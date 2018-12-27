@@ -5,6 +5,8 @@ local jump_table = {
         [0x0028] = function(packet)
             -- collect top-level action information
             local action = {
+                -- Windower code leads me to believe param and recast might be
+                -- at different indices - 102 and 134, respectively. not sure
                 actor_id     = ashita.bits.unpack_be(packet, 40, 32),
                 target_count = ashita.bits.unpack_be(packet, 72, 8),
                 category     = ashita.bits.unpack_be(packet, 82, 4),
@@ -31,7 +33,7 @@ local jump_table = {
                         animation = ashita.bits.unpack_be(packet, bit_offset + 41, 11),
                         effect    = ashita.bits.unpack_be(packet, bit_offset + 53, 2),
                         stagger   = ashita.bits.unpack_be(packet, bit_offset + 55, 7),
-                        param     = ashita.bits.unpack_be(packet, bit_offset + 60, 17),
+                        param     = ashita.bits.unpack_be(packet, bit_offset + 63, 17),
                         message   = ashita.bits.unpack_be(packet, bit_offset + 80, 10),
                         unknown   = ashita.bits.unpack_be(packet, bit_offset + 90, 31)
                     }
