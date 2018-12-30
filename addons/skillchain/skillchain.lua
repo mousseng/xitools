@@ -2,15 +2,17 @@
 
 _addon.author  = 'lin'
 _addon.name    = 'skillchain'
-_addon.version = '0.3.0'
+_addon.version = '0.4.0'
 
 require 'common'
 require 'timer'
 
 local Packet       = require 'packet'
 local Weaponskills = require 'weaponskills'
+local BloodPacts   = require 'bloodpacts'
 
 local DefaultConfig = {
+    debug = false,
     font = {
         family    = 'Consolas',
         size      = 10,
@@ -25,8 +27,8 @@ local SkillchainConfig = DefaultConfig
 
 --[[ live data ]]
 
-local Party   = {}
-local Enemies = {}
+local IsInParty = {}
+local Enemies   = {}
 
 --[[ utility data ]]
 
@@ -85,6 +87,12 @@ local Elements = {
 
 --[[ helper functions ]]
 
+local function debug(msg)
+    if SkillchainConfig.debug then
+        print('[DEBUG] ' .. msg)
+    end
+end
+
 -- given a PARTY_DEFINE packet, extract the members' server_ids, drop the empty
 -- values, and update the live party data
 local function update_party(packet)
@@ -95,7 +103,7 @@ local function update_party(packet)
     local member5 = struct.unpack('i', packet, 0x08 + 1 + 48)
     local member6 = struct.unpack('i', packet, 0x08 + 1 + 60)
 
-    Party = {
+    IsInParty = {
         [member1] = true,
         [member2] = true,
         [member3] = true,
@@ -105,7 +113,7 @@ local function update_party(packet)
     }
 
     -- just to keep things tidy
-    Party[0] = nil
+    IsInParty[0] = nil
 end
 
 -- find an entity by its server_id by traversing the entire entity array
@@ -126,6 +134,18 @@ local function get_entity(server_id)
     return nil
 end
 
+-- only check for SMN for now, since that's all i know that works
+local function party_has_pet_job()
+    local party_mgr = AshitaCore:GetDataManager():GetParty()
+
+    return party_mgr:GetMemberMainJob(0) == 15 or party_mgr:GetMemberSubJob(0) == 15
+        or party_mgr:GetMemberMainJob(1) == 15 or party_mgr:GetMemberSubJob(1) == 15
+        or party_mgr:GetMemberMainJob(2) == 15 or party_mgr:GetMemberSubJob(2) == 15
+        or party_mgr:GetMemberMainJob(3) == 15 or party_mgr:GetMemberSubJob(3) == 15
+        or party_mgr:GetMemberMainJob(4) == 15 or party_mgr:GetMemberSubJob(4) == 15
+        or party_mgr:GetMemberMainJob(5) == 15 or party_mgr:GetMemberSubJob(5) == 15
+end
+
 -- little helper to avoid crowding conditionals
 local function is_chain_finished(skillchain)
     local len = #skillchain
@@ -135,6 +155,151 @@ local function is_chain_finished(skillchain)
     and skillchain[len] == skillchain[len - 1] then
         return true
     end
+end
+
+local function handle_weaponskill(action)
+    debug('Handling weaponskill by actor ' .. action.actor_id)
+
+    if IsInParty[action.actor_id] then
+        -- gotta traverse our way to the meat of the action data; there can be
+        -- multiple targets per weaponskill, so don't choke and die if there are
+        for i = 1, action.target_count do
+            local target = action.targets[i]
+
+            -- pretty sure there should only ever be one action per target for
+            -- weaponskills, but if not this could be the source of a bug
+            for j = 1, target.action_count do
+                local weaponskill = target.actions[j]
+
+                -- only continue tracking if the ability didn't miss, and it can chain
+                if weaponskill.reaction == 0x08
+                and not NonChainingSkills[weaponskill.animation] then
+                    -- reset target info if starting a new chain,
+                    -- or if the last one was broken,
+                    -- or if the last one finished
+                    if Enemies[target.id] == nil
+                    or not weaponskill.has_add_effect
+                    or is_chain_finished(Enemies[target.id].chain) then
+                        Enemies[target.id] = {
+                            name = get_entity(target.id).Name,
+                            time = nil,
+                            chain = {}
+                        }
+                    end
+
+                    -- drop the information after the window is definitely
+                    -- closed and there's been no activity
+                    ashita.timer.remove_timer(target.id)
+                    ashita.timer.create(
+                        target.id,
+                        10,
+                        1,
+                        function(tgt) Enemies[target.id] = nil end,
+                        target.id
+                    )
+
+                    local chain_element = {
+                        id = weaponskill.animation,
+                        name = Weaponskills[weaponskill.animation].name,
+                        base_damage = weaponskill.param,
+                        bonus_damage = weaponskill.add_effect_param,
+                        resonance = Resonances[weaponskill.add_effect_message]
+                    }
+
+                    -- list out all the attrs for first weaponskill. unsure if
+                    -- you can actually chain off of non-primary attributes, so
+                    -- just do it anyway
+                    if #Enemies[target.id].chain == 0 then
+                        chain_element.resonance =
+                            table.concat(Weaponskills[weaponskill.animation].attr, ', ')
+                    end
+
+                    Enemies[target.id].time = os.time()
+                    table.insert(Enemies[target.id].chain, chain_element)
+                end
+            end
+        end
+    end
+end
+
+local function handle_petability(action)
+    -- first we need to find out which pets are in our party
+    local pets = {}
+    for k, v in pairs(IsInParty) do
+        local party_member = get_entity(k)
+
+        if party_member ~= nil then
+            local party_pet = GetEntity(party_member.PetTargetIndex)
+
+            if party_pet ~= nil then
+                pets[party_pet.ServerId] = true
+            end
+        end
+    end
+
+    -- if it's a party member's pet
+    if pets[action.actor_id] then
+        local pet = get_entity(action.actor_id)
+
+        for i = 1, action.target_count do
+            local target = action.targets[i]
+
+            for j = 1, target.action_count do
+                local ability =  target.actions[j]
+
+                -- check if it was a hit and chainable skill
+                if BloodPacts[pet.Name][ability.animation] ~= nil
+                and ability.reaction == 0x08 then
+                    -- reset target info if starting a new chain,
+                    -- or if the last one was broken,
+                    -- or if the last one finished
+                    if Enemies[target.id] == nil
+                    or not ability.has_add_effect
+                    or is_chain_finished(Enemies[target.id].chain) then
+                        Enemies[target.id] = {
+                            name = get_entity(target.id).Name,
+                            time = nil,
+                            chain = {}
+                        }
+                    end
+
+                    -- drop the information after the window is definitely
+                    -- closed and there's been no activity
+                    ashita.timer.remove_timer(target.id)
+                    ashita.timer.create(
+                        target.id,
+                        10,
+                        1,
+                        function(tgt) Enemies[target.id] = nil end,
+                        target.id
+                    )
+
+                    local chain_element = {
+                        id = ability.animation,
+                        name = BloodPacts[pet.Name][ability.animation].name,
+                        base_damage = ability.param,
+                        bonus_damage = ability.add_effect_param,
+                        resonance = Resonances[ability.add_effect_message]
+                    }
+
+                    -- list out all the attrs for first weaponskill. unsure if
+                    -- you can actually chain off of non-primary attributes, so
+                    -- just do it anyway
+                    if #Enemies[target.id].chain == 0 then
+                        chain_element.resonance =
+                            table.concat(BloodPacts[pet.Name][ability.animation].attr, ', ')
+                    end
+
+                    Enemies[target.id].time = os.time()
+                    table.insert(Enemies[target.id].chain, chain_element)
+                end
+            end
+        end
+    end
+end
+
+local function handle_bluemagic(action)
+    --
 end
 
 --[[ event handlers ]]
@@ -165,7 +330,7 @@ function load()
     local member5 = party:GetMemberServerId(4)
     local member6 = party:GetMemberServerId(5)
 
-    Party = {
+    IsInParty = {
         [member1] = true,
         [member2] = true,
         [member3] = true,
@@ -175,7 +340,7 @@ function load()
     }
 
     -- just to keep things tidy
-    Party[0] = nil
+    IsInParty[0] = nil
 end
 
 function unload()
@@ -200,7 +365,7 @@ function render()
         for x = 1, #v.chain do
             line = line
                 .. '\n  > '
-                .. Weaponskills[v.chain[x].id].name
+                .. v.chain[x].name
                 .. ' ['
                 .. v.chain[x].base_damage
 
@@ -237,71 +402,33 @@ function render()
     font:SetText(e:concat('\n\n'))
 end
 
-function handle_packet(id, size, packet)
+function handle_command(command, ntype)
+    local args = command:args()
+    if (args[1] ~= '/sc') then
+        return false
+    end
+
+    if (#args > 1 and args[2] == 'debug') then
+        SkillchainConfig.debug = not SkillchainConfig.debug
+        return true
+    end
+end
+
+function dispatch_packet(id, size, packet)
     if id == 0x00C8 then
+        -- debug('Dispatching party define packet')
         update_party(packet)
-    elseif id == 0x0028 and ashita.bits.unpack_be(packet, 82, 4) == 3 then
-        -- only look at WEAPONSKILL_FINISH packets
-        local action = Packet.Server.parse(packet)
+    elseif id == 0x0028 then
+        local category = ashita.bits.unpack_be(packet, 82, 4)
+        debug('Dispatching action packet, category ' .. category)
 
-        -- gotta traverse our way to the meat of the action data; there can be
-        -- multiple targets per weaponskill, so don't choke and die if there are
-        for i = 1, action.target_count do
-            local target = action.targets[i]
-
-            -- pretty sure there should only ever be one action per target for
-            -- weaponskills, but if not this could be the source of a bug
-            for j = 1, target.action_count do
-                local weaponskill = target.actions[j]
-
-                -- only continue tracking if the source is in our party, the
-                -- ability didn't miss, and it can skillchain
-                if Party[action.actor_id]
-                and weaponskill.reaction == 0x08
-                and not NonChainingSkills[weaponskill.animation] then
-                    -- reset target info if starting a new chain,
-                    -- or if the last one was broken,
-                    -- or if the last one finished
-                    if Enemies[target.id] == nil
-                    or not weaponskill.has_add_effect
-                    or is_chain_finished(Enemies[target.id].chain) then
-                        Enemies[target.id] = {
-                            name = get_entity(target.id).Name,
-                            time = nil,
-                            chain = {}
-                        }
-                    end
-
-                    -- drop the information after the window is definitely
-                    -- closed and there's been no activity
-                    ashita.timer.remove_timer(target.id)
-                    ashita.timer.create(
-                        target.id,
-                        10,
-                        1,
-                        function(tgt) Enemies[target.id] = nil end,
-                        target.id
-                    )
-
-                    local chain_element = {
-                        id = weaponskill.animation,
-                        base_damage = weaponskill.param,
-                        bonus_damage = weaponskill.add_effect_param,
-                        resonance = Resonances[weaponskill.add_effect_message]
-                    }
-
-                    -- list out all the attrs for first weaponskill. unsure if
-                    -- you can actually chain off of non-primary attributes, so
-                    -- just do it anyway
-                    if #Enemies[target.id].chain == 0 then
-                        chain_element.resonance =
-                            table.concat(Weaponskills[weaponskill.animation].attr, ', ')
-                    end
-
-                    Enemies[target.id].time = os.time()
-                    table.insert(Enemies[target.id].chain, chain_element)
-                end
-            end
+        if category == 3 then
+            handle_weaponskill(Packet.Server.parse(packet))
+        elseif category == 4 then
+            handle_bluemagic(Packet.Server.parse(packet))
+            --handle_magicburst(Packet.Server.parse(packet))
+        elseif category == 13 and party_has_pet_job() then
+            handle_petability(Packet.Server.parse(packet))
         end
     end
 
@@ -311,4 +438,5 @@ end
 ashita.register_event('load', load)
 ashita.register_event('unload', unload)
 ashita.register_event('render', render)
-ashita.register_event('incoming_packet', handle_packet)
+ashita.register_event('command', handle_command)
+ashita.register_event('incoming_packet', dispatch_packet)
