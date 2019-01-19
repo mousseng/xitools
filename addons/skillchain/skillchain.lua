@@ -1,18 +1,19 @@
---[[ config ]]
+-------------------------------------------------------------------------------
+-- config
+-------------------------------------------------------------------------------
 
 _addon.author  = 'lin'
 _addon.name    = 'skillchain'
 _addon.version = '0.4.0'
 
+require 'utils'
+require 'packet'
 require 'common'
-require 'timer'
 
-local Packet       = require 'packet'
 local Weaponskills = require 'weaponskills'
 local BloodPacts   = require 'bloodpacts'
 
-local DefaultConfig = {
-    debug = false,
+local default_config = {
     font = {
         family    = 'Consolas',
         size      = 10,
@@ -23,16 +24,20 @@ local DefaultConfig = {
     }
 }
 
-local SkillchainConfig = DefaultConfig
+local config = default_config
 
---[[ live data ]]
+-------------------------------------------------------------------------------
+-- live data
+-------------------------------------------------------------------------------
 
-local IsInParty = {}
-local Enemies   = {}
+local Enemies = {}
 
---[[ utility data ]]
+-------------------------------------------------------------------------------
+-- utility data
+-------------------------------------------------------------------------------
 
--- keyed by the weaponskill's animation_id
+-- A set-style table of weaponskills that do not interact with skillchains. It
+-- is keyed by the animation ID.
 local NonChainingSkills = {
     [8] = true,
     [36] = true,
@@ -44,9 +49,17 @@ local NonChainingSkills = {
     [143] = true,
     [149] = true,
     [150] = true,
-    [230] = true
+    [230] = true,
+    -- HACK: dragoon jump abilities. For some reason these are counted as
+    -- weaponskills rather than abilities, in spite of appearing in darkstar's
+    -- ability table.
+    [204] = true,
+    [209] = true,
+    [214] = true,
 }
 
+-- A lookup table to find the appropriate name for a given skillchain effect.
+-- The keys are an action's add_effect_message.
 local Resonances = {
     [0x120] = 'Light',
     [0x121] = 'Darkness',
@@ -66,6 +79,8 @@ local Resonances = {
     [0x12F] = 'Umbra'
 }
 
+-- A lookup table to find the appropriate list of burstable magic elements for
+-- a given skillchain effect.
 local Elements = {
     Light         = 'Wind, Thunder, Fire, Light',
     Darkness      = 'Ice, Water, Earth, Dark',
@@ -85,84 +100,34 @@ local Elements = {
     Umbra         = 'Ice, Water, Earth, Dark'
 }
 
---[[ helper functions ]]
+-------------------------------------------------------------------------------
+-- helper functions
+-------------------------------------------------------------------------------
 
-local function debug(msg)
-    if SkillchainConfig.debug then
-        print('[DEBUG] ' .. msg)
-    end
-end
-
--- given a PARTY_DEFINE packet, extract the members' server_ids, drop the empty
--- values, and update the live party data
-local function update_party(packet)
-    local member1 = struct.unpack('i', packet, 0x08 + 1)
-    local member2 = struct.unpack('i', packet, 0x08 + 1 + 12)
-    local member3 = struct.unpack('i', packet, 0x08 + 1 + 24)
-    local member4 = struct.unpack('i', packet, 0x08 + 1 + 36)
-    local member5 = struct.unpack('i', packet, 0x08 + 1 + 48)
-    local member6 = struct.unpack('i', packet, 0x08 + 1 + 60)
-
-    IsInParty = {
-        [member1] = true,
-        [member2] = true,
-        [member3] = true,
-        [member4] = true,
-        [member5] = true,
-        [member6] = true
-    }
-
-    -- just to keep things tidy
-    IsInParty[0] = nil
-end
-
--- find an entity by its server_id by traversing the entire entity array
-local function get_entity(server_id)
-    -- entity array is 2304 items long
-    for x = 0, 2303 do
-        -- get the entity
-        local e = GetEntity(x)
-
-        -- ensure the entity is valid
-        if e ~= nil and e.WarpPointer ~= 0 then
-            if e.ServerId == server_id then
-                return e
-            end
-        end
-    end
-
-    return nil
-end
-
--- only check for SMN for now, since that's all i know that works
+-- Heuristic to determine whether to even bother trying to handle a mob action.
+-- Since we only have (partial, buggy) SMN support at the moment, only check
+-- for the presence of a SMN in the party.
 local function party_has_pet_job()
-    local party_mgr = AshitaCore:GetDataManager():GetParty()
+    local party = AshitaCore:GetDataManager():GetParty()
 
-    return party_mgr:GetMemberMainJob(0) == 15 or party_mgr:GetMemberSubJob(0) == 15
-        or party_mgr:GetMemberMainJob(1) == 15 or party_mgr:GetMemberSubJob(1) == 15
-        or party_mgr:GetMemberMainJob(2) == 15 or party_mgr:GetMemberSubJob(2) == 15
-        or party_mgr:GetMemberMainJob(3) == 15 or party_mgr:GetMemberSubJob(3) == 15
-        or party_mgr:GetMemberMainJob(4) == 15 or party_mgr:GetMemberSubJob(4) == 15
-        or party_mgr:GetMemberMainJob(5) == 15 or party_mgr:GetMemberSubJob(5) == 15
+    return party:GetMemberMainJob(0) == 15 or party:GetMemberSubJob(0) == 15
+        or party:GetMemberMainJob(1) == 15 or party:GetMemberSubJob(1) == 15
+        or party:GetMemberMainJob(2) == 15 or party:GetMemberSubJob(2) == 15
+        or party:GetMemberMainJob(3) == 15 or party:GetMemberSubJob(3) == 15
+        or party:GetMemberMainJob(4) == 15 or party:GetMemberSubJob(4) == 15
+        or party:GetMemberMainJob(5) == 15 or party:GetMemberSubJob(5) == 15
 end
 
--- little helper to avoid crowding conditionals
-local function is_chain_finished(skillchain)
-    local len = #skillchain
-
-    -- double lv3 chain?
-    if (skillchain[len] == 'Light' or skillchain[len] == 'Darkness')
-    and skillchain[len] == skillchain[len - 1] then
-        return true
-    end
-end
-
+-- Collects and collates data about a particular action in order for the render
+-- function to display information about active skillchains. Specialized on
+-- weaponskills.
 local function handle_weaponskill(action)
-    debug('Handling weaponskill by actor ' .. action.actor_id)
+    if IsServerIdInParty(action.actor_id) then
 
-    if IsInParty[action.actor_id] then
-        -- gotta traverse our way to the meat of the action data; there can be
-        -- multiple targets per weaponskill, so don't choke and die if there are
+        -- Gotta traverse our way to the meat of the action data; there can be
+        -- multiple targets per weaponskill, so don't choke and die if there
+        -- are. Additionally, while the top-level param field contains the skill
+        -- ID, this doesn't hold for all category 3 packets (such as DRG jumps).
         for i = 1, action.target_count do
             local target = action.targets[i]
 
@@ -171,17 +136,15 @@ local function handle_weaponskill(action)
             for j = 1, target.action_count do
                 local weaponskill = target.actions[j]
 
-                -- only continue tracking if the ability didn't miss, and it can chain
+                -- only track if the ability didn't miss and can chain
                 if weaponskill.reaction == 0x08
                 and not NonChainingSkills[weaponskill.animation] then
                     -- reset target info if starting a new chain,
-                    -- or if the last one was broken,
-                    -- or if the last one finished
+                    -- or if the last one was broken/finished
                     if Enemies[target.id] == nil
-                    or not weaponskill.has_add_effect
-                    or is_chain_finished(Enemies[target.id].chain) then
+                    or not weaponskill.has_add_effect then
                         Enemies[target.id] = {
-                            name = get_entity(target.id).Name,
+                            name = GetEntityByServerId(target.id).Name,
                             time = nil,
                             chain = {}
                         }
@@ -222,24 +185,32 @@ local function handle_weaponskill(action)
     end
 end
 
+-- Collects and collates data about a particular action in order for the render
+-- function to display information about active skillchains. Specialized on pet
+-- abilities.
 local function handle_petability(action)
+    local party = AshitaCore:GetDataManager():GetParty()
+
     -- first we need to find out which pets are in our party
     local pets = {}
-    for k, v in pairs(IsInParty) do
-        local party_member = get_entity(k)
 
-        if party_member ~= nil then
-            local party_pet = GetEntity(party_member.PetTargetIndex)
+    for x = 1, 5 do
+        if party:GetMemberActive(x) == 1 and party:GetMemberServerId(x) ~= 0 then
+            local party_mem = GetEntity(party:GetMemberTargetIndex(x))
 
-            if party_pet ~= nil then
-                pets[party_pet.ServerId] = true
+            if party_mem ~= nil then
+                local party_pet = GetEntity(party_mem.PetTargetIndex)
+
+                if party_pet ~= nil then
+                    pets[party_pet.ServerId] = true
+                end
             end
         end
     end
 
-    -- if it's a party member's pet
+    -- only bother deciphering it if it's a party member's pet
     if pets[action.actor_id] then
-        local pet = get_entity(action.actor_id)
+        local pet = GetEntityByServerId(action.actor_id)
 
         for i = 1, action.target_count do
             local target = action.targets[i]
@@ -247,17 +218,16 @@ local function handle_petability(action)
             for j = 1, target.action_count do
                 local ability =  target.actions[j]
 
-                -- check if it was a hit and chainable skill
-                if BloodPacts[pet.Name][ability.animation] ~= nil
+                -- check if it was a hit and chainable skill by a supported pet
+                if BloodPacts[pet.Name] ~= nil
+                and BloodPacts[pet.Name][ability.animation] ~= nil
                 and ability.reaction == 0x08 then
                     -- reset target info if starting a new chain,
-                    -- or if the last one was broken,
-                    -- or if the last one finished
+                    -- or if the last one was broken/finished
                     if Enemies[target.id] == nil
-                    or not ability.has_add_effect
-                    or is_chain_finished(Enemies[target.id].chain) then
+                    or not ability.has_add_effect then
                         Enemies[target.id] = {
-                            name = get_entity(target.id).Name,
+                            name = GetEntityByServerId(target.id).Name,
                             time = nil,
                             chain = {}
                         }
@@ -298,57 +268,33 @@ local function handle_petability(action)
     end
 end
 
-local function handle_bluemagic(action)
-    --
-end
-
---[[ event handlers ]]
+-------------------------------------------------------------------------------
+-- event handlers
+-------------------------------------------------------------------------------
 
 function load()
-    SkillchainConfig = ashita.settings.load_merged(_addon.path .. 'settings/settings.json', SkillchainConfig)
+    config = ashita.settings.load_merged(_addon.path .. 'settings/settings.json', config)
 
     -- initialize rendering data
     local font = AshitaCore:GetFontManager():Create('__skillchain_addon')
-    font:SetColor(SkillchainConfig.font.color)
-    font:SetFontFamily(SkillchainConfig.font.family)
-    font:SetFontHeight(SkillchainConfig.font.size)
+    font:SetColor(config.font.color)
+    font:SetFontFamily(config.font.family)
+    font:SetFontHeight(config.font.size)
     font:SetBold(false)
-    font:SetPositionX(SkillchainConfig.font.position[1])
-    font:SetPositionY(SkillchainConfig.font.position[2])
+    font:SetPositionX(config.font.position[1])
+    font:SetPositionY(config.font.position[2])
     font:SetText('Skillchain ~ by lin')
     font:SetVisibility(true)
-    font:GetBackground():SetColor(SkillchainConfig.font.bgcolor)
-    font:GetBackground():SetVisibility(SkillchainConfig.font.bgvisible)
-
-    -- initialize party data
-    local party = AshitaCore:GetDataManager():GetParty()
-
-    local member1 = party:GetMemberServerId(0)
-    local member2 = party:GetMemberServerId(1)
-    local member3 = party:GetMemberServerId(2)
-    local member4 = party:GetMemberServerId(3)
-    local member5 = party:GetMemberServerId(4)
-    local member6 = party:GetMemberServerId(5)
-
-    IsInParty = {
-        [member1] = true,
-        [member2] = true,
-        [member3] = true,
-        [member4] = true,
-        [member5] = true,
-        [member6] = true
-    }
-
-    -- just to keep things tidy
-    IsInParty[0] = nil
+    font:GetBackground():SetColor(config.font.bgcolor)
+    font:GetBackground():SetVisibility(config.font.bgvisible)
 end
 
 function unload()
     local font = AshitaCore:GetFontManager():Get('__skillchain_addon')
-    SkillchainConfig.font.position = { font:GetPositionX(), font:GetPositionY() }
+    config.font.position = { font:GetPositionX(), font:GetPositionY() }
 
     -- save config
-    ashita.settings.save(_addon.path .. 'settings/settings.json', SkillchainConfig)
+    ashita.settings.save(_addon.path .. 'settings/settings.json', config)
 
     -- unload font object
     AshitaCore:GetFontManager():Delete('__skillchain_addon')
@@ -402,33 +348,20 @@ function render()
     font:SetText(e:concat('\n\n'))
 end
 
-function handle_command(command, ntype)
-    local args = command:args()
-    if (args[1] ~= '/sc') then
-        return false
-    end
-
-    if (#args > 1 and args[2] == 'debug') then
-        SkillchainConfig.debug = not SkillchainConfig.debug
-        return true
-    end
-end
-
 function dispatch_packet(id, size, packet)
-    if id == 0x00C8 then
-        -- debug('Dispatching party define packet')
-        update_party(packet)
-    elseif id == 0x0028 then
-        local category = ashita.bits.unpack_be(packet, 82, 4)
-        debug('Dispatching action packet, category ' .. category)
+    if id == 0x0028 then
+        local action = ashita.packet.parse_server(packet)
 
-        if category == 3 then
-            handle_weaponskill(Packet.Server.parse(packet))
-        elseif category == 4 then
-            handle_bluemagic(Packet.Server.parse(packet))
-            --handle_magicburst(Packet.Server.parse(packet))
-        elseif category == 13 and party_has_pet_job() then
-            handle_petability(Packet.Server.parse(packet))
+        if action.category == 3 then
+            ashita.packet.log_server(id, action)
+            handle_weaponskill(action)
+        elseif action.category == 4 then
+            ashita.packet.log_server(id, action)
+            -- handle_bluemagic(action)
+            -- handle_magicburst(action)
+        elseif action.category == 13 and party_has_pet_job() then
+            ashita.packet.log_server(id, action)
+            handle_petability(action)
         end
     end
 
@@ -438,5 +371,4 @@ end
 ashita.register_event('load', load)
 ashita.register_event('unload', unload)
 ashita.register_event('render', render)
-ashita.register_event('command', handle_command)
 ashita.register_event('incoming_packet', dispatch_packet)
