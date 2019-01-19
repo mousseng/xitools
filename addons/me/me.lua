@@ -1,9 +1,12 @@
---[[ config ]]
+-------------------------------------------------------------------------------
+-- config
+-------------------------------------------------------------------------------
 
 _addon.author  = 'lin'
 _addon.name    = 'me'
-_addon.version = '0.1.0'
+_addon.version = '1.0.0'
 
+require 'utils'
 require 'common'
 require 'ffxi.targets'
 
@@ -20,19 +23,9 @@ local default_config = {
 
 local config = default_config
 
---[[ helper functions ]]
-
-local Jobs = {
-    [0] = '',
-    [1] = 'WAR', [2] = 'MNK', [3] = 'WHM',
-    [4] = 'BLM', [5] = 'RDM', [6] = 'THF',
-    [7] = 'PLD', [8] = 'DRK', [9] = 'BST',
-    [10] = 'BRD', [11] = 'RNG', [12] = 'SAM',
-    [13] = 'NIN', [14] = 'DRG', [15] = 'SMN',
-    [16] = 'BLU', [17] = 'COR', [18] = 'PUP',
-    [19] = 'DNC', [20] = 'SCH', [21] = 'GEO',
-    [22] = 'RUN',
-}
+-------------------------------------------------------------------------------
+-- helper functions
+-------------------------------------------------------------------------------
 
 local function format_xp(number, include_unit)
     if number < 10000 then
@@ -94,7 +87,9 @@ local function get_percent_bar(percent)
     else                        return ' [          ]' end
 end
 
---[[ event handlers ]]
+-------------------------------------------------------------------------------
+-- event handlers
+-------------------------------------------------------------------------------
 
 function load()
     config = ashita.settings.load_merged(_addon.path .. 'settings/settings.json', config)
@@ -135,10 +130,10 @@ function render()
     local player = {
         name = player_entity.Name or '',
 
-        main_job = Jobs[player_data:GetMainJob()] or 0,
+        main_job = GetJob(player_data:GetMainJob()) or 0,
         main_lv = player_data:GetMainJobLevel() or 0,
 
-        sub_job = Jobs[player_data:GetSubJob()] or 0,
+        sub_job = GetJob(player_data:GetSubJob()) or 0,
         sub_lv = player_data:GetSubJobLevel() or 0,
 
         cur_xp = player_data:GetExpCurrent() or 0,
