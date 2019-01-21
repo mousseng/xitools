@@ -185,7 +185,7 @@ function render()
     if target ~= nil and target.Name ~= '' and target.TargetIndex ~= 0 then
         local dist = string.format('%.1f', math.sqrt(target.Distance))
 
-        local target_line1 = target.Name .. ' [' .. dist .. 'm]'
+        local target_line1 = string.format('%-17.17s %s', target.Name, ' [' .. dist .. 'm]')
         local target_line2 = '\nHP      '
             .. string.format('%3i', target.HealthPercent) .. '%'
             .. get_percent_bar(target.HealthPercent / 100)
