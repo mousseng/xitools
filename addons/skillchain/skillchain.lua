@@ -212,56 +212,59 @@ local function handle_petability(action)
     if pets[action.actor_id] then
         local pet = GetEntityByServerId(action.actor_id)
 
-        for i = 1, action.target_count do
-            local target = action.targets[i]
+        -- check if it's a chainable skill by a supported pet
+        if BloodPacts[pet.Name] ~= nil
+        and BloodPacts[pet.Name][action.param] ~= nil then
 
-            for j = 1, target.action_count do
-                local ability =  target.actions[j]
+            for i = 1, action.target_count do
+                local target = action.targets[i]
 
-                -- check if it was a hit and chainable skill by a supported pet
-                if BloodPacts[pet.Name] ~= nil
-                and BloodPacts[pet.Name][ability.animation] ~= nil
-                and ability.reaction == 0x08 then
-                    -- reset target info if starting a new chain,
-                    -- or if the last one was broken/finished
-                    if Enemies[target.id] == nil
-                    or not ability.has_add_effect then
-                        Enemies[target.id] = {
-                            name = GetEntityByServerId(target.id).Name,
-                            time = nil,
-                            chain = {}
+                for j = 1, target.action_count do
+                    local ability =  target.actions[j]
+
+                    -- check if it was a hit
+                    if ability.reaction == 0x08 then
+                        -- reset target info if starting a new chain,
+                        -- or if the last one was broken/finished
+                        if Enemies[target.id] == nil
+                        or not ability.has_add_effect then
+                            Enemies[target.id] = {
+                                name = GetEntityByServerId(target.id).Name,
+                                time = nil,
+                                chain = {}
+                            }
+                        end
+
+                        -- drop the information after the window is definitely
+                        -- closed and there's been no activity
+                        ashita.timer.remove_timer(target.id)
+                        ashita.timer.create(
+                            target.id,
+                            10,
+                            1,
+                            function(tgt) Enemies[target.id] = nil end,
+                            target.id
+                        )
+
+                        local chain_element = {
+                            id = ability.animation,
+                            name = BloodPacts[pet.Name][action.param].name,
+                            base_damage = ability.param,
+                            bonus_damage = ability.add_effect_param,
+                            resonance = Resonances[ability.add_effect_message]
                         }
+
+                        -- list out all the attrs for first weaponskill. unsure if
+                        -- you can actually chain off of non-primary attributes, so
+                        -- just do it anyway
+                        if #Enemies[target.id].chain == 0 then
+                            chain_element.resonance =
+                                table.concat(BloodPacts[pet.Name][action.param].attr, ', ')
+                        end
+
+                        Enemies[target.id].time = os.time()
+                        table.insert(Enemies[target.id].chain, chain_element)
                     end
-
-                    -- drop the information after the window is definitely
-                    -- closed and there's been no activity
-                    ashita.timer.remove_timer(target.id)
-                    ashita.timer.create(
-                        target.id,
-                        10,
-                        1,
-                        function(tgt) Enemies[target.id] = nil end,
-                        target.id
-                    )
-
-                    local chain_element = {
-                        id = ability.animation,
-                        name = BloodPacts[pet.Name][ability.animation].name,
-                        base_damage = ability.param,
-                        bonus_damage = ability.add_effect_param,
-                        resonance = Resonances[ability.add_effect_message]
-                    }
-
-                    -- list out all the attrs for first weaponskill. unsure if
-                    -- you can actually chain off of non-primary attributes, so
-                    -- just do it anyway
-                    if #Enemies[target.id].chain == 0 then
-                        chain_element.resonance =
-                            table.concat(BloodPacts[pet.Name][ability.animation].attr, ', ')
-                    end
-
-                    Enemies[target.id].time = os.time()
-                    table.insert(Enemies[target.id].chain, chain_element)
                 end
             end
         end
