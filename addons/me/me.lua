@@ -64,27 +64,27 @@ local function get_tp_color(tp_percent)
 end
 
 local function get_percent_bar(percent)
-        if percent >= 1.00 then return ' [==========]'
-    elseif percent >= 0.95 then return ' [=========-]'
-    elseif percent >= 0.90 then return ' [========= ]'
-    elseif percent >= 0.85 then return ' [========- ]'
-    elseif percent >= 0.80 then return ' [========  ]'
-    elseif percent >= 0.75 then return ' [=======-  ]'
-    elseif percent >= 0.70 then return ' [=======   ]'
-    elseif percent >= 0.65 then return ' [======-   ]'
-    elseif percent >= 0.60 then return ' [======    ]'
-    elseif percent >= 0.55 then return ' [=====-    ]'
-    elseif percent >= 0.50 then return ' [=====     ]'
-    elseif percent >= 0.45 then return ' [====-     ]'
-    elseif percent >= 0.40 then return ' [====      ]'
-    elseif percent >= 0.35 then return ' [===-      ]'
-    elseif percent >= 0.30 then return ' [===       ]'
-    elseif percent >= 0.25 then return ' [==-       ]'
-    elseif percent >= 0.20 then return ' [==        ]'
-    elseif percent >= 0.15 then return ' [=-        ]'
-    elseif percent >= 0.10 then return ' [=         ]'
-    elseif percent >= 0.05 then return ' [-         ]'
-    else                        return ' [          ]' end
+        if percent >= 1.00 then return '[==========]'
+    elseif percent >= 0.95 then return '[=========-]'
+    elseif percent >= 0.90 then return '[========= ]'
+    elseif percent >= 0.85 then return '[========- ]'
+    elseif percent >= 0.80 then return '[========  ]'
+    elseif percent >= 0.75 then return '[=======-  ]'
+    elseif percent >= 0.70 then return '[=======   ]'
+    elseif percent >= 0.65 then return '[======-   ]'
+    elseif percent >= 0.60 then return '[======    ]'
+    elseif percent >= 0.55 then return '[=====-    ]'
+    elseif percent >= 0.50 then return '[=====     ]'
+    elseif percent >= 0.45 then return '[====-     ]'
+    elseif percent >= 0.40 then return '[====      ]'
+    elseif percent >= 0.35 then return '[===-      ]'
+    elseif percent >= 0.30 then return '[===       ]'
+    elseif percent >= 0.25 then return '[==-       ]'
+    elseif percent >= 0.20 then return '[==        ]'
+    elseif percent >= 0.15 then return '[=-        ]'
+    elseif percent >= 0.10 then return '[=         ]'
+    elseif percent >= 0.05 then return '[-         ]'
+    else                        return '[          ]' end
 end
 
 -------------------------------------------------------------------------------
@@ -149,53 +149,60 @@ function render()
         cur_tp = math.floor(party_data:GetMemberCurrentTP(0) / 10) or 0,
     }
 
-    local line1 = player.name
-        .. ' (Lv' .. player.main_lv .. ' ' .. player.main_job
-
-    if player.sub_job ~= 0 then
-        line1 = line1 .. ', Lv' .. player.sub_lv .. ' ' .. player.sub_job
+    local line1
+    if player.sub_job ~= '' then
+        line1 = string.format('%-13.13s %s%2i/%s%2i',
+            player.name,
+            player.main_job, player.main_lv,
+            player.sub_job, player.sub_lv)
+    else
+        line1 = string.format('%-19.19s %s%2i',
+            player.name,
+            player.main_job, player.main_lv)
     end
 
-    line1 = line1 .. ')'
+    local line2 = string.format('HP %4i/%4i %s',
+        player.cur_hp,
+        player.max_hp,
+        get_percent_bar(player.cur_hp / player.max_hp))
 
-    local line2 = '\nHP ' .. string.format('%4i', player.cur_hp)
-        .. '/' .. string.format('%4i', player.max_hp)
-        .. get_percent_bar(player.cur_hp / player.max_hp)
+    local line3 = string.format('MP %4i/%4i %s',
+        player.cur_mp,
+        player.max_mp,
+        get_percent_bar(player.cur_mp / player.max_mp))
 
-    local line3 = '\nMP ' .. string.format('%4i', player.cur_mp)
-        .. '/' .. string.format('%4i', player.max_mp)
-        .. get_percent_bar(player.cur_mp / player.max_mp)
+    local line4 = string.format('TP %4i/%4i %s',
+        player.cur_tp,
+        player.max_tp,
+        get_percent_bar(player.cur_tp / player.max_tp))
 
-    local line4 = '\nTP ' .. string.format('%4i', player.cur_tp)
-        .. '/' .. string.format('%4i', player.max_tp)
-        .. get_percent_bar(player.cur_tp / player.max_tp)
+    local line5 = string.format('XP %4i/%4i %s',
+        format_xp(player.cur_xp, false),
+        format_xp(player.max_xp, true),
+        get_percent_bar(player.cur_xp / player.max_xp))
 
-    local line5 = '\nXP ' .. format_xp(player.cur_xp, false)
-        .. '/' .. format_xp(player.max_xp, true)
-        .. get_percent_bar(player.cur_xp / player.max_xp)
-
-
-    local text = line1
-        .. colorize_text(line2, get_hp_color(player.cur_hp / player.max_hp))
-        .. colorize_text(line3, get_hp_color(player.cur_mp / player.max_mp))
-        .. colorize_text(line4, get_tp_color(player.cur_tp / player.max_tp))
-        .. line5
+    local text = T{}
+    table.insert(text, line1)
+    table.insert(text, colorize_text(line2, get_hp_color(player.cur_hp / player.max_hp)))
+    table.insert(text, colorize_text(line3, get_hp_color(player.cur_mp / player.max_mp)))
+    table.insert(text, colorize_text(line4, get_tp_color(player.cur_tp / player.max_tp)))
+    table.insert(text, line5)
 
     local target = ashita.ffxi.targets.get_target('t')
     if target ~= nil and target.Name ~= '' and target.TargetIndex ~= 0 then
         local dist = string.format('%.1f', math.sqrt(target.Distance))
 
-        local target_line1 = string.format('%-17.17s %s', target.Name, ' [' .. dist .. 'm]')
-        local target_line2 = '\nHP      '
-            .. string.format('%3i', target.HealthPercent) .. '%'
-            .. get_percent_bar(target.HealthPercent / 100)
+        local target_line1 = string.format('%-17.17s %7s', target.Name, '[' .. dist .. 'm]')
+        local target_line2 = string.format('HP      %3i%% %s',
+            target.HealthPercent,
+            get_percent_bar(target.HealthPercent / 100))
 
-        text = text .. '\n\n'
-            .. target_line1
-            .. colorize_text(target_line2, get_hp_color(target.HealthPercent / 100))
+        table.insert(text, '')
+        table.insert(text, target_line1)
+        table.insert(text, colorize_text(target_line2, get_hp_color(target.HealthPercent / 100)))
     end
 
-    font:SetText(text)
+    font:SetText(text:concat('\n'))
 end
 
 ashita.register_event('load', load)
