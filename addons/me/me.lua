@@ -122,7 +122,7 @@ function render()
     local target_data = AshitaCore:GetDataManager():GetTarget()
     local player_entity = GetPlayerEntity()
 
-    if party_data == nil or player_data == nil or player_entity == nil then
+    if player_entity == nil or GetJob(player_data:GetMainJob()) == '' then
         font:SetText('')
         return
     end
@@ -130,10 +130,10 @@ function render()
     local player = {
         name = player_entity.Name or '',
 
-        main_job = GetJob(player_data:GetMainJob()) or 0,
+        main_job = GetJob(player_data:GetMainJob()),
         main_lv = player_data:GetMainJobLevel() or 0,
 
-        sub_job = GetJob(player_data:GetSubJob()) or 0,
+        sub_job = GetJob(player_data:GetSubJob()),
         sub_lv = player_data:GetSubJobLevel() or 0,
 
         cur_xp = player_data:GetExpCurrent() or 0,
