@@ -151,12 +151,12 @@ function render()
 
     local line1
     if player.sub_job ~= '' then
-        line1 = string.format('%-13.13s %s%2i/%s%2i',
+        line1 = string.format('%-11.11s [%s%2i/%s%2i]',
             player.name,
             player.main_job, player.main_lv,
             player.sub_job, player.sub_lv)
     else
-        line1 = string.format('%-19.19s %s%2i',
+        line1 = string.format('%-17.17s [%s%2i]',
             player.name,
             player.main_job, player.main_lv)
     end
