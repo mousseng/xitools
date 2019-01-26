@@ -12,8 +12,9 @@ require 'common'
 
 local Weaponskills = require 'weaponskills'
 local BloodPacts   = require 'bloodpacts'
+local MagicBursts  = require 'magicbursts'
 
-local default_config = {
+local config = {
     font = {
         family    = 'Consolas',
         size      = 10,
@@ -23,8 +24,6 @@ local default_config = {
         bgvisible = true
     }
 }
-
-local config = default_config
 
 -------------------------------------------------------------------------------
 -- live data
@@ -100,6 +99,11 @@ local Elements = {
     Umbra         = 'Ice, Water, Earth, Dark'
 }
 
+local ChainType = {
+    SC = 1,
+    MB = 2,
+}
+
 -------------------------------------------------------------------------------
 -- helper functions
 -------------------------------------------------------------------------------
@@ -163,10 +167,11 @@ local function handle_weaponskill(action)
 
                     local chain_element = {
                         id = weaponskill.animation,
+                        type = ChainType.SC,
                         name = Weaponskills[weaponskill.animation].name,
                         base_damage = weaponskill.param,
                         bonus_damage = weaponskill.add_effect_param,
-                        resonance = Resonances[weaponskill.add_effect_message]
+                        resonance = Resonances[weaponskill.add_effect_message],
                     }
 
                     -- list out all the attrs for first weaponskill. unsure if
@@ -248,10 +253,11 @@ local function handle_petability(action)
 
                         local chain_element = {
                             id = ability.animation,
+                            type = ChainType.SC,
                             name = BloodPacts[pet.Name][action.param].name,
                             base_damage = ability.param,
                             bonus_damage = ability.add_effect_param,
-                            resonance = Resonances[ability.add_effect_message]
+                            resonance = Resonances[ability.add_effect_message],
                         }
 
                         -- list out all the attrs for first weaponskill. unsure if
@@ -265,6 +271,33 @@ local function handle_petability(action)
                         Enemies[target.id].time = os.time()
                         table.insert(Enemies[target.id].chain, chain_element)
                     end
+                end
+            end
+        end
+    end
+end
+
+local function handle_magicability(action)
+    -- TODO: handle BLU skillchains
+
+    if IsServerIdInParty(action.actor_id) and MagicBursts[action.param] ~= nil then
+        for i = 1, action.target_count do
+            local target = action.targets[i]
+
+            for j = 1, target.action_count do
+                local spell = target.actions[j]
+
+                if spell.message == MagicBursts[action.param].burst_msg then
+                    local chain_element = {
+                        id = action.param,
+                        type = ChainType.MB,
+                        name = AshitaCore:GetResourceManager():GetSpellById(action.param).Name[0],
+                        base_damage = ability.param,
+                        bonus_damage = nil,
+                        resonance = nil,
+                    }
+
+                    table.insert(Enemies[target.id].chain, chain_element)
                 end
             end
         end
@@ -308,36 +341,43 @@ function render()
     local resx = AshitaCore:GetResourceManager()
     local e = T{}
 
-    for k, v in pairs(Enemies) do
+    for idx, v in pairs(Enemies) do
         local line = v.name
 
         for x = 1, #v.chain do
-            line = line
-                .. '\n  > '
-                .. v.chain[x].name
-                .. ' ['
-                .. v.chain[x].base_damage
-
-            -- don't show bonus damage for first step in chain
-            if v.chain[x].bonus_damage ~= nil then
-                line = line .. ' + ' .. v.chain[x].bonus_damage
-            end
-
-            line = line
-                .. ' dmg]'
-                .. '\n    '
-                .. v.chain[x].resonance
-
-            -- don't show burstable elements for first step in chain
-            if x > 1 then
+            if v.chain[x].type == ChainType.SC then
                 line = line
-                    .. ' ('
-                    .. Elements[v.chain[x].resonance]
-                    .. ')'
+                    .. '\n  > '
+                    .. v.chain[x].name
+                    .. ' ['
+                    .. v.chain[x].base_damage
+
+                -- don't show bonus damage for first step in chain
+                if v.chain[x].bonus_damage ~= nil then
+                    line = line .. ' + ' .. v.chain[x].bonus_damage
+                end
+
+                line = line
+                    .. ' dmg]'
+                    .. '\n    '
+                    .. v.chain[x].resonance
+
+                -- don't show burstable elements for first step in chain
+                if x > 1 then
+                    line = line
+                        .. ' ('
+                        .. Elements[v.chain[x].resonance]
+                        .. ')'
+                end
+            elseif v.chain[x].type == ChainType.MB then
+                line = line
+                    .. '\n    Magic Burst! '
+                    .. v.chain[x].name
+                    .. ' [' .. v.chain[x].base_damage .. ' dmg]'
             end
         end
 
-        local time_remaining = 7 - math.abs(v.time - os.time())
+        local time_remaining = 8 - math.abs(v.time - os.time())
 
         if time_remaining >= 0 then
             line = line .. '\n  > ' .. time_remaining .. 's'
@@ -360,8 +400,7 @@ function dispatch_packet(id, size, packet)
             handle_weaponskill(action)
         elseif action.category == 4 then
             ashita.packet.log_server(id, action)
-            -- handle_bluemagic(action)
-            -- handle_magicburst(action)
+            handle_magicability(action)
         elseif action.category == 13 and party_has_pet_job() then
             ashita.packet.log_server(id, action)
             handle_petability(action)
