@@ -3,6 +3,18 @@
 -- intent, but don't want to clutter up the actual logic of an addon with.
 -------------------------------------------------------------------------------
 
+-- A simple iterator that only returns the values of a table; handy when using
+-- array-like tables.
+function values(array)
+    local i = 0
+    local n = #array
+
+    return function ()
+        i = i + 1
+        if i <= n then return array[i] end
+    end
+end
+
 -- A lot of my font surface creation code is very samey - this just encapsulates
 -- all of that in a single function. It expects a config object with the
 -- following structure:

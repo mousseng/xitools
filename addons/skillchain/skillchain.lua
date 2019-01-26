@@ -4,7 +4,7 @@
 
 _addon.author  = 'lin'
 _addon.name    = 'skillchain'
-_addon.version = '0.4.0'
+_addon.version = '0.5.0'
 
 require 'utils'
 require 'packet'
@@ -108,6 +108,11 @@ local ChainType = {
 -- helper functions
 -------------------------------------------------------------------------------
 
+local function create_or_reset_timer(id)
+    ashita.timer.remove_timer(id)
+    ashita.timer.create(id, 16, 1, function() Enemies[id] = nil end)
+end
+
 -- Heuristic to determine whether to even bother trying to handle a mob action.
 -- Since we only have (partial, buggy) SMN support at the moment, only check
 -- for the presence of a SMN in the party.
@@ -156,14 +161,7 @@ local function handle_weaponskill(action)
 
                     -- drop the information after the window is definitely
                     -- closed and there's been no activity
-                    ashita.timer.remove_timer(target.id)
-                    ashita.timer.create(
-                        target.id,
-                        10,
-                        1,
-                        function(tgt) Enemies[target.id] = nil end,
-                        target.id
-                    )
+                    create_or_reset_timer(target.id)
 
                     local chain_element = {
                         id = weaponskill.animation,
@@ -242,14 +240,7 @@ local function handle_petability(action)
 
                         -- drop the information after the window is definitely
                         -- closed and there's been no activity
-                        ashita.timer.remove_timer(target.id)
-                        ashita.timer.create(
-                            target.id,
-                            10,
-                            1,
-                            function(tgt) Enemies[target.id] = nil end,
-                            target.id
-                        )
+                        create_or_reset_timer(target.id)
 
                         local chain_element = {
                             id = ability.animation,
@@ -277,6 +268,9 @@ local function handle_petability(action)
     end
 end
 
+-- Collects and collates data about a particular action in order for the render
+-- function to display information about active skillchains. Specialized on
+-- magic abilities; only handles magic bursts currently, not BLU chains.
 local function handle_magicability(action)
     -- TODO: handle BLU skillchains
 
@@ -292,10 +286,13 @@ local function handle_magicability(action)
                         id = action.param,
                         type = ChainType.MB,
                         name = AshitaCore:GetResourceManager():GetSpellById(action.param).Name[0],
-                        base_damage = ability.param,
+                        base_damage = spell.param,
                         bonus_damage = nil,
                         resonance = nil,
                     }
+
+                    -- extend display timer when bursts happen
+                    create_or_reset_timer(target.id)
 
                     table.insert(Enemies[target.id].chain, chain_element)
                 end
@@ -339,56 +336,52 @@ end
 function render()
     local font = AshitaCore:GetFontManager():Get('__skillchain_addon')
     local resx = AshitaCore:GetResourceManager()
-    local e = T{}
+    local text = T{}
 
-    for idx, v in pairs(Enemies) do
-        local line = v.name
+    for _, mob in pairs(Enemies) do
+        -- Create the heading for our skillchain.
+        table.insert(text, mob.name)
 
-        for x = 1, #v.chain do
-            if v.chain[x].type == ChainType.SC then
-                line = line
-                    .. '\n  > '
-                    .. v.chain[x].name
-                    .. ' ['
-                    .. v.chain[x].base_damage
+        -- Fill out the body of our skillchain.
+        for _, chain in pairs(mob.chain) do
+            -- Is this the first step of a chain? If so, don't show burstable
+            -- elements (since you can't burst).
+            if chain.type == ChainType.SC and not chain.bonus_damage then
+                local t1 = string.format('  > %s [%i dmg]', chain.name, chain.base_damage)
+                local t2 = string.format('    %s', chain.resonance)
 
-                -- don't show bonus damage for first step in chain
-                if v.chain[x].bonus_damage ~= nil then
-                    line = line .. ' + ' .. v.chain[x].bonus_damage
-                end
+                table.insert(text, t1)
+                table.insert(text, t2)
+            -- Otherwise, also display the bonus damage and burstable elements.
+            elseif chain.type == ChainType.SC then
+                local t1 = string.format('  > %s [%i + %i dmg]', chain.name, chain.base_damage, chain.bonus_damage)
+                local t2 = string.format('    %s (%s)', chain.resonance, Elements[chain.resonance])
 
-                line = line
-                    .. ' dmg]'
-                    .. '\n    '
-                    .. v.chain[x].resonance
+                table.insert(text, t1)
+                table.insert(text, t2)
+            -- Display any magic bursts that occurred and their damage.
+            elseif chain.type == ChainType.MB then
+                local t = string.format('    Magic Burst! %s [%i dmg]', chain.name, chain.base_damage)
 
-                -- don't show burstable elements for first step in chain
-                if x > 1 then
-                    line = line
-                        .. ' ('
-                        .. Elements[v.chain[x].resonance]
-                        .. ')'
-                end
-            elseif v.chain[x].type == ChainType.MB then
-                line = line
-                    .. '\n    Magic Burst! '
-                    .. v.chain[x].name
-                    .. ' [' .. v.chain[x].base_damage .. ' dmg]'
+                table.insert(text, t)
             end
         end
 
-        local time_remaining = 8 - math.abs(v.time - os.time())
-
+        -- Create the footer for our skillchain, noting the remaining window and
+        -- including a spacer between the mobs.
+        local time_remaining = 8 - math.abs(mob.time - os.time())
         if time_remaining >= 0 then
-            line = line .. '\n  > ' .. time_remaining .. 's'
+            table.insert(text, string.format('  > %is', time_remaining))
         else
-            line = line .. '\n  x'
+            table.insert(text, '  x')
         end
 
-        table.insert(e, line)
+        table.insert(text, '')
     end
 
-    font:SetText(e:concat('\n\n'))
+    -- Just clear out the last newline.
+    text[#text] = nil
+    font:SetText(text:concat('\n'))
 end
 
 function dispatch_packet(id, size, packet)
