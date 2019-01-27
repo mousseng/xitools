@@ -31,9 +31,9 @@ local function format_xp(number, include_unit)
     if number < 10000 then
         return string.format('%4i', number)
     elseif include_unit then
-        return string.format('%4.1fk', number)
+        return string.format('%4.1fk', number / 1000)
     else
-        return string.format('%4.1f', number)
+        return string.format('%4.1f', number / 1000)
     end
 end
 
@@ -176,9 +176,9 @@ function render()
         player.max_tp,
         get_percent_bar(player.cur_tp / player.max_tp))
 
-    local line5 = string.format('XP %4i/%4i %s',
+    local line5 = string.format('XP %4.4s/%-4.4s %s',
         format_xp(player.cur_xp, false),
-        format_xp(player.max_xp, true),
+        format_xp(player.max_xp, false),
         get_percent_bar(player.cur_xp / player.max_xp))
 
     local text = T{}
