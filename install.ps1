@@ -1,10 +1,4 @@
-[Security.Principal.WindowsPrincipal]$role = [Security.Principal.WindowsIdentity]::GetCurrent()
-[Security.Principal.WindowsBuiltInRole]$admin = 'Administrator'
+$src = "$PSScriptRoot\addons\"
+$tgt = "$($env:LocalAppData)\PlayOnline\Ashita\"
 
-if (!$role.IsInRole($admin)) {
-    Start-Process powershell -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -File $PSCommandPath"
-}
-else {
-    Set-Location $PSScriptRoot
-    Copy-Item -Recurse -Container -Force -Path 'addons' -Destination "$([Environment]::GetEnvironmentVariable("ProgramFiles(x86)"))\PlayOnline\Ashita\"
-}
+Copy-Item -Recurse -Container -Force -Path $src -Destination $tgt
