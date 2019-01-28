@@ -99,6 +99,7 @@ local Elements = {
     Umbra         = 'Ice, Water, Earth, Dark'
 }
 
+-- Enum to identify what type of display a particular chain element will need.
 local ChainType = {
     SC = 1,
     MB = 2,
@@ -108,6 +109,8 @@ local ChainType = {
 -- helper functions
 -------------------------------------------------------------------------------
 
+-- Does what it says on the tin: creates or resets the timer for a particular
+-- skillchain. When the timer expires, the skillchain is removed from memory.
 local function create_or_reset_timer(id)
     ashita.timer.remove_timer(id)
     ashita.timer.create(id, 16, 1, function() Enemies[id] = nil end)
@@ -282,6 +285,15 @@ local function handle_magicability(action)
                 local spell = target.actions[j]
 
                 if spell.message == MagicBursts[action.param].burst_msg then
+                    -- make sure we have a chain to append to
+                    if Enemies[target.id] == nil then
+                        Enemies[target.id] = {
+                            name = GetEntityByServerId(target.id).Name,
+                            time = nil,
+                            chain = {}
+                        }
+                    end
+
                     local chain_element = {
                         id = action.param,
                         type = ChainType.MB,
@@ -293,7 +305,6 @@ local function handle_magicability(action)
 
                     -- extend display timer when bursts happen
                     create_or_reset_timer(target.id)
-
                     table.insert(Enemies[target.id].chain, chain_element)
                 end
             end
