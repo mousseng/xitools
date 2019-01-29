@@ -83,8 +83,12 @@ local magic_bursts_by_spell_id = {
     [213] = { name = 'burst_ii', burst_msg = 252, },
     [214] = { name = 'flood', burst_msg = 252, },
     [215] = { name = 'flood_ii', burst_msg = 252, },
+
+    -- New garbage
     [218] = { name = 'meteor', burst_msg = 252, },
     [219] = { name = 'comet', burst_msg = 252, },
+
+    -- SCH garbage
     [278] = { name = 'geohelix', burst_msg = 252, },
     [279] = { name = 'hydrohelix', burst_msg = 252, },
     [280] = { name = 'anemohelix', burst_msg = 252, },
@@ -93,6 +97,8 @@ local magic_bursts_by_spell_id = {
     [283] = { name = 'ionohelix', burst_msg = 252, },
     [284] = { name = 'noctohelix', burst_msg = 252, },
     [285] = { name = 'luminohelix', burst_msg = 252, },
+
+    -- NIN stuff seems buggy
     [320] = { name = 'katon_ichi', burst_msg = 2, },
     [321] = { name = 'katon_ni', burst_msg = 2, },
     [322] = { name = 'katon_san', burst_msg = 2, },
@@ -123,6 +129,8 @@ local magic_bursts_by_spell_id = {
     [350] = { name = 'dokumori_ichi', burst_msg = 267, },
     [351] = { name = 'dokumori_ni', burst_msg = 267, },
     [352] = { name = 'dokumori_san', burst_msg = 267, },
+
+    -- BRD shit - maybe buggy?
     [454] = { name = 'fire_threnody', burst_msg = 268, },
     [455] = { name = 'ice_threnody', burst_msg = 268, },
     [456] = { name = 'wind_threnody', burst_msg = 268, },
@@ -131,6 +139,8 @@ local magic_bursts_by_spell_id = {
     [459] = { name = 'water_threnody', burst_msg = 268, },
     [460] = { name = 'light_threnody', burst_msg = 268, },
     [461] = { name = 'dark_threnody', burst_msg = 268, },
+
+    -- New BLM garbage
     [496] = { name = 'firaja', burst_msg = 252, },
     [497] = { name = 'blizzaja', burst_msg = 252, },
     [498] = { name = 'aeroja', burst_msg = 252, },
@@ -138,13 +148,19 @@ local magic_bursts_by_spell_id = {
     [500] = { name = 'thundaja', burst_msg = 252, },
     [501] = { name = 'waterja', burst_msg = 252, },
     [502] = { name = 'kaustra', burst_msg = 252, },
+
+    -- New garbage
     [503] = { name = 'impact', burst_msg = 252, },
+
+    -- New NIN garbage
     [505] = { name = 'gekka_ichi', burst_msg = 267, },
     [506] = { name = 'yain_ichi', burst_msg = 267, },
     [507] = { name = 'myoshu_ichi', burst_msg = 267, },
     [508] = { name = 'yurin_ichi', burst_msg = 267, },
     [509] = { name = 'kakka_ichi', burst_msg = 267, },
     [510] = { name = 'migawari_ichi', burst_msg = 267, },
+
+    -- BLU stuff, not sure if buggy
     [513] = { name = 'venom_shell', burst_msg = 271, },
     [515] = { name = 'maelstrom', burst_msg = 252, },
     [521] = { name = 'mp_drainkiss', burst_msg = 275, },

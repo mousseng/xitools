@@ -109,6 +109,26 @@ local ChainType = {
 -- helper functions
 -------------------------------------------------------------------------------
 
+local function handle_error(err)
+    print('\30\76[ERROR] \30\68Skillchain encountered an error. Restart it if needed, check log file for more information.')
+    ashita.logging.error('Skillchain', err)
+
+    local date = os.date('*t')
+    local log_name = string.format('skillchain_errors %04i.%02i.%02i.log', date.year, date.month, date.day)
+    local log_dir = string.format('%s/%s/', AshitaCore:GetAshitaInstallPath(), 'logs')
+
+    if not ashita.file.dir_exists(log_dir) then
+        ashita.file.create_dir(log_dir)
+    end
+
+    local log_file = io.open(string.format('%s/%s', log_dir, log_name), 'a')
+    if log_file ~= nil then
+        local timestamp = os.date('[%H:%M:%S]', os.time())
+        log_file:write(string.format('%s\n%s\n\n', timestamp, err))
+        log_file:close()
+    end
+end
+
 -- Does what it says on the tin: creates or resets the timer for a particular
 -- skillchain. When the timer expires, the skillchain is removed from memory.
 local function create_or_reset_timer(id)
@@ -397,17 +417,22 @@ end
 
 function dispatch_packet(id, size, packet)
     if id == 0x0028 then
+        local status = true, err
         local action = ashita.packet.parse_server(packet)
 
         if action.category == 3 then
             ashita.packet.log_server(id, action)
-            handle_weaponskill(action)
+            status, err = pcall(handle_weaponskill, action)
         elseif action.category == 4 then
             ashita.packet.log_server(id, action)
-            handle_magicability(action)
+            status, err = pcall(handle_magicability, action)
         elseif action.category == 13 and party_has_pet_job() then
             ashita.packet.log_server(id, action)
-            handle_petability(action)
+            status, err = pcall(handle_petability, action)
+        end
+
+        if not status then
+            handle_error(err)
         end
     end
 
