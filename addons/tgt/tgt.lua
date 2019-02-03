@@ -44,26 +44,26 @@ ashita.register_event('render', function()
         -- Other considerations: Poison, Bind, Sleep, Silence
 
         -- local target_debuffs = debuffs[target.ServerId]
-        -- local line3 = string.format(
-        --     '%s%s %s%s%s%s %s %s %s %s %s %s',
-        --     colorize_text('D', target_debuffs.dia),
-        --     colorize_text('B', target_debuffs.bio),
-        --     colorize_text('P', target_debuffs.paralyze),
-        --     colorize_text('S', target_debuffs.slow),
-        --     colorize_text('G', target_debuffs.blind),
-        --     colorize_text('B', target_debuffs.gravity),
-        --     colorize_text('Sh', target_debuffs.shock),
-        --     colorize_text('Ra', target_debuffs.rasp),
-        --     colorize_text('Ch', target_debuffs.choke),
-        --     colorize_text('Fr', target_debuffs.frost),
-        --     colorize_text('Bu', target_debuffs.burn),
-        --     colorize_text('Dr', target_debuffs.drown),
-        -- )
+        local line3 = string.format(
+            '%s%s %s%s%s%s %s %s %s %s %s %s',
+            colorize_text('D',  255, 255, 255, 127),
+            colorize_text('B',  255, 255, 255, 127),
+            colorize_text('P',  255, 255, 255, 127),
+            colorize_text('S',  255, 255, 255, 127),
+            colorize_text('G',  255, 255, 255, 127),
+            colorize_text('B',  255, 255, 255, 127),
+            colorize_text('Sh', 255, 255, 255, 127),
+            colorize_text('Ra', 255, 255, 255, 127),
+            colorize_text('Ch', 255, 255, 255, 127),
+            colorize_text('Fr', 255, 255, 255, 127),
+            colorize_text('Bu', 255, 255, 255, 127),
+            colorize_text('Dr', 255, 255, 255, 127)
+        )
 
         table.insert(text, '')
         table.insert(text, line1)
         table.insert(text, colorize_text(line2, get_hp_color(target.HealthPercent / 100)))
-        -- table.insert(text, line3)
+        table.insert(text, line3)
     end
 
     font:SetText(table.concat(text, '\n'))
