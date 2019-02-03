@@ -9,6 +9,7 @@ _addon.unique  = '__me_addon'
 
 require 'common'
 require 'lin.text'
+require 'lin.jobs'
 
 local config = { x = 200, y = 200 }
 
@@ -24,7 +25,7 @@ ashita.register_event('render', function()
     local target_data = AshitaCore:GetDataManager():GetTarget()
     local player_entity = GetPlayerEntity()
 
-    if player_entity == nil or GetJob(player_data:GetMainJob()) == '' then
+    if player_entity == nil or get_job(player_data:GetMainJob()) == nil then
         font:SetText('')
         return
     end
@@ -32,10 +33,10 @@ ashita.register_event('render', function()
     local player = {
         name = player_entity.Name or '',
 
-        main_job = GetJob(player_data:GetMainJob()),
+        main_job = get_job(player_data:GetMainJob()),
         main_lv = player_data:GetMainJobLevel() or 0,
 
-        sub_job = GetJob(player_data:GetSubJob()),
+        sub_job = get_job(player_data:GetSubJob()),
         sub_lv = player_data:GetSubJobLevel() or 0,
 
         cur_xp = player_data:GetExpCurrent() or 0,
@@ -83,14 +84,14 @@ ashita.register_event('render', function()
         format_xp(player.max_xp, false),
         percent_bar(player.cur_xp / player.max_xp, 12))
 
-    local text = T{}
+    local text = {}
     table.insert(text, line1)
     table.insert(text, colorize_text(line2, get_hp_color(player.cur_hp / player.max_hp)))
     table.insert(text, colorize_text(line3, get_hp_color(player.cur_mp / player.max_mp)))
     table.insert(text, colorize_text(line4, get_tp_color(player.cur_tp / player.max_tp)))
     table.insert(text, line5)
 
-    font:SetText(text:concat('\n'))
+    font:SetText(table.concat(text, '\n'))
 end)
 
 ashita.register_event('load', function()
