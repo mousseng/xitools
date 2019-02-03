@@ -37,7 +37,7 @@ ashita.register_event('render', function()
         local line2 = string.format(
             'HP      %3i%% %s',
             target.HealthPercent,
-            percent_bar(target.HealthPercent / 100, 12))
+            percent_bar(12, target.HealthPercent / 100))
 
         -- Line 3: debuff status icons.
         -- DB PSGB Sh Ra Ch Fr Bu Dr
@@ -46,23 +46,23 @@ ashita.register_event('render', function()
         -- local target_debuffs = debuffs[target.ServerId]
         -- local line3 = string.format(
         --     '%s%s %s%s%s%s %s %s %s %s %s %s',
-        --     colorize('D', target_debuffs.dia),
-        --     colorize('B', target_debuffs.bio),
-        --     colorize('P', target_debuffs.paralyze),
-        --     colorize('S', target_debuffs.slow),
-        --     colorize('G', target_debuffs.blind),
-        --     colorize('B', target_debuffs.gravity),
-        --     colorize('Sh', target_debuffs.shock),
-        --     colorize('Ra', target_debuffs.rasp),
-        --     colorize('Ch', target_debuffs.choke),
-        --     colorize('Fr', target_debuffs.frost),
-        --     colorize('Bu', target_debuffs.burn),
-        --     colorize('Dr', target_debuffs.drown),
+        --     colorize_text('D', target_debuffs.dia),
+        --     colorize_text('B', target_debuffs.bio),
+        --     colorize_text('P', target_debuffs.paralyze),
+        --     colorize_text('S', target_debuffs.slow),
+        --     colorize_text('G', target_debuffs.blind),
+        --     colorize_text('B', target_debuffs.gravity),
+        --     colorize_text('Sh', target_debuffs.shock),
+        --     colorize_text('Ra', target_debuffs.rasp),
+        --     colorize_text('Ch', target_debuffs.choke),
+        --     colorize_text('Fr', target_debuffs.frost),
+        --     colorize_text('Bu', target_debuffs.burn),
+        --     colorize_text('Dr', target_debuffs.drown),
         -- )
 
         table.insert(text, '')
         table.insert(text, line1)
-        table.insert(text, colorize(line2, get_hp_color(target.HealthPercent / 100)))
+        table.insert(text, colorize_text(line2, get_hp_color(target.HealthPercent / 100)))
         -- table.insert(text, line3)
     end
 

@@ -67,22 +67,22 @@ ashita.register_event('render', function()
     local line2 = string.format('HP %4i/%4i %s',
         player.cur_hp,
         player.max_hp,
-        percent_bar(player.cur_hp / player.max_hp, 12))
+        percent_bar(12, player.cur_hp / player.max_hp))
 
     local line3 = string.format('MP %4i/%4i %s',
         player.cur_mp,
         player.max_mp,
-        percent_bar(player.cur_mp / player.max_mp, 12))
+        percent_bar(12, player.cur_mp / player.max_mp))
 
     local line4 = string.format('TP %4i/%4i %s',
         player.cur_tp,
         player.max_tp,
-        percent_bar(player.cur_tp / player.max_tp, 12))
+        percent_bar(12, player.cur_tp / player.max_tp))
 
     local line5 = string.format('XP %4.4s/%-4.4s %s',
         format_xp(player.cur_xp, false),
         format_xp(player.max_xp, false),
-        percent_bar(player.cur_xp / player.max_xp, 12))
+        percent_bar(12, player.cur_xp / player.max_xp))
 
     local text = {}
     table.insert(text, line1)
