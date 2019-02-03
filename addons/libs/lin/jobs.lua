@@ -1,3 +1,5 @@
+lin = lin or { }
+
 local jobs = {
     [ 1] = 'WAR',
     [ 2] = 'MNK',
@@ -23,6 +25,7 @@ local jobs = {
     [22] = 'RUN',
 }
 
-function get_job(id)
+local function get_job(id)
     return jobs[id]
 end
+lin.get_job = get_job

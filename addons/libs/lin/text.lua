@@ -1,4 +1,6 @@
-function percent_bar(width, percent, f, h, n)
+lin = lin or { }
+
+local function percent_bar(width, percent, f, h, n)
     if f == nil then f = '=' end
     if h == nil then h = '-' end
     if n == nil then n = ' ' end
@@ -17,8 +19,9 @@ function percent_bar(width, percent, f, h, n)
 
     return string.format('[%s%s%s]', fb, hb, nb)
 end
+lin.percent_bar = percent_bar
 
-function format_xp(number, include_unit)
+local function format_xp(number, include_unit)
     if number < 10000 then
         return string.format('%4i', number)
     elseif include_unit then
@@ -27,8 +30,9 @@ function format_xp(number, include_unit)
         return string.format('%4.1f', number / 1000)
     end
 end
+lin.format_xp = format_xp
 
-function colorize_text(text, r, g, b, a)
+local function colorize_text(text, r, g, b, a)
     if a == nil then a = 255 end
 
     if r < 0 then r = 0 elseif r > 255 then r = 255 end
@@ -38,16 +42,19 @@ function colorize_text(text, r, g, b, a)
 
     return string.format('|c%02x%02x%02x%02x|%s|r', a, r, g, b, text)
 end
+lin.colorize_text = colorize_text
 
-function get_hp_color(hp_percent)
+local function get_hp_color(hp_percent)
         if hp_percent > 0.75 then return 255, 255, 255
     elseif hp_percent > 0.50 then return 255, 255,   0
     elseif hp_percent > 0.25 then return 255, 165,   0
     elseif hp_percent > 0.00 then return 243,  50,  50
     else                          return 255, 255, 255 end
 end
+lin.get_hp_color = get_hp_color
 
-function get_tp_color(tp_percent)
+local function get_tp_color(tp_percent)
     if tp_percent > 0.33 then return   0, 255, 255
     else return 255, 255, 255 end
 end
+lin.get_tp_color = get_tp_color

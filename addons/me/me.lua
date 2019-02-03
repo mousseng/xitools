@@ -25,7 +25,7 @@ ashita.register_event('render', function()
     local target_data = AshitaCore:GetDataManager():GetTarget()
     local player_entity = GetPlayerEntity()
 
-    if player_entity == nil or get_job(player_data:GetMainJob()) == nil then
+    if player_entity == nil or lin.get_job(player_data:GetMainJob()) == nil then
         font:SetText('')
         return
     end
@@ -33,10 +33,10 @@ ashita.register_event('render', function()
     local player = {
         name = player_entity.Name or '',
 
-        main_job = get_job(player_data:GetMainJob()),
+        main_job = lin.get_job(player_data:GetMainJob()),
         main_lv = player_data:GetMainJobLevel() or 0,
 
-        sub_job = get_job(player_data:GetSubJob()),
+        sub_job = lin.get_job(player_data:GetSubJob()),
         sub_lv = player_data:GetSubJobLevel() or 0,
 
         cur_xp = player_data:GetExpCurrent() or 0,
@@ -67,28 +67,28 @@ ashita.register_event('render', function()
     local line2 = string.format('HP %4i/%4i %s',
         player.cur_hp,
         player.max_hp,
-        percent_bar(12, player.cur_hp / player.max_hp))
+        lin.percent_bar(12, player.cur_hp / player.max_hp))
 
     local line3 = string.format('MP %4i/%4i %s',
         player.cur_mp,
         player.max_mp,
-        percent_bar(12, player.cur_mp / player.max_mp))
+        lin.percent_bar(12, player.cur_mp / player.max_mp))
 
     local line4 = string.format('TP %4i/%4i %s',
         player.cur_tp,
         player.max_tp,
-        percent_bar(12, player.cur_tp / player.max_tp))
+        lin.percent_bar(12, player.cur_tp / player.max_tp))
 
     local line5 = string.format('XP %4.4s/%-4.4s %s',
-        format_xp(player.cur_xp, false),
-        format_xp(player.max_xp, false),
-        percent_bar(12, player.cur_xp / player.max_xp))
+        lin.format_xp(player.cur_xp, false),
+        lin.format_xp(player.max_xp, false),
+        lin.percent_bar(12, player.cur_xp / player.max_xp))
 
     local text = {}
     table.insert(text, line1)
-    table.insert(text, colorize_text(line2, get_hp_color(player.cur_hp / player.max_hp)))
-    table.insert(text, colorize_text(line3, get_hp_color(player.cur_mp / player.max_mp)))
-    table.insert(text, colorize_text(line4, get_tp_color(player.cur_tp / player.max_tp)))
+    table.insert(text, lin.colorize_text(line2, lin.get_hp_color(player.cur_hp / player.max_hp)))
+    table.insert(text, lin.colorize_text(line3, lin.get_hp_color(player.cur_mp / player.max_mp)))
+    table.insert(text, lin.colorize_text(line4, lin.get_tp_color(player.cur_tp / player.max_tp)))
     table.insert(text, line5)
 
     font:SetText(table.concat(text, '\n'))
