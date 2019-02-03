@@ -4,118 +4,20 @@
 
 _addon.author  = 'lin'
 _addon.name    = 'me'
-_addon.version = '1.0.0'
+_addon.version = '2.0.0'
+_addon.unique  = '__me_addon'
 
-require 'utils'
 require 'common'
-require 'ffxi.targets'
+require 'lin.text'
 
-local default_config = {
-    font = {
-        family    = 'Consolas',
-        size      = 10,
-        color     = 0xFFFFFFFF,
-        position  = { 50, 125 },
-        bgcolor   = 0xA0000000,
-        bgvisible = true
-    }
-}
-
-local config = default_config
-
--------------------------------------------------------------------------------
--- helper functions
--------------------------------------------------------------------------------
-
-local function format_xp(number, include_unit)
-    if number < 10000 then
-        return string.format('%4i', number)
-    elseif include_unit then
-        return string.format('%4.1fk', number / 1000)
-    else
-        return string.format('%4.1f', number / 1000)
-    end
-end
-
-local function colorize_text(text, r, g, b, a)
-    if a == nil then
-        a = 255
-    end
-
-    if r < 0 then r = 0 elseif r > 255 then r = 255 end
-    if g < 0 then g = 0 elseif g > 255 then g = 255 end
-    if b < 0 then b = 0 elseif b > 255 then b = 255 end
-    if a < 0 then a = 0 elseif a > 255 then a = 255 end
-
-    return string.format('|c%02x%02x%02x%02x|%s|r', a, r, g, b, text)
-end
-
-local function get_hp_color(hp_percent)
-        if hp_percent > 0.75 then return 255, 255, 255
-    elseif hp_percent > 0.50 then return 255, 255,   0
-    elseif hp_percent > 0.25 then return 255, 165,   0
-    elseif hp_percent > 0.00 then return 243,  50,  50
-    else                          return 255, 255, 255 end
-end
-
-local function get_tp_color(tp_percent)
-    if tp_percent > 0.33 then return   0, 255, 255
-    else return 255, 255, 255 end
-end
-
-local function get_percent_bar(percent)
-        if percent >= 1.00 then return '[==========]'
-    elseif percent >= 0.95 then return '[=========-]'
-    elseif percent >= 0.90 then return '[========= ]'
-    elseif percent >= 0.85 then return '[========- ]'
-    elseif percent >= 0.80 then return '[========  ]'
-    elseif percent >= 0.75 then return '[=======-  ]'
-    elseif percent >= 0.70 then return '[=======   ]'
-    elseif percent >= 0.65 then return '[======-   ]'
-    elseif percent >= 0.60 then return '[======    ]'
-    elseif percent >= 0.55 then return '[=====-    ]'
-    elseif percent >= 0.50 then return '[=====     ]'
-    elseif percent >= 0.45 then return '[====-     ]'
-    elseif percent >= 0.40 then return '[====      ]'
-    elseif percent >= 0.35 then return '[===-      ]'
-    elseif percent >= 0.30 then return '[===       ]'
-    elseif percent >= 0.25 then return '[==-       ]'
-    elseif percent >= 0.20 then return '[==        ]'
-    elseif percent >= 0.15 then return '[=-        ]'
-    elseif percent >= 0.10 then return '[=         ]'
-    elseif percent >= 0.05 then return '[-         ]'
-    else                        return '[          ]' end
-end
+local config = { x = 200, y = 200 }
 
 -------------------------------------------------------------------------------
 -- event handlers
 -------------------------------------------------------------------------------
 
-function load()
-    config = ashita.settings.load_merged(_addon.path .. 'settings/settings.json', config)
-
-    local font = AshitaCore:GetFontManager():Create('__me_addon')
-    font:SetColor(config.font.color)
-    font:SetFontFamily(config.font.family)
-    font:SetFontHeight(config.font.size)
-    font:SetBold(false)
-    font:SetPositionX(config.font.position[1])
-    font:SetPositionY(config.font.position[2])
-    font:SetText('me ~ by lin')
-    font:SetVisibility(true)
-    font:GetBackground():SetColor(config.font.bgcolor)
-    font:GetBackground():SetVisibility(config.font.bgvisible)
-end
-
-function unload()
-    local font = AshitaCore:GetFontManager():Get('__me_addon')
-    config.font.position = { font:GetPositionX(), font:GetPositionY() }
-    ashita.settings.save(_addon.path .. 'settings/settings.json', config)
-    AshitaCore:GetFontManager():Delete('__me_addon')
-end
-
-function render()
-    local font = AshitaCore:GetFontManager():Get('__me_addon')
+ashita.register_event('render', function()
+    local font = AshitaCore:GetFontManager():Get(_addon.unique)
 
     local party_data = AshitaCore:GetDataManager():GetParty()
     local player_data = AshitaCore:GetDataManager():GetPlayer()
@@ -164,22 +66,22 @@ function render()
     local line2 = string.format('HP %4i/%4i %s',
         player.cur_hp,
         player.max_hp,
-        get_percent_bar(player.cur_hp / player.max_hp))
+        percent_bar(player.cur_hp / player.max_hp, 12))
 
     local line3 = string.format('MP %4i/%4i %s',
         player.cur_mp,
         player.max_mp,
-        get_percent_bar(player.cur_mp / player.max_mp))
+        percent_bar(player.cur_mp / player.max_mp, 12))
 
     local line4 = string.format('TP %4i/%4i %s',
         player.cur_tp,
         player.max_tp,
-        get_percent_bar(player.cur_tp / player.max_tp))
+        percent_bar(player.cur_tp / player.max_tp, 12))
 
     local line5 = string.format('XP %4.4s/%-4.4s %s',
         format_xp(player.cur_xp, false),
         format_xp(player.max_xp, false),
-        get_percent_bar(player.cur_xp / player.max_xp))
+        percent_bar(player.cur_xp / player.max_xp, 12))
 
     local text = T{}
     table.insert(text, line1)
@@ -188,23 +90,29 @@ function render()
     table.insert(text, colorize_text(line4, get_tp_color(player.cur_tp / player.max_tp)))
     table.insert(text, line5)
 
-    local target = ashita.ffxi.targets.get_target('t')
-    if target ~= nil and target.Name ~= '' and target.TargetIndex ~= 0 then
-        local dist = string.format('%.1f', math.sqrt(target.Distance))
-
-        local target_line1 = string.format('%-17.17s %7s', target.Name, '[' .. dist .. 'm]')
-        local target_line2 = string.format('HP      %3i%% %s',
-            target.HealthPercent,
-            get_percent_bar(target.HealthPercent / 100))
-
-        table.insert(text, '')
-        table.insert(text, target_line1)
-        table.insert(text, colorize_text(target_line2, get_hp_color(target.HealthPercent / 100)))
-    end
-
     font:SetText(text:concat('\n'))
-end
+end)
 
-ashita.register_event('load', load)
-ashita.register_event('unload', unload)
-ashita.register_event('render', render)
+ashita.register_event('load', function()
+    local font = AshitaCore:GetFontManager():Create(_addon.unique)
+    config = ashita.settings.load_merged(_addon.path .. 'settings/settings.json', config)
+
+    font:SetColor(0xFFFFFFFF)
+    font:SetFontFamily('Consolas')
+    font:SetFontHeight(10)
+    font:SetBold(false)
+    font:SetPositionX(config.x)
+    font:SetPositionY(config.y)
+    font:SetVisibility(true)
+    font:GetBackground():SetColor(0xA0000000)
+    font:GetBackground():SetVisibility(true)
+end)
+
+ashita.register_event('unload', function()
+    config.x = AshitaCore:GetFontManager():Get(_addon.unique):GetPositionX()
+    config.y = AshitaCore:GetFontManager():Get(_addon.unique):GetPositionY()
+
+    AshitaCore:GetFontManager():Delete(_addon.unique)
+
+    ashita.settings.save(_addon.path .. 'settings/settings.json', config)
+end)
