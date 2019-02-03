@@ -3,47 +3,11 @@
 -- intent, but don't want to clutter up the actual logic of an addon with.
 -------------------------------------------------------------------------------
 
--- A simple iterator that only returns the values of a table; handy when using
--- array-like tables.
-function values(array)
-    local i = 0
-    local n = #array
+function PercentBar(width, percent, f, h, n)
+    if f == nil then f = '=' end
+    if h == nil then h = '-' end
+    if n == nil then n = ' ' end
 
-    return function ()
-        i = i + 1
-        if i <= n then return array[i] end
-    end
-end
-
--- A lot of my font surface creation code is very samey - this just encapsulates
--- all of that in a single function. It expects a config object with the
--- following structure:
---   font
---     family
---     size
---     color
---     position
---     bgcolor
---     bgvisible
-function CreateFontObject(name, config)
-    local font = AshitaCore:GetFontManager():Create(name)
-    font:SetColor(config.font.color)
-    font:SetFontFamily(config.font.family)
-    font:SetFontHeight(config.font.size)
-    font:SetBold(false)
-    font:SetPositionX(config.font.position[1])
-    font:SetPositionY(config.font.position[2])
-    font:SetVisibility(true)
-    font:GetBackground():SetColor(config.font.bgcolor)
-    font:GetBackground():SetVisibility(config.font.bgvisible)
-
-    return font
-end
-
-local FULL_BAR = '='
-local HALF_BAR = '-'
-local NO_BAR   = ' '
-function GetPercentBar(width, percent)
     local bar_width = width - 2
 
     local full_step = 1 / bar_width
@@ -52,9 +16,9 @@ function GetPercentBar(width, percent)
     local full_bars = math.floor(percent / full_step)
     local half_bars = math.floor((percent % full_step) / half_step)
 
-    local fb = FULL_BAR:rep(full_bars)
-    local hb = HALF_BAR:rep(half_bars)
-    local nb = NO_BAR:rep(bar_width - (full_bars + half_bars))
+    local fb = f:rep(full_bars)
+    local hb = h:rep(half_bars)
+    local nb = n:rep(bar_width - (full_bars + half_bars))
 
     return string.format('[%s%s%s]', fb, hb, nb)
 end
