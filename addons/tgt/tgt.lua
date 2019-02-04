@@ -9,13 +9,35 @@ _addon.unique  = '__tgt_addon'
 
 require 'common'
 require 'lin.text'
+require 'lin.packets'
 require 'ffxi.targets'
+
+require 'tgt_helpers'
 
 local config = { x = 200, y = 200 }
 
 -------------------------------------------------------------------------------
 -- event handlers
 -------------------------------------------------------------------------------
+
+-- Just a little syntactical sugar. Takes a conditional and two functions, one
+-- for when the conditional is truthy and one for falsey.
+local function when(cond, t, f)
+    if cond then return t()
+    else return f() end
+end
+
+local function grey()   return 255, 255, 255, 127 end
+local function white()  return 250, 235, 215 end
+local function black()  return 145,  44, 238 end
+local function yellow() return 205, 205, 205 end
+local function brown()  return 139, 126, 102 end
+local function green()  return 154, 205,  50 end
+local function blue()   return  72, 118, 255 end
+local function red()    return 205,  55,   0 end
+local function cyan()   return 150, 205, 205 end
+
+local debuffs = { }
 
 ashita.register_event('render', function()
     local font = AshitaCore:GetFontManager():Get(_addon.unique)
@@ -43,21 +65,21 @@ ashita.register_event('render', function()
         -- DB PSGB Sh Ra Ch Fr Bu Dr
         -- Other considerations: Poison, Bind, Sleep, Silence
 
-        -- local target_debuffs = debuffs[target.ServerId]
+        local tgt_debuffs = debuffs[target.ServerId] or DEFAULT_STATE
         local line3 = string.format(
             '%s%s %s%s%s%s %s %s %s %s %s %s',
-            lin.colorize_text('D',  255, 255, 255, 127),
-            lin.colorize_text('B',  255, 255, 255, 127),
-            lin.colorize_text('P',  255, 255, 255, 127),
-            lin.colorize_text('S',  255, 255, 255, 127),
-            lin.colorize_text('G',  255, 255, 255, 127),
-            lin.colorize_text('B',  255, 255, 255, 127),
-            lin.colorize_text('Sh', 255, 255, 255, 127),
-            lin.colorize_text('Ra', 255, 255, 255, 127),
-            lin.colorize_text('Ch', 255, 255, 255, 127),
-            lin.colorize_text('Fr', 255, 255, 255, 127),
-            lin.colorize_text('Bu', 255, 255, 255, 127),
-            lin.colorize_text('Dr', 255, 255, 255, 127)
+            lin.colorize_text('D',  when(tgt_debuffs.dia, white, grey)),
+            lin.colorize_text('B',  when(tgt_debuffs.bio, black, grey)),
+            lin.colorize_text('P',  when(tgt_debuffs.para, white, grey)),
+            lin.colorize_text('S',  when(tgt_debuffs.slow, white, grey)),
+            lin.colorize_text('G',  when(tgt_debuffs.grav, black, grey)),
+            lin.colorize_text('B',  when(tgt_debuffs.blind, black, grey)),
+            lin.colorize_text('Sh', when(tgt_debuffs.shock, yellow, grey)),
+            lin.colorize_text('Ra', when(tgt_debuffs.rasp, brown, grey)),
+            lin.colorize_text('Ch', when(tgt_debuffs.choke, green, grey)),
+            lin.colorize_text('Fr', when(tgt_debuffs.frost, cyan, grey)),
+            lin.colorize_text('Bu', when(tgt_debuffs.burn, red, grey)),
+            lin.colorize_text('Dr', when(tgt_debuffs.drown, blue, grey))
         )
 
         table.insert(text, '')
@@ -67,6 +89,19 @@ ashita.register_event('render', function()
     end
 
     font:SetText(table.concat(text, '\n'))
+end)
+
+ashita.register_event('incoming_packet', function(id, size, data)
+    -- clear state on zone changes
+    if (id == 0x0A) then
+        debuffs = { }
+    elseif (id == 0x0028) then
+        handle_action(debuffs, lin.parse_action(data))
+    elseif (id == 0x0029) then
+        handle_basic(debuffs, lin.parse_basic(data))
+    end
+
+    return false
 end)
 
 ashita.register_event('load', function()
