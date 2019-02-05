@@ -65,7 +65,7 @@ ashita.register_event('render', function()
         -- DB PSGB Sh Ra Ch Fr Bu Dr
         -- Other considerations: Poison, Bind, Sleep, Silence
 
-        local tgt_debuffs = debuffs[target.ServerId] or DEFAULT_STATE
+        local tgt_debuffs = debuffs[target.ServerId] or deepCopy(DEFAULT_STATE)
         local line3 = string.format(
             '%s%s %s%s%s%s %s %s %s %s %s %s',
             lin.colorize_text('D',  when(tgt_debuffs.dia, white, grey)),

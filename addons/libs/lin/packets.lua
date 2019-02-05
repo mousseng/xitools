@@ -185,13 +185,13 @@ lin.parse_basic = parse_basic
 
 local function dump_basic(basic)
     local output =
-        'sender: '     .. string.format('%i',   basic.sender)     .. '\n' ..
-        'target: '     .. string.format('%i',   basic.target)     .. '\n' ..
-        'sender_tgt: ' .. string.format('%i',   basic.sender_tgt) .. '\n' ..
-        'target_tgt: ' .. string.format('%i',   basic.target_tgt) .. '\n' ..
-        'param: '      .. string.format('0x%x', basic.param)      .. '\n' ..
-        'value: '      .. string.format('0x%x', basic.value)      .. '\n' ..
-        'message: '    .. string.format('0x%x', basic.message)    .. '\n' ..
+        'sender: '     .. string.format('%i', basic.sender) .. '\n' ..
+        'target: '     .. string.format('%i', basic.target) .. '\n' ..
+        'sender_tgt: ' .. string.format('%i', basic.sender_tgt) .. '\n' ..
+        'target_tgt: ' .. string.format('%i', basic.target_tgt) .. '\n' ..
+        'param: '      .. string.format('%i (0x%x)', basic.param, basic.param) .. '\n' ..
+        'value: '      .. string.format('%i (0x%x)', basic.value, basic.value) .. '\n' ..
+        'message: '    .. string.format('%i (0x%x)', basic.message, basic.message) .. '\n'
 
     dump(0x0029, output)
 end

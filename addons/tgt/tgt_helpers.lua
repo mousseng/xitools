@@ -17,6 +17,24 @@ DEFAULT_STATE = {
     drown = nil,
 }
 
+function deepCopy(object)
+    local lookup_table = {}
+    local function _copy(object)
+        if type(object) ~= "table" then
+            return object
+        elseif lookup_table[object] then
+            return lookup_table[object]
+        end
+        local new_table = {}
+        lookup_table[object] = new_table
+        for index, value in pairs(object) do
+            new_table[_copy(index)] = _copy(value)
+        end
+        return setmetatable(new_table, getmetatable(object))
+    end
+    return _copy(object)
+end
+
 function handle_action(state, action)
     for _, target in pairs(action.targets) do
         for _, ability in pairs(target.actions) do
@@ -24,7 +42,7 @@ function handle_action(state, action)
                 -- Set up our state
                 local spell = action.param
                 local message = ability.message
-                state[target.id] = state[target.id] or DEFAULT_STATE
+                state[target.id] = state[target.id] or deepCopy(DEFAULT_STATE)
 
                 -- Bio and Dia
                 if message == 2 or message == 264 then
@@ -155,7 +173,38 @@ function handle_action(state, action)
 end
 
 function handle_basic(state, basic)
-    -- if basic.message == 206 then
-    --     lin.dump_basic(basic)
-    -- end
+    if basic.message == 206 then
+        lin.dump_basic(basic)
+        local status_name = AshitaCore:GetResourceManager():GetString('statusnames', basic.param)
+
+        if state[basic.target] == nil then
+            return
+        end
+
+        if basic.param == 134 then
+            state[basic.target].dia = nil
+        elseif basic.param == 135 then
+            state[basic.target].bio = nil
+        elseif basic.param == 4 then
+            state[basic.target].para = nil
+        elseif basic.param == 13 then
+            state[basic.target].slow = nil
+        elseif basic.param == 12 then
+            state[basic.target].grav = nil
+        elseif basic.param == 5 then
+            state[basic.target].blind = nil
+        elseif basic.param == 132 then
+            state[basic.target].shock = nil
+        elseif basic.param == 131 then
+            state[basic.target].rasp = nil
+        elseif basic.param == 130 then
+            state[basic.target].choke = nil
+        elseif basic.param == 129 then
+            state[basic.target].frost = nil
+        elseif basic.param == 128 then
+            state[basic.target].burn = nil
+        elseif basic.param == 133 then
+            state[basic.target].drown = nil
+        end
+    end
 end
