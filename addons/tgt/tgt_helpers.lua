@@ -3,12 +3,23 @@
 -------------------------------------------------------------------------------
 
 DEFAULT_STATE = {
+    -- standard fare
     dia = nil,
     bio = nil,
     para = nil,
     slow = nil,
     grav = nil,
     blind = nil,
+    -- utility
+    silence = nil,
+    sleep = nil,
+    bind = nil,
+    stun = nil,
+    -- misc
+    virus = nil,
+    curse = nil,
+    -- dots
+    poison = nil,
     shock = nil,
     rasp = nil,
     choke = nil,
@@ -180,30 +191,44 @@ function handle_basic(state, basic)
             return
         end
 
-        if basic.param == 134 then
+        if basic.param == 2 or basic.param == 19 then
+            state[basic.target].sleep = nil
+        elseif basic.param == 3 or basic.param == 540 then
+            state[basic.target].poison = nil
+        elseif basic.param == 4 or basic.param == 566 then
+            state[basic.target].para = nil
+        elseif basic.param == 5 then
+            state[basic.target].blind = nil
+        elseif basic.param == 6 then
+            state[basic.target].silence = nil
+        elseif basic.param == 8 then
+            state[basic.target].virus = nil
+        elseif basic.param == 9 or basic.param == 20 then
+            state[basic.target].curse = nil
+        elseif basic.param == 10 then
+            state[basic.target].stun = nil
+        elseif basic.param == 11 then
+            state[basic.target].bind = nil
+        elseif basic.param == 12 or basic.param == 567 then
+            state[basic.target].grav = nil
+        elseif basic.param == 13 then
+            state[basic.target].slow or basic.param == 565 = nil
+        elseif basic.param == 128 then
+            state[basic.target].burn = nil
+        elseif basic.param == 129 then
+            state[basic.target].frost = nil
+        elseif basic.param == 130 then
+            state[basic.target].choke = nil
+        elseif basic.param == 131 then
+            state[basic.target].rasp = nil
+        elseif basic.param == 132 then
+            state[basic.target].shock = nil
+        elseif basic.param == 133 then
+            state[basic.target].drown = nil
+        elseif basic.param == 134 then
             state[basic.target].dia = nil
         elseif basic.param == 135 then
             state[basic.target].bio = nil
-        elseif basic.param == 4 then
-            state[basic.target].para = nil
-        elseif basic.param == 13 then
-            state[basic.target].slow = nil
-        elseif basic.param == 12 then
-            state[basic.target].grav = nil
-        elseif basic.param == 5 then
-            state[basic.target].blind = nil
-        elseif basic.param == 132 then
-            state[basic.target].shock = nil
-        elseif basic.param == 131 then
-            state[basic.target].rasp = nil
-        elseif basic.param == 130 then
-            state[basic.target].choke = nil
-        elseif basic.param == 129 then
-            state[basic.target].frost = nil
-        elseif basic.param == 128 then
-            state[basic.target].burn = nil
-        elseif basic.param == 133 then
-            state[basic.target].drown = nil
         end
     end
 end
