@@ -174,7 +174,6 @@ end
 
 function handle_basic(state, basic)
     if basic.message == 206 then
-        lin.dump_basic(basic)
         local status_name = AshitaCore:GetResourceManager():GetString('statusnames', basic.param)
 
         if state[basic.target] == nil then

@@ -93,11 +93,11 @@ end)
 
 ashita.register_event('incoming_packet', function(id, size, data)
     -- clear state on zone changes
-    if (id == 0x0A) then
+    if id == 0x0A then
         debuffs = { }
-    elseif (id == 0x0028) then
+    elseif id == 0x0028 then
         handle_action(debuffs, lin.parse_action(data))
-    elseif (id == 0x0029) then
+    elseif id == 0x0029 then
         handle_basic(debuffs, lin.parse_basic(data))
     end
 

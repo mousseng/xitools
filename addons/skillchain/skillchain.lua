@@ -421,13 +421,10 @@ function dispatch_packet(id, size, packet)
         local action = ashita.packet.parse_server(packet)
 
         if action.category == 3 then
-            ashita.packet.log_server(id, action)
             status, err = pcall(handle_weaponskill, action)
         elseif action.category == 4 then
-            ashita.packet.log_server(id, action)
             status, err = pcall(handle_magicability, action)
         elseif action.category == 13 and party_has_pet_job() then
-            ashita.packet.log_server(id, action)
             status, err = pcall(handle_petability, action)
         end
 
