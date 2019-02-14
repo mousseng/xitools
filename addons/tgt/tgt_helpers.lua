@@ -125,6 +125,51 @@ function handle_action(state, action)
                         ashita.timer.create(timer_id, 180, 1, function()
                             state[target.id].blind = nil
                         end)
+                    elseif spell == 59 or spell == 359 then -- silence/ga
+                        state[target.id].silence = true
+
+                        local timer_id = string.format('%i silence', target.id)
+
+                        ashita.timer.remove_timer(timer_id)
+                        ashita.timer.create(timer_id, 120, 1, function()
+                            state[target.id].silence = nil
+                        end)
+                    elseif spell == 253 or spell == 259 or spell == 273 or spell == 274 then -- sleep/2/ga/2
+                        state[target.id].sleep = true
+
+                        local timer_id = string.format('%i sleep', target.id)
+
+                        ashita.timer.remove_timer(timer_id)
+                        ashita.timer.create(timer_id, 90, 1, function()
+                            state[target.id].sleep = nil
+                        end)
+                    elseif spell == 258 or spell == 362 then -- bind
+                        state[target.id].bind = true
+
+                        local timer_id = string.format('%i bind', target.id)
+
+                        ashita.timer.remove_timer(timer_id)
+                        ashita.timer.create(timer_id, 60, 1, function()
+                            state[target.id].bind = nil
+                        end)
+                    elseif spell == 252 then -- stun
+                        state[target.id].stun = true
+
+                        local timer_id = string.format('%i stun', target.id)
+
+                        ashita.timer.remove_timer(timer_id)
+                        ashita.timer.create(timer_id, 5, 1, function()
+                            state[target.id].stun = nil
+                        end)
+                    elseif spell <= 229 and spell >= 220 then -- poison/2
+                        state[target.id].poison = true
+
+                        local timer_id = string.format('%i poison', target.id)
+
+                        ashita.timer.remove_timer(timer_id)
+                        ashita.timer.create(timer_id, 120, 1, function()
+                            state[target.id].poison = nil
+                        end)
                     end
                 -- Elemental debuffs
                 elseif message == 237 or message == 278 then
@@ -211,8 +256,8 @@ function handle_basic(state, basic)
             state[basic.target].bind = nil
         elseif basic.param == 12 or basic.param == 567 then
             state[basic.target].grav = nil
-        elseif basic.param == 13 then
-            state[basic.target].slow or basic.param == 565 = nil
+        elseif basic.param == 13 or basic.param == 565 then
+            state[basic.target].slow = nil
         elseif basic.param == 128 then
             state[basic.target].burn = nil
         elseif basic.param == 129 then

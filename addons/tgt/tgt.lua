@@ -63,23 +63,29 @@ ashita.register_event('render', function()
 
         -- Line 3: debuff status icons.
         -- DB PSGB Sh Ra Ch Fr Bu Dr
+        -- DB PGSB Si Sl Bi P SRCFBD
         -- Other considerations: Poison, Bind, Sleep, Silence
 
         local tgt_debuffs = debuffs[target.ServerId] or deepCopy(DEFAULT_STATE)
         local line3 = string.format(
-            '%s%s %s%s%s%s %s %s %s %s %s %s',
+            '%s%s %s%s%s%s %s %s %s %s%s%s%s%s%s%s',
+            -- '%s%s %s%s%s%s %s %s %s %s %s %s',
             lin.colorize_text('D',  when(tgt_debuffs.dia, white, grey)),
             lin.colorize_text('B',  when(tgt_debuffs.bio, black, grey)),
             lin.colorize_text('P',  when(tgt_debuffs.para, white, grey)),
             lin.colorize_text('S',  when(tgt_debuffs.slow, white, grey)),
             lin.colorize_text('G',  when(tgt_debuffs.grav, black, grey)),
             lin.colorize_text('B',  when(tgt_debuffs.blind, black, grey)),
-            lin.colorize_text('Sh', when(tgt_debuffs.shock, yellow, grey)),
-            lin.colorize_text('Ra', when(tgt_debuffs.rasp, brown, grey)),
-            lin.colorize_text('Ch', when(tgt_debuffs.choke, green, grey)),
-            lin.colorize_text('Fr', when(tgt_debuffs.frost, cyan, grey)),
-            lin.colorize_text('Bu', when(tgt_debuffs.burn, red, grey)),
-            lin.colorize_text('Dr', when(tgt_debuffs.drown, blue, grey))
+            lin.colorize_text('Si', when(tgt_debuffs.silence, white, grey)),
+            lin.colorize_text('Sl', when(tgt_debuffs.sleep, black, grey)),
+            lin.colorize_text('Bi', when(tgt_debuffs.bind, black, grey)),
+            lin.colorize_text('Po', when(tgt_debuffs.poison, black, grey)),
+            lin.colorize_text('S',  when(tgt_debuffs.shock, yellow, grey)),
+            lin.colorize_text('R',  when(tgt_debuffs.rasp, brown, grey)),
+            lin.colorize_text('C',  when(tgt_debuffs.choke, green, grey)),
+            lin.colorize_text('F',  when(tgt_debuffs.frost, cyan, grey)),
+            lin.colorize_text('B',  when(tgt_debuffs.burn, red, grey)),
+            lin.colorize_text('D',  when(tgt_debuffs.drown, blue, grey))
         )
 
         table.insert(text, '')
