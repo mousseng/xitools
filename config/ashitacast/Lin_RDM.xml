@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ashitacast>
+    <settings>
+        <buffupdate>true</buffupdate>
+        <statusupdate>true</statusupdate>
+        <hpupdate>false</hpupdate>
+        <autoupdate>true</autoupdate>
+    </settings>
+
+    <sets>
+        <set name="Standing">
+            <main>Fencing Degen</main>
+            <!-- <sub>none</sub> -->
+            <!-- <range>none</range> -->
+            <!-- <ammo>none</ammo> -->
+            <head>Warlock's Chapeau</head>
+            <neck>Tiger Stole</neck>
+            <lear>Cunning Earring</lear>
+            <!-- <rear>none</rear> -->
+            <body>Warlock's Tabard</body>
+            <hands>Savage Gauntlets</hands>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+            <back>Red Cape +1</back>
+            <waist>Friar's Rope</waist>
+            <legs>Warlock's Tights</legs>
+            <feet>Warlock's Boots</feet>
+        </set>
+        <set name="Resting">
+            <main>Gelong Staff</main>
+        </set>
+        <set name="Healing">
+            <neck>Justice Badge</neck>
+            <lring>Saintly Ring</lring>
+            <rring>Saintly Ring</rring>
+        </set>
+        <set name="Elemental">
+            <neck>Black Neckerchief</neck>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+        </set>
+        <set name="ElementalDot" baseset="Elemental">
+            <!-- TODO -->
+        </set>
+        <set name="Enfeebling">
+            <!-- TODO -->
+        </set>
+        <set name="EnfeeblingWhite" baseset="Enfeebling">
+            <neck>Justice Badge</neck>
+            <lring>Saintly Ring</lring>
+            <rring>Saintly Ring</rring>
+        </set>
+        <set name="EnfeeblingBlack" baseset="Enfeebling">
+            <neck>Black Neckerchief</neck>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+        </set>
+        <set name="Enhancing">
+            <!-- TODO -->
+        </set>
+        <set name="Stoneskin" baseset="Enhancing">
+            <!-- TODO -->
+        </set>
+        <set name="Dark">
+            <!-- TODO -->
+        </set>
+        <set name="Divine">
+            <!-- TODO -->
+        </set>
+        <set name="FastCast">
+            <head>Warlock's Chapeau</head>
+            <!-- <body>Duelist's Tabard</body> -->
+            <!-- <lear>Loquac. Earring</lear> -->
+        </set>
+    </sets>
+
+    <init>
+        <command>/macro book 1</command>
+        <command delay="1000">/macro set 1</command>
+    </init>
+
+    <inputcommands>
+        <cmd input="/rdm">
+            <equip set="Standing" />
+        </cmd>
+    </inputcommands>
+
+    <!-- <jobability>
+        <if ad_name="Chainspell"><equip><body>Vitivation Tabard</body></equip></if>
+    </jobability> -->
+
+    <!-- <idlegear>
+        <if p_status="resting"><equip set="Resting" /></if>
+        <else><equip set="Standing" /></else>
+    </idlegear> -->
+
+    <premagic>
+        <equip set="FastCast" />
+    </premagic>
+
+    <midmagic>
+        <if ad_skill="HealingMagic">
+            <equip set="Healing" />
+        </if>
+        <elseif ad_skill="ElementalMagic">
+            <if ad_name="Burn|Choke|Shock|Rasp|Drown|Choke"><equip set="ElementalDot" /></if>
+            <else>
+                <equip set="Elemental" />
+            </else>
+        </elseif>
+        <elseif ad_skill="EnfeeblingMagic">
+            <if ad_name="Slow*|Paralyze*|Silence*">
+                <equip set="EnfeeblingWhite" />
+            </if>
+            <elseif ad_name="Poison*|Sleep*|Blind*|Bind*|Dispel|Gravity">
+                <equip set="EnfeeblingBlack" />
+            </elseif>
+        </elseif>
+        <elseif ad_skill="EnhancingMagic">
+            <if ad_name="Stoneskin"><equip set="Stoneskin" /></if>
+            <else><equip set="Enhancing" /></else>
+        </elseif>
+        <elseif ad_skill="DarkMagic">
+            <equip set="Dark" />
+        </elseif>
+        <elseif ad_skill="DivineMagic">
+            <equip set="Divine" />
+        </elseif>
+    </midmagic>
+</ashitacast>

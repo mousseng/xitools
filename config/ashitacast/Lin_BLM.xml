@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ashitacast>
+    <settings>
+        <buffupdate>true</buffupdate>
+        <statusupdate>true</statusupdate>
+        <hpupdate>false</hpupdate>
+        <autoupdate>true</autoupdate>
+    </settings>
+
+    <sets>
+        <set name="Standing">
+            <main>Yew Wand</main>
+            <!-- <sub>none</sub> -->
+            <!-- <range>none</range> -->
+            <!-- <ammo>none</ammo> -->
+            <head>Seer's Crown +1</head>
+            <neck>Black Silk Neckerchief</neck>
+            <lear>Cunning Earring</lear>
+            <!-- <rear>none</rear> -->
+            <body>Seer's Tunic</body>
+            <hands>Seer's Mitts +1</hands>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+            <back>Black Cape</back>
+            <waist>Friar's Rope</waist>
+            <legs>Seer's Slacks +1</legs>
+            <feet>Seer's Pumps</feet>
+        </set>
+        <set name="Resting">
+        </set>
+    </sets>
+
+    <init>
+        <!-- <command>/macro book 1</command> -->
+        <!-- <command delay="1000">/macro set 1</command> -->
+    </init>
+
+    <inputcommands>
+        <cmd input="/blm">
+            <equip set="Standing" />
+        </cmd>
+    </inputcommands>
+
+    <jobability>
+    </jobability>
+
+    <idlegear>
+        <if p_status="resting">
+            <equip set="Resting" />
+        </if>
+        <else>
+            <equip set="Standing" />
+        </else>
+    </idlegear>
+
+    <premagic>
+    </premagic>
+
+    <midmagic>
+    </midmagic>
+</ashitacast>
