@@ -7,8 +7,8 @@ local function percent_bar(width, percent, f, h, n)
 
     local bar_width = width - 2
 
-    local full_step = 1 / bar_width
-    local half_step = 1 / (bar_width * 2)
+    local full_step = math.min(1, 1 / bar_width)
+    local half_step = math.min(1, 1 / (bar_width * 2))
 
     local full_bars = math.floor(percent / full_step)
     local half_bars = math.floor((percent % full_step) / half_step)
