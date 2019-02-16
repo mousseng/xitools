@@ -59,8 +59,10 @@ function handle_action(state, action)
                 if message == 2 or message == 264 then
                     if spell == 23 or spell == 24 or spell == 25 or spell == 33 then
                         state[target.id].dia = true
+                        state[target.id].bio = false
                     elseif spell == 230 or spell == 231 or spell == 232 then
                         state[target.id].bio = true
+                        state[target.id].dia = false
                     end
 
                     -- Set up timers
