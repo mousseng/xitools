@@ -97,13 +97,7 @@ function handle_action(state, action)
                         state[target.id].slow = true
 
                         local timer_id = string.format('%i slow', target.id)
-                        local timer_len = nil
-
-                        if spell == 56 then
-                            timer_len = 120
-                        else
-                            timer_len = 180
-                        end
+                        local timer_len = 180
 
                         ashita.timer.remove_timer(timer_id)
                         ashita.timer.create(timer_id, timer_len, 1, function()
