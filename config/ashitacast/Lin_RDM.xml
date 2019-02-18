@@ -20,7 +20,7 @@
             <body>Warlock's Tabard</body>
             <hands>Savage Gauntlets</hands>
             <lring>Eremite's Ring</lring>
-            <rring>Eremite's Ring</rring>
+            <rring>Empress Band</rring>
             <back>Red Cape +1</back>
             <waist>Friar's Rope</waist>
             <legs>Warlock's Tights</legs>
@@ -89,10 +89,10 @@
         <if ad_name="Chainspell"><equip><body>Vitivation Tabard</body></equip></if>
     </jobability> -->
 
-    <!-- <idlegear>
+    <idlegear>
         <if p_status="resting"><equip set="Resting" /></if>
         <else><equip set="Standing" /></else>
-    </idlegear> -->
+    </idlegear>
 
     <premagic>
         <equip set="FastCast" />
