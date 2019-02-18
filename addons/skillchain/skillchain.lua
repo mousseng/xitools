@@ -30,6 +30,7 @@ local config = {
 -------------------------------------------------------------------------------
 
 local Enemies = {}
+local last_render = os.time()
 
 -------------------------------------------------------------------------------
 -- utility data
@@ -365,6 +366,8 @@ function unload()
 end
 
 function render()
+    if os.time() - last_render < 1 then return end
+
     local font = AshitaCore:GetFontManager():Get('__skillchain_addon')
     local resx = AshitaCore:GetResourceManager()
     local text = T{}
@@ -413,6 +416,7 @@ function render()
     -- Just clear out the last newline.
     text[#text] = nil
     font:SetText(text:concat('\n'))
+    last_render = os.time()
 end
 
 function dispatch_packet(id, size, packet)
