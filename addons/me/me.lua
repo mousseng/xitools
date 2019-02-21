@@ -12,15 +12,12 @@ require 'lin.text'
 require 'lin.jobs'
 
 local config = { x = 200, y = 200 }
-local last_render = os.time()
 
 -------------------------------------------------------------------------------
 -- event handlers
 -------------------------------------------------------------------------------
 
 ashita.register_event('render', function()
-    if os.time() - last_render < 1 then return end
-
     local font = AshitaCore:GetFontManager():Get(_addon.unique)
 
     local party_data = AshitaCore:GetDataManager():GetParty()
@@ -95,7 +92,6 @@ ashita.register_event('render', function()
     table.insert(text, line5)
 
     font:SetText(table.concat(text, '\n'))
-    last_render = os.time()
 end)
 
 ashita.register_event('load', function()

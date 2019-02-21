@@ -15,7 +15,6 @@ require 'ffxi.targets'
 require 'tgt_helpers'
 
 local config = { x = 200, y = 200 }
-local last_render = os.time()
 
 -------------------------------------------------------------------------------
 -- event handlers
@@ -41,8 +40,6 @@ local function cyan()   return 150, 205, 205 end
 local debuffs = { }
 
 ashita.register_event('render', function()
-    if os.time() - last_render < 1 then return end
-
     local font = AshitaCore:GetFontManager():Get(_addon.unique)
     local text = { }
 
@@ -98,7 +95,6 @@ ashita.register_event('render', function()
     end
 
     font:SetText(table.concat(text, '\n'))
-    last_render = os.time()
 end)
 
 ashita.register_event('incoming_packet', function(id, size, data)
