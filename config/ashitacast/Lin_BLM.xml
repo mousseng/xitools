@@ -16,7 +16,7 @@
             <head>Seer's Crown +1</head>
             <neck>Black Silk Neckerchief</neck>
             <lear>Cunning Earring</lear>
-            <!-- <rear>none</rear> -->
+            <rear>Moldavite Earring</rear>
             <body>Seer's Tunic</body>
             <hands>Seer's Mitts +1</hands>
             <lring>Eremite's Ring</lring>
@@ -32,6 +32,8 @@
         <set name="+INT">
             <main>Chestnut Wand</main>
             <neck>Black Silk Neckerchief</neck>
+            <lear>Cunning Earring</lear>
+            <rear>Moldavite Earring</rear>
             <lring>Eremite's Ring</lring>
             <rring>Eremite's Ring</rring>
         </set>

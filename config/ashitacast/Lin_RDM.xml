@@ -9,14 +9,14 @@
 
     <sets>
         <set name="Standing">
-            <main>Fencing Degen</main>
+            <main>Enhancing Sword</main>
             <!-- <sub>none</sub> -->
             <!-- <range>none</range> -->
             <!-- <ammo>none</ammo> -->
             <head>Warlock's Chapeau</head>
             <neck>Tiger Stole</neck>
             <lear>Cunning Earring</lear>
-            <!-- <rear>none</rear> -->
+            <rear>Moldavite Earring</rear>
             <body>Warlock's Tabard</body>
             <hands>Savage Gauntlets</hands>
             <lring>San d'Orian Ring</lring>
@@ -27,13 +27,16 @@
             <feet>Warlock's Boots</feet>
         </set>
         <set name="Resting">
-            <main>Gelong Staff</main>
         </set>
         <set name="+INT">
             <main>Chestnut Wand</main>
             <neck>Black Neckerchief</neck>
+            <lear>Cunning Earring</lear>
             <lring>Eremite's Ring</lring>
             <rring>Eremite's Ring</rring>
+        </set>
+        <set name="+MAB">
+            <rear>Moldavite Earring</rear>
         </set>
         <set name="+MND">
             <main>Chestnut Wand</main>
@@ -41,7 +44,7 @@
             <lring>Saintly Ring</lring>
             <rring>Saintly Ring</rring>
         </set>
-        <set name="FastCast">
+        <set name="-cast">
             <head>Warlock's Chapeau</head>
             <!-- <body>Duelist's Tabard</body> -->
             <!-- <lear>Loquac. Earring</lear> -->
@@ -65,7 +68,7 @@
     </idlegear>
 
     <premagic>
-        <equip set="FastCast" />
+        <equip set="-cast" />
     </premagic>
 
     <midmagic>
@@ -74,12 +77,13 @@
         </if>
         <elseif ad_skill="ElementalMagic">
             <equip set="+INT" />
+            <equip set="+MAB" />
         </elseif>
         <elseif ad_skill="EnfeeblingMagic">
             <if ad_name="Slow*|Paralyze*|Silence*">
                 <equip set="+MND" />
             </if>
-            <elseif ad_name="Poison*|Sleep*|Blind*|Bind*|Dispel|Gravity">
+            <elseif ad_name="Poison*|Sleep*|Blind*|Bind*|Gravity">
                 <equip set="+INT" />
             </elseif>
         </elseif>
