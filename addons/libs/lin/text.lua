@@ -1,9 +1,15 @@
 lin = lin or { }
 
+local function isnan(number)
+  return type(number) == 'number'
+    and number ~= number
+end
+
 local function percent_bar(width, percent, f, h, n)
     if f == nil then f = '=' end
     if h == nil then h = '-' end
     if n == nil then n = ' ' end
+    if isnan(percent) then percent = 0 end
 
     local bar_width = width - 2
 
