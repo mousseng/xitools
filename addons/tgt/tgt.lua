@@ -31,7 +31,7 @@ local function grey()   return 255, 255, 255, 127 end
 local function white()  return 250, 235, 215 end
 local function black()  return 153,  50, 204 end
 local function yellow() return 205, 205, 205 end
-local function brown()  return 139, 126, 102 end
+local function brown()  return 255, 246, 143 end
 local function green()  return 154, 205,  50 end
 local function blue()   return  72, 118, 255 end
 local function red()    return 205,  55,   0 end
