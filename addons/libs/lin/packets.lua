@@ -97,15 +97,61 @@ lin.parse_action = parse_action
 -------------------------------------------------------------------------------
 local function parse_basic(packet)
     local basic = {
-        sender     = struct.unpack('i', packet, 0x04 + 1),
-        target     = struct.unpack('i', packet, 0x08 + 1),
-        sender_tgt = struct.unpack('h', packet, 0x14 + 1),
-        target_tgt = struct.unpack('h', packet, 0x16 + 1),
-        param      = struct.unpack('i', packet, 0x0C + 1),
-        value      = struct.unpack('i', packet, 0x10 + 1),
-        message    = struct.unpack('h', packet, 0x18 + 1)
+        sender     = struct.unpack('i4', packet, 0x04 + 1),
+        target     = struct.unpack('i4', packet, 0x08 + 1),
+        sender_tgt = struct.unpack('i1', packet, 0x14 + 1),
+        target_tgt = struct.unpack('i1', packet, 0x16 + 1),
+        param      = struct.unpack('i4', packet, 0x0C + 1),
+        value      = struct.unpack('i4', packet, 0x10 + 1),
+        message    = struct.unpack('i1', packet, 0x18 + 1)
     }
 
     return basic
 end
 lin.parse_basic = parse_basic
+
+-------------------------------------------------------------------------------
+-- Server ID 0x0061: the character stats packet.
+-------------------------------------------------------------------------------
+local function parse_charstats(packet)
+    local charstats = {
+        max_hp      = struct.unpack('i4', packet, 0x04 + 1),
+        max_mp      = struct.unpack('i4', packet, 0x08 + 1),
+
+        main_job    = struct.unpack('i1', packet, 0x0C + 1),
+        main_level  = struct.unpack('i1', packet, 0x0D + 1),
+        sub_job     = struct.unpack('i1', packet, 0x0E + 1),
+        sub_level   = struct.unpack('i1', packet, 0x0F + 1),
+        current_exp = struct.unpack('i2', packet, 0x10 + 1),
+        needed_exp  = struct.unpack('i2', packet, 0x12 + 1),
+
+        str = nil,
+        dex = nil,
+        vit = nil,
+        agi = nil,
+        int = nil,
+        mnd = nil,
+        chr = nil,
+
+        atk = nil,
+        def = nil,
+
+        fireres = nil,
+        iceres = nil,
+        windres = nil,
+        earthres = nil,
+        thunderres = nil,
+        waterres = nil,
+        lightres = nil,
+        darkres = nil,
+
+        title = nil,
+        rank = nil,
+        rankpoints = nil,
+        homepoint = nil,
+        nation = nil
+    }
+
+    return charstats
+end
+lin.parse_charstats = parse_charstats
