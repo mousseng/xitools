@@ -63,7 +63,7 @@ ashita.register_event('render', function()
         for cast in sorted(active_buffs[id], 'time') do
             local remaining = durations[id] - (os.time() - cast.time)
 
-            if remaining > 0 then
+            if remaining > -5 then
                 local line = string.format(
                     '%-7s %12s %3is',
                     spell_name,
@@ -71,7 +71,9 @@ ashita.register_event('render', function()
                     math.max(remaining, 0)
                 )
 
-                if remaining <= 30 then
+                if remaining <= 10 then
+                    line = lin.colorize_text(line, 243, 50, 50)
+                elseif remaining <= 30 then
                     line = lin.colorize_text(line, 255, 165, 0)
                 end
 
