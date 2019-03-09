@@ -53,7 +53,7 @@ ashita.register_event('render', function()
     }
 
     local line1
-    if player.sub_job ~= '' then
+    if player.sub_job ~= '' and player.sub_job ~= nil then
         line1 = string.format('%-11.11s [%s%2i/%s%2i]',
             player.name,
             player.main_job, player.main_lv,
