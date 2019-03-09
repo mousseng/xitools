@@ -36,6 +36,8 @@ local last_render = os.time()
 -- utility data
 -------------------------------------------------------------------------------
 
+local DEBUG = false
+
 -- A set-style table of weaponskills that do not interact with skillchains. It
 -- is keyed by the animation ID.
 local NonChainingSkills = {
@@ -195,6 +197,12 @@ local function handle_weaponskill(action)
                         bonus_damage = weaponskill.add_effect_param,
                         resonance = Resonances[weaponskill.add_effect_message],
                     }
+
+                    if (DEBUG) then
+                        print('target id ' .. tostring(target.id))
+                        print('enemy ' .. tostring(Enemies[target.id]))
+                        print('enemy name ' .. tostring(Enemies[target.id].name))
+                    end
 
                     -- list out all the attrs for first weaponskill. unsure if
                     -- you can actually chain off of non-primary attributes, so
@@ -435,6 +443,20 @@ function dispatch_packet(id, size, packet)
         if not status then
             handle_error(err)
         end
+    end
+
+    return false
+end
+
+function command(cmd, ntype)
+    local args = command:args()
+
+    if args[1] ~= '/sc' or #args == 1 then
+        return false
+    end
+
+    if #args[2] == 'debug' then
+        DEBUG = not DEBUG
     end
 
     return false
