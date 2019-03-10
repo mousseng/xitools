@@ -26,13 +26,14 @@
             <legs>Warlock's Tights</legs>
             <feet>Warlock's Boots</feet>
         </set>
-        <!-- <set name="+HP">
-        </set> -->
-        <!-- <set name="+MP">
-        </set> -->
+        <set name="+HP">
+        </set>
+        <set name="+MP">
+        </set>
         <set name="+HHP">
         </set>
         <set name="+HMP">
+            <main>Dark Staff</main>
             <waist>Mohbwa Sash</waist>
         </set>
         <set name="+INT">
@@ -51,6 +52,14 @@
             <lring>Saintly Ring</lring>
             <rring>Saintly Ring</rring>
             <waist>Friar's Rope</waist>
+        </set>
+        <set name="+Dark">
+            <main>Dark Staff</main>
+            <sub>Bugard Strap</sub>
+        </set>
+        <set name="+DarkMagic">
+            <main>Dark Staff</main>
+            <sub>Bugard Strap</sub>
         </set>
         <set name="-CAST">
             <head>Warlock's Chapeau</head>
@@ -105,6 +114,10 @@
             <elseif ad_name="Poison*|Sleep*|Blind*|Bind*|Gravity">
                 <equip set="+INT" />
             </elseif>
+
+            <if ad_element="dark">
+                <equip set="+Dark" />
+            </if>
         </elseif>
         <!-- <elseif ad_skill="EnhancingMagic">
             <if ad_name="Stoneskin"><equip set="Stoneskin" /></if>
@@ -112,6 +125,7 @@
         </elseif> -->
         <elseif ad_skill="DarkMagic">
             <equip set="+INT" />
+            <equip set="+DarkMagic" />
         </elseif>
         <elseif ad_skill="DivineMagic">
             <equip set="+MND" />
