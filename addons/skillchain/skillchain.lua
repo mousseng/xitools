@@ -9,6 +9,7 @@ _addon.version = '0.5.0'
 require 'utils'
 require 'packet'
 require 'common'
+require 'lin.text'
 
 local Weaponskills = require 'weaponskills'
 local BloodPacts   = require 'bloodpacts'
@@ -106,6 +107,7 @@ local Elements = {
 local ChainType = {
     SC = 1,
     MB = 2,
+    Miss = 3,
 }
 
 -------------------------------------------------------------------------------
@@ -213,6 +215,29 @@ local function handle_weaponskill(action)
                     end
 
                     Enemies[target.id].time = os.time()
+                    table.insert(Enemies[target.id].chain, chain_element)
+                elseif weaponskill.reaction ~= 0x08
+                and not NonChainingSkills[weaponskill.animation] then
+                    -- reset target info if starting a new chain,
+                    -- or if the last one was broken/finished
+                    if Enemies[target.id] == nil
+                    or not weaponskill.has_add_effect then
+                        Enemies[target.id] = {
+                            name = GetEntityByServerId(target.id).Name,
+                            time = nil,
+                            chain = {}
+                        }
+                    end
+
+                    local chain_element = {
+                        id = weaponskill.animation,
+                        type = ChainType.Miss,
+                        name = Weaponskills[weaponskill.animation].name,
+                        base_damage = nil,
+                        bonus_damage = nil,
+                        resonance = nil,
+                    }
+
                     table.insert(Enemies[target.id].chain, chain_element)
                 end
             end
@@ -406,6 +431,10 @@ function render()
                 local t = string.format('    Magic Burst! %s [%i dmg]', chain.name, chain.base_damage)
 
                 table.insert(text, t)
+            elseif chain.type == ChainType.Miss then
+                local t = string.format('  ! %s missed.', chain.name)
+
+                table.insert(text, colorize_text(t, 255, 255, 255, 0.6))
             end
         end
 
