@@ -4,494 +4,131 @@
 
 _addon.author  = 'lin'
 _addon.name    = 'skillchain'
-_addon.version = '0.5.0'
+_addon.version = '1.0.0-beta'
+_addon.unique  = '__skillchain_addon'
 
-require 'utils'
-require 'packet'
-require 'common'
+require 'skillchain_data'
+require 'skillchain_packethandler'
 require 'lin.text'
+require 'lin.packets'
 
-local Weaponskills = require 'weaponskills'
-local BloodPacts   = require 'bloodpacts'
-local MagicBursts  = require 'magicbursts'
-
-local config = {
-    font = {
-        family    = 'Consolas',
-        size      = 10,
-        color     = 0xFFFFFFFF,
-        position  = { 50, 125 },
-        bgcolor   = 0x80000000,
-        bgvisible = true
-    }
-}
-
--------------------------------------------------------------------------------
--- live data
--------------------------------------------------------------------------------
-
-local Enemies = {}
-local last_render = os.time()
-
--------------------------------------------------------------------------------
--- utility data
--------------------------------------------------------------------------------
-
-local DEBUG = false
-
--- A set-style table of weaponskills that do not interact with skillchains. It
--- is keyed by the animation ID.
-local NonChainingSkills = {
-    [8] = true,
-    [36] = true,
-    [37] = true,
-    [79] = true,
-    [80] = true,
-    [87] = true,
-    [89] = true,
-    [143] = true,
-    [149] = true,
-    [150] = true,
-    [230] = true,
-    -- HACK: dragoon jump abilities. For some reason these are counted as
-    -- weaponskills rather than abilities, in spite of appearing in darkstar's
-    -- ability table.
-    [204] = true,
-    [209] = true,
-    [214] = true,
-}
-
--- A lookup table to find the appropriate name for a given skillchain effect.
--- The keys are an action's add_effect_message.
-local Resonances = {
-    [0x120] = 'Light',
-    [0x121] = 'Darkness',
-    [0x122] = 'Gravitation',
-    [0x123] = 'Fragmentation',
-    [0x124] = 'Distortion',
-    [0x125] = 'Fusion',
-    [0x126] = 'Compression',
-    [0x127] = 'Liquefaction',
-    [0x128] = 'Induration',
-    [0x129] = 'Reverberation',
-    [0x12A] = 'Transfixion',
-    [0x12B] = 'Scission',
-    [0x12C] = 'Detonation',
-    [0x12D] = 'Impaction',
-    [0x12E] = 'Radiance',
-    [0x12F] = 'Umbra'
-}
-
--- A lookup table to find the appropriate list of burstable magic elements for
--- a given skillchain effect.
-local Elements = {
-    Light         = 'Wind, Thunder, Fire, Light',
-    Darkness      = 'Ice, Water, Earth, Dark',
-    Gravitation   = 'Earth, Dark',
-    Fragmentation = 'Thunder, Wind',
-    Distortion    = 'Ice, Water',
-    Fusion        = 'Fire, Light',
-    Compression   = 'Dark',
-    Liquefaction  = 'Fire',
-    Induration    = 'Ice',
-    Reverberation = 'Water',
-    Transfixion   = 'Light',
-    Scission      = 'Earth',
-    Detonation    = 'Wind',
-    Impaction     = 'Thunder',
-    Radiance      = 'Wind, Thunder, Fire, Light',
-    Umbra         = 'Ice, Water, Earth, Dark'
-}
-
--- Enum to identify what type of display a particular chain element will need.
-local ChainType = {
-    SC = 1,
-    MB = 2,
-    Miss = 3,
-}
-
--------------------------------------------------------------------------------
--- helper functions
--------------------------------------------------------------------------------
-
-local function handle_error(err)
-    print('\30\76[ERROR] \30\68Skillchain encountered an error. Restart it if needed, check log file for more information.')
-    ashita.logging.error('Skillchain', err)
-
-    local date = os.date('*t')
-    local log_name = string.format('skillchain_errors %04i.%02i.%02i.log', date.year, date.month, date.day)
-    local log_dir = string.format('%s/%s/', AshitaCore:GetAshitaInstallPath(), 'logs')
-
-    if not ashita.file.dir_exists(log_dir) then
-        ashita.file.create_dir(log_dir)
-    end
-
-    local log_file = io.open(string.format('%s/%s', log_dir, log_name), 'a')
-    if log_file ~= nil then
-        local timestamp = os.date('[%H:%M:%S]', os.time())
-        log_file:write(string.format('%s\n%s\n\n', timestamp, err))
-        log_file:close()
-    end
-end
-
--- Does what it says on the tin: creates or resets the timer for a particular
--- skillchain. When the timer expires, the skillchain is removed from memory.
-local function create_or_reset_timer(id)
-    ashita.timer.remove_timer(id)
-    ashita.timer.create(id, 16, 1, function() Enemies[id] = nil end)
-end
-
--- Heuristic to determine whether to even bother trying to handle a mob action.
--- Since we only have (partial, buggy) SMN support at the moment, only check
--- for the presence of a SMN in the party.
-local function party_has_pet_job()
-    local party = AshitaCore:GetDataManager():GetParty()
-
-    return party:GetMemberMainJob(0) == 15 or party:GetMemberSubJob(0) == 15
-        or party:GetMemberMainJob(1) == 15 or party:GetMemberSubJob(1) == 15
-        or party:GetMemberMainJob(2) == 15 or party:GetMemberSubJob(2) == 15
-        or party:GetMemberMainJob(3) == 15 or party:GetMemberSubJob(3) == 15
-        or party:GetMemberMainJob(4) == 15 or party:GetMemberSubJob(4) == 15
-        or party:GetMemberMainJob(5) == 15 or party:GetMemberSubJob(5) == 15
-end
-
--- Collects and collates data about a particular action in order for the render
--- function to display information about active skillchains. Specialized on
--- weaponskills.
-local function handle_weaponskill(action)
-    if IsServerIdInParty(action.actor_id) then
-
-        -- Gotta traverse our way to the meat of the action data; there can be
-        -- multiple targets per weaponskill, so don't choke and die if there
-        -- are. Additionally, while the top-level param field contains the skill
-        -- ID, this doesn't hold for all category 3 packets (such as DRG jumps).
-        for i = 1, action.target_count do
-            local target = action.targets[i]
-
-            -- pretty sure there should only ever be one action per target for
-            -- weaponskills, but if not this could be the source of a bug
-            for j = 1, target.action_count do
-                local weaponskill = target.actions[j]
-
-                -- only track if the ability didn't miss and can chain
-                if weaponskill.reaction == 0x08
-                and not NonChainingSkills[weaponskill.animation] then
-                    -- reset target info if starting a new chain,
-                    -- or if the last one was broken/finished
-                    if Enemies[target.id] == nil
-                    or not weaponskill.has_add_effect then
-                        Enemies[target.id] = {
-                            name = GetEntityByServerId(target.id).Name,
-                            time = nil,
-                            chain = {}
-                        }
-                    end
-
-                    -- drop the information after the window is definitely
-                    -- closed and there's been no activity
-                    create_or_reset_timer(target.id)
-
-                    local chain_element = {
-                        id = weaponskill.animation,
-                        type = ChainType.SC,
-                        name = Weaponskills[weaponskill.animation].name,
-                        base_damage = weaponskill.param,
-                        bonus_damage = weaponskill.add_effect_param,
-                        resonance = Resonances[weaponskill.add_effect_message],
-                    }
-
-                    if (DEBUG) then
-                        print('target id ' .. tostring(target.id))
-                        print('enemy ' .. tostring(Enemies[target.id]))
-                        print('enemy name ' .. tostring(Enemies[target.id].name))
-                    end
-
-                    -- list out all the attrs for first weaponskill. unsure if
-                    -- you can actually chain off of non-primary attributes, so
-                    -- just do it anyway
-                    if #Enemies[target.id].chain == 0 then
-                        chain_element.resonance =
-                            table.concat(Weaponskills[weaponskill.animation].attr, ', ')
-                    end
-
-                    Enemies[target.id].time = os.time()
-                    table.insert(Enemies[target.id].chain, chain_element)
-                elseif weaponskill.reaction ~= 0x08
-                and not NonChainingSkills[weaponskill.animation] then
-                    -- reset target info if starting a new chain,
-                    -- or if the last one was broken/finished
-                    if Enemies[target.id] == nil
-                    or not weaponskill.has_add_effect then
-                        Enemies[target.id] = {
-                            name = GetEntityByServerId(target.id).Name,
-                            time = nil,
-                            chain = {}
-                        }
-                    end
-
-                    local chain_element = {
-                        id = weaponskill.animation,
-                        type = ChainType.Miss,
-                        name = Weaponskills[weaponskill.animation].name,
-                        base_damage = nil,
-                        bonus_damage = nil,
-                        resonance = nil,
-                    }
-
-                    table.insert(Enemies[target.id].chain, chain_element)
-                end
-            end
-        end
-    end
-end
-
--- Collects and collates data about a particular action in order for the render
--- function to display information about active skillchains. Specialized on pet
--- abilities.
-local function handle_petability(action)
-    local party = AshitaCore:GetDataManager():GetParty()
-
-    -- first we need to find out which pets are in our party
-    local pets = {}
-
-    for x = 1, 5 do
-        if party:GetMemberActive(x) == 1 and party:GetMemberServerId(x) ~= 0 then
-            local party_mem = GetEntity(party:GetMemberTargetIndex(x))
-
-            if party_mem ~= nil then
-                local party_pet = GetEntity(party_mem.PetTargetIndex)
-
-                if party_pet ~= nil then
-                    pets[party_pet.ServerId] = true
-                end
-            end
-        end
-    end
-
-    -- only bother deciphering it if it's a party member's pet
-    if pets[action.actor_id] then
-        local pet = GetEntityByServerId(action.actor_id)
-
-        -- check if it's a chainable skill by a supported pet
-        if BloodPacts[pet.Name] ~= nil
-        and BloodPacts[pet.Name][action.param] ~= nil then
-
-            for i = 1, action.target_count do
-                local target = action.targets[i]
-
-                for j = 1, target.action_count do
-                    local ability =  target.actions[j]
-
-                    -- check if it was a hit
-                    if ability.reaction == 0x08 then
-                        -- reset target info if starting a new chain,
-                        -- or if the last one was broken/finished
-                        if Enemies[target.id] == nil
-                        or not ability.has_add_effect then
-                            Enemies[target.id] = {
-                                name = GetEntityByServerId(target.id).Name,
-                                time = nil,
-                                chain = {}
-                            }
-                        end
-
-                        -- drop the information after the window is definitely
-                        -- closed and there's been no activity
-                        create_or_reset_timer(target.id)
-
-                        local chain_element = {
-                            id = ability.animation,
-                            type = ChainType.SC,
-                            name = BloodPacts[pet.Name][action.param].name,
-                            base_damage = ability.param,
-                            bonus_damage = ability.add_effect_param,
-                            resonance = Resonances[ability.add_effect_message],
-                        }
-
-                        -- list out all the attrs for first weaponskill. unsure if
-                        -- you can actually chain off of non-primary attributes, so
-                        -- just do it anyway
-                        if #Enemies[target.id].chain == 0 then
-                            chain_element.resonance =
-                                table.concat(BloodPacts[pet.Name][action.param].attr, ', ')
-                        end
-
-                        Enemies[target.id].time = os.time()
-                        table.insert(Enemies[target.id].chain, chain_element)
-                    end
-                end
-            end
-        end
-    end
-end
-
--- Collects and collates data about a particular action in order for the render
--- function to display information about active skillchains. Specialized on
--- magic abilities; only handles magic bursts currently, not BLU chains.
-local function handle_magicability(action)
-    -- TODO: handle BLU skillchains
-
-    if IsServerIdInParty(action.actor_id) and MagicBursts[action.param] ~= nil then
-        for i = 1, action.target_count do
-            local target = action.targets[i]
-
-            for j = 1, target.action_count do
-                local spell = target.actions[j]
-
-                if spell.message == MagicBursts[action.param].burst_msg then
-                    -- make sure we have a chain to append to
-                    if Enemies[target.id] == nil then
-                        Enemies[target.id] = {
-                            name = GetEntityByServerId(target.id).Name,
-                            time = nil,
-                            chain = {}
-                        }
-                    end
-
-                    local chain_element = {
-                        id = action.param,
-                        type = ChainType.MB,
-                        name = AshitaCore:GetResourceManager():GetSpellById(action.param).Name[0],
-                        base_damage = spell.param,
-                        bonus_damage = nil,
-                        resonance = nil,
-                    }
-
-                    -- extend display timer when bursts happen
-                    create_or_reset_timer(target.id)
-                    table.insert(Enemies[target.id].chain, chain_element)
-                end
-            end
-        end
-    end
-end
+local config = { x = 100, y = 100, debug = false }
+local chains = { }
 
 -------------------------------------------------------------------------------
 -- event handlers
 -------------------------------------------------------------------------------
 
-function load()
-    config = ashita.settings.load_merged(_addon.path .. 'settings/settings.json', config)
-
-    -- initialize rendering data
-    local font = AshitaCore:GetFontManager():Create('__skillchain_addon')
-    font:SetColor(config.font.color)
-    font:SetFontFamily(config.font.family)
-    font:SetFontHeight(config.font.size)
-    font:SetBold(false)
-    font:SetPositionX(config.font.position[1])
-    font:SetPositionY(config.font.position[2])
-    font:SetText('Skillchain ~ by lin')
-    font:SetVisibility(true)
-    font:GetBackground():SetColor(config.font.bgcolor)
-    font:GetBackground():SetVisibility(config.font.bgvisible)
-end
-
-function unload()
-    local font = AshitaCore:GetFontManager():Get('__skillchain_addon')
-    config.font.position = { font:GetPositionX(), font:GetPositionY() }
-
-    -- save config
-    ashita.settings.save(_addon.path .. 'settings/settings.json', config)
-
-    -- unload font object
-    AshitaCore:GetFontManager():Delete('__skillchain_addon')
-end
-
-function render()
-    if os.time() - last_render < 1 then return end
-
-    local font = AshitaCore:GetFontManager():Get('__skillchain_addon')
+ashita.register_event('render', function()
+    local font = AshitaCore:GetFontManager():Get(_addon.unique)
     local resx = AshitaCore:GetResourceManager()
-    local text = T{}
+    local text = { }
 
-    for _, mob in pairs(Enemies) do
-        -- Create the heading for our skillchain.
-        table.insert(text, mob.name)
+    for _, mob in pairs(chains) do
+        if #mob.chain > 0 then
+            -- Create the heading for our skillchain.
+            table.insert(text, mob.name)
 
-        -- Fill out the body of our skillchain.
-        for _, chain in pairs(mob.chain) do
-            -- Is this the first step of a chain? If so, don't show burstable
-            -- elements (since you can't burst).
-            if chain.type == ChainType.SC and not chain.bonus_damage then
-                local t1 = string.format('  > %s [%i dmg]', chain.name, chain.base_damage)
-                local t2 = string.format('    %s', chain.resonance)
+            -- Fill out the body of our skillchain.
+            for _, chain in pairs(mob.chain) do
+                -- Is this the first step of a chain? If so, don't show burstable
+                -- elements (since you can't burst).
+                if chain.type == ChainType.Starter then
+                    local t1 = string.format('  > %s [%i dmg]', chain.name, chain.base_damage)
+                    local t2 = string.format('    %s', chain.resonance)
 
-                table.insert(text, t1)
-                table.insert(text, t2)
-            -- Otherwise, also display the bonus damage and burstable elements.
-            elseif chain.type == ChainType.SC then
-                local t1 = string.format('  > %s [%i + %i dmg]', chain.name, chain.base_damage, chain.bonus_damage)
-                local t2 = string.format('    %s (%s)', chain.resonance, Elements[chain.resonance])
+                    table.insert(text, t1)
+                    table.insert(text, t2)
+                -- Otherwise, also display the bonus damage and burstable elements.
+                elseif chain.type == ChainType.Skillchain then
+                    local t1 = string.format('  > %s [%i + %i dmg]', chain.name, chain.base_damage, chain.bonus_damage or 0)
+                    local t2 = string.format('    %s (%s)', chain.resonance, Elements[chain.resonance])
 
-                table.insert(text, t1)
-                table.insert(text, t2)
-            -- Display any magic bursts that occurred and their damage.
-            elseif chain.type == ChainType.MB then
-                local t = string.format('    Magic Burst! %s [%i dmg]', chain.name, chain.base_damage)
+                    table.insert(text, t1)
+                    table.insert(text, t2)
+                -- Display any magic bursts that occurred and their damage.
+                elseif chain.type == ChainType.MagicBurst then
+                    local t = string.format('    Magic Burst! %s [%i dmg]', chain.name, chain.base_damage)
 
-                table.insert(text, t)
-            elseif chain.type == ChainType.Miss then
-                local t = string.format('  ! %s missed.', chain.name)
+                    table.insert(text, t)
+                elseif chain.type == ChainType.Miss then
+                    local t = string.format('  ! %s missed.', chain.name)
 
-                table.insert(text, colorize_text(t, 255, 255, 255, 0.6))
+                    table.insert(text, t)
+                else -- chain.type == ChainType.Unknown
+                end
             end
-        end
 
-        -- Create the footer for our skillchain, noting the remaining window and
-        -- including a spacer between the mobs.
-        local time_remaining = 8 - math.abs(mob.time - os.time())
-        if time_remaining >= 0 then
-            table.insert(text, string.format('  > %is', time_remaining))
-        else
-            table.insert(text, '  x')
-        end
+            -- Create the footer for our skillchain, noting the remaining window and
+            -- including a spacer between the mobs.
+            if mob.time ~= nil then
+                local time_remaining = 8 - math.abs(mob.time - os.time())
+                if time_remaining >= 0 then
+                    table.insert(text, string.format('  > %is', time_remaining))
+                else
+                    table.insert(text, '  x')
+                end
+            end
 
-        table.insert(text, '')
+            table.insert(text, '')
+        end
     end
 
     -- Just clear out the last newline.
     text[#text] = nil
-    font:SetText(text:concat('\n'))
-    last_render = os.time()
-end
+    font:SetText(table.concat(text, '\n'))
+end)
 
-function dispatch_packet(id, size, packet)
+ashita.register_event('incoming_packet', function (id, size, packet)
     if id == 0x0028 then
-        local status = true, err
-        local action = ashita.packet.parse_server(packet)
+        local action = lin.parse_action(packet)
 
         if action.category == 3 then
-            status, err = pcall(handle_weaponskill, action)
+            handle_weaponskill(action, chains)
         elseif action.category == 4 then
-            status, err = pcall(handle_magicability, action)
-        elseif action.category == 13 and party_has_pet_job() then
-            status, err = pcall(handle_petability, action)
-        end
-
-        if not status then
-            handle_error(err)
+            handle_magicability(action, chains)
+        elseif action.category == 13 then
+            handle_petability(action, chains)
         end
     end
 
     return false
-end
+end)
 
-function command(cmd, ntype)
-    local args = command:args()
+ashita.register_event('command', function(cmd, ntype)
+    local args = cmd:args()
 
     if args[1] ~= '/sc' or #args == 1 then
         return false
     end
 
     if #args[2] == 'debug' then
-        DEBUG = not DEBUG
+        config.debug = not config.debug
     end
 
     return false
-end
+end)
 
-ashita.register_event('load', load)
-ashita.register_event('unload', unload)
-ashita.register_event('render', render)
-ashita.register_event('incoming_packet', dispatch_packet)
+ashita.register_event('load', function()
+    local font = AshitaCore:GetFontManager():Create(_addon.unique)
+    config = ashita.settings.load_merged(_addon.path .. 'settings/settings.json', config)
+
+    font:SetColor(0xFFFFFFFF)
+    font:SetFontFamily('Consolas')
+    font:SetFontHeight(10)
+    font:SetBold(false)
+    font:SetPositionX(config.x)
+    font:SetPositionY(config.y)
+    font:SetVisibility(true)
+    font:GetBackground():SetColor(0xA0000000)
+    font:GetBackground():SetVisibility(true)
+end)
+
+ashita.register_event('unload', function()
+    config.x = AshitaCore:GetFontManager():Get(_addon.unique):GetPositionX()
+    config.y = AshitaCore:GetFontManager():Get(_addon.unique):GetPositionY()
+
+    AshitaCore:GetFontManager():Delete(_addon.unique)
+
+    ashita.settings.save(_addon.path .. 'settings/settings.json', config)
+end)
