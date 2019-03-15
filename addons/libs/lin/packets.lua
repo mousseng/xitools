@@ -99,11 +99,11 @@ local function parse_basic(packet)
     local basic = {
         sender     = struct.unpack('i4', packet, 0x04 + 1),
         target     = struct.unpack('i4', packet, 0x08 + 1),
-        sender_tgt = struct.unpack('i1', packet, 0x14 + 1),
-        target_tgt = struct.unpack('i1', packet, 0x16 + 1),
         param      = struct.unpack('i4', packet, 0x0C + 1),
         value      = struct.unpack('i4', packet, 0x10 + 1),
-        message    = struct.unpack('i1', packet, 0x18 + 1)
+        sender_tgt = struct.unpack('i2', packet, 0x14 + 1),
+        target_tgt = struct.unpack('i2', packet, 0x16 + 1),
+        message    = struct.unpack('i2', packet, 0x18 + 1),
     }
 
     return basic
