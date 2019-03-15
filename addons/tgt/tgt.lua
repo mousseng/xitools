@@ -97,6 +97,46 @@ ashita.register_event('render', function()
     font:SetText(table.concat(text, '\n'))
 end)
 
+ashita.register_event('command', function(cmd, nType)
+    local args = cmd:args()
+
+    if #args < 2 or args[1] ~= '/tgt' then
+        return false
+    end
+
+    if args[2] == 'dump' then
+        print(tostring(debuffs))
+
+        for id, mob in pairs(debuffs) do
+            print(string.format(
+                '[%s] id %i: '
+                .. 'dia %s, bio %s, para %s, slow %s, grav %s, bld %s, '
+                .. 'sil %s, slp %s, bind %s, pois %s, '
+                .. 'sh %s, ra %s, ch %s, fr %s, bu %s, dr %s',
+                tostring(mob), id,
+                tostring(mob.dia),
+                tostring(mob.bio),
+                tostring(mob.para),
+                tostring(mob.slow),
+                tostring(mob.grav),
+                tostring(mob.blind),
+                tostring(mob.silence),
+                tostring(mob.sleep),
+                tostring(mob.bind),
+                tostring(mob.poison),
+                tostring(mob.shock),
+                tostring(mob.rasp),
+                tostring(mob.choke),
+                tostring(mob.frost),
+                tostring(mob.burn),
+                tostring(mob.drown)
+            ))
+        end
+    end
+
+    return false
+end)
+
 ashita.register_event('incoming_packet', function(id, size, data)
     -- clear state on zone changes
     if id == 0x0A then
