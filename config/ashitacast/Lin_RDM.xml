@@ -29,6 +29,14 @@
         <set name="+HP">
         </set>
         <set name="+MP">
+            <main>Fencing Degen</main>
+            <sub>Bugard Strap +1</sub>
+            <head>Warlock's Chapeau</head>
+            <hands>Savage Gauntlets</hands>
+            <body>Warlock's Tabard</body>
+            <waist>Mohbwa Sash</waist>
+            <legs>Savage Loincloth</legs>
+            <feet>Warlock's Boots</feet>
         </set>
         <set name="+HHP">
         </set>
@@ -55,11 +63,11 @@
         </set>
         <set name="+Dark">
             <main>Dark Staff</main>
-            <sub>Bugard Strap</sub>
+            <sub>Bugard Strap +1</sub>
         </set>
         <set name="+DarkMagic">
             <main>Dark Staff</main>
-            <sub>Bugard Strap</sub>
+            <sub>Bugard Strap +1</sub>
         </set>
         <set name="-CAST">
             <head>Warlock's Chapeau</head>
@@ -94,6 +102,8 @@
             <equip set="Solo" />
         </else>
     </idlegear>
+
+    <jobability></jobability>
 
     <premagic>
         <equip set="-CAST" />
