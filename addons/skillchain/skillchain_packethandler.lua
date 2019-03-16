@@ -1,9 +1,27 @@
 require 'common'
-require 'utils'
 
 local Weaponskills = require 'weaponskills'
 local BloodPacts   = require 'bloodpacts'
 local MagicBursts  = require 'magicbursts'
+
+-- Fetch an entity by its server ID. Helpful when looking up information from
+-- packets, which tend to not include the entity index (since that's a client
+-- thing only). Returns nil if no matching entity is found.
+local function GetEntityByServerId(id)
+    -- The entity array is 2304 items long
+    for x = 0, 2303 do
+        local e = GetEntity(x)
+
+        -- Ensure the entity is valid
+        if e ~= nil and e.WarpPointer ~= 0 then
+            if e.ServerId == id then
+                return e
+            end
+        end
+    end
+
+    return nil
+end
 
 -- Determines if a particular entity (given as a server ID) belongs to the
 -- player's alliance.
