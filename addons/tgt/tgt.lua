@@ -4,7 +4,7 @@
 
 _addon.author  = 'lin'
 _addon.name    = 'tgt'
-_addon.version = '1.0.0'
+_addon.version = '1.1.0'
 _addon.unique  = '__tgt_addon'
 
 require 'common'
@@ -14,7 +14,7 @@ require 'ffxi.targets'
 
 require 'tgt_helpers'
 
-local config = { x = 200, y = 200 }
+local config = { x = 200, y = 200, dependent = true, status = true, }
 
 -------------------------------------------------------------------------------
 -- event handlers
@@ -61,37 +61,41 @@ ashita.register_event('render', function()
             target.HealthPercent,
             lin.percent_bar(12, target.HealthPercent / 100))
 
-        -- Line 3: debuff status icons.
-        -- DB PSGB Sh Ra Ch Fr Bu Dr
-        -- DB PGSB Si Sl Bi P SRCFBD
-        -- Other considerations: Poison, Bind, Sleep, Silence
+        -- build basic target display
+        if config.dependent then
+            table.insert(text, '')
+        end
 
-        local tgt_debuffs = debuffs[target.ServerId] or deepCopy(DEFAULT_STATE)
-        local line3 = string.format(
-            '%s%s %s%s%s%s %s %s %s %s%s%s%s%s%s%s',
-            -- '%s%s %s%s%s%s %s %s %s %s %s %s',
-            lin.colorize_text('D',  when(tgt_debuffs.dia, white, grey)),
-            lin.colorize_text('B',  when(tgt_debuffs.bio, black, grey)),
-            lin.colorize_text('P',  when(tgt_debuffs.para, white, grey)),
-            lin.colorize_text('S',  when(tgt_debuffs.slow, white, grey)),
-            lin.colorize_text('G',  when(tgt_debuffs.grav, black, grey)),
-            lin.colorize_text('B',  when(tgt_debuffs.blind, black, grey)),
-            lin.colorize_text('Si', when(tgt_debuffs.silence, white, grey)),
-            lin.colorize_text('Sl', when(tgt_debuffs.sleep, black, grey)),
-            lin.colorize_text('Bi', when(tgt_debuffs.bind, black, grey)),
-            lin.colorize_text('Po', when(tgt_debuffs.poison, black, grey)),
-            lin.colorize_text('S',  when(tgt_debuffs.shock, yellow, grey)),
-            lin.colorize_text('R',  when(tgt_debuffs.rasp, brown, grey)),
-            lin.colorize_text('C',  when(tgt_debuffs.choke, green, grey)),
-            lin.colorize_text('F',  when(tgt_debuffs.frost, cyan, grey)),
-            lin.colorize_text('B',  when(tgt_debuffs.burn, red, grey)),
-            lin.colorize_text('D',  when(tgt_debuffs.drown, blue, grey))
-        )
-
-        table.insert(text, '')
         table.insert(text, line1)
         table.insert(text, lin.colorize_text(line2, lin.get_hp_color(target.HealthPercent / 100)))
-        table.insert(text, line3)
+
+        -- build advanced status display for target
+        -- DB PGSB Si Sl Bi PoSRCFBD
+        if config.status then
+            local tgt_debuffs = debuffs[target.ServerId] or deepCopy(DEFAULT_STATE)
+            local line3 = string.format(
+                '%s%s %s%s%s%s %s %s %s %s%s%s%s%s%s%s',
+                -- '%s%s %s%s%s%s %s %s %s %s %s %s',
+                lin.colorize_text('D',  when(tgt_debuffs.dia, white, grey)),
+                lin.colorize_text('B',  when(tgt_debuffs.bio, black, grey)),
+                lin.colorize_text('P',  when(tgt_debuffs.para, white, grey)),
+                lin.colorize_text('S',  when(tgt_debuffs.slow, white, grey)),
+                lin.colorize_text('G',  when(tgt_debuffs.grav, black, grey)),
+                lin.colorize_text('B',  when(tgt_debuffs.blind, black, grey)),
+                lin.colorize_text('Si', when(tgt_debuffs.silence, white, grey)),
+                lin.colorize_text('Sl', when(tgt_debuffs.sleep, black, grey)),
+                lin.colorize_text('Bi', when(tgt_debuffs.bind, black, grey)),
+                lin.colorize_text('Po', when(tgt_debuffs.poison, black, grey)),
+                lin.colorize_text('S',  when(tgt_debuffs.shock, yellow, grey)),
+                lin.colorize_text('R',  when(tgt_debuffs.rasp, brown, grey)),
+                lin.colorize_text('C',  when(tgt_debuffs.choke, green, grey)),
+                lin.colorize_text('F',  when(tgt_debuffs.frost, cyan, grey)),
+                lin.colorize_text('B',  when(tgt_debuffs.burn, red, grey)),
+                lin.colorize_text('D',  when(tgt_debuffs.drown, blue, grey))
+            )
+
+            table.insert(text, line3)
+        end
     end
 
     font:SetText(table.concat(text, '\n'))
@@ -104,7 +108,11 @@ ashita.register_event('command', function(cmd, nType)
         return false
     end
 
-    if args[2] == 'dump' then
+    if args[2] == 'line' then
+        config.dependent = not config.dependent
+    elseif args[2] == 'status' then
+        config.status = not config.status
+    elseif args[2] == 'dump' then
         print(tostring(debuffs))
 
         for id, mob in pairs(debuffs) do
@@ -138,6 +146,9 @@ ashita.register_event('command', function(cmd, nType)
 end)
 
 ashita.register_event('incoming_packet', function(id, size, data)
+    -- don't track anything if we're not displaying it
+    if not config.status then return end
+
     -- clear state on zone changes
     if id == 0x0A then
         debuffs = { }
