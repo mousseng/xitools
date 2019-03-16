@@ -8,7 +8,7 @@ _addon.version = '1.0.0'
 _addon.unique  = '__tracker_addon'
 
 require 'common'
-require 'utils'
+require 'lin.ffxi'
 require 'lin.text'
 require 'lin.packets'
 
@@ -95,7 +95,7 @@ ashita.register_event('incoming_packet', function(id, size, data)
             for i = 1, action.target_count do
                 local target = action.targets[i]
                 local cast_info = {
-                    name = GetEntityNameByServerId(target.id),
+                    name = lin.get_entity_name_by_server_id(target.id),
                     time = os.time(),
                 }
 

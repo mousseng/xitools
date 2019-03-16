@@ -6,7 +6,7 @@ _addon.author  = 'lin'
 _addon.name    = 'logger'
 _addon.version = '1.0.0'
 
-require 'utils'
+require 'lin.ffxi'
 require 'lin.packets'
 
 -------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ end
 
 local function write_action(action)
     local output =
-        'actor_id: '     .. string.format('%i',   action.actor_id) .. ' (' .. GetEntityNameByServerId(action.actor_id) .. ')\n' ..
+        'actor_id: '     .. string.format('%i',   action.actor_id) .. ' (' .. lin.get_entity_name_by_server_id(action.actor_id) .. ')\n' ..
         'target_count: ' .. string.format('%i',   action.target_count) .. '\n' ..
         'category: '     .. string.format('0x%x', action.category)     .. '\n' ..
         'param: '        .. string.format('0x%x', action.param)        .. '\n' ..
@@ -48,7 +48,7 @@ local function write_action(action)
 
     for i = 1, action.target_count do
         output = output ..
-            '    id: '           .. tostring(action.targets[i].id) .. ' (' .. GetEntityNameByServerId(action.targets[i].id) .. ')\n' ..
+            '    id: '           .. tostring(action.targets[i].id) .. ' (' .. lin.get_entity_name_by_server_id(action.targets[i].id) .. ')\n' ..
             '    action_count: ' .. tostring(action.targets[i].action_count) .. '\n' ..
             '    actions:\n'
 

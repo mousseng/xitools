@@ -9,10 +9,9 @@ a collection of addons (and maybe some plugins) for Ashita that I made
 - `tracker` is a primitive ability tracker tailored for the author
 
 ### libs
-- `packet` is a garbage dump of some packet-related functionality i needed
-- `utils` is a garbage dump of everything else
-- `lin/packets` is a simpler, less-disgusting, namespaced collection of the same
-  packet functionality provided in `packet`
+- `lin/ffxi` has a bunch of utility-ish functions around ashita/ffxi tools
+- `lin/packets` provides functions to turn binary packet data into usable lua
+  tables
 - `lin/jobs` contains job-related stuff. i probably don't need this, just too
   lazy to check the ashita docs for this
 - `lin/text` is where all of the stuff related to text-display goes, like
