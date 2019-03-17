@@ -10,6 +10,7 @@ local function percent_bar(width, percent, f, h, n)
     if h == nil then h = '-' end
     if n == nil then n = ' ' end
     if isnan(percent) then percent = 0 end
+    if percent > 1 then percent = 1 end
 
     local bar_width = width - 2
 
