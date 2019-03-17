@@ -13,11 +13,11 @@
             <!-- <sub>none</sub> -->
             <!-- <range>none</range> -->
             <!-- <ammo>none</ammo> -->
-            <head>Warlock's Chapeau</head>
+            <!-- <head>Warlock's Chapeau</head> -->
             <neck>Tiger Stole</neck>
             <lear>Cunning Earring</lear>
             <rear>Moldavite Earring</rear>
-            <body>Warlock's Tabard</body>
+            <body>Vermillion Cloak</body>
             <hands>Savage Gauntlets</hands>
             <lring>San d'Orian Ring</lring>
             <rring>Empress Band</rring>
@@ -26,6 +26,7 @@
             <legs>Warlock's Tights</legs>
             <feet>Warlock's Boots</feet>
         </set>
+        <!-- Resources -->
         <set name="+HP">
         </set>
         <set name="+MP">
@@ -42,37 +43,50 @@
         </set>
         <set name="+HMP">
             <main>Dark Staff</main>
+            <body>Errant Hpl.</body>
             <waist>Mohbwa Sash</waist>
         </set>
-        <set name="+INT">
-            <main>Chestnut Wand</main>
-            <neck>Black Neckerchief</neck>
-            <lear>Cunning Earring</lear>
-            <lring>Eremite's Ring</lring>
-            <rring>Eremite's Ring</rring>
-        </set>
-        <set name="+MAB">
-            <rear>Moldavite Earring</rear>
-        </set>
-        <set name="+MND">
-            <main>Chestnut Wand</main>
-            <neck>Justice Badge</neck>
-            <lring>Saintly Ring</lring>
-            <rring>Saintly Ring</rring>
-            <waist>Friar's Rope</waist>
-        </set>
-        <set name="+Dark">
-            <main>Dark Staff</main>
-            <sub>Bugard Strap +1</sub>
+        <!-- Skills -->
+        <set name="+EnfeeblingMagic">
+            <body>Warlock's Tabard</body>
         </set>
         <set name="+DarkMagic">
             <main>Dark Staff</main>
             <sub>Bugard Strap +1</sub>
         </set>
-        <set name="-CAST">
+        <!-- Primary Stats -->
+        <set name="+INT">
+            <main>Chestnut Wand</main>
+            <neck>Black Neckerchief</neck>
+            <lear>Cunning Earring</lear>
+            <body>Errant Hpl.</body>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+        </set>
+        <set name="+MND">
+            <main>Chestnut Wand</main>
+            <neck>Justice Badge</neck>
+            <body>Errant Hpl.</body>
+            <lring>Saintly Ring</lring>
+            <rring>Saintly Ring</rring>
+            <waist>Friar's Rope</waist>
+        </set>
+        <!-- Secondary Stats -->
+        <set name="+MAB">
+            <rear>Moldavite Earring</rear>
+        </set>
+        <set name="-Enmity">
+            <body>Errant Hpl.</body>
+        </set>
+        <set name="+FastCast">
             <head>Warlock's Chapeau</head>
             <!-- <body>Duelist's Tabard</body> -->
             <!-- <lear>Loquac. Earring</lear> -->
+        </set>
+        <!-- Elemental Affinities -->
+        <set name="+Dark">
+            <main>Dark Staff</main>
+            <sub>Bugard Strap +1</sub>
         </set>
     </sets>
 
@@ -106,7 +120,7 @@
     <jobability></jobability>
 
     <premagic>
-        <equip set="-CAST" />
+        <equip set="+FastCast" />
     </premagic>
 
     <midmagic>
@@ -128,6 +142,8 @@
             <if ad_element="dark">
                 <equip set="+Dark" />
             </if>
+
+            <equip set="+EnfeeblingMagic" />
         </elseif>
         <!-- <elseif ad_skill="EnhancingMagic">
             <if ad_name="Stoneskin"><equip set="Stoneskin" /></if>
