@@ -83,6 +83,9 @@ local magic_bursts_by_spell_id = {
     [213] = { name = 'burst_ii', burst_msg = 252, },
     [214] = { name = 'flood', burst_msg = 252, },
     [215] = { name = 'flood_ii', burst_msg = 252, },
+    [245] = { name = 'drain', burst_msg = 227 },
+    [246] = { name = 'drain_ii', burst_msg = 227 },
+    -- [247] = { name = 'aspir', burst_msg = 228 },
 
     -- New garbage
     [218] = { name = 'meteor', burst_msg = 252, },
