@@ -90,7 +90,8 @@ ashita.register_event('incoming_packet', function(id, size, data)
     if id == 0x0028 then
         local action = lin.parse_action(data)
 
-        if action.actor_id == GetPlayerEntity().ServerId
+        if GetPlayerEntity() ~= nil
+        and action.actor_id == GetPlayerEntity().ServerId
         and tracked_spells[action.param] ~= nil then
             for i = 1, action.target_count do
                 local target = action.targets[i]
