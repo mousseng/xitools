@@ -17,6 +17,11 @@ local config = { x = 200, y = 200 }
 -- event handlers
 -------------------------------------------------------------------------------
 
+local limit_mode = {
+    exp = 32,
+    merit = 224,
+}
+
 ashita.register_event('render', function()
     local font = AshitaCore:GetFontManager():Get(_addon.unique)
 
@@ -41,6 +46,12 @@ ashita.register_event('render', function()
 
         cur_xp = player_data:GetExpCurrent() or 0,
         max_xp = player_data:GetExpNeeded() or 0,
+
+        limit_mode = player_data:GetLimitMode(),
+        merits = player_data:GetMeritPoints(),
+
+        cur_lp = player_data:GetLimitPoints(),
+        max_lp = 10000,
 
         max_hp = player_data:GetHealthMax() or 0,
         cur_hp = party_data:GetMemberCurrentHP(0) or 0,
@@ -79,10 +90,19 @@ ashita.register_event('render', function()
         player.max_tp,
         lin.percent_bar(12, player.cur_tp / player.max_tp))
 
-    local line5 = string.format('XP %4.4s/%-4.4s %s',
-        lin.format_xp(player.cur_xp, false),
-        lin.format_xp(player.max_xp, false),
-        lin.percent_bar(12, player.cur_xp / player.max_xp))
+    local line5
+    if player.limit_mode == limit_mode.merit
+    or player.cur_xp == 43999 then
+        line5 = string.format('LP %4.4s/%-4.4s %s',
+            lin.format_xp(player.cur_lp, false),
+            lin.format_xp(player.max_lp, false),
+            lin.percent_bar(12, player.cur_lp / player.max_lp))
+    else -- xp
+        line5 = string.format('XP %4.4s/%-4.4s %s',
+            lin.format_xp(player.cur_xp, false),
+            lin.format_xp(player.max_xp, false),
+            lin.percent_bar(12, player.cur_xp / player.max_xp))
+    end
 
     local text = {}
     table.insert(text, line1)
