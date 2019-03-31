@@ -19,8 +19,8 @@
             <rear>Moldavite Earring</rear>
             <body>Vermillion Cloak</body>
             <hands>Savage Gauntlets</hands>
-            <lring>San d'Orian Ring</lring>
-            <rring>Empress Band</rring>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
             <back>Red Cape +1</back>
             <waist>Mohbwa Sash</waist>
             <legs>Warlock's Tights</legs>
@@ -103,6 +103,10 @@
             <main>Earth Staff</main>
             <sub>Bugard Strap +1</sub>
         </set>
+        <set name="+Wind">
+            <main>Wind Staff</main>
+            <sub>Bugard Strap +1</sub>
+        </set>
     </sets>
 
     <init>
@@ -163,6 +167,9 @@
             </elseif>
             <elseif ad_element="earth">
                 <equip set="+Earth" />
+            </elseif>
+            <elseif ad_element="wind">
+                <equip set="+Wind" />
             </elseif>
 
             <equip set="+EnfeeblingMagic" />
