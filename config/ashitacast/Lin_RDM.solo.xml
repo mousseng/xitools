@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ashitacast>
+    <settings>
+        <buffupdate>false</buffupdate>
+        <statusupdate>true</statusupdate>
+        <hpupdate>false</hpupdate>
+        <autoupdate>true</autoupdate>
+    </settings>
+
+    <sets>
+        <set name="Solo">
+            <main>Enhancing Sword</main>
+            <!-- <sub>Bugard Strap +1</sub> -->
+            <!-- <range>none</range> -->
+            <!-- <ammo>none</ammo> -->
+            <head></head>
+            <neck>Tiger Stole</neck>
+            <lear>Cunning Earring</lear>
+            <rear>Moldavite Earring</rear>
+            <body>Vermillion Cloak</body>
+            <hands>Warlock's Gloves</hands>
+            <lring>San d'Orian Ring</lring>
+            <rring>Empress Band</rring>
+            <back>Red Cape +1</back>
+            <waist>Mohbwa Sash</waist>
+            <legs>Warlock's Tights</legs>
+            <feet>Warlock's Boots</feet>
+        </set>
+        <!-- Resources -->
+        <set name="+HHP">
+        </set>
+        <set name="+HMP">
+            <main>Dark Staff</main>
+            <sub>Bugard Strap +1</sub>
+            <body>Errant Hpl.</body>
+            <waist>Mohbwa Sash</waist>
+        </set>
+        <!-- Primary Stats -->
+        <set name="+INT">
+            <neck>Black Neckerchief</neck>
+            <lear>Cunning Earring</lear>
+            <body>Errant Hpl.</body>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+            <waist>Penitent's Rope</waist>
+        </set>
+        <set name="+MND">
+            <neck>Justice Badge</neck>
+            <body>Errant Hpl.</body>
+            <lring>Saintly Ring</lring>
+            <rring>Saintly Ring</rring>
+            <waist>Penitent's Rope</waist>
+        </set>
+        <!-- Secondary Stats -->
+        <set name="+MAB">
+            <rear>Moldavite Earring</rear>
+        </set>
+        <set name="-Enmity">
+            <body>Errant Hpl.</body>
+            <waist>Penitent's Rope</waist>
+        </set>
+        <set name="+FastCast">
+            <head>Warlock's Chapeau</head>
+            <!-- <body>Duelist's Tabard</body> -->
+            <!-- <lear>Loquac. Earring</lear> -->
+        </set>
+    </sets>
+
+    <init>
+        <command>/macro book 1</command>
+        <command delay="1000">/macro set 1</command>
+    </init>
+
+    <inputcommands>
+        <cmd input="/rdm">
+            <equip set="Solo" />
+        </cmd>
+    </inputcommands>
+
+    <idlegear>
+        <if buffactive="sleep">
+            <equip>
+                <neck>Opo-opo Necklace</neck>
+            </equip>
+        </if>
+
+        <if p_status="resting">
+            <equip set="+HHP" />
+            <equip set="+HMP" />
+        </if>
+        <else>
+            <equip set="Solo" />
+        </else>
+    </idlegear>
+
+    <jobability></jobability>
+
+    <premagic>
+        <equip set="+FastCast" />
+    </premagic>
+
+    <midmagic>
+        <if ad_skill="HealingMagic">
+            <equip set="+MND" />
+        </if>
+        <elseif ad_skill="ElementalMagic">
+            <equip set="+INT" />
+            <equip set="+MAB" />
+        </elseif>
+        <elseif ad_skill="EnfeeblingMagic">
+            <if ad_name="Slow*|Paralyze*|Silence*">
+                <equip set="+MND" />
+            </if>
+            <elseif ad_name="Poison*|Sleep*|Blind*|Bind*|Gravity">
+                <equip set="+INT" />
+            </elseif>
+        </elseif>
+        <elseif ad_skill="DarkMagic">
+            <equip set="+INT" />
+        </elseif>
+        <elseif ad_skill="DivineMagic">
+            <equip set="+MND" />
+        </elseif>
+    </midmagic>
+</ashitacast>
