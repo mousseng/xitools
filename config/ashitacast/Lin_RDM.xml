@@ -9,10 +9,30 @@
 
     <variables>
         <var name="mode">Combat</var>
+        <!-- <var name="mode">Gathering</var> -->
+        <!-- <var name="mode">Solo</var> -->
     </variables>
 
     <sets>
         <set name="Solo">
+            <main>Enhancing Sword</main>
+            <!-- <sub></sub> -->
+            <!-- <range></range> -->
+            <ammo>Morion Tathlum</ammo>
+            <head priority="-1">Walahra Turban</head>
+            <neck>Tiger Stole</neck>
+            <lear>Cunning Earring</lear>
+            <rear>Moldavite Earring</rear>
+            <body>Scorpion Harness</body>
+            <hands>Crimson Fng. Gnt.</hands>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+            <back>Red Cape +1</back>
+            <waist>Mohbwa Sash</waist>
+            <legs>Warlock's Tights</legs>
+            <feet>Warlock's Boots</feet>
+        </set>
+        <set name="Idle">
             <main>Earth Staff</main>
             <sub>Bugard Strap +1</sub>
             <!-- <range>none</range> -->
@@ -110,6 +130,9 @@
             <body>Errant Hpl.</body>
             <waist>Penitent's Rope</waist>
         </set>
+        <set name="+Haste">
+            <head priority="-1">Walahra Turban</head>
+        </set>
         <set name="+FastCast">
             <head priority="-1">Warlock's Chapeau</head>
             <!-- <body>Duelist's Tabard</body> -->
@@ -144,7 +167,7 @@
             <setvar name="mode" value="Combat" />
             <command>/macro book 1</command>
             <command delay="1000">/macro set 1</command>
-            <equip set="Solo" />
+            <equip set="Idle" />
         </cmd>
         <cmd input="/farm">
             <setvar name="mode" value="Gathering" />
@@ -162,7 +185,7 @@
             <equip set="+HMP" />
         </elseif>
         <else>
-            <equip set="Solo" />
+            <equip set="Idle" />
         </else>
     </idlegear>
 
@@ -176,11 +199,14 @@
 
     <midmagic>
         <if advanced="$mode=Gathering">
+            <!-- Disable midmagic in gathering mode -->
         </if>
         <elseif ad_skill="HealingMagic">
             <equip set="+MND" />
+            <equip set="+Haste" />
         </elseif>
         <elseif ad_skill="ElementalMagic">
+            <equip set="+Haste" />
             <equip set="+INT" />
             <equip set="+MAB" />
             <equip set="+ElementalMagic" />
@@ -216,12 +242,16 @@
 
             <equip set="+EnfeeblingMagic" />
         </elseif>
-        <!-- <elseif ad_skill="EnhancingMagic">
-            <if ad_name="Stoneskin"><equip set="Stoneskin" /></if>
-            <else><equip set="Enhancing" /></else>
-        </elseif> -->
+        <elseif ad_skill="EnhancingMagic">
+            <if ad_name="Stoneskin|Phalanx*">
+                <equip set="+EnhancingMagic" />
+            </if>
+
+            <equip set="+Haste" />
+        </elseif>
         <elseif ad_skill="DarkMagic">
             <equip set="+INT" />
+            <equip set="+Haste" />
             <equip set="+DarkMagic" />
         </elseif>
         <elseif ad_skill="DivineMagic">
