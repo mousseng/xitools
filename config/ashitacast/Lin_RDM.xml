@@ -16,12 +16,12 @@
     <sets>
         <set name="Solo">
             <main>Enhancing Sword</main>
-            <!-- <sub></sub> -->
+            <sub>Genbu's Shield</sub>
             <!-- <range></range> -->
             <ammo>Morion Tathlum</ammo>
             <head priority="-1">Walahra Turban</head>
             <neck>Tiger Stole</neck>
-            <lear>Cunning Earring</lear>
+            <lear>Suppanomimi</lear>
             <rear>Moldavite Earring</rear>
             <body>Scorpion Harness</body>
             <hands>Crimson Fng. Gnt.</hands>
@@ -38,7 +38,7 @@
             <!-- <range>none</range> -->
             <ammo>Morion Tathlum</ammo>
             <head priority="-1"></head>
-            <neck>Tiger Stole</neck>
+            <neck>Uggalepih Pendant</neck>
             <lear>Cunning Earring</lear>
             <rear>Moldavite Earring</rear>
             <body>Vermillion Cloak</body>
@@ -75,6 +75,7 @@
             <main>Earth Staff</main>
             <sub>Bugard Strap +1</sub>
             <head priority="-1">Warlock's Chapeau</head>
+            <neck>Uggalepih Pendant</neck>
             <hands>Crimson Fng. Gnt.</hands>
             <body>Warlock's Tabard</body>
             <waist>Mohbwa Sash</waist>
