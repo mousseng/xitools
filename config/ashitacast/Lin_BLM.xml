@@ -14,15 +14,15 @@
             <!-- <range>none</range> -->
             <!-- <ammo>none</ammo> -->
             <head>Seer's Crown +1</head>
-            <neck>Black Silk Neckerchief</neck>
+            <neck>Black Neckerchief</neck>
             <lear>Cunning Earring</lear>
             <rear>Moldavite Earring</rear>
             <body>Seer's Tunic</body>
             <hands>Seer's Mitts +1</hands>
             <lring>Eremite's Ring</lring>
-            <rring>Empress Band</rring>
+            <rring>Eremite's Ring</rring>
             <back>Black Cape</back>
-            <waist>Friar's Rope</waist>
+            <waist>Mohbwa Sash</waist>
             <legs>Seer's Slacks +1</legs>
             <feet>Seer's Pumps</feet>
         </set>
@@ -31,7 +31,7 @@
         </set>
         <set name="+INT">
             <main>Chestnut Wand</main>
-            <neck>Black Silk Neckerchief</neck>
+            <neck>Black Neckerchief</neck>
             <lear>Cunning Earring</lear>
             <rear>Moldavite Earring</rear>
             <lring>Eremite's Ring</lring>
