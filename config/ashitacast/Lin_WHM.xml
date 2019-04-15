@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ashitacast>
     <settings>
-        <buffupdate>true</buffupdate>
+        <buffupdate>false</buffupdate>
         <statusupdate>true</statusupdate>
         <hpupdate>false</hpupdate>
         <autoupdate>true</autoupdate>
     </settings>
 
     <sets>
-        <set name="Standing">
+        <set name="Idle">
+            <main>Yew Wand</main>
+            <neck>Justice Badge</neck>
+            <body>Ryl.Ftm. Tunic</body>
+            <hands>Mithran Gauntlets</hands>
+            <ring1>Emperor Band</ring1>
+            <ring2>Saintly Ring</ring2>
+            <waist>Friar's Rope</waist>
+            <legs>Linen Slops</legs>
+            <feet>Mithran Gaiters</feet>
         </set>
         <set name="Resting">
+        </set>
+        <set name="+MND">
+            <main>Yew Wand</main>
+            <neck>Justice Badge</neck>
+            <ring1>Saintly Ring</ring1>
+            <ring2>Saintly Ring</ring2>
+            <waist>Friar's Rope</waist>
         </set>
     </sets>
 
     <init>
-        <!-- <command>/macro book 1</command> -->
-        <!-- <command delay="1000">/macro set 1</command> -->
+        <command>/macro book 3</command>
+        <command delay="1000">/macro set 1</command>
     </init>
 
     <inputcommands>
         <cmd input="/whm">
-            <equip set="Standing" />
+            <equip set="Idle" />
+            <command>/macro book 3</command>
+            <command delay="1000">/macro set 1</command>
         </cmd>
     </inputcommands>
 
@@ -33,7 +51,7 @@
             <equip set="Resting" />
         </if>
         <else>
-            <equip set="Standing" />
+            <equip set="Idle" />
         </else>
     </idlegear>
 
@@ -41,5 +59,11 @@
     </premagic>
 
     <midmagic>
+        <if ad_skill="HealingMagic">
+            <equip set="+MND" />
+        </if>
+        <elseif ad_skill="DivineMagic">
+            <equip set="+MND" />
+        </elseif>
     </midmagic>
 </ashitacast>
