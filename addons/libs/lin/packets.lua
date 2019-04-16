@@ -1,6 +1,22 @@
 lin = lin or { }
 
 -------------------------------------------------------------------------------
+-- Server ID 0x0017: the chat message packet.
+-------------------------------------------------------------------------------
+local function parse_chatmessage(packet)
+    local chatmessage = {
+        type    = struct.unpack('i1', packet, 0x04 + 1),
+        from_gm = struct.unpack('i1', packet, 0x05 + 1),
+        zone    = struct.unpack('i2', packet, 0x06 + 1),
+        sender  = struct.unpack('s',  packet, 0x08 + 1),
+        text    = struct.unpack('s',  packet, 0x18 + 1),
+    }
+
+    return chatmessage
+end
+lin.parse_chatmessage = parse_chatmessage
+
+-------------------------------------------------------------------------------
 -- Server ID 0x0028: the action packet. This is pretty complex packet, and its
 -- fields are used for a lot of differing purposes, depending on the context.
 -- It is a variable-length packet, containing nested arrays of targets and
