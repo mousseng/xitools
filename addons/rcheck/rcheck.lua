@@ -94,8 +94,7 @@ ashita.register_event('command', function(cmd)
     write('Running ready check, tallying results in 20 seconds.')
     send_message('Ready check, please / within 20 seconds!')
 
-    -- Allow rapid tallying, but don't spam the user.
-    ashita.timer.once(5, function()
+    ashita.timer.create(_addon.unique, 1, 19, function()
         if listening and matches(party, ready) then
             write(all_ready)
             send_message(all_ready)
@@ -103,27 +102,6 @@ ashita.register_event('command', function(cmd)
         end
     end)
 
-    -- A stop-in at the halfway point seems fine.
-    ashita.timer.once(10, function()
-        if listening and matches(party, ready) then
-            write(all_ready)
-            send_message(all_ready)
-            listening = false
-        elseif listening then
-            write('Still tallying... ' .. #ready + 1 .. ' of ' .. #party + 1 .. ' ready.')
-        end
-    end)
-
-    -- Allow rapid tallying, but don't spam the user.
-    ashita.timer.once(15, function()
-        if listening and matches(party, ready) then
-            write(all_ready)
-            send_message(all_ready)
-            listening = false
-        end
-    end)
-
-    -- Stop tallying no matter what and report back.
     ashita.timer.once(20, function()
         if listening and matches(party, ready) then
             write(all_ready)
