@@ -99,8 +99,6 @@
             <body>Warlock's Tabard</body>
         </set>
         <set name="+DarkMagic">
-            <main>Dark Staff</main>
-            <sub>Bugard Strap +1</sub>
             <hands>Crimson Fng. Gnt.</hands>
         </set>
         <!-- Primary Stats -->
@@ -134,6 +132,10 @@
         <set name="+Haste">
             <head priority="-1">Walahra Turban</head>
         </set>
+        <set name="+Cure">
+            <main>Light Staff</main>
+            <sub>Bugard Strap +1</sub>
+        </set>
         <set name="+FastCast">
             <head priority="-1">Warlock's Chapeau</head>
             <!-- <body>Duelist's Tabard</body> -->
@@ -154,6 +156,10 @@
         </set>
         <set name="+Wind">
             <main>Wind Staff</main>
+            <sub>Bugard Strap +1</sub>
+        </set>
+        <set name="+Light">
+            <main>Light Staff</main>
             <sub>Bugard Strap +1</sub>
         </set>
     </sets>
@@ -205,6 +211,7 @@
         <elseif ad_skill="HealingMagic">
             <equip set="+MND" />
             <equip set="+Haste" />
+            <equip set="+Cure" />
         </elseif>
         <elseif ad_skill="ElementalMagic">
             <equip set="+Haste" />
@@ -240,6 +247,9 @@
             <elseif ad_element="wind">
                 <equip set="+Wind" />
             </elseif>
+            <elseif ad_element="light">
+                <equip set="+Light" />
+            </elseif>
 
             <equip set="+EnfeeblingMagic" />
         </elseif>
@@ -253,10 +263,13 @@
         <elseif ad_skill="DarkMagic">
             <equip set="+INT" />
             <equip set="+Haste" />
+            <equip set="+Dark" />
             <equip set="+DarkMagic" />
         </elseif>
         <elseif ad_skill="DivineMagic">
             <equip set="+MND" />
+            <equip set="+Haste" />
+            <equip set="+Light" />
         </elseif>
     </midmagic>
 </ashitacast>
