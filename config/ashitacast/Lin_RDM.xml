@@ -15,7 +15,7 @@
 
     <sets>
         <set name="Solo">
-            <main>Enhancing Sword</main>
+            <main>Joyeuse</main>
             <sub>Genbu's Shield</sub>
             <!-- <range></range> -->
             <ammo>Morion Tathlum</ammo>
@@ -51,7 +51,7 @@
             <feet>Errant Pigaches</feet>
         </set>
         <set name="Gathering">
-            <main>Enhancing Sword</main>
+            <main>Joyeuse</main>
             <sub></sub>
             <range></range>
             <ammo></ammo>
