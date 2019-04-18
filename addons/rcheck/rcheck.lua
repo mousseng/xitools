@@ -15,6 +15,7 @@ local OutChatPacket = 0xB5
 local InChatPacket  = 0x17
 
 local all_ready = 'All party members accounted for.'
+local whitelist = { '/', '\\', 'r', 'kronk' }
 
 local listening = false
 local party = { }
@@ -31,6 +32,12 @@ local function get_party()
     end
 
     return array
+end
+
+local function is_whitelisted(text)
+    return table.hasvalue(
+        whitelist,
+        string.lower(string.trim(text)))
 end
 
 local function subtract(lhs, rhs)
@@ -144,8 +151,8 @@ ashita.register_event('incoming_packet', function(id, size, data)
     if id == 0x17 and listening then
         local msg = lin.parse_chatmessage(data)
 
-        if msg.type == PartyMessage then
-        -- and string.trim(msg.text) == '/' then
+        if msg.type == PartyMessage
+        and is_whitelisted(msg.text) then
             table.insert(ready, msg.sender)
         end
     end
