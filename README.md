@@ -2,13 +2,13 @@
 a collection of addons (and maybe some plugins) for Ashita that I made
 
 ## addons
-- `skillchain` tracks active and potential skillchains and magic bursts
 - `logger` logs some simple packet data for diagnostic and dev purposes
 - `me` is a simple hud for displaying the player's basic status
-- `tgt` is a simple hud for display the target's basic status
-- `tracker` is a primitive ability tracker tailored for the author
 - `rcheck` makes it easy to check party/alliance readiness by asking and doing
   the tallying for you
+- `skillchain` tracks active and potential skillchains and magic bursts
+- `tgt` is a simple hud for display the target's basic status
+- `tracker` is a primitive ability tracker tailored for the author
 - `xp` is a shitty exp tracker. you should probably just use watchexp instead
 
 
