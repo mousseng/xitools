@@ -7,6 +7,10 @@ a collection of addons (and maybe some plugins) for Ashita that I made
 - `me` is a simple hud for displaying the player's basic status
 - `tgt` is a simple hud for display the target's basic status
 - `tracker` is a primitive ability tracker tailored for the author
+- `rcheck` makes it easy to check party/alliance readiness by asking and doing
+  the tallying for you
+- `xp` is a shitty exp tracker. you should probably just use watchexp instead
+
 
 ### libs
 - `lin/ffxi` has a bunch of utility-ish functions around ashita/ffxi tools
