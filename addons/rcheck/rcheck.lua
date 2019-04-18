@@ -24,12 +24,10 @@ local function get_party()
     local party = AshitaCore:GetDataManager():GetParty()
     local array = { }
 
-    for i = 1, 17 do
-        if party:GetMemberActive(i) == 0 then
-            return array
+    for i = 0, 17 do
+        if party:GetMemberActive(i) == 1 then
+            table.insert(array, party:GetMemberName(i))
         end
-
-        table.insert(array, party:GetMemberName(i))
     end
 
     return array
@@ -84,7 +82,7 @@ ashita.register_event('command', function(cmd)
 
     listening = true
     party = get_party()
-    ready = { }
+    ready = { party[1] }
 
     write('Running ready check, tallying results in 20 seconds.')
     send_message('Ready check, please / within 20 seconds!')
@@ -127,8 +125,8 @@ ashita.register_event('command', function(cmd)
             local missing = subtract(party, ready)
             local some_ready = string.format(
                 '%i of %i ready. We\'re missing %s.',
-                #ready + 1,
-                #party + 1,
+                #ready,
+                #party,
                 table.concat(missing, ', ')
             )
 
