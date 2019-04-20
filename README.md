@@ -9,7 +9,6 @@ a collection of addons (and maybe some plugins) for Ashita that I made
 - `skillchain` tracks active and potential skillchains and magic bursts
 - `tgt` is a simple hud for display the target's basic status
 - `tracker` is a primitive ability tracker tailored for the author
-- `xp` is a shitty exp tracker. you should probably just use watchexp instead
 
 
 ### libs
