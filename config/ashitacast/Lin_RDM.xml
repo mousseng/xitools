@@ -7,31 +7,7 @@
         <autoupdate>true</autoupdate>
     </settings>
 
-    <variables>
-        <var name="mode">Combat</var>
-        <!-- <var name="mode">Gathering</var> -->
-        <!-- <var name="mode">Solo</var> -->
-    </variables>
-
     <sets>
-        <set name="Solo">
-            <main>Joyeuse</main>
-            <sub>Genbu's Shield</sub>
-            <!-- <range></range> -->
-            <ammo>Morion Tathlum</ammo>
-            <head priority="-1">Walahra Turban</head>
-            <neck>Tiger Stole</neck>
-            <lear>Suppanomimi</lear>
-            <rear>Moldavite Earring</rear>
-            <body>Scorpion Harness</body>
-            <hands>Crimson Fng. Gnt.</hands>
-            <lring>Eremite's Ring</lring>
-            <rring>Eremite's Ring</rring>
-            <back>Red Cape +1</back>
-            <waist>Mohbwa Sash</waist>
-            <legs>Warlock's Tights</legs>
-            <feet>Warlock's Boots</feet>
-        </set>
         <set name="Idle">
             <main>Earth Staff</main>
             <sub>Bugard Strap +1</sub>
@@ -49,24 +25,6 @@
             <waist>Mohbwa Sash</waist>
             <legs>Warlock's Tights</legs>
             <feet>Errant Pigaches</feet>
-        </set>
-        <set name="Gathering">
-            <main>Joyeuse</main>
-            <sub></sub>
-            <range></range>
-            <ammo></ammo>
-            <head priority="-1"></head>
-            <neck></neck>
-            <lear></lear>
-            <rear></rear>
-            <body>Field Tunica</body>
-            <hands>Field Gloves</hands>
-            <lring></lring>
-            <rring></rring>
-            <back></back>
-            <waist></waist>
-            <legs>Field Hose</legs>
-            <feet>Field Boots</feet>
         </set>
         <!-- Resources -->
         <set name="+HP">
@@ -97,6 +55,9 @@
         </set>
         <set name="+EnfeeblingMagic">
             <body>Warlock's Tabard</body>
+        </set>
+        <set name="+EnhancingMagic">
+            <legs>Warlock's Tights</legs>
         </set>
         <set name="+DarkMagic">
             <hands>Crimson Fng. Gnt.</hands>
@@ -169,28 +130,11 @@
         <command delay="1000">/macro set 1</command>
     </init>
 
-    <inputcommands>
-        <cmd input="/rdm">
-            <setvar name="mode" value="Combat" />
-            <command>/macro book 1</command>
-            <command delay="1000">/macro set 1</command>
-            <equip set="Idle" />
-        </cmd>
-        <cmd input="/farm">
-            <setvar name="mode" value="Gathering" />
-            <command>/macro book 20</command>
-            <command delay="1000">/macro set 1</command>
-            <equip set="Gathering" />
-        </cmd>
-    </inputcommands>
-
     <idlegear>
-        <if advanced="$mode=Gathering">
-        </if>
-        <elseif p_status="resting">
+        <if p_status="resting">
             <equip set="+HHP" />
             <equip set="+HMP" />
-        </elseif>
+        </if>
         <else>
             <equip set="Idle" />
         </else>
@@ -205,14 +149,11 @@
     </premagic>
 
     <midmagic>
-        <if advanced="$mode=Gathering">
-            <!-- Disable midmagic in gathering mode -->
-        </if>
-        <elseif ad_skill="HealingMagic">
+        <if ad_skill="HealingMagic">
             <equip set="+MND" />
             <equip set="+Haste" />
             <equip set="+Cure" />
-        </elseif>
+        </if>
         <elseif ad_skill="ElementalMagic">
             <equip set="+Haste" />
             <equip set="+INT" />
