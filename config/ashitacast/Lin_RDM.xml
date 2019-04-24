@@ -128,6 +128,7 @@
     <init>
         <command>/macro book 1</command>
         <command delay="1000">/macro set 1</command>
+        <command delay="1000">/gl blink</command>
     </init>
 
     <idlegear>
