@@ -9,15 +9,13 @@
 
     <sets>
         <set name="Solo">
-            <main lock="true">Joyeuse</main>
-            <sub lock="true">Genbu's Shield</sub>
             <!-- <range></range> -->
             <ammo>Morion Tathlum</ammo>
-            <head priority="-1">Walahra Turban</head>
+            <!-- <head priority="-1">Walahra Turban</head> -->
             <neck>Tiger Stole</neck>
             <lear>Suppanomimi</lear>
             <rear>Moldavite Earring</rear>
-            <body>Warlock's Tabard</body>
+            <body>Vermillion Cloak</body>
             <hands>Crimson Fng. Gnt.</hands>
             <lring>San d'Orian Ring</lring>
             <!-- <rring>Eremite's Ring</rring> -->
@@ -25,6 +23,14 @@
             <waist>Warrior's Belt +1</waist>
             <legs>Warlock's Tights</legs>
             <feet>Warlock's Boots</feet>
+        </set>
+        <set name="Solo-BLM">
+            <main lock="true">Joyeuse</main>
+            <sub lock="true">Genbu's Shield</sub>
+        </set>
+        <set name="Solo-NIN">
+            <main lock="true">Enhancing Sword</main>
+            <sub lock="true">Joyeuse</sub>
         </set>
         <!-- Resources -->
         <set name="+HHP">
@@ -87,10 +93,32 @@
         </if>
         <else>
             <equip set="Solo" />
+
+            <if p_subjob="nin">
+                <equip set="Solo-NIN" />
+            </if>
+            <elseif p_subjob="blm|whm">
+                <equip set="Solo-BLM" />
+            </elseif>
         </else>
     </idlegear>
 
     <jobability></jobability>
+
+    <weaponskill>
+        <if ad_name="Vorpal Blade">
+            <equip set="+STR" />
+            <equip set="+Attack" />
+        </if>
+        <elseif ad_name="Red Lotus Blade">
+            <equip set="+Attack" />
+            <equip set="+INT" />
+        </elseif>
+        <elseif ad_name="Shining Blade">
+            <equip set="+Attack" />
+            <equip set="+MND" />
+        </elseif>
+    </weaponskill>
 
     <premagic>
         <equip set="+FastCast" />
