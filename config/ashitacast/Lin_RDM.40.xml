@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ashitacast>
+    <settings>
+        <buffupdate>false</buffupdate>
+        <statusupdate>true</statusupdate>
+        <hpupdate>false</hpupdate>
+        <autoupdate>true</autoupdate>
+    </settings>
+
+    <sets>
+        <set name="Idle">
+            <main>Chestnut Wand</main>
+            <sub>Shell Shield</sub>
+            <!-- <range>none</range> -->
+            <ammo>Morion Tathlum</ammo>
+            <head priority="-1">Horn Hairpin +1</head>
+            <neck>Black Neckerchief</neck>
+            <lear>Cunning Earring</lear>
+            <body>Savage Separates</body>
+            <hands>Savage Gauntlets</hands>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+            <back>Black Cape</back>
+            <waist>Mohbwa Sash</waist>
+            <legs>Savage Loincloth</legs>
+            <feet>Mountain Gaiters</feet>
+        </set>
+        <!-- Primary Stats -->
+        <set name="+INT">
+            <neck>Black Neckerchief</neck>
+            <lring>Eremite's Ring</lring>
+            <rring>Eremite's Ring</rring>
+        </set>
+        <set name="+MND">
+            <neck>Justice Badge</neck>
+            <hands>Savage Gauntlets</hands>
+            <lring>Saintly Ring</lring>
+            <rring>Saintly Ring</rring>
+            <waist>Friar's Rope</waist>
+        </set>
+    </sets>
+
+    <init>
+        <command>/macro book 1</command>
+        <command delay="1000">/macro set 1</command>
+        <command delay="1000">/gl blink</command>
+    </init>
+
+    <idlegear>
+        <equip set="Idle" />
+    </idlegear>
+
+    <midmagic>
+        <if ad_skill="HealingMagic">
+            <equip set="+MND" />
+        </if>
+        <elseif ad_skill="ElementalMagic">
+            <equip set="+INT" />
+        </elseif>
+        <elseif ad_skill="EnfeeblingMagic">
+            <if ad_name="Slow*|Paralyze*|Silence*">
+                <equip set="+MND" />
+            </if>
+            <elseif ad_name="Poison*|Sleep*|Blind*|Bind*|Gravity">
+                <equip set="+INT" />
+            </elseif>
+        </elseif>
+        <elseif ad_skill="DarkMagic">
+            <equip set="+INT" />
+        </elseif>
+        <elseif ad_skill="DivineMagic">
+            <equip set="+MND" />
+        </elseif>
+    </midmagic>
+</ashitacast>
