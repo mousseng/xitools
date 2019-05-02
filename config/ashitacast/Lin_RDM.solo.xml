@@ -11,25 +11,25 @@
         <set name="Solo">
             <!-- <range></range> -->
             <ammo>Morion Tathlum</ammo>
-            <!-- <head priority="-1">Walahra Turban</head> -->
+            <head priority="-1">Walahra Turban</head>
             <neck>Tiger Stole</neck>
             <lear>Suppanomimi</lear>
             <rear>Moldavite Earring</rear>
-            <body>Vermillion Cloak</body>
-            <hands>Crimson Fng. Gnt.</hands>
+            <body>Scorpion Harness</body>
+            <hands>Warlock's Gloves</hands>
             <lring>San d'Orian Ring</lring>
             <!-- <rring>Eremite's Ring</rring> -->
             <back>Red Cape +1</back>
-            <waist>Warrior's Belt +1</waist>
+            <waist>Life Belt</waist>
             <legs>Warlock's Tights</legs>
-            <feet>Warlock's Boots</feet>
+            <feet>Crimson Greaves</feet>
         </set>
         <set name="Solo-BLM">
             <main lock="true">Joyeuse</main>
             <sub lock="true">Genbu's Shield</sub>
         </set>
         <set name="Solo-NIN">
-            <main lock="true">Enhancing Sword</main>
+            <main lock="true">Sapara of Trials</main>
             <sub lock="true">Joyeuse</sub>
         </set>
         <!-- Resources -->
@@ -47,6 +47,7 @@
             <lring>Eremite's Ring</lring>
             <rring>Eremite's Ring</rring>
             <waist>Penitent's Rope</waist>
+            <feet>Mountain Gaiters</feet>
         </set>
         <set name="+MND">
             <neck>Justice Badge</neck>
@@ -69,10 +70,6 @@
         <set name="+MAB">
             <rear>Moldavite Earring</rear>
         </set>
-        <set name="-Enmity">
-            <body>Errant Hpl.</body>
-            <waist>Penitent's Rope</waist>
-        </set>
         <set name="+FastCast">
             <head>Warlock's Chapeau</head>
             <!-- <body>Duelist's Tabard</body> -->
@@ -81,7 +78,7 @@
     </sets>
 
     <init>
-        <command>/macro book 1</command>
+        <command>/macro book 2</command>
         <command delay="1000">/macro set 1</command>
         <command delay="1000">/gl blink</command>
     </init>
@@ -97,9 +94,9 @@
             <if p_subjob="nin">
                 <equip set="Solo-NIN" />
             </if>
-            <elseif p_subjob="blm|whm">
+            <else>
                 <equip set="Solo-BLM" />
-            </elseif>
+            </else>
         </else>
     </idlegear>
 
