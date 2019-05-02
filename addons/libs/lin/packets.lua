@@ -131,43 +131,66 @@ lin.parse_basic = parse_basic
 -------------------------------------------------------------------------------
 local function parse_charstats(packet)
     local charstats = {
-        max_hp      = struct.unpack('i4', packet, 0x04 + 1),
-        max_mp      = struct.unpack('i4', packet, 0x08 + 1),
+        max_hp      = struct.unpack('I4', packet, 0x04 + 1),
+        max_mp      = struct.unpack('I4', packet, 0x08 + 1),
 
-        main_job    = struct.unpack('i1', packet, 0x0C + 1),
-        main_level  = struct.unpack('i1', packet, 0x0D + 1),
-        sub_job     = struct.unpack('i1', packet, 0x0E + 1),
-        sub_level   = struct.unpack('i1', packet, 0x0F + 1),
-        current_exp = struct.unpack('i2', packet, 0x10 + 1),
-        needed_exp  = struct.unpack('i2', packet, 0x12 + 1),
+        main_job    = struct.unpack('I1', packet, 0x0C + 1),
+        main_level  = struct.unpack('I1', packet, 0x0D + 1),
+        sub_job     = struct.unpack('I1', packet, 0x0E + 1),
+        sub_level   = struct.unpack('I1', packet, 0x0F + 1),
+        current_exp = struct.unpack('I2', packet, 0x10 + 1),
+        needed_exp  = struct.unpack('I2', packet, 0x12 + 1),
 
-        str = nil,
-        dex = nil,
-        vit = nil,
-        agi = nil,
-        int = nil,
-        mnd = nil,
-        chr = nil,
+        base_str = struct.unpack('I2', packet, 0x14 + 1),
+        base_dex = struct.unpack('I2', packet, 0x16 + 1),
+        base_vit = struct.unpack('I2', packet, 0x18 + 1),
+        base_agi = struct.unpack('I2', packet, 0x1A + 1),
+        base_int = struct.unpack('I2', packet, 0x1C + 1),
+        base_mnd = struct.unpack('I2', packet, 0x1E + 1),
+        base_chr = struct.unpack('I2', packet, 0x20 + 1),
 
-        atk = nil,
-        def = nil,
+        bonus_str = struct.unpack('i2', packet, 0x22 + 1),
+        bonus_dex = struct.unpack('i2', packet, 0x24 + 1),
+        bonus_vit = struct.unpack('i2', packet, 0x26 + 1),
+        bonus_agi = struct.unpack('i2', packet, 0x28 + 1),
+        bonus_int = struct.unpack('i2', packet, 0x2A + 1),
+        bonus_mnd = struct.unpack('i2', packet, 0x2C + 1),
+        bonus_chr = struct.unpack('i2', packet, 0x2E + 1),
 
-        fireres = nil,
-        iceres = nil,
-        windres = nil,
-        earthres = nil,
-        thunderres = nil,
-        waterres = nil,
-        lightres = nil,
-        darkres = nil,
+        atk = struct.unpack('I2', packet, 0x30 + 1),
+        def = struct.unpack('I2', packet, 0x32 + 1),
 
-        title = nil,
-        rank = nil,
-        rankpoints = nil,
-        homepoint = nil,
-        nation = nil
+        res_fire    = struct.unpack('i2', packet, 0x34 + 1),
+        res_ice     = struct.unpack('i2', packet, 0x36 + 1),
+        res_wind    = struct.unpack('i2', packet, 0x38 + 1),
+        res_earth   = struct.unpack('i2', packet, 0x3A + 1),
+        res_thunder = struct.unpack('i2', packet, 0x3C + 1),
+        res_water   = struct.unpack('i2', packet, 0x3E + 1),
+        res_light   = struct.unpack('i2', packet, 0x40 + 1),
+        res_dark    = struct.unpack('i2', packet, 0x42 + 1),
+
+        title = struct.unpack('I2', packet, 0x44 + 1),
+        rank = struct.unpack('I2', packet, 0x46 + 1),
+        rankpoints = struct.unpack('I2', packet, 0x48 + 1),
+        homepoint = struct.unpack('I1', packet, 0x4A + 1),
+        nation = struct.unpack('I1', packet, 0x50 + 1)
     }
 
     return charstats
 end
 lin.parse_charstats = parse_charstats
+
+-------------------------------------------------------------------------------
+-- Server ID 0x0063: the menu merit packet. Note that this is only for the
+-- first packet in the sequence (it's 3 packets total), because it's the only
+-- one I care about for now.
+-------------------------------------------------------------------------------
+local function parse_menumerit(packet)
+    local menumerit = {
+        limit_points = struct.unpack('I2', packet, 0x08 + 1),
+        merit_points = struct.unpack('I1', packet, 0x0A + 1),
+    }
+
+    return menumerit
+end
+lin.parse_menumerit = parse_menumerit
