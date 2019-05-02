@@ -12,7 +12,7 @@
             <main>Chestnut Wand</main>
             <!-- <sub>none</sub> -->
             <!-- <range>none</range> -->
-            <!-- <ammo>none</ammo> -->
+            <ammo>Morion Tathlum</ammo>
             <head>Seer's Crown +1</head>
             <neck>Black Neckerchief</neck>
             <lear>Cunning Earring</lear>
@@ -24,7 +24,7 @@
             <back>Black Cape</back>
             <waist>Mohbwa Sash</waist>
             <legs>Seer's Slacks +1</legs>
-            <feet>Seer's Pumps</feet>
+            <feet>Mountain Gaiters</feet>
         </set>
         <set name="Resting">
             <main>Gelong Staff</main>
@@ -36,12 +36,14 @@
             <rear>Moldavite Earring</rear>
             <lring>Eremite's Ring</lring>
             <rring>Eremite's Ring</rring>
+            <feet>Mountain Gaiters</feet>
         </set>
         <set name="+MND">
             <main>Chestnut Wand</main>
             <neck>Justice Badge</neck>
             <lring>Saintly Ring</lring>
             <rring>Saintly Ring</rring>
+            <feet>Seer's Pumps</feet>
         </set>
     </sets>
 
