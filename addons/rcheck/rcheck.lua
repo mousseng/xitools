@@ -8,6 +8,7 @@ _addon.version = '1.0.0'
 _addon.unique  = '__rcheck_addon'
 
 require 'common'
+require 'core.set'
 require 'lin.packets'
 
 local PartyMessage = 4
@@ -15,55 +16,34 @@ local OutChatPacket = 0xB5
 local InChatPacket  = 0x17
 
 local all_ready = 'All party members accounted for.'
-local whitelist = { '/', '\\', 'r', 'kronk' }
+local whitelist = set.from_array({ '/', '\\', 'r', 'kronk' })
 
 local listening = false
-local party = { }
-local ready = { }
+local party = set.new()
+local ready = set.new()
 
 local function get_party()
-    local party = AshitaCore:GetDataManager():GetParty()
-    local array = { }
+    local data = AshitaCore:GetDataManager():GetParty()
+    local party = set.new()
 
     for i = 0, 17 do
-        if party:GetMemberActive(i) == 1 then
-            table.insert(array, party:GetMemberName(i))
+        if data:GetMemberActive(i) == 1 then
+            party:add(data:GetMemberName(i))
         end
     end
 
-    return array
+    return party
 end
 
-local function is_whitelisted(text)
-    return table.hasvalue(
-        whitelist,
-        string.lower(string.trim(text)))
-end
+local function get_player()
+    local result = set.new()
+    local player = GetPlayerEntity()
 
-local function subtract(lhs, rhs)
-    local result = { }
-
-    for idx, val in ipairs(lhs) do
-        if not table.hasvalue(rhs, val) then
-            table.insert(result, val)
-        end
+    if player ~= nil and player.Name ~= nil then
+        result:add(player.Name)
     end
 
     return result
-end
-
-local function matches(lhs, rhs)
-    if #lhs ~= #rhs then
-        return false
-    end
-
-    for idx, val in ipairs(lhs) do
-        if not table.hasvalue(rhs, val) then
-            return false
-        end
-    end
-
-    return true
 end
 
 local function write(text)
@@ -89,30 +69,30 @@ ashita.register_event('command', function(cmd)
 
     listening = true
     party = get_party()
-    ready = { party[1] }
+    ready = get_player()
 
-    write('Running ready check, tallying results in 20 seconds.')
-    send_message('Ready check, please / within 20 seconds!')
+    write('Running ready check, tallying results in 30 seconds. <call21>')
+    send_message('Ready check, please / within 30 seconds! <call21>')
 
-    ashita.timer.create(_addon.unique, 1, 19, function()
-        if listening and matches(party, ready) then
+    ashita.timer.create(_addon.unique, 1, 29, function()
+        if listening and set.equals(ready, party) then
             write(all_ready)
             send_message(all_ready)
             listening = false
         end
     end)
 
-    ashita.timer.once(20, function()
-        if listening and matches(party, ready) then
+    ashita.timer.once(30, function()
+        if listening and set.equals(ready, party) then
             write(all_ready)
             send_message(all_ready)
         elseif listening then
-            local missing = subtract(party, ready)
+            local missing = ready:difference(party)
             local some_ready = string.format(
                 '%i of %i ready. We\'re missing %s.',
-                #ready,
-                #party,
-                table.concat(missing, ', ')
+                ready:count(),
+                party:count(),
+                table.concat(missing:to_array(), ', ')
             )
 
             write(some_ready)
@@ -130,8 +110,9 @@ ashita.register_event('incoming_packet', function(id, size, data)
         local msg = lin.parse_chatmessage(data)
 
         if msg.type == PartyMessage
-        and is_whitelisted(msg.text) then
-            table.insert(ready, msg.sender)
+        and whitelist:contains(string.trim(msg.text))
+        and not ready:contains(string.trim(msg.sender)) then
+            ready:add(msg.sender)
         end
     end
 
