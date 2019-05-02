@@ -4,7 +4,7 @@
 
 _addon.author  = 'lin'
 _addon.name    = 'rcheck'
-_addon.version = '1.0.0'
+_addon.version = '2.0.0'
 _addon.unique  = '__rcheck_addon'
 
 require 'common'
@@ -13,7 +13,7 @@ require 'lin.packets'
 
 local PartyMessage = 4
 local OutChatPacket = 0xB5
-local InChatPacket  = 0x17
+local IncChatPacket = 0x17
 
 local all_ready = 'All party members accounted for.'
 local whitelist = set.from_array({ '/', '\\', 'r', 'kronk' })
@@ -46,18 +46,28 @@ local function get_player()
     return result
 end
 
-local function write(text)
-    -- Gnarly, but the colors help.
-    print(string.format('\31\200[\31\05rcheck\31\200] \31\130%s', text))
-end
-
 local function send_message(text)
-    local data = struct.pack('xxxxBBsx', 4, 0, text):totable()
+    local player = GetPlayerEntity()
+    local zone = AshitaCore:GetDataManager():GetParty():GetMemberZone(0)
 
-    data[1] = OutChatPacket
-    data[2] = #text + 2
+    if player == nil or player.Name == nil or zone == nil then
+        -- shit's broke, bail before you do something stupid
+        return
+    end
 
-    AddOutgoingPacket(OutChatPacket, data)
+    local out = struct.pack('xxxxBBsx', 4, 0, text):totable()
+    out[1] = OutChatPacket
+    out[2] = #text + 2
+
+    AddOutgoingPacket(OutChatPacket, out)
+
+    -- name string must be padded out with null bytes to a length of 15
+    local name = string.rpad(player.Name, string.char(0), 15)
+    local inc = struct.pack('xxxxBBhssx', 4, 0, zone, name, text):totable()
+    inc[1] = IncChatPacket
+    inc[2] = #text + 20 -- 2 uchars, 1 ushort, 16-byte sender
+
+    AddIncomingPacket(IncChatPacket, inc)
 end
 
 ashita.register_event('command', function(cmd)
@@ -71,12 +81,10 @@ ashita.register_event('command', function(cmd)
     party = get_party()
     ready = get_player()
 
-    write('Running ready check, tallying results in 30 seconds. <call21>')
     send_message('Ready check, please / within 30 seconds! <call21>')
 
     ashita.timer.create(_addon.unique, 1, 29, function()
         if listening and set.equals(ready, party) then
-            write(all_ready)
             send_message(all_ready)
             listening = false
         end
@@ -84,7 +92,6 @@ ashita.register_event('command', function(cmd)
 
     ashita.timer.once(30, function()
         if listening and set.equals(ready, party) then
-            write(all_ready)
             send_message(all_ready)
         elseif listening then
             local missing = ready:difference(party)
@@ -95,7 +102,6 @@ ashita.register_event('command', function(cmd)
                 table.concat(missing:to_array(), ', ')
             )
 
-            write(some_ready)
             send_message(some_ready)
         end
 
