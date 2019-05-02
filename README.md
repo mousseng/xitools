@@ -12,6 +12,8 @@ a collection of addons (and maybe some plugins) for Ashita that I made
 
 
 ### libs
+- `core/` libraries are intended to be fundamental building blocks - common data
+  structures and algorithms
 - `lin/ffxi` has a bunch of utility-ish functions around ashita/ffxi tools
 - `lin/packets` provides functions to turn binary packet data into usable lua
   tables

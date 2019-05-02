@@ -1,22 +1,21 @@
-# skillchain
-Tracks potential and active skillchains within your party.
+# tgt
+Shows helpful information about your target.
 
 # installation
 The easiest way is to just copy the entire `xitools/addons/` folder to your
 Ashita installation directory (to be merged with the existing `Ashita/addons`
 directory). However, all that is needed for this particular addon is:
-  - `xitools/addons/skillchain/`
+  - `xitools/addons/tgt/`
   - `xitools/addons/libs/lin/text.lua`
   - `xitools/addons/libs/lin/packets.lua`
 
+It plays quite nicely with `me` however, so consider installing that as well.
+
 # usage
-`/addon load skillchain`
+`/addon load tgt`
 
 # known issues
-- no blue mage support
-- some job abilities are treated as weaponskills by the server's packet handler
-  - dragoon's Jump and High Jump are confirmed instances of this
-  - Steal as well
+- debuff tracking doesn't really work when too far from the target
 
 # potential issues
-- can puppetmasters' mammets weaponskill?
+- no unknown issues on the horizon
