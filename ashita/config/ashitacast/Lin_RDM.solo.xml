@@ -30,7 +30,7 @@
             <rring></rring>
             <back>Red Cape +1</back>
             <waist>Life Belt</waist>
-            <legs>Warlock's Tights</legs>
+            <legs>Duelist's Tights</legs>
             <feet>Crimson Greaves</feet>
         </set>
         <!-- Resources -->
@@ -71,8 +71,15 @@
             <rear>Intruder Earring</rear>
             <hands>Warlock's Gloves</hands>
             <waist>Crimson Greaves</waist>
+            <legs>Duelist's Tights</legs>
         </set>
         <!-- Skills -->
+        <set name="+ElementalMagic">
+            <legs>Duelist's Tights</legs>
+        </set>
+        <set name="+HealingMagic">
+            <legs>Warlock's Tights</legs>
+        </set>
         <set name="+EnfeeblingMagic">
             <body>Warlock's Tabard</body>
         </set>
@@ -136,6 +143,7 @@
         <elseif ad_name="Burning Blade|Red Lotus Blade">
             <equip set="+Accuracy" />
             <equip set="+Attack" />
+            <equip set="+MAB" />
             <equip set="+INT" />
             <equip set="+STR" />
         </elseif>
@@ -147,6 +155,7 @@
         <elseif ad_name="Shining Blade|Seraph Blade">
             <equip set="+Accuracy" />
             <equip set="+Attack" />
+            <equip set="+MAB" />
             <equip set="+MND" />
             <equip set="+STR" />
         </elseif>
@@ -159,6 +168,7 @@
             <equip set="+Accuracy" />
         </elseif>
         <elseif ad_name="Savage Blade">
+            <equip set="+MAB" />
             <equip set="+MND" />
             <equip set="+STR" />
             <equip set="+Attack" />
@@ -172,6 +182,7 @@
 
     <midmagic>
         <if ad_skill="HealingMagic">
+            <equip set="+HealingMagic" />
             <equip set="+MND" />
             <equip set="+Haste" />
         </if>
@@ -179,6 +190,7 @@
             <equip set="+Haste" />
             <equip set="+INT" />
             <equip set="+MAB" />
+            <equip set="+ElementalMagic" />
 
             <if ad_mppaftercast="<51">
                 <equip><neck>Uggalepih Pendant</neck></equip>

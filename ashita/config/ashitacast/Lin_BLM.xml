@@ -9,7 +9,7 @@
 
     <sets>
         <set name="Standing">
-            <main>Chestnut Wand</main>
+            <main>Earth Staff</main>
             <!-- <sub>none</sub> -->
             <!-- <range>none</range> -->
             <ammo>Morion Tathlum</ammo>
@@ -21,13 +21,14 @@
             <hands>Seer's Mitts +1</hands>
             <lring>Eremite's Ring</lring>
             <rring>Eremite's Ring</rring>
-            <back>Black Cape</back>
+            <back>Red Cape +1</back>
             <waist>Mohbwa Sash</waist>
             <legs>Seer's Slacks +1</legs>
             <feet>Mountain Gaiters</feet>
         </set>
         <set name="Resting">
-            <main>Gelong Staff</main>
+            <main>Dark Staff</main>
+            <waist>Mohbwa Sash</waist>
         </set>
         <set name="+INT">
             <main>Chestnut Wand</main>
@@ -44,6 +45,27 @@
             <lring>Saintly Ring</lring>
             <rring>Saintly Ring</rring>
             <feet>Seer's Pumps</feet>
+        </set>
+        <!-- Elemental Affinities -->
+        <set name="+Dark">
+            <main>Dark Staff</main>
+            <sub>Bugard Strap +1</sub>
+        </set>
+        <set name="+Ice">
+            <main>Ice Staff</main>
+            <sub>Bugard Strap +1</sub>
+        </set>
+        <set name="+Earth">
+            <main>Earth Staff</main>
+            <sub>Bugard Strap +1</sub>
+        </set>
+        <set name="+Wind">
+            <main>Wind Staff</main>
+            <sub>Bugard Strap +1</sub>
+        </set>
+        <set name="+Light">
+            <main>Light Staff</main>
+            <sub>Bugard Strap +1</sub>
         </set>
     </sets>
 
@@ -76,6 +98,26 @@
     <midmagic>
         <if ad_skill="ElementalMagic">
             <equip set="+INT" />
+
+            <if ad_element="dark">
+                <equip set="+Dark" />
+            </if>
+            <elseif ad_element="ice">
+                <equip set="+Ice" />
+            </elseif>
+            <elseif ad_element="earth">
+                <equip set="+Earth" />
+            </elseif>
+            <elseif ad_element="wind">
+                <equip set="+Wind" />
+            </elseif>
+            <elseif ad_element="light">
+                <equip set="+Light" />
+            </elseif>
+            <else>
+                <!-- Default to Ice for eles I don't have -->
+                <equip set="+Ice" />
+            </else>
         </if>
     </midmagic>
 </ashitacast>

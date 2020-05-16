@@ -1,0 +1,79 @@
+RDM Gear Wishlist
+=================
+
+Support Gear
+------------
+- Ranged
+    - Lamian Kaman
+        - MP+10
+        - MDB+1
+
+Solo Gear
+---------
+- Swords
+    - Martial Anelace
+        - ENM (Brothers)
+        - 39 DMG / 240 DEL
+        - TP Bonus
+    - Mensur Epee
+        - ISNM (Happy Caster)
+        - 47 DMG / 240 DEL
+    - Guespiere
+        - BCNM (Early Bird Catches the Wyrm)
+        - BCNM (Horns of War)
+        - 38 DMG / 226 DEL
+        - STR+1
+        - MND+6
+        - Addtl: 10% DEF-
+- Daggers
+    - Martial Knife
+        - ENM (Bionic Bug)
+        - 27 DMG / 186 DEL
+        - TP Bonus
+    - Blau Dolch
+        - ENM (Shall We Dance)
+        - ENM (Totentanz)
+        - 33 DMG / 178 DEL
+        - Attack+16
+        - Accuracy+5
+    - Misericorde
+        - 27 DMG / 183 DEL
+        - DEX+2
+        - VIT+2
+        - MND+2
+- Ranged
+    - Lightning Bow
+        - NM (Ose)
+        - DEX+2
+    - Ifrit's Bow
+        - BCNM (Carbuncle Prime)
+        - STR+3
+- Body
+    - Assault Jerkin
+        - NM (Ose)
+        - Attack+18
+        - Accuracy+3
+- Gloves
+    - Ogre Gloves
+        - STR+6
+    - Pallas's Bracelets
+        - NM (Pallas)
+        - STR+9
+    - Tarasque Mitts
+        - Attack+10
+    - Dusk Gloves
+        - Haste+3%
+        - Attack+5
+    - Wise Gloves
+        - MND+4
+        - Accuracy+3
+- Legs
+    - Dusk Trousers
+        - Attack+14
+- Feet
+    - Rutter Sabatons
+        - STR+3
+        - Attack+5
+    - Ogre Ledelsens
+        - MND+3
+        - Attack+10

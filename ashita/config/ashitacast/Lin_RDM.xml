@@ -23,7 +23,7 @@
             <rring>Eremite's Ring</rring>
             <back>Red Cape +1</back>
             <waist>Mohbwa Sash</waist>
-            <legs>Warlock's Tights</legs>
+            <legs>Duelist's Tights</legs>
             <feet>Errant Pigaches</feet>
         </set>
         <!-- Resources -->
@@ -52,6 +52,10 @@
         <set name="+ElementalMagic">
             <main>Ice Staff</main>
             <sub>Bugard Strap +1</sub>
+            <legs>Duelist's Tights</legs>
+        </set>
+        <set name="+HealingMagic">
+            <legs>Warlock's Tights</legs>
         </set>
         <set name="+EnfeeblingMagic">
             <body>Warlock's Tabard</body>
@@ -80,6 +84,7 @@
             <lring>Saintly Ring</lring>
             <rring>Saintly Ring</rring>
             <waist>Penitent's Rope</waist>
+            <legs>Warlock's Tights</legs>
         </set>
         <!-- Secondary Stats -->
         <set name="+MAB">
@@ -151,6 +156,7 @@
 
     <midmagic>
         <if ad_skill="HealingMagic">
+            <equip set="+HealingMagic" />
             <equip set="+MND" />
             <equip set="+Haste" />
             <equip set="+Cure" />

@@ -181,6 +181,63 @@ end
 lin.parse_charstats = parse_charstats
 
 -------------------------------------------------------------------------------
+-- Server ID 0x0062: the character skills packet.
+-------------------------------------------------------------------------------
+local function parse_charskills(packet)
+    return {
+        -- combat skills
+        h2h = struct.unpack('I2', packet, 0x81 + 1),
+        dagger = struct.unpack('I2', packet, 0x83 + 1),
+        sword = struct.unpack('I2', packet, 0x85 + 1),
+        gsword = struct.unpack('I2', packet, 0x87 + 1),
+        axe = struct.unpack('I2', packet, 0x89 + 1),
+        gaxe = struct.unpack('I2', packet, 0x8B + 1),
+        scythe = struct.unpack('I2', packet, 0x8D + 1),
+        polearm = struct.unpack('I2', packet, 0x8F + 1),
+        katana = struct.unpack('I2', packet, 0x91 + 1),
+        gkatana = struct.unpack('I2', packet, 0x93 + 1),
+        club = struct.unpack('I2', packet, 0x95 + 1),
+        staff = struct.unpack('I2', packet, 0x97 + 1),
+        -- reserved x9
+        automaton_melee = struct.unpack('I2', packet, 0xB1 + 1),
+        automaton_ranged = struct.unpack('I2', packet, 0xB3 + 1),
+        automaton_magic = struct.unpack('I2', packet, 0xB5 + 1),
+        archery = struct.unpack('I2', packet, 0xB7 + 1),
+        marksmanship = struct.unpack('I2', packet, 0xA1 + 1),
+        throwing = struct.unpack('I2', packet, 0xA3 + 1),
+        guarding = struct.unpack('I2', packet, 0xA5 + 1),
+        evasion = struct.unpack('I2', packet, 0xA7 + 1),
+        shield = struct.unpack('I2', packet, 0xA9 + 1),
+        parrying = struct.unpack('I2', packet, 0xAB + 1),
+        divine = struct.unpack('I2', packet, 0xAD + 1),
+        healing = struct.unpack('I2', packet, 0xAF + 1),
+        enhancing = struct.unpack('I2', packet, 0xB1 + 1),
+        enfeebling = struct.unpack('I2', packet, 0xB3 + 1),
+        elemental = struct.unpack('I2', packet, 0xB5 + 1),
+        dark = struct.unpack('I2', packet, 0xB7 + 1),
+        summoning = struct.unpack('I2', packet, 0xB9 + 1),
+        ninjutsu = struct.unpack('I2', packet, 0xBB + 1),
+        singing = struct.unpack('I2', packet, 0xBD + 1),
+        string = struct.unpack('I2', packet, 0xBF + 1),
+        wind = struct.unpack('I2', packet, 0xC1 + 1),
+        blue = struct.unpack('I2', packet, 0xC3 + 1),
+        -- crafting skills
+        fishing = nil,
+        woodworking = nil,
+        smithing = nil,
+        goldsmithing = nil,
+        clothcraft = nil,
+        leathercraft = nil,
+        bonecraft = nil,
+        alchemy = nil,
+        cooking = nil,
+        synergy = nil,
+        riding = nil,
+    }
+end
+lin.parse_charskills = parse_charskills
+
+-------------------------------------------------------------------------------
 -- Server ID 0x0063: the menu merit packet. Note that this is only for the
 -- first packet in the sequence (it's 3 packets total), because it's the only
 -- one I care about for now.
