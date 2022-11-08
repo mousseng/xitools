@@ -1,15 +1,15 @@
 # xitools
-a collection of addons (and maybe some plugins) for Ashita that I made
+a collection of addons (and maybe some plugins) for Ashita that I made.
+the ones in `ashita-v3` are no longer maintained since I'm using v4 now. sorry.
 
 ## addons
-- `logger` logs some simple packet data for diagnostic and dev purposes
 - `me` is a simple hud for displaying the player's basic status
+- `tgt` is a simple hud for display the target's basic status
 - `rcheck` makes it easy to check party/alliance readiness by asking and doing
   the tallying for you
 - `skillchain` tracks active and potential skillchains and magic bursts
-- `tgt` is a simple hud for display the target's basic status
 - `tracker` is a primitive ability tracker tailored for the author
-
+- `logger` logs some simple packet data for diagnostic and dev purposes
 
 ### libs
 - `core/` libraries are intended to be fundamental building blocks - common data
@@ -21,6 +21,14 @@ a collection of addons (and maybe some plugins) for Ashita that I made
   lazy to check the ashita docs for this
 - `lin/text` is where all of the stuff related to text-display goes, like
   formatting numbers, colorizing stuff, and making percent bars
+
+### v4 porting status
+- [x] `me`
+- [x] `tgt`
+- [ ] `rcheck`
+- [ ] `skillchain`
+- [ ] `tracker`
+- [ ] `logger`
 
 ## config
 these are my ashitacast configs. perhaps you'll find them useful; mostly i just
