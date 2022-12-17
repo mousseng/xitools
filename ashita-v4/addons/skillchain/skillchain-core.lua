@@ -1,13 +1,17 @@
-require 'common'
+local BloodPacts = require('data.bloodpacts')
+local ChainType = require('data.chaintype')
+local Elements = require('data.elements')
+local MagicBursts = require('data.magicbursts')
+local NonChainingSkills = require('data.nonchainingskills')
+local Resonances = require('data.resonances')
+local Weaponskills = require('data.weaponskills')
 
-local Weaponskills = require('weaponskills')
-local BloodPacts   = require('bloodpacts')
-local MagicBursts  = require('magicbursts')
+local core = { }
 
 -- Fetch an entity by its server ID. Helpful when looking up information from
 -- packets, which tend to not include the entity index (since that's a client
 -- thing only). Returns nil if no matching entity is found.
-local function GetEntityByServerId(id)
+local function getEntityByServerId(id)
     -- The entity array is 2304 items long
     for x = 0, 2303 do
         local e = GetEntity(x)
@@ -25,7 +29,7 @@ end
 
 -- Determines if a particular entity (given as a server ID) belongs to the
 -- player's alliance.
-local function is_server_id_in_party(id)
+local function isServerIdInParty(id)
     local party = AshitaCore:GetMemoryManager():GetParty()
 
     for i = 0, 17 do
@@ -44,7 +48,7 @@ end
 
 -- Determines if a particular pet (given as a server ID) belongs to the
 -- player's alliance.
-local function is_pet_server_id_in_party(id)
+local function isPetServerIdInParty(id)
     local party = AshitaCore:GetMemoryManager():GetParty()
 
     for i = 0, 17 do
@@ -65,20 +69,12 @@ local function is_pet_server_id_in_party(id)
     return false
 end
 
--- Does what it says on the tin: creates or resets the timer for a particular
--- skillchain. When the timer expires, the skillchain is removed from memory.
-local function create_or_reset_timer(id, mobs)
-    -- TODO: ah fuck, timers
-    ashita.timer.remove_timer(id)
-    ashita.timer.create(id, 16, 1, function() mobs[id] = nil end)
-end
-
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on
 -- weaponskills.
-function handle_weaponskill(packet, mobs)
+function core.HandleWeaponskill(packet, mobs)
     -- Don't care about skillchains we can't participate in
-    if not is_server_id_in_party(packet.actor_id) then
+    if not isServerIdInParty(packet.actor_id) then
         return
     end
 
@@ -90,7 +86,7 @@ function handle_weaponskill(packet, mobs)
 
         -- Set up our display data
         local mob = mobs[target.id] or {
-            name = GetEntityByServerId(target.id).Name,
+            name = getEntityByServerId(target.id).Name,
             time = nil,
             chain = { },
         }
@@ -131,9 +127,6 @@ function handle_weaponskill(packet, mobs)
                     chain_element.type = ChainType.Unknown
                 end
 
-                -- Drop the information after the window is definitely
-                -- closed and there's been no activity
-                create_or_reset_timer(target.id, mobs)
                 table.insert(mob.chain, chain_element)
             end
         end
@@ -146,9 +139,9 @@ end
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on pet
 -- abilities.
-function handle_petability(packet, mobs)
+function core.HandlePetAbility(packet, mobs)
     -- Don't care about skillchains we can't participate in
-    if not is_pet_server_id_in_party(packet.actor_id)
+    if not isPetServerIdInParty(packet.actor_id)
     or BloodPacts[packet.param] == nil then
         return
     end
@@ -159,7 +152,7 @@ function handle_petability(packet, mobs)
 
         -- Set up our display data
         local mob = mobs[target.id] or {
-            name = GetEntityByServerId(packet.actor_id).Name,
+            name = getEntityByServerId(packet.actor_id).Name,
             time = nil,
             chain = { },
         }
@@ -198,9 +191,6 @@ function handle_petability(packet, mobs)
                 chain_element.type = ChainType.Unknown
             end
 
-            -- Drop the information after the window is definitely
-            -- closed and there's been no activity
-            create_or_reset_timer(target.id, mobs)
             table.insert(mob.chain, chain_element)
         end
 
@@ -212,9 +202,9 @@ end
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on
 -- magic abilities; only handles magic bursts currently, not BLU chains.
-function handle_magicability(packet, mobs)
+function core.HandleMagicAbility(packet, mobs)
     -- Don't care about skillchains we can't participate in
-    if not is_server_id_in_party(packet.actor_id)
+    if not isServerIdInParty(packet.actor_id)
     or MagicBursts[packet.param] == nil then
         return
     end
@@ -225,7 +215,7 @@ function handle_magicability(packet, mobs)
 
         -- Set up our display data
         local mob = mobs[target.id] or {
-            name = GetEntityByServerId(target.id).Name,
+            name = getEntityByServerId(target.id).Name,
             time = nil,
             chain = { },
         }
@@ -244,9 +234,6 @@ function handle_magicability(packet, mobs)
                     resonance = nil,
                 }
 
-                -- Drop the information after the window is definitely
-                -- closed and there's been no activity
-                create_or_reset_timer(target.id, mobs)
                 table.insert(mob.chain, chain_element)
             end
         end
@@ -255,3 +242,95 @@ function handle_magicability(packet, mobs)
         mobs[target.id] = mob
     end
 end
+
+-- Draws a single skillchain.
+local function drawMob(mob)
+    local lines = { }
+
+    -- Create the heading for our skillchain.
+    table.insert(lines, mob.name)
+
+    -- Fill out the body of our skillchain.
+    for _, chain in pairs(mob.chain) do
+        -- Is this the first step of a chain? If so, don't show burstable
+        -- elements (since you can't burst).
+        if chain.type == ChainType.Starter then
+            local t1 = string.format('  > %s [%i dmg]', chain.name, chain.base_damage)
+            local t2 = string.format('    %s', chain.resonance)
+
+            table.insert(lines, t1)
+            table.insert(lines, t2)
+        -- Otherwise, also display the bonus damage and burstable elements.
+        elseif chain.type == ChainType.Skillchain then
+            local t1 = string.format('  > %s [%i + %i dmg]', chain.name, chain.base_damage, chain.bonus_damage or 0)
+            local t2 = string.format('    %s (%s)', chain.resonance, Elements[chain.resonance])
+
+            table.insert(lines, t1)
+            table.insert(lines, t2)
+        -- Display any magic bursts that occurred and their damage.
+        elseif chain.type == ChainType.MagicBurst then
+            local t = string.format('    Magic Burst! %s [%i dmg]', chain.name, chain.base_damage)
+
+            table.insert(lines, t)
+        elseif chain.type == ChainType.Miss then
+            local t = string.format('  ! %s missed.', chain.name)
+
+            table.insert(lines, t)
+        else
+            -- chain.type == ChainType.Unknown
+        end
+    end
+
+    -- Create the footer for our skillchain, noting the remaining window and
+    -- including a spacer between the mobs.
+    if mob.time ~= nil then
+        local time_remaining = 8 - math.abs(mob.time - os.time())
+        if time_remaining >= 0 then
+            table.insert(lines, string.format('  > %is', time_remaining))
+        else
+            table.insert(lines, '  x')
+        end
+    end
+
+    table.insert(lines, '')
+    return table.concat(lines, '\n')
+end
+
+-- Draws the whole list of active skillchains the user is aware of.
+function core.Draw(mobs)
+    local lines = { }
+
+    for _, mob in pairs(mobs) do
+        if #mob.chain > 0 then
+            table.insert(lines, drawMob(mob))
+        end
+    end
+
+    -- Just clear out the last newline.
+    lines[#lines] = nil
+    return table.concat(lines, '\n')
+end
+
+-- Checks each skillchain we know about for expiry and deletes when appropriate.
+local function RunGarbageCollector(chains)
+    for i, mob in pairs(chains) do
+        if mob.time ~= nil then
+            local timeSince = os.time() - mob.time
+            if timeSince > 15 then
+                chains[i] = nil
+            end
+        end
+    end
+end
+
+-- Loops infinitely in the background, cleaning up "expired" skillchains.
+function core.BeginGarbageCollection(chains)
+    return ashita.tasks.once(0, function()
+        while (true) do
+            RunGarbageCollector(chains)
+            coroutine.sleep(1)
+        end
+    end)
+end
+
+return core

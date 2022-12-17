@@ -1,4 +1,4 @@
-local bloodpacts_by_id = {
+return {
     -- Carbuncle
     [907] = { name = 'Poison Nails', attr = { 'Transfixion' } },
     -- Fenrir
@@ -30,5 +30,3 @@ local bloodpacts_by_id = {
     [852] = { name = 'Megalith Throw', attr = { 'Induration' } },
     [855] = { name = 'Mountain Buster', attr = { 'Gravitation', 'Induration' } },
 }
-
-return bloodpacts_by_id

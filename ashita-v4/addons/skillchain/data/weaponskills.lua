@@ -1,4 +1,4 @@
-local weaponskills_by_id = {
+return {
     [  1] = { name = 'Combo', attr = { 'Impaction' } },
     [  2] = { name = 'Shoulder Tackle', attr = { 'Reverberation', 'Impaction' } },
     [  3] = { name = 'One Inch Punch', attr = { 'Compression' } },
@@ -205,5 +205,3 @@ local weaponskills_by_id = {
     [239] = { name = 'Glory Slash', attr = { 'Light', 'Fusion' } },
     [240] = { name = 'Tartarus Torpor', attr = {} },
 }
-
-return weaponskills_by_id

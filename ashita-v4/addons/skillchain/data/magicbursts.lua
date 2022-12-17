@@ -1,4 +1,4 @@
-local magic_bursts_by_spell_id = {
+return {
     [ 21] = { name = 'holy', burst_msg = 252, },
     [ 22] = { name = 'holy_ii', burst_msg = 252, },
     [ 28] = { name = 'banish', burst_msg = 252, },
@@ -209,5 +209,3 @@ local magic_bursts_by_spell_id = {
     [648] = { name = 'regurgitation', burst_msg = 252, },
     [651] = { name = 'corrosive_ooze', burst_msg = 252, },
 }
-
-return magic_bursts_by_spell_id
