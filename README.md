@@ -27,7 +27,7 @@ the ones in `ashita-v3` are no longer maintained since I'm using v4 now. sorry.
 - [x] `tgt`
 - [x] `rcheck`
 - [x] `skillchain`
-- [ ] `tracker`
+- [x] `tracker`
 - [ ] `logger`
 - [ ] ashitacast configs
   - i suspect this doesn't require any change, but still need to check
