@@ -106,7 +106,7 @@ ashita.events.register('command', 'command_cb', function(e)
     return true
 end)
 
-ashita.events.register('incoming_packet', 'incoming_packet_cb', function(e)
+ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x17 and listening then
         local msg = lin.parse_chatmessage(e.data)
 

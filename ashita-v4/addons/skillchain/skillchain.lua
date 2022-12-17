@@ -10,6 +10,11 @@ local Packets = require('lin.packets')
 local Settings = require('settings')
 local Fonts = require('fonts')
 
+---@class SkillchainModule
+---@field config SkillchainSettings
+---@field chains table
+---@field font Font|nil
+---@field gc table|nil
 local Module = {
     config = Settings.load(Defaults),
     chains = { },
@@ -48,7 +53,7 @@ ashita.events.register('unload', 'unload_cb', function()
     Settings.save()
 end)
 
-ashita.events.register('incoming_packet', 'incoming_packet_cb', function(e)
+ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x28 then
         local action = Packets.parse_action(e.data)
 

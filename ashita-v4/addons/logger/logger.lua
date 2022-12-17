@@ -95,7 +95,7 @@ end
 -- event handlers
 -------------------------------------------------------------------------------
 
-ashita.events.register('incoming_packet', 'incoming_packet_cb', function(e)
+ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x0028 then
         local packet = Packets.parse_action(e.data)
         if packet.category == 0 or packet.category == 1 then return false end

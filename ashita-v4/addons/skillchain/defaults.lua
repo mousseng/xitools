@@ -1,6 +1,16 @@
 local scaling = require('scaling')
 
+---@class SkillchainSettings
+---@field font Font
 local default_settings = {
+    ---@class Font
+    ---@field visible boolean
+    ---@field font_family string
+    ---@field font_height number
+    ---@field color number
+    ---@field position_x number
+    ---@field position_y number
+    ---@field background table
     font = {
         visible = true,
         font_family = 'Consolas',

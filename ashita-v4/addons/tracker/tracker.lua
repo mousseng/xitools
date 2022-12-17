@@ -117,7 +117,7 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
     last_render = os.time()
 end)
 
-ashita.events.register('incoming_packet', 'incoming_packet_cb', function(e)
+ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if id == 0x28 then
         local action = packets.parse_action(e.data)
 
