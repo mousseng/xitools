@@ -66,7 +66,7 @@ end
 ashita.events.register('command', 'command_cb', function(e)
     local args = e.command:args()
 
-    if #args < 1 or args[1] == '/rc' or args[1] ~= '/rcheck' then
+    if #args < 1 or (args[1] ~= '/rc' and args[1] ~= '/rcheck') then
         return false
     end
 
