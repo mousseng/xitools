@@ -25,10 +25,12 @@ the ones in `ashita-v3` are no longer maintained since I'm using v4 now. sorry.
 ### v4 porting status
 - [x] `me`
 - [x] `tgt`
-- [ ] `rcheck`
+- [x] `rcheck`
 - [ ] `skillchain`
 - [ ] `tracker`
 - [ ] `logger`
+- [ ] ashitacast configs
+  - i suspect this doesn't require any change, but still need to check
 
 ## config
 these are my ashitacast configs. perhaps you'll find them useful; mostly i just
