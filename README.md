@@ -28,7 +28,7 @@ the ones in `ashita-v3` are no longer maintained since I'm using v4 now. sorry.
 - [x] `rcheck`
 - [x] `skillchain`
 - [x] `tracker`
-- [ ] `logger`
+- [x] `logger`
 - [ ] ashitacast configs
   - i suspect this doesn't require any change, but still need to check
   - just found out about Luashitacast, btfo
