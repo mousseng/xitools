@@ -10,6 +10,8 @@ the ones in `ashita-v3` are no longer maintained since I'm using v4 now. sorry.
 - `skillchain` tracks active and potential skillchains and magic bursts
 - `tracker` is a primitive ability tracker tailored for the author
 - `logger` logs some simple packet data for diagnostic and dev purposes
+- `xp` tells you how much exp you've earned since you started earning, or over
+  a specified period of time
 
 ### libs
 - `core/` libraries are intended to be fundamental building blocks - common data
@@ -29,6 +31,7 @@ the ones in `ashita-v3` are no longer maintained since I'm using v4 now. sorry.
 - [x] `skillchain`
 - [x] `tracker`
 - [x] `logger`
+- [x] `xp`
 - [ ] ashitacast configs
   - i suspect this doesn't require any change, but still need to check
   - just found out about Luashitacast, btfo
