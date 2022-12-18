@@ -1,3 +1,4 @@
+---@enum NonChainingSkill
 -- A set-style table of weaponskills that do not interact with skillchains. It
 -- is keyed by the animation ID.
 return {

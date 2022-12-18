@@ -1,3 +1,4 @@
+---@enum Weaponskill
 return {
     [  1] = { name = 'Combo', attr = { 'Impaction' } },
     [  2] = { name = 'Shoulder Tackle', attr = { 'Reverberation', 'Impaction' } },

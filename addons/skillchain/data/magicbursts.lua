@@ -1,3 +1,4 @@
+---@enum MagicBurst
 return {
     [ 21] = { name = 'holy', burst_msg = 252, },
     [ 22] = { name = 'holy_ii', burst_msg = 252, },

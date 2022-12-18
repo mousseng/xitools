@@ -1,3 +1,4 @@
+---@enum ChainType
 -- Enum to identify what type of display a particular chain element will need.
 return {
     Unknown = 0,

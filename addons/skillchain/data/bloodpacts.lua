@@ -1,3 +1,4 @@
+---@enum BloodPacts
 return {
     -- Carbuncle
     [907] = { name = 'Poison Nails', attr = { 'Transfixion' } },

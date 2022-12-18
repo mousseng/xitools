@@ -11,10 +11,25 @@ local Settings = require('settings')
 local Fonts = require('fonts')
 
 ---@class SkillchainModule
----@field config SkillchainSettings
----@field chains table
----@field font Font|nil
----@field gc table|nil
+---@field config Settings
+---@field chains Skillchain[]
+---@field font Font?
+---@field gc table?
+
+---@class Skillchain
+---@field name string
+---@field time number
+---@field chain SkillchainStep[]
+
+---@class SkillchainStep
+---@field id number
+---@field type ChainType
+---@field name string
+---@field base_damage number
+---@field bonus_damage number
+---@field resonance Resonance
+
+---@type SkillchainModule
 local Module = {
     config = Settings.load(Defaults),
     chains = { },

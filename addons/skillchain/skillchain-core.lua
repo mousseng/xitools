@@ -11,6 +11,8 @@ local core = { }
 -- Fetch an entity by its server ID. Helpful when looking up information from
 -- packets, which tend to not include the entity index (since that's a client
 -- thing only). Returns nil if no matching entity is found.
+---@param id number
+---@return table?
 local function getEntityByServerId(id)
     -- The entity array is 2304 items long
     for x = 0, 2303 do
@@ -29,6 +31,8 @@ end
 
 -- Determines if a particular entity (given as a server ID) belongs to the
 -- player's alliance.
+---@param id number
+---@return boolean
 local function isServerIdInParty(id)
     local party = AshitaCore:GetMemoryManager():GetParty()
 
@@ -48,6 +52,8 @@ end
 
 -- Determines if a particular pet (given as a server ID) belongs to the
 -- player's alliance.
+---@param id number
+---@return boolean
 local function isPetServerIdInParty(id)
     local party = AshitaCore:GetMemoryManager():GetParty()
 
@@ -72,6 +78,8 @@ end
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on
 -- weaponskills.
+---@param packet table
+---@param mobs Skillchain[]
 function core.HandleWeaponskill(packet, mobs)
     -- Don't care about skillchains we can't participate in
     if not isServerIdInParty(packet.actor_id) then
@@ -139,6 +147,8 @@ end
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on pet
 -- abilities.
+---@param packet table
+---@param mobs Skillchain[]
 function core.HandlePetAbility(packet, mobs)
     -- Don't care about skillchains we can't participate in
     if not isPetServerIdInParty(packet.actor_id)
@@ -202,6 +212,8 @@ end
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on
 -- magic abilities; only handles magic bursts currently, not BLU chains.
+---@param packet table
+---@param mobs Skillchain[]
 function core.HandleMagicAbility(packet, mobs)
     -- Don't care about skillchains we can't participate in
     if not isServerIdInParty(packet.actor_id)
@@ -244,6 +256,8 @@ function core.HandleMagicAbility(packet, mobs)
 end
 
 -- Draws a single skillchain.
+---@param mob Skillchain
+---@return string
 local function drawMob(mob)
     local lines = { }
 
@@ -297,6 +311,8 @@ local function drawMob(mob)
 end
 
 -- Draws the whole list of active skillchains the user is aware of.
+---@param mobs Skillchain[]
+---@return string
 function core.Draw(mobs)
     local lines = { }
 
@@ -312,6 +328,7 @@ function core.Draw(mobs)
 end
 
 -- Checks each skillchain we know about for expiry and deletes when appropriate.
+---@param chains Skillchain[]
 local function RunGarbageCollector(chains)
     for i, mob in pairs(chains) do
         if mob.time ~= nil then
@@ -324,6 +341,8 @@ local function RunGarbageCollector(chains)
 end
 
 -- Loops infinitely in the background, cleaning up "expired" skillchains.
+---@param chains Skillchain[]
+---@return table
 function core.BeginGarbageCollection(chains)
     return ashita.tasks.once(0, function()
         while (true) do

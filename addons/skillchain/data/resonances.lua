@@ -1,3 +1,4 @@
+---@enum Resonance
 -- A lookup table to find the appropriate name for a given skillchain effect.
 -- The keys are an action's add_effect_message.
 return {
