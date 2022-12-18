@@ -1,6 +1,5 @@
 # xitools
-a collection of addons (and maybe some plugins) for Ashita that I made.
-the ones in `ashita-v3` are no longer maintained since I'm using v4 now. sorry.
+a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 
 ## addons
 - `me` is a simple hud for displaying the player's basic status
@@ -23,18 +22,6 @@ the ones in `ashita-v3` are no longer maintained since I'm using v4 now. sorry.
   lazy to check the ashita docs for this
 - `lin/text` is where all of the stuff related to text-display goes, like
   formatting numbers, colorizing stuff, and making percent bars
-
-### v4 porting status
-- [x] `me`
-- [x] `tgt`
-- [x] `rcheck`
-- [x] `skillchain`
-- [x] `tracker`
-- [x] `logger`
-- [x] `xp`
-- [ ] ashitacast configs
-  - i suspect this doesn't require any change, but still need to check
-  - just found out about Luashitacast, btfo
 
 ## config
 these are my ashitacast configs. perhaps you'll find them useful; mostly i just
