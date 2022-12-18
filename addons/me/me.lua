@@ -1,53 +1,36 @@
 addon.name    = 'me'
 addon.author  = 'lin'
-addon.version = '1.0.0'
+addon.version = '2.0.0'
 addon.desc    = 'A simple text-based HUD for player status'
 
-local fonts = require('fonts')
-local scaling = require('scaling')
-local settings = require('settings')
-local jobs = require('lin.jobs')
-local text = require('lin.text')
+local Defaults = require('defaults')
+local Settings = require('settings')
+local Fonts = require('fonts')
 
--------------------------------------------------------------------------------
--- config
--------------------------------------------------------------------------------
+local Jobs = require('lin.jobs')
+local Text = require('lin.text')
 
-local default_settings = {
-    font = {
-        visible = true,
-        font_family = 'Consolas',
-        font_height = scaling.scale_f(10),
-        color = 0xFFFFFFFF,
-        position_x = 200,
-        position_y = 200,
-        background = {
-            visible = true,
-            color = 0xA0000000,
-        }
-    }
-}
+---@class MeModule
+---@field config Settings
+---@field font Font?
 
-local me = {
-    settings = settings.load(default_settings),
+---@type MeModule
+local Me = {
+    config = Settings.load(Defaults),
     font = nil,
 }
 
-settings.register('settings', 'settings_update', function (s)
+Settings.register('settings', 'settings_update', function (s)
     if (s ~= nil) then
-        me.settings = s
+        Me.settings = s
     end
 
-    if (me.font ~= nil) then
-        me.font:apply(me.settings.font)
+    if (Me.font ~= nil) then
+        Me.font:apply(Me.settings.font)
     end
 
-    settings.save()
+    Settings.save()
 end)
-
--------------------------------------------------------------------------------
--- event handlers
--------------------------------------------------------------------------------
 
 ashita.events.register('d3d_present', 'd3d_present_cb', function()
     local lines = {}
@@ -56,18 +39,18 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
     local player_data = AshitaCore:GetMemoryManager():GetPlayer()
     local player_entity = GetPlayerEntity()
 
-    if player_entity == nil or jobs.get_job(player_data:GetMainJob()) == nil then
-        me.font.text = ''
+    if player_entity == nil or Jobs.get_job(player_data:GetMainJob()) == nil then
+        Me.font.text = ''
         return
     end
 
     local player = {
         name = player_entity.Name or '',
 
-        main_job = jobs.get_job(player_data:GetMainJob()),
+        main_job = Jobs.get_job(player_data:GetMainJob()),
         main_lv = player_data:GetMainJobLevel() or 0,
 
-        sub_job = jobs.get_job(player_data:GetSubJob()),
+        sub_job = Jobs.get_job(player_data:GetSubJob()),
         sub_lv = player_data:GetSubJobLevel() or 0,
 
         cur_xp = player_data:GetExpCurrent() or 0,
@@ -104,51 +87,52 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
     local line2 = string.format('HP %4i/%4i %s',
         player.cur_hp,
         player.max_hp,
-        text.percent_bar(12, player.cur_hp / player.max_hp))
+        Text.percent_bar(12, player.cur_hp / player.max_hp))
 
     local line3 = string.format('MP %4i/%4i %s',
         player.cur_mp,
         player.max_mp,
-        text.percent_bar(12, player.cur_mp / player.max_mp))
+        Text.percent_bar(12, player.cur_mp / player.max_mp))
 
     local line4 = string.format('TP %4i/%4i %s',
         player.cur_tp,
         player.max_tp,
-        text.percent_bar(12, player.cur_tp / player.max_tp))
+        Text.percent_bar(12, player.cur_tp / player.max_tp))
 
     local line5
     if player.is_limit_mode
     or player.cur_xp == 43999 then
         line5 = string.format('LP %4.4s/%-4.4s %s',
-            text.format_xp(player.cur_lp, false),
-            text.format_xp(player.max_lp, false),
-            text.percent_bar(12, player.cur_lp / player.max_lp))
+            Text.format_xp(player.cur_lp, false),
+            Text.format_xp(player.max_lp, false),
+            Text.percent_bar(12, player.cur_lp / player.max_lp))
     else
         line5 = string.format('XP %4.4s/%-4.4s %s',
-            text.format_xp(player.cur_xp, false),
-            text.format_xp(player.max_xp, false),
-            text.percent_bar(12, player.cur_xp / player.max_xp))
+            Text.format_xp(player.cur_xp, false),
+            Text.format_xp(player.max_xp, false),
+            Text.percent_bar(12, player.cur_xp / player.max_xp))
     end
+
     table.insert(lines, line1)
-    table.insert(lines, text.colorize(line2, text.get_hp_color(player.cur_hp / player.max_hp)))
-    table.insert(lines, text.colorize(line3, text.get_hp_color(player.cur_mp / player.max_mp)))
-    table.insert(lines, text.colorize(line4, text.get_tp_color(player.cur_tp / player.max_tp)))
+    table.insert(lines, Text.colorize(line2, Text.get_hp_color(player.cur_hp / player.max_hp)))
+    table.insert(lines, Text.colorize(line3, Text.get_hp_color(player.cur_mp / player.max_mp)))
+    table.insert(lines, Text.colorize(line4, Text.get_tp_color(player.cur_tp / player.max_tp)))
     table.insert(lines, line5)
 
-    me.font.text = table.concat(lines, '\n')
+    Me.font.text = table.concat(lines, '\n')
 end)
 
 ashita.events.register('load', 'load_cb', function()
-    me.font = fonts.new(me.settings.font)
+    Me.font = Fonts.new(Me.settings.font)
 end)
 
 ashita.events.register('unload', 'unload_cb', function()
-    if (me.font ~= nil) then
+    if (Me.font ~= nil) then
         -- TODO: do we need to manually persist location changes?
         --       if so, maybe just :apply() to the settings object
-        me.font:destroy()
-        me.font = nil
+        Me.font:destroy()
+        Me.font = nil
     end
 
-    settings.save()
+    Settings.save()
 end)
