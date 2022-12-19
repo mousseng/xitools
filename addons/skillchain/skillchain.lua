@@ -4,14 +4,14 @@ addon.version = '2.0.0'
 addon.desc    = 'A little skillchain tracker so you know when things happen'
 
 local Defaults = require('defaults')
-local Skillchain = require('skillchain-core')
-local Packets = require('lin.packets')
-
 local Settings = require('settings')
 local Fonts = require('fonts')
 
+local Packets = require('lin.packets')
+local Skillchain = require('skillchain-core')
+
 ---@class SkillchainModule
----@field config Settings
+---@field config SkillchainSettings
 ---@field chains Skillchain[]
 ---@field font Font?
 ---@field gc table?

@@ -11,7 +11,7 @@ local Jobs = require('lin.jobs')
 local Text = require('lin.text')
 
 ---@class MeModule
----@field config Settings
+---@field config MeSettings
 ---@field font Font?
 
 ---@type MeModule
