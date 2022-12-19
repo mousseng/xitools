@@ -3,20 +3,23 @@ addon.author  = 'lin'
 addon.version = '1.0.0'
 addon.desc    = 'Make ready-checking easy :)'
 
+local Set = require('core.set')
+local Packets = require('lin.packets')
+
 local PartyMessage = 4
 local OutChatPacket = 0xB5
 local IncChatPacket = 0x17
 
 local prompt = 'Ready check, please / within 30 seconds! <call21>'
 local all_ready = 'All party members accounted for.'
-local whitelist = set.from_array({ '/', '\\', 'r', 'kronk' })
+local whitelist = Set.from_array({ '/', '\\', 'r', 'kronk' })
 
 local listening = false
-local party = set.new()
-local ready = set.new()
+local party = Set.new()
+local ready = Set.new()
 
 local function get_party()
-    local result = set.new()
+    local result = Set.new()
     local party = AshitaCore:GetMemoryManager():GetParty()
 
     for i = 0, 17 do
@@ -29,7 +32,7 @@ local function get_party()
 end
 
 local function get_player()
-    local result = set.new()
+    local result = Set.new()
     local player = GetPlayerEntity()
 
     if player ~= nil and player.Name ~= nil then
@@ -79,14 +82,14 @@ ashita.events.register('command', 'command_cb', function(e)
     -- TODO: idk if this blows up, might have to hoist
     -- some of these vars up as parameters to the coroutines
     ashita.tasks.repeating(1, 29, 1, function()
-        if listening and set.equals(ready, party) then
+        if listening and Set.equals(ready, party) then
             send_message(all_ready)
             listening = false
         end
     end)
 
     ashita.tasks.once(30, function()
-        if listening and set.equals(ready, party) then
+        if listening and Set.equals(ready, party) then
             send_message(all_ready)
         elseif listening then
             local missing = ready:difference(party)
@@ -108,7 +111,7 @@ end)
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x17 and listening then
-        local msg = lin.parse_chatmessage(e.data)
+        local msg = Packets.parse_chatmessage(e.data)
 
         if msg.type == PartyMessage
         and whitelist:contains(string.trim(msg.text))
