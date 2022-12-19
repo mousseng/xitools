@@ -22,11 +22,11 @@ local Me = {
 
 Settings.register('settings', 'settings_update', function (s)
     if (s ~= nil) then
-        Me.settings = s
+        Me.config = s
     end
 
     if (Me.font ~= nil) then
-        Me.font:apply(Me.settings.font)
+        Me.font:apply(Me.config.font)
     end
 
     Settings.save()
@@ -123,13 +123,13 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
 end)
 
 ashita.events.register('load', 'load_cb', function()
-    Me.font = Fonts.new(Me.settings.font)
+    Me.font = Fonts.new(Me.config.font)
 end)
 
 ashita.events.register('unload', 'unload_cb', function()
     if (Me.font ~= nil) then
-        -- TODO: do we need to manually persist location changes?
-        --       if so, maybe just :apply() to the settings object
+        Me.config.font.position_x = Me.font.position_x
+        Me.config.font.position_y = Me.font.position_y
         Me.font:destroy()
         Me.font = nil
     end
