@@ -116,7 +116,7 @@ ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x0A then
         Module.debuffs = { }
     elseif e.id == 0x0028 then
-        Tgt.HandleAction(Module.debuffs, Packets.parse_action(e.data))
+        Tgt.HandleAction(Module.debuffs, Packets.parse_action(e.data_modified_raw))
     elseif e.id == 0x0029 then
         Tgt.HandleBasic(Module.debuffs, Packets.parse_basic(e.data))
     end
@@ -130,8 +130,8 @@ end)
 
 ashita.events.register('unload', 'unload_cb', function()
     if (Module.font ~= nil) then
-        -- TODO: do we need to manually persist location changes?
-        --       if so, maybe just :apply() to the settings object
+        Module.config.font.position_x = Module.font.position_x
+        Module.config.font.position_y = Module.font.position_y
         Module.font:destroy()
         Module.font = nil
     end

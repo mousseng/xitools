@@ -15,18 +15,18 @@ local Text = require('lin.text')
 ---@field font Font?
 
 ---@type MeModule
-local Me = {
+local Module = {
     config = Settings.load(Defaults),
     font = nil,
 }
 
 Settings.register('settings', 'settings_update', function (s)
     if (s ~= nil) then
-        Me.config = s
+        Module.config = s
     end
 
-    if (Me.font ~= nil) then
-        Me.font:apply(Me.config.font)
+    if (Module.font ~= nil) then
+        Module.font:apply(Module.config.font)
     end
 
     Settings.save()
@@ -40,7 +40,7 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
     local player_entity = GetPlayerEntity()
 
     if player_entity == nil or Jobs.get_job(player_data:GetMainJob()) == nil then
-        Me.font.text = ''
+        Module.font.text = ''
         return
     end
 
@@ -119,19 +119,19 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
     table.insert(lines, Text.colorize(line4, Text.get_tp_color(player.cur_tp / player.max_tp)))
     table.insert(lines, line5)
 
-    Me.font.text = table.concat(lines, '\n')
+    Module.font.text = table.concat(lines, '\n')
 end)
 
 ashita.events.register('load', 'load_cb', function()
-    Me.font = Fonts.new(Me.config.font)
+    Module.font = Fonts.new(Module.config.font)
 end)
 
 ashita.events.register('unload', 'unload_cb', function()
-    if (Me.font ~= nil) then
-        Me.config.font.position_x = Me.font.position_x
-        Me.config.font.position_y = Me.font.position_y
-        Me.font:destroy()
-        Me.font = nil
+    if (Module.font ~= nil) then
+        Module.config.font.position_x = Module.font.position_x
+        Module.config.font.position_y = Module.font.position_y
+        Module.font:destroy()
+        Module.font = nil
     end
 
     Settings.save()
