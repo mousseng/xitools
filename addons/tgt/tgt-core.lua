@@ -211,7 +211,10 @@ end
 ---@param debuffs TrackedEnemies
 ---@param basic any
 function core.HandleBasic(debuffs, basic)
-    if basic.message == 206 then
+    -- if we're tracking a mob that dies, reset its status
+    if basic.message == 6 and debuffs[basic.target] then
+        debuffs[basic.target] = nil
+    elseif basic.message == 206 then
         if debuffs[basic.target] == nil then
             return
         end

@@ -124,6 +124,23 @@ function packets.parse_basic(packet)
 end
 
 -------------------------------------------------------------------------------
+-- Server ID 0x002D: the death message packet.
+-------------------------------------------------------------------------------
+function packets.parse_death(packet)
+    local death = {
+        player     = struct.unpack('i4', packet, 0x04 + 1),
+        target     = struct.unpack('i4', packet, 0x08 + 1),
+        player_idx = struct.unpack('i2', packet, 0x0C + 1),
+        target_idx = struct.unpack('i2', packet, 0x0E + 1),
+        param1     = struct.unpack('i4', packet, 0x10 + 1),
+        param2     = struct.unpack('i4', packet, 0x14 + 1),
+        message    = struct.unpack('i2', packet, 0x18 + 1),
+    }
+
+    return death
+end
+
+-------------------------------------------------------------------------------
 -- Server ID 0x0061: the character stats packet.
 -------------------------------------------------------------------------------
 function packets.parse_charstats(packet)

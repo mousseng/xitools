@@ -97,7 +97,7 @@ end
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x0028 then
-        local packet = Packets.parse_action(e.data)
+        local packet = Packets.parse_action(e.data_modified_raw)
         if packet.category == 0 or packet.category == 1 then return false end
         write_action(packet)
     elseif e.id == 0x0029 then
