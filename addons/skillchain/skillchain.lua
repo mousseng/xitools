@@ -12,9 +12,9 @@ local Skillchain = require('skillchain-core')
 
 ---@class SkillchainModule
 ---@field config SkillchainSettings
+---@field lastPulse number
 ---@field chains Skillchain[]
 ---@field font Font?
----@field gc table?
 
 ---@class Skillchain
 ---@field name string
@@ -32,9 +32,9 @@ local Skillchain = require('skillchain-core')
 ---@type SkillchainModule
 local Module = {
     config = Settings.load(Defaults),
+    lastPulse = os.time(),
     chains = { },
     font = nil,
-    gc = nil,
 }
 
 Settings.register('settings', 'settings_update', function (s)
@@ -51,11 +51,12 @@ end)
 
 ashita.events.register('load', 'load_cb', function()
     Module.font = Fonts.new(Module.config.font)
-    Module.gc = Skillchain.BeginGarbageCollection(Module.chains)
 end)
 
 ashita.events.register('unload', 'unload_cb', function()
     if (Module.font ~= nil) then
+        Module.config.font.position_x = Module.font.position_x
+        Module.config.font.position_y = Module.font.position_y
         Module.font:destroy()
         Module.font = nil
     end
@@ -66,6 +67,20 @@ ashita.events.register('unload', 'unload_cb', function()
     end
 
     Settings.save()
+end)
+
+ashita.events.register('command', 'command_cb', function(e)
+    local args = e.command:args()
+
+    if #args < 2 or args[1] ~= '/sc' then
+        return false
+    end
+
+    if args[2] == 'header' then
+        Module.config.showHeader = not Module.config.showHeader
+    end
+
+    return false
 end)
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
@@ -85,5 +100,11 @@ ashita.events.register('packet_in', 'packet_in_cb', function(e)
 end)
 
 ashita.events.register('d3d_present', 'd3d_present_cb', function()
-    Module.font.text = Skillchain.Draw(Module.chains)
+    Module.font.text = Skillchain.Draw(Module.chains, Module.config.showHeader)
+
+    local now = os.time()
+    if now - Module.lastPulse > 1 then
+        Module.lastPulse = now
+        Skillchain.RunGarbageCollector(Module.chains)
+    end
 end)

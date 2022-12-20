@@ -312,9 +312,14 @@ end
 
 -- Draws the whole list of active skillchains the user is aware of.
 ---@param mobs Skillchain[]
+---@param showHeader boolean
 ---@return string
-function core.Draw(mobs)
+function core.Draw(mobs, showHeader)
     local lines = { }
+
+    if showHeader then
+        table.insert(lines, 'Skillchain Tracker')
+    end
 
     for _, mob in pairs(mobs) do
         if #mob.chain > 0 then
@@ -323,13 +328,16 @@ function core.Draw(mobs)
     end
 
     -- Just clear out the last newline.
-    lines[#lines] = nil
+    if lines[#lines] == '' then
+        lines[#lines] = nil
+    end
+
     return table.concat(lines, '\n')
 end
 
 -- Checks each skillchain we know about for expiry and deletes when appropriate.
 ---@param chains Skillchain[]
-local function RunGarbageCollector(chains)
+function core.RunGarbageCollector(chains)
     for i, mob in pairs(chains) do
         if mob.time ~= nil then
             local timeSince = os.time() - mob.time
@@ -338,18 +346,6 @@ local function RunGarbageCollector(chains)
             end
         end
     end
-end
-
--- Loops infinitely in the background, cleaning up "expired" skillchains.
----@param chains Skillchain[]
----@return table
-function core.BeginGarbageCollection(chains)
-    return ashita.tasks.once(0, function()
-        while (true) do
-            RunGarbageCollector(chains)
-            coroutine.sleep(1)
-        end
-    end)
 end
 
 return core

@@ -1,6 +1,6 @@
 addon.name    = 'tgt'
 addon.author  = 'lin'
-addon.version = '1.0.0'
+addon.version = '2.0.0'
 addon.desc    = 'A simple text-based HUD for target status'
 
 local Defaults = require('defaults')
