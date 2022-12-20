@@ -101,17 +101,17 @@ function core.HandleWeaponskill(packet, mobs)
 
         for j = 1, target.action_count do
             local action = target.actions[j]
-            local chain_element = nil
+            local chain_step = nil
 
             -- Skip weaponskills that we'll never bother with or actions that
             -- have no reaction (like Steal)
             if not NonChainingSkills[action.animation]
             and action.reaction ~= 0 then
                 -- Prep chain step display data
-                chain_element = {
+                chain_step = {
                     id = action.animation,
                     type = nil,
-                    name = resources:GetAbilityById(packet.param).Name[0],
+                    name = resources:GetAbilityById(packet.param).Name[1],
                     base_damage = action.param,
                     bonus_damage = action.add_effect_param,
                     resonance = nil,
@@ -119,23 +119,23 @@ function core.HandleWeaponskill(packet, mobs)
 
                 -- Specialize our chain step
                 if action.reaction == 0x08 and not action.has_add_effect then
-                    chain_element.type = ChainType.Starter
-                    chain_element.resonance = table.concat(Weaponskills[packet.param].attr, ', ')
+                    chain_step.type = ChainType.Starter
+                    chain_step.resonance = table.concat(Weaponskills[packet.param].attr, ', ')
 
                     mob.time = os.time()
                     mob.chain = { }
                 elseif action.reaction == 0x08 and action.has_add_effect then
-                    chain_element.type = ChainType.Skillchain
-                    chain_element.resonance = Resonances[action.add_effect_message]
+                    chain_step.type = ChainType.Skillchain
+                    chain_step.resonance = Resonances[action.add_effect_message]
 
                     mob.time = os.time()
                 elseif action.reaction == 0x01 or action.reaction == 0x09 then
-                    chain_element.type = ChainType.Miss
+                    chain_step.type = ChainType.Miss
                 else
-                    chain_element.type = ChainType.Unknown
+                    chain_step.type = ChainType.Unknown
                 end
 
-                table.insert(mob.chain, chain_element)
+                table.insert(mob.chain, chain_step)
             end
         end
 
@@ -240,7 +240,7 @@ function core.HandleMagicAbility(packet, mobs)
                 chain_element = {
                     id = packet.param,
                     type = ChainType.MagicBurst,
-                    name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[0],
+                    name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[1],
                     base_damage = action.param,
                     bonus_damage = nil,
                     resonance = nil,
