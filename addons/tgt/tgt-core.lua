@@ -46,6 +46,26 @@ local function blue()   return  72, 118, 255 end
 local function red()    return 205,  55,   0 end
 local function cyan()   return 150, 205, 205 end
 
+---@param object table
+---@return table
+local function deepCopy(object)
+    local lookup_table = {}
+    local function _copy(obj)
+        if type(obj) ~= "table" then
+            return obj
+        elseif lookup_table[obj] then
+            return lookup_table[obj]
+        end
+        local new_table = {}
+        lookup_table[obj] = new_table
+        for index, value in pairs(obj) do
+            new_table[_copy(index)] = _copy(value)
+        end
+        return setmetatable(new_table, getmetatable(obj))
+    end
+    return _copy(object)
+end
+
 ---@param debuffs TrackedEnemies
 ---@param includeStatus boolean
 ---@param includePreamble boolean
@@ -111,26 +131,6 @@ function core.Draw(debuffs, includeStatus, includePreamble)
     return table.concat(lines, '\n')
 end
 
----@param object table
----@return table
-local function deepCopy(object)
-    local lookup_table = {}
-    local function _copy(obj)
-        if type(obj) ~= "table" then
-            return obj
-        elseif lookup_table[obj] then
-            return lookup_table[obj]
-        end
-        local new_table = {}
-        lookup_table[obj] = new_table
-        for index, value in pairs(obj) do
-            new_table[_copy(index)] = _copy(value)
-        end
-        return setmetatable(new_table, getmetatable(obj))
-    end
-    return _copy(object)
-end
-
 ---@param debuffs TrackedEnemies
 ---@param action any
 function core.HandleAction(debuffs, action)
@@ -142,7 +142,7 @@ function core.HandleAction(debuffs, action)
                 -- Set up our state
                 local spell = action.param
                 local message = ability.message
-                debuffs[target.id] = debuffs[target.id] or deepCopy(DEFAULT_STATE)
+                debuffs[target.id] = debuffs[target.id] or deepCopy(DefaultDebuffs)
 
                 -- Bio and Dia
                 if message == 2 or message == 264 then
