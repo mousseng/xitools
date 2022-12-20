@@ -22,7 +22,7 @@ end
 -- Shorthand method to grab an entity's name (by server id, obviously) or a
 -- placeholder string if the entity can't be found.
 function ffxi.get_entity_name_by_server_id(id, default_name)
-    local e = get_entity_by_server_id(id)
+    local e = ffxi.get_entity_by_server_id(id)
 
     if e ~= nil and e.Name ~= nil then
         return e.Name

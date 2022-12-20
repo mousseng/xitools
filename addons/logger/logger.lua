@@ -11,14 +11,14 @@ local function dump(id, str)
     local log_name = string.format('packets %04i.%02i.%02i.log', date.year, date.month, date.day)
     local log_dir = string.format('%s/%s/', AshitaCore:GetInstallPath(), 'packetlogs')
 
-    if not ashita.file.dir_exists(log_dir) then
-        ashita.file.create_dir(log_dir)
+    if not ashita.fs.exists(log_dir) then
+        ashita.fs.create_dir(log_dir)
     end
 
     local log_file = io.open(string.format('%s/%s', log_dir, log_name), 'a')
     if log_file ~= nil then
         local header = string.format(
-            '%s id %x\n',
+            '%s id 0x%x\n',
             os.date('[%H:%M:%S]', os.time()),
             id)
 
