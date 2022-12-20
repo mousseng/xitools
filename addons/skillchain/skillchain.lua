@@ -72,7 +72,7 @@ end)
 ashita.events.register('command', 'command_cb', function(e)
     local args = e.command:args()
 
-    if #args < 2 or args[1] ~= '/sc' then
+    if #args < 2 or args[1] ~= '/schain' then
         return false
     end
 
