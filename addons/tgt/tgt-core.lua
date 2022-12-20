@@ -68,8 +68,8 @@ function core.Draw(debuffs, includeStatus, includePreamble)
 
         local line2 = string.format(
             'HP      %3i%% %s',
-            target.HealthPercent,
-            Text.percent_bar(12, target.HealthPercent / 100))
+            target.HPPercent,
+            Text.percent_bar(12, target.HPPercent / 100))
 
         -- build basic target display
         if includePreamble then
@@ -77,7 +77,7 @@ function core.Draw(debuffs, includeStatus, includePreamble)
         end
 
         table.insert(lines, line1)
-        table.insert(lines, Text.colorize(line2, Text.get_hp_color(target.HealthPercent / 100)))
+        table.insert(lines, Text.colorize(line2, Text.get_hp_color(target.HPPercent / 100)))
 
         -- build advanced status display for target
         -- DB PGSB Si Sl Bi PoSRCFBD
