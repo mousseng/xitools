@@ -70,7 +70,7 @@ end)
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x28 then
-        local action = Packets.parse_action(e.data)
+        local action = Packets.parse_action(e.data_modified_raw)
 
         if action.category == 3 then
             Skillchain.HandleWeaponskill(action, Module.chains)
