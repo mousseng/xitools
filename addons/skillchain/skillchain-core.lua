@@ -93,6 +93,7 @@ function core.HandleWeaponskill(packet, mobs)
         local target = packet.targets[i]
 
         -- Set up our display data
+        ---@type Skillchain
         local mob = mobs[target.id] or {
             name = getEntityByServerId(target.id).Name,
             time = nil,
@@ -108,8 +109,10 @@ function core.HandleWeaponskill(packet, mobs)
             if not NonChainingSkills[action.animation]
             and action.reaction ~= 0 then
                 -- Prep chain step display data
+                ---@type SkillchainStep
                 chain_step = {
                     id = action.animation,
+                    time = os.time(),
                     type = nil,
                     name = resources:GetAbilityById(packet.param).Name[1],
                     base_damage = action.param,
@@ -161,6 +164,7 @@ function core.HandlePetAbility(packet, mobs)
         local target = packet.targets[i]
 
         -- Set up our display data
+        ---@type Skillchain
         local mob = mobs[target.id] or {
             name = getEntityByServerId(packet.actor_id).Name,
             time = nil,
@@ -169,8 +173,11 @@ function core.HandlePetAbility(packet, mobs)
 
         for j = 1, target.action_count do
             local action = target.actions[j]
-            local chain_element = {
+
+            ---@type SkillchainStep
+            local chain_step = {
                 id = action.animation,
+                time = os.time(),
                 type = nil,
                 name = BloodPacts[packet.param].name,
                 base_damage = action.param,
@@ -180,28 +187,28 @@ function core.HandlePetAbility(packet, mobs)
 
             -- Specialize our chain step
             if action.reaction == 0x08 and not action.has_add_effect then
-                chain_element.type = ChainType.Starter
-                chain_element.resonance = table.concat(BloodPacts[packet.param].attr, ', ')
+                chain_step.type = ChainType.Starter
+                chain_step.resonance = table.concat(BloodPacts[packet.param].attr, ', ')
 
                 mob.time = os.time()
                 mob.chain = { }
             elseif action.reaction == 0x08 and action.has_add_effect then
-                chain_element.type = ChainType.Skillchain
-                chain_element.resonance = Resonances[action.add_effect_message]
+                chain_step.type = ChainType.Skillchain
+                chain_step.resonance = Resonances[action.add_effect_message]
 
                 mob.time = os.time()
             elseif action.reaction == 0x01 or action.reaction == 0x09 then
-                chain_element.type = ChainType.Miss
+                chain_step.type = ChainType.Miss
             else
-                chain_element.type = ChainType.Unknown
+                chain_step.type = ChainType.Unknown
             end
 
             -- Don't expect to need this, but it's nice to be clear
-            if chain_element.type == nil then
-                chain_element.type = ChainType.Unknown
+            if chain_step.type == nil then
+                chain_step.type = ChainType.Unknown
             end
 
-            table.insert(mob.chain, chain_element)
+            table.insert(mob.chain, chain_step)
         end
 
         -- Replace the existing mob information or add the new one
@@ -226,6 +233,7 @@ function core.HandleMagicAbility(packet, mobs)
         local target = packet.targets[i]
 
         -- Set up our display data
+        ---@type Skillchain
         local mob = mobs[target.id] or {
             name = getEntityByServerId(target.id).Name,
             time = nil,
@@ -234,11 +242,14 @@ function core.HandleMagicAbility(packet, mobs)
 
         for j = 1, target.action_count do
             local action = target.actions[j]
-            local chain_element = nil
+
+            ---@type SkillchainStep
+            local chain_step = nil
 
             if action.message == MagicBursts[packet.param].burst_msg then
-                chain_element = {
+                chain_step = {
                     id = packet.param,
+                    time = os.time(),
                     type = ChainType.MagicBurst,
                     name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[1],
                     base_damage = action.param,
@@ -246,7 +257,7 @@ function core.HandleMagicAbility(packet, mobs)
                     resonance = nil,
                 }
 
-                table.insert(mob.chain, chain_element)
+                table.insert(mob.chain, chain_step)
             end
         end
 
@@ -339,7 +350,13 @@ end
 ---@param chains Skillchain[]
 function core.RunGarbageCollector(chains)
     for i, mob in pairs(chains) do
-        if mob.time ~= nil then
+        if mob.time == nil and mob.chain[#mob.chain].type == ChainType.Miss then
+            -- this means our starter missed
+            local timeSince = os.time() - mob.chain[#mob.chain].time
+            if timeSince > 10 then
+                chains[i] = nil
+            end
+        elseif mob.time ~= nil then
             local timeSince = os.time() - mob.time
             if timeSince > 15 then
                 chains[i] = nil

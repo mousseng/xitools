@@ -23,6 +23,7 @@ local Skillchain = require('skillchain-core')
 
 ---@class SkillchainStep
 ---@field id number
+---@field time number
 ---@field type ChainType
 ---@field name string
 ---@field base_damage number
@@ -80,7 +81,25 @@ ashita.events.register('command', 'command_cb', function(e)
         Module.config.showHeader = not Module.config.showHeader
     end
 
-    return false
+    if args[2] == 'test' then
+        ---@type Skillchain
+        local testMob = {
+            chain = { },
+            name = 'Test',
+            time = nil,
+        }
+
+        ---@type SkillchainStep
+        local testStep = {
+            time = os.time(),
+            type = 4,
+        }
+
+        table.insert(testMob.chain, testStep)
+        table.insert(Module.chains, testMob)
+    end
+
+    return true
 end)
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
