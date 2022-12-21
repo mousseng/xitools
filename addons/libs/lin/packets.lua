@@ -1,6 +1,19 @@
 local packets = {}
 
 -------------------------------------------------------------------------------
+-- Server ID 0x000A: the zone-in packet.
+-------------------------------------------------------------------------------
+function packets.parse_zonein(packet)
+    local zonein = {
+        player = struct.unpack('i4', packet, 0x04 + 1),
+        player_idx = struct.unpack('i2', packet, 0x08 + 1),
+        zone = struct.unpack('i2', packet, 0x30 + 1),
+    }
+
+    return zonein
+end
+
+-------------------------------------------------------------------------------
 -- Server ID 0x0017: the chat message packet.
 -------------------------------------------------------------------------------
 function packets.parse_chatmessage(packet)
