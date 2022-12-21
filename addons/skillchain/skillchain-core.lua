@@ -350,7 +350,7 @@ end
 ---@param chains Skillchain[]
 function core.RunGarbageCollector(chains)
     for i, mob in pairs(chains) do
-        if mob.time == nil and mob.chain[#mob.chain].type == ChainType.Miss then
+        if mob.time == nil and #mob.chain > 0 and mob.chain[#mob.chain].type == ChainType.Miss then
             -- this means our starter missed
             local timeSince = os.time() - mob.chain[#mob.chain].time
             if timeSince > 10 then
