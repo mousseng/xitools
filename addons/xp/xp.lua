@@ -3,6 +3,8 @@ addon.author  = 'lin'
 addon.version = '2.0.0'
 addon.desc    = 'Like WatchEXP, but a v4 addon'
 
+require('common')
+
 -- For whatever reason, FFXI uses ASCII 7 as its newline character in the chain
 -- messages instead of 10 and/or 13 like one might expect.
 local exp_earned = '%w+ gains (%d+) experience points.'
