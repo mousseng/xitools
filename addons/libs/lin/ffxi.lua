@@ -1,5 +1,21 @@
 local ffxi = {}
 
+---@param id number
+---@return number?
+function ffxi.GetEntityIndexByServerId(id)
+    -- The entity array is 2304 items long
+    for x = 0, 2303 do
+        local e = GetEntity(x)
+
+        -- Ensure the entity is valid
+        if e ~= nil and e.WarpPointer ~= 0 and e.ServerId == id then
+            return x
+        end
+    end
+
+    return nil
+end
+
 -- Fetch an entity by its server ID. Helpful when looking up information from
 -- packets, which tend to not include the entity index (since that's a client
 -- thing only). Returns nil if no matching entity is found.
