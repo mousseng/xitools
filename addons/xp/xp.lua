@@ -1,10 +1,7 @@
 addon.name    = 'xp'
 addon.author  = 'lin'
-addon.version = '1.0.0'
+addon.version = '2.0.0'
 addon.desc    = 'Like WatchEXP, but a v4 addon'
-
-require 'common'
-local packets = require('lin.packets')
 
 -- For whatever reason, FFXI uses ASCII 7 as its newline character in the chain
 -- messages instead of 10 and/or 13 like one might expect.
@@ -25,10 +22,6 @@ local chain_timers = {
 
 local events = { }
 local chain_end = nil
-
--------------------------------------------------------------------------------
--- event handlers
--------------------------------------------------------------------------------
 
 -- Walks through the list of events and sums up the experience gain from events
 -- that come after the given time
@@ -115,6 +108,12 @@ ashita.events.register('command', 'command_cb', function(e)
     local args = e.command:args()
     if #args < 1 or args[1] ~= '/xp' then
         return false
+    end
+
+    if #args > 1 and args[2] == 'reset' then
+        events = { }
+        chain_end = nil
+        return true
     end
 
     -- Bail early if nothing to report
