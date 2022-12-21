@@ -20,13 +20,13 @@ local Module = {
 ---@param scale number
 ---@param shouldSave boolean
 local function SetMinimapScale(scale, shouldSave)
-    print(string.format('Setting scale for zone %d to %.1f', Module.currentZone, scale))
+    print(string.format('Setting scale for zone %d to %.2f', Module.currentZone, scale))
 
     if shouldSave then
         Module.config.zoneScales[Module.currentZone] = scale
     end
 
-    AshitaCore:GetChatManager():QueueCommand(1, string.format('/minimap zoom %.1f', scale))
+    AshitaCore:GetChatManager():QueueCommand(1, string.format('/minimap zoom %.2f', scale))
 end
 
 local function ApplyConfiguredMinimapScale()
