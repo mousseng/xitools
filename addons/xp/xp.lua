@@ -145,7 +145,7 @@ ashita.events.register('command', 'command_cb', function(e)
         ))
     else
         print(string.format(
-            'For the past %.1i hours, earned %.1i exp/hr (for %i total).',
+            'For the past %.1d hours, earned %.1i exp/hr (for %i total).',
             duration,
             total_xp / duration,
             total_xp

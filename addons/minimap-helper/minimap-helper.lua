@@ -1,6 +1,6 @@
 addon.name    = 'minimap-helper'
 addon.author  = 'lin'
-addon.version = '1.0.0'
+addon.version = '1.1.0'
 addon.desc    = 'Automates minimap scale changes'
 
 local Defaults = require('defaults')
@@ -24,6 +24,7 @@ local function SetMinimapScale(scale, shouldSave)
 
     if shouldSave then
         Module.config.zoneScales[Module.currentZone] = scale
+        Settings.save()
     end
 
     AshitaCore:GetChatManager():QueueCommand(1, string.format('/minimap zoom %.2f', scale))
