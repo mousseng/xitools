@@ -11,6 +11,7 @@ a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 - `logger` logs some simple packet data for diagnostic and dev purposes
 - `xp` tells you how much exp you've earned since you started earning, or over
   a specified period of time
+- `minimap-helper` auto-configures the zoom for your Minimap plugin
 
 ### libs
 - `core/` libraries are intended to be fundamental building blocks - common data
