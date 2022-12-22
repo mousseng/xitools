@@ -116,9 +116,9 @@ ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x0A then
         Module.debuffs = { }
     elseif e.id == 0x0028 then
-        Tgt.HandleAction(Module.debuffs, Packets.parse_action(e.data_modified_raw))
+        Tgt.HandleAction(Module.debuffs, Packets.ParseAction(e.data_modified_raw))
     elseif e.id == 0x0029 then
-        Tgt.HandleBasic(Module.debuffs, Packets.parse_basic(e.data))
+        Tgt.HandleBasic(Module.debuffs, Packets.ParseBasic(e.data))
     end
 
     return false

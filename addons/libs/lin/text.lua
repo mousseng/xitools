@@ -1,15 +1,23 @@
 local text = {}
 
-local function isnan(number)
+---@param number number
+---@return boolean
+local function IsNan(number)
   return type(number) == 'number'
     and number ~= number
 end
 
-function text.percent_bar(width, percent, f, h, n)
+---@param width integer
+---@param percent number
+---@param f string Character to represent a full section
+---@param h string Character to represent a partial section
+---@param n string Character to represent an empty section
+---@return string
+function text.PercentBar(width, percent, f, h, n)
     if f == nil then f = '=' end
     if h == nil then h = '-' end
     if n == nil then n = ' ' end
-    if isnan(percent) then percent = 0 end
+    if IsNan(percent) then percent = 0 end
     if percent > 1 then percent = 1 end
 
     local bar_width = width - 2
@@ -27,7 +35,10 @@ function text.percent_bar(width, percent, f, h, n)
     return string.format('[%s%s%s]', fb, hb, nb)
 end
 
-function text.format_xp(number, include_unit)
+---@param number integer
+---@param include_unit boolean
+---@return string
+function text.FormatXp(number, include_unit)
     if number < 10000 then
         return string.format('%4i', number)
     elseif include_unit then
@@ -37,7 +48,13 @@ function text.format_xp(number, include_unit)
     end
 end
 
-function text.colorize(text, r, g, b, a)
+---@param text string
+---@param r integer
+---@param g integer
+---@param b integer
+---@param a integer
+---@return string
+function text.Colorize(text, r, g, b, a)
     if a == nil then a = 255 end
 
     if r < 0 then r = 0 elseif r > 255 then r = 255 end
@@ -48,7 +65,9 @@ function text.colorize(text, r, g, b, a)
     return string.format('|c%02x%02x%02x%02x|%s|r', a, r, g, b, text)
 end
 
-function text.get_hp_color(hp_percent)
+---@param hp_percent number
+---@return integer, integer, integer
+function text.GetHpColor(hp_percent)
         if hp_percent > 0.75 then return 255, 255, 255
     elseif hp_percent > 0.50 then return 255, 255,   0
     elseif hp_percent > 0.25 then return 255, 165,   0
@@ -56,9 +75,11 @@ function text.get_hp_color(hp_percent)
     else                          return 255, 255, 255 end
 end
 
-function text.get_tp_color(tp_percent)
+---@param tp_percent number
+---@return integer, integer, integer
+function text.GetTpColor(tp_percent)
     if tp_percent > 0.33 then return   0, 255, 255
-    else return 255, 255, 255 end
+    else                      return 255, 255, 255 end
 end
 
 return text

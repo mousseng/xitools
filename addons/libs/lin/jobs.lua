@@ -23,7 +23,9 @@ local jobs = {
     [22] = 'RUN',
 }
 
-function jobs.get_job(id)
+---@param id integer
+---@return string
+function jobs.GetJobAbbr(id)
     return jobs[id]
 end
 

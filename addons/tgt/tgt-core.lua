@@ -89,7 +89,7 @@ function core.Draw(debuffs, includeStatus, includePreamble)
         local line2 = string.format(
             'HP      %3i%% %s',
             target.HPPercent,
-            Text.percent_bar(12, target.HPPercent / 100))
+            Text.PercentBar(12, target.HPPercent / 100))
 
         -- build basic target display
         if includePreamble then
@@ -97,7 +97,7 @@ function core.Draw(debuffs, includeStatus, includePreamble)
         end
 
         table.insert(lines, line1)
-        table.insert(lines, Text.colorize(line2, Text.get_hp_color(target.HPPercent / 100)))
+        table.insert(lines, Text.Colorize(line2, Text.GetHpColor(target.HPPercent / 100)))
 
         -- build advanced status display for target
         -- DB PGSB Si Sl Bi PoSRCFBD
@@ -106,22 +106,22 @@ function core.Draw(debuffs, includeStatus, includePreamble)
             local line3 = string.format(
                 '%s%s %s%s%s%s %s %s %s %s%s%s%s%s%s%s',
                 -- '%s%s %s%s%s%s %s %s %s %s %s %s',
-                Text.colorize('D',  when(now < tgt_debuffs.dia, white, grey)),
-                Text.colorize('B',  when(now < tgt_debuffs.bio, black, grey)),
-                Text.colorize('P',  when(now < tgt_debuffs.para, white, grey)),
-                Text.colorize('S',  when(now < tgt_debuffs.slow, white, grey)),
-                Text.colorize('G',  when(now < tgt_debuffs.grav, black, grey)),
-                Text.colorize('B',  when(now < tgt_debuffs.blind, black, grey)),
-                Text.colorize('Si', when(now < tgt_debuffs.silence, white, grey)),
-                Text.colorize('Sl', when(now < tgt_debuffs.sleep, black, grey)),
-                Text.colorize('Bi', when(now < tgt_debuffs.bind, black, grey)),
-                Text.colorize('Po', when(now < tgt_debuffs.poison, black, grey)),
-                Text.colorize('S',  when(now < tgt_debuffs.shock, yellow, grey)),
-                Text.colorize('R',  when(now < tgt_debuffs.rasp, brown, grey)),
-                Text.colorize('C',  when(now < tgt_debuffs.choke, green, grey)),
-                Text.colorize('F',  when(now < tgt_debuffs.frost, cyan, grey)),
-                Text.colorize('B',  when(now < tgt_debuffs.burn, red, grey)),
-                Text.colorize('D',  when(now < tgt_debuffs.drown, blue, grey))
+                Text.Colorize('D',  when(now < tgt_debuffs.dia, white, grey)),
+                Text.Colorize('B',  when(now < tgt_debuffs.bio, black, grey)),
+                Text.Colorize('P',  when(now < tgt_debuffs.para, white, grey)),
+                Text.Colorize('S',  when(now < tgt_debuffs.slow, white, grey)),
+                Text.Colorize('G',  when(now < tgt_debuffs.grav, black, grey)),
+                Text.Colorize('B',  when(now < tgt_debuffs.blind, black, grey)),
+                Text.Colorize('Si', when(now < tgt_debuffs.silence, white, grey)),
+                Text.Colorize('Sl', when(now < tgt_debuffs.sleep, black, grey)),
+                Text.Colorize('Bi', when(now < tgt_debuffs.bind, black, grey)),
+                Text.Colorize('Po', when(now < tgt_debuffs.poison, black, grey)),
+                Text.Colorize('S',  when(now < tgt_debuffs.shock, yellow, grey)),
+                Text.Colorize('R',  when(now < tgt_debuffs.rasp, brown, grey)),
+                Text.Colorize('C',  when(now < tgt_debuffs.choke, green, grey)),
+                Text.Colorize('F',  when(now < tgt_debuffs.frost, cyan, grey)),
+                Text.Colorize('B',  when(now < tgt_debuffs.burn, red, grey)),
+                Text.Colorize('D',  when(now < tgt_debuffs.drown, blue, grey))
             )
 
             table.insert(lines, line3)

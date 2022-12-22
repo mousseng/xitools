@@ -39,7 +39,7 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
     local player_data = AshitaCore:GetMemoryManager():GetPlayer()
     local player_entity = GetPlayerEntity()
 
-    if player_entity == nil or Jobs.get_job(player_data:GetMainJob()) == nil then
+    if player_entity == nil or Jobs.GetJobAbbr(player_data:GetMainJob()) == nil then
         Module.font.text = ''
         return
     end
@@ -47,10 +47,10 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
     local player = {
         name = player_entity.Name or '',
 
-        main_job = Jobs.get_job(player_data:GetMainJob()),
+        main_job = Jobs.GetJobAbbr(player_data:GetMainJob()),
         main_lv = player_data:GetMainJobLevel() or 0,
 
-        sub_job = Jobs.get_job(player_data:GetSubJob()),
+        sub_job = Jobs.GetJobAbbr(player_data:GetSubJob()),
         sub_lv = player_data:GetSubJobLevel() or 0,
 
         cur_xp = player_data:GetExpCurrent() or 0,
@@ -87,36 +87,36 @@ ashita.events.register('d3d_present', 'd3d_present_cb', function()
     local line2 = string.format('HP %4i/%4i %s',
         player.cur_hp,
         player.max_hp,
-        Text.percent_bar(12, player.cur_hp / player.max_hp))
+        Text.PercentBar(12, player.cur_hp / player.max_hp))
 
     local line3 = string.format('MP %4i/%4i %s',
         player.cur_mp,
         player.max_mp,
-        Text.percent_bar(12, player.cur_mp / player.max_mp))
+        Text.PercentBar(12, player.cur_mp / player.max_mp))
 
     local line4 = string.format('TP %4i/%4i %s',
         player.cur_tp,
         player.max_tp,
-        Text.percent_bar(12, player.cur_tp / player.max_tp))
+        Text.PercentBar(12, player.cur_tp / player.max_tp))
 
     local line5
     if player.is_limit_mode
     or player.cur_xp == 43999 then
         line5 = string.format('LP %4.4s/%-4.4s %s',
-            Text.format_xp(player.cur_lp, false),
-            Text.format_xp(player.max_lp, false),
-            Text.percent_bar(12, player.cur_lp / player.max_lp))
+            Text.FormatXp(player.cur_lp, false),
+            Text.FormatXp(player.max_lp, false),
+            Text.PercentBar(12, player.cur_lp / player.max_lp))
     else
         line5 = string.format('XP %4.4s/%-4.4s %s',
-            Text.format_xp(player.cur_xp, false),
-            Text.format_xp(player.max_xp, false),
-            Text.percent_bar(12, player.cur_xp / player.max_xp))
+            Text.FormatXp(player.cur_xp, false),
+            Text.FormatXp(player.max_xp, false),
+            Text.PercentBar(12, player.cur_xp / player.max_xp))
     end
 
     table.insert(lines, line1)
-    table.insert(lines, Text.colorize(line2, Text.get_hp_color(player.cur_hp / player.max_hp)))
-    table.insert(lines, Text.colorize(line3, Text.get_hp_color(player.cur_mp / player.max_mp)))
-    table.insert(lines, Text.colorize(line4, Text.get_tp_color(player.cur_tp / player.max_tp)))
+    table.insert(lines, Text.Colorize(line2, Text.GetHpColor(player.cur_hp / player.max_hp)))
+    table.insert(lines, Text.Colorize(line3, Text.GetHpColor(player.cur_mp / player.max_mp)))
+    table.insert(lines, Text.Colorize(line4, Text.GetTpColor(player.cur_tp / player.max_tp)))
     table.insert(lines, line5)
 
     Module.font.text = table.concat(lines, '\n')

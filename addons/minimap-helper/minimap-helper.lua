@@ -53,7 +53,7 @@ end)
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x000A then
-        local zone = Packets.parse_zonein(e.data).zone
+        local zone = Packets.ParseZoneIn(e.data).zone
         Module.currentZone = zone
         ApplyConfiguredMinimapScale()
     end

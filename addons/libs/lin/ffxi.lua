@@ -3,9 +3,12 @@ local ffxi = {}
 -- Fetch an entity by its server ID. Helpful when looking up information from
 -- packets, which tend to not include the entity index (since that's a client
 -- thing only). Returns nil if no matching entity is found.
-function ffxi.get_entity_by_server_id(id)
+---@param id number
+---@return Entity?
+function ffxi.GetEntityByServerId(id)
     -- The entity array is 2304 items long
     for x = 0, 2303 do
+        ---@type Entity
         local e = GetEntity(x)
 
         -- Ensure the entity is valid
@@ -21,8 +24,11 @@ end
 
 -- Shorthand method to grab an entity's name (by server id, obviously) or a
 -- placeholder string if the entity can't be found.
-function ffxi.get_entity_name_by_server_id(id, default_name)
-    local e = ffxi.get_entity_by_server_id(id)
+---@param id number
+---@param default_name string
+---@return string
+function ffxi.GetEntityNameByServerId(id, default_name)
+    local e = ffxi.GetEntityByServerId(id)
 
     if e ~= nil and e.Name ~= nil then
         return e.Name
@@ -34,7 +40,9 @@ end
 
 -- Determines if a particular entity (given as a server ID) belongs to the
 -- player's alliance.
-function ffxi.is_server_id_in_party(id)
+---@param id number
+---@return boolean
+function ffxi.IsServerIdInParty(id)
     local party = AshitaCore:GetDataManager():GetParty()
 
     for i = 0, 17 do
@@ -54,7 +62,9 @@ end
 
 -- Determines if a particular pet (given as a server ID) belongs to the
 -- player's alliance.
-function ffxi.is_pet_server_id_in_party(id)
+---@param id number
+---@return boolean
+function ffxi.IsPetServerIdInParty(id)
     local party = AshitaCore:GetDataManager():GetParty()
 
     for i = 0, 17 do

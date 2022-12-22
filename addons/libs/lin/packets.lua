@@ -3,7 +3,7 @@ local packets = {}
 -------------------------------------------------------------------------------
 -- Server ID 0x000A: the zone-in packet.
 -------------------------------------------------------------------------------
-function packets.parse_zonein(packet)
+function packets.ParseZoneIn(packet)
     local zonein = {
         player = struct.unpack('i4', packet, 0x04 + 1),
         player_idx = struct.unpack('i2', packet, 0x08 + 1),
@@ -16,7 +16,7 @@ end
 -------------------------------------------------------------------------------
 -- Server ID 0x0017: the chat message packet.
 -------------------------------------------------------------------------------
-function packets.parse_chatmessage(packet)
+function packets.ParseChatMessage(packet)
     local chatmessage = {
         type    = struct.unpack('i1', packet, 0x04 + 1),
         from_gm = struct.unpack('i1', packet, 0x05 + 1),
@@ -34,7 +34,7 @@ end
 -- It is a variable-length packet, containing nested arrays of targets and
 -- actions.
 -------------------------------------------------------------------------------
-function packets.parse_action(packet)
+function packets.ParseAction(packet)
     -- Collect top-level metadata. The category field will provide the context
     -- for the rest of the packet - that should be enough information to figure
     -- out what each target and action field are used for.
@@ -122,7 +122,7 @@ end
 -------------------------------------------------------------------------------
 -- Server ID 0x0029: the basic message packet.
 -------------------------------------------------------------------------------
-function packets.parse_basic(packet)
+function packets.ParseBasic(packet)
     local basic = {
         sender     = struct.unpack('i4', packet, 0x04 + 1),
         target     = struct.unpack('i4', packet, 0x08 + 1),
@@ -139,7 +139,7 @@ end
 -------------------------------------------------------------------------------
 -- Server ID 0x002D: the death message packet.
 -------------------------------------------------------------------------------
-function packets.parse_death(packet)
+function packets.ParseDeath(packet)
     local death = {
         player     = struct.unpack('i4', packet, 0x04 + 1),
         target     = struct.unpack('i4', packet, 0x08 + 1),
@@ -156,7 +156,7 @@ end
 -------------------------------------------------------------------------------
 -- Server ID 0x0061: the character stats packet.
 -------------------------------------------------------------------------------
-function packets.parse_charstats(packet)
+function packets.ParseCharStats(packet)
     local charstats = {
         max_hp      = struct.unpack('I4', packet, 0x04 + 1),
         max_mp      = struct.unpack('I4', packet, 0x08 + 1),
@@ -209,7 +209,7 @@ end
 -------------------------------------------------------------------------------
 -- Server ID 0x0062: the character skills packet.
 -------------------------------------------------------------------------------
-function packets.parse_charskills(packet)
+function packets.ParseCharSkills(packet)
     return {
         -- combat skills
         h2h = struct.unpack('I2', packet, 0x81 + 1),
@@ -267,7 +267,7 @@ end
 -- first packet in the sequence (it's 3 packets total), because it's the only
 -- one I care about for now.
 -------------------------------------------------------------------------------
-function packets.parse_menumerit(packet)
+function packets.ParseMenuMerit(packet)
     local menumerit = {
         limit_points = struct.unpack('I2', packet, 0x08 + 1),
         merit_points = struct.unpack('I1', packet, 0x0A + 1),

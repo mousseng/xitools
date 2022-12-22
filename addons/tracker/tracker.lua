@@ -119,7 +119,7 @@ end)
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if id == 0x28 then
-        local action = packets.parse_action(e.data)
+        local action = packets.ParseAction(e.data)
 
         if GetPlayerEntity() ~= nil
         and action.actor_id == GetPlayerEntity().ServerId
@@ -127,7 +127,7 @@ ashita.events.register('packet_in', 'packet_in_cb', function(e)
             for i = 1, action.target_count do
                 local target = action.targets[i]
                 local cast_info = {
-                    name = ffxi.get_entity_name_by_server_id(target.id),
+                    name = ffxi.GetEntityNameByServerId(target.id),
                     time = os.time(),
                 }
 

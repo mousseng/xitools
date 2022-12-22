@@ -31,7 +31,7 @@ end
 
 local function write_action(action)
     local output =
-        'actor_id: '     .. string.format('%i',   action.actor_id) .. ' (' .. Ffxi.get_entity_name_by_server_id(action.actor_id) .. ')\n' ..
+        'actor_id: '     .. string.format('%i',   action.actor_id) .. ' (' .. Ffxi.GetEntityNameByServerId(action.actor_id) .. ')\n' ..
         'target_count: ' .. string.format('%i',   action.target_count) .. '\n' ..
         'category: '     .. string.format('0x%x', action.category)     .. '\n' ..
         'param: '        .. string.format('0x%x', action.param)        .. '\n' ..
@@ -41,7 +41,7 @@ local function write_action(action)
 
     for i = 1, action.target_count do
         output = output ..
-            '    id: '           .. tostring(action.targets[i].id) .. ' (' .. Ffxi.get_entity_name_by_server_id(action.targets[i].id) .. ')\n' ..
+            '    id: '           .. tostring(action.targets[i].id) .. ' (' .. Ffxi.GetEntityNameByServerId(action.targets[i].id) .. ')\n' ..
             '    action_count: ' .. tostring(action.targets[i].action_count) .. '\n' ..
             '    actions:\n'
 
@@ -97,11 +97,11 @@ end
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x0028 then
-        local packet = Packets.parse_action(e.data_modified_raw)
+        local packet = Packets.ParseAction(e.data_modified_raw)
         if packet.category == 0 or packet.category == 1 then return false end
         write_action(packet)
     elseif e.id == 0x0029 then
-        write_basic(Packets.parse_basic(e.data))
+        write_basic(Packets.ParseBasic(e.data))
     end
 
     return false

@@ -111,7 +111,7 @@ end)
 
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
     if e.id == 0x17 and listening then
-        local msg = Packets.parse_chatmessage(e.data)
+        local msg = Packets.ParseChatMessage(e.data)
 
         if msg.type == PartyMessage
         and whitelist:contains(string.trim(msg.text))

@@ -1,0 +1,139 @@
+---@meta
+
+---@class Position
+---@field X     number
+---@field Y     number
+---@field Z     number
+---@field Roll  number
+---@field Yaw   number
+---@field Pitch number
+
+---@class Move
+---@field X          number
+---@field Y          number
+---@field Z          number
+---@field DeltaX     number
+---@field DeltaY     number
+---@field DeltaZ     number
+---@field DeltaRoll  number
+---@field DeltaYaw   number
+---@field DeltaPitch number
+
+---@class Movement
+---@field LocalPosition Position
+---@field LastPosition  Position
+---@field Move          Move
+
+---@class Look
+---@field Hair   integer
+---@field Head   integer
+---@field Body   integer
+---@field Hands  integer
+---@field Legs   integer
+---@field Feet   integer
+---@field Main   integer
+---@field Sub    integer
+---@field Ranged integer
+
+---@class Render
+---@field Flags0 integer Main Render Flags
+---@field Flags1 integer Name Flags (Party, Away, Anon)
+---@field Flags2 integer Name Flags (Bazaar, GM Icon, etc.)
+---@field Flags3 integer Entity Flags (Shadow)
+---@field Flags4 integer Name Flags (Name Visibility)
+---@field Flags5 integer Geomancer Indi's
+---@field Flags6 integer Unknown
+---@field Flags7 integer Overhead Flags (Hi-word: Jump Emote, Model Visibility etc.) (Low-word: Job Mastery Stars, Party Seek Mastery Star, etc. [Low-Byte:] Timer of some sort.)
+---@field Flags8 integer Overhead Flags (Job mastery party.)
+
+---@class Entity
+---@field Movement                Movement
+---@field TargetIndex             integer
+---@field ServerId                integer
+---@field Name                    string
+---@field MovementSpeed           number
+---@field AnimationSpeed          number
+---@field Attachments             integer[]
+---@field Distance                number
+---@field TurnSpeed               integer
+---@field TurnSpeedHead           integer
+---@field Heading                 number
+---@field HPPercent               integer
+---@field Type                    integer
+---@field Race                    integer
+---@field LocalMoveCount          integer
+---@field ActorLockFlag           integer
+---@field ModelUpdateFlags        integer
+---@field DoorId                  integer
+---@field Look                    Look
+---@field ActionTimer1            integer
+---@field ActionTimer2            integer
+---@field Render                  Render
+---@field PopEffect               integer
+---@field UpdateMask              integer
+---@field InteractionTargetIndex  integer
+---@field NpcSpeechFrame          integer
+---@field LookAxisX               integer
+---@field LookAxisY               integer
+---@field MouthCounter            integer
+---@field MouthWaitCounter        integer
+---@field CraftTimerUnknown       integer
+---@field CraftServerId           integer
+---@field CraftAnimationEffect    integer
+---@field CraftAnimationStep      integer
+---@field CraftParam              integer
+---@field MovementSpeed2          number
+---@field NpcWalkPosition1        integer
+---@field NpcWalkPosition2        integer
+---@field NpcWalkMode             integer
+---@field CostumeId               integer
+---@field Mou4                    integer
+---@field StatusServer            integer
+---@field Status                  integer
+---@field StatusEvent             integer
+---@field ModelTime               integer
+---@field ModelStartTime          integer
+---@field ClaimStatus             integer
+---@field ZoneId                  integer
+---@field Animations              integer
+---@field AnimationTime           integer
+---@field AnimationStep           integer
+---@field AnimationPlay           integer
+---@field EmoteTargetIndex        integer
+---@field EmoteId                 integer
+---@field EmoteIdString           integer
+---@field SpawnFlags              integer
+---@field LinkshellColor          integer
+---@field NameColor               integer
+---@field CampaignNameFlag        integer
+---@field MountId                 integer
+---@field FishingActionCountdown  integer
+---@field FishingRodCastTime      integer
+---@field LastActionId            integer
+---@field TargetedIndex           integer
+---@field PetTargetIndex          integer
+---@field UpdateRequestDelay      integer
+---@field IsDirty                 integer
+---@field BallistaFlags           integer
+---@field PankrationEnabled       integer
+---@field PankrationFlagFlip      integer
+---@field ModelSize               number
+---@field ModelHitboxSize         number
+---@field EnvironmentAreaId       integer
+---@field MonstrosityFlag         integer
+---@field MonstrosityNameId       integer
+---@field MonstrosityName         string
+---@field MonstrosityNameEnd      integer
+---@field MonstrosityNameAbbr     string
+---@field MonstrosityNameAbbrEnd  integer
+---@field CustomProperties        integer[]
+---@field BallistaInfo            integer[]
+---@field FellowTargetIndex       integer
+---@field WarpTargetIndex         integer
+---@field TrustOwnerTargetIndex   integer
+---@field AreaDisplayTargetIndex  integer
+---@field VTablePointer           integer
+---@field ActorPointer            integer
+---@field EventPointer            integer
+---@field EmoteTargetActorPointer integer
+---@field LastActionActorPointer  integer
