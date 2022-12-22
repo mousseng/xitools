@@ -1,6 +1,6 @@
 addon.name    = 'minimap-helper'
 addon.author  = 'lin'
-addon.version = '1.1.0'
+addon.version = '1.2.0'
 addon.desc    = 'Automates minimap scale changes'
 
 local Defaults = require('defaults')
@@ -20,14 +20,14 @@ local Module = {
 ---@param scale number
 ---@param shouldSave boolean
 local function SetMinimapScale(scale, shouldSave)
-    print(string.format('Setting scale for zone %d to %.2f', Module.currentZone, scale))
+    print(string.format('Setting scale for zone %d to %s', Module.currentZone, tostring(scale)))
 
     if shouldSave then
         Module.config.zoneScales[Module.currentZone] = scale
         Settings.save()
     end
 
-    AshitaCore:GetChatManager():QueueCommand(1, string.format('/minimap zoom %.2f', scale))
+    AshitaCore:GetChatManager():QueueCommand(1, '/minimap zoom ' .. scale)
 end
 
 local function ApplyConfiguredMinimapScale()
@@ -37,14 +37,15 @@ local function ApplyConfiguredMinimapScale()
 end
 
 ashita.events.register('command', 'command_cb', function(e)
+    ---@type string[]
     local args = e.command:args()
 
     if #args == 0 or args[1] ~= '/mmh' then
         return false
     end
 
-    if #args == 2 then
-        local scale = args[2]
+    local scale = tonumber(args[2])
+    if scale ~= nil then
         SetMinimapScale(scale, true)
     end
 
