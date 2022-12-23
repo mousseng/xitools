@@ -1,10 +1,11 @@
+require('common')
 local scaling = require('scaling')
 
 ---@class MeSettings
 ---@field font Font?
 
 ---@type MeSettings
-local default_settings = {
+local default_settings = T{
     font = {
         visible = true,
         font_family = 'Consolas',

@@ -1,3 +1,4 @@
+require('common')
 local scaling = require('scaling')
 
 ---@class TgtSettings
@@ -6,7 +7,7 @@ local scaling = require('scaling')
 ---@field status boolean
 
 ---@type TgtSettings
-local default_settings = {
+local default_settings = T{
     dependent = false,
     status = true,
     font = {

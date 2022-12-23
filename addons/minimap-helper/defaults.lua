@@ -1,10 +1,11 @@
+require('common')
 local scaling = require('scaling')
 
 ---@class MinimapHelperSettings
 ---@field zoneScales { [number]: number }
 
 ---@type MinimapHelperSettings
-local default_settings = {
+local default_settings = T{
     zoneScales = {
         [  0] = 0.5, -- UNKNOWN
         [  1] = 0.5, -- PHANAUET_CHANNEL

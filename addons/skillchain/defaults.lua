@@ -1,3 +1,4 @@
+require('common')
 local scaling = require('scaling')
 
 ---@class SkillchainSettings
@@ -5,7 +6,7 @@ local scaling = require('scaling')
 ---@field font Font?
 
 ---@type SkillchainSettings
-local default_settings = {
+local default_settings = T{
     showHeader = true,
     font = {
         visible = true,
