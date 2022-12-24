@@ -1,6 +1,13 @@
 ---@meta
 
----@class TextInEvent
+---@class AshitaCommand
+---@field args fun(self: AshitaCommand): string[]
+---@field blocked boolean
+
+---@class CommandEventArgs
+---@field command AshitaCommand
+
+---@class TextInEventArgs
 ---@field mode             integer
 ---@field mode_modified    integer
 ---@field message          string
@@ -10,7 +17,7 @@
 ---@field injected         boolean
 ---@field blocked          boolean
 
----@class PacketInEvent
+---@class PacketInEventArgs
 ---@field id                integer
 ---@field size              integer
 ---@field data              string

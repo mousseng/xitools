@@ -1,0 +1,148 @@
+---@meta
+
+---@class PlayerStats
+---@field Strength     integer
+---@field Dexterity    integer
+---@field Vitality     integer
+---@field Agility      integer
+---@field Intelligence integer
+---@field Mind         integer
+---@field Charisma     integer
+
+---@class PlayerResists
+---@field Fire      integer
+---@field Ice       integer
+---@field Wind      integer
+---@field Earth     integer
+---@field Lightning integer
+---@field Water     integer
+---@field Light     integer
+---@field Dark      integer
+
+---@class UnityInfo
+
+---@class CombatSkill
+---@field Raw      integer
+---@field GetSkill fun(): integer
+---@field IsCapped fun(): boolean
+
+---@class CombatSkills
+---@field HandToHand   CombatSkill
+---@field Dagger       CombatSkill
+---@field Sword        CombatSkill
+---@field GreatSword   CombatSkill
+---@field Axe          CombatSkill
+---@field GreatAxe     CombatSkill
+---@field Scythe       CombatSkill
+---@field Polearm      CombatSkill
+---@field Katana       CombatSkill
+---@field GreatKatana  CombatSkill
+---@field Club         CombatSkill
+---@field Staff        CombatSkill
+---@field Archery      CombatSkill
+---@field Marksmanship CombatSkill
+---@field Throwing     CombatSkill
+---@field Guarding     CombatSkill
+---@field Evasion      CombatSkill
+---@field Shield       CombatSkill
+---@field Parrying     CombatSkill
+---@field Divine       CombatSkill
+---@field Healing      CombatSkill
+---@field Enhancing    CombatSkill
+---@field Enfeebling   CombatSkill
+---@field Elemental    CombatSkill
+---@field Dark         CombatSkill
+---@field Summon       CombatSkill
+---@field Ninjutsu     CombatSkill
+---@field Singing      CombatSkill
+---@field String       CombatSkill
+---@field Wind         CombatSkill
+---@field BlueMagic    CombatSkill
+
+---@class CraftSkill
+---@field Raw      integer
+---@field GetRank  fun(): integer
+---@field GetSkill fun(): integer
+---@field IsCapped fun(): boolean
+
+---@class CraftSkills
+---@field Fishing      CraftSkill
+---@field Woodworking  CraftSkill
+---@field Smithing     CraftSkill
+---@field Goldsmithing CraftSkill
+---@field Clothcraft   CraftSkill
+---@field Leathercraft CraftSkill
+---@field Bonecraft    CraftSkill
+---@field Alchemy      CraftSkill
+---@field Cooking      CraftSkill
+---@field Synergy      CraftSkill
+---@field Riding       CraftSkill
+
+---@class AbilityRecast
+---@field TimerId integer
+---@field Recast  integer
+
+---@class MountRecast
+---@field TimerId integer
+---@field Recast  integer
+
+---@class JobPointsEntry
+---@field CapacityPoints integer
+---@field Points         integer
+---@field PointsSpent    integer
+
+---@class JobPointsInfo
+---@field Jobs JobPointsEntry[]
+
+---@class Player
+---@field HPMax                                  integer
+---@field MPMax                                  integer
+---@field MainJob                                integer
+---@field MainJobLevel                           integer
+---@field SubJob                                 integer
+---@field SubJobLevel                            integer
+---@field ExpCurrent                             integer
+---@field ExpNeeded                              integer
+---@field Stats                                  PlayerStats
+---@field StatsModifiers                         PlayerStats
+---@field Attack                                 integer
+---@field Defense                                integer
+---@field Resists                                PlayerResists
+---@field Title                                  integer
+---@field Rank                                   integer
+---@field RankPoints                             integer
+---@field Homepoint                              integer
+---@field Nation                                 integer
+---@field Residence                              integer
+---@field SuLevel                                integer
+---@field HighestItemLevel                       integer
+---@field ItemLevel                              integer
+---@field MainHandItemLevel                      integer
+---@field UnityInfo                              UnityInfo
+---@field UnityPartialPersonalEvalutionPoints    integer
+---@field UnityPersonalEvaluationPoints          integer
+---@field UnityChatColorFlag                     integer
+---@field MasteryJob                             integer
+---@field MasteryJobLevel                        integer
+---@field MasteryFlags                           integer
+---@field MasteryUnknown0000                     integer
+---@field MasteryExp                             integer
+---@field MasteryExpNeeded                       integer
+---@field CombatSkills                           CombatSkills
+---@field CraftSkills                            CraftSkills
+---@field AbilityInfo                            AbilityRecast[]
+---@field MountRecast                            MountRecast
+---@field DataLoadedFlags                        integer
+---@field LimitPoints                            integer
+---@field MeritPoints                            integer
+---@field AssimilationPoints                     integer
+---@field IsLimitBreaker                         boolean
+---@field IsExperiencePointsLocked               boolean
+---@field IsLimitModeEnabled                     boolean
+---@field MeritPointsMax                         integer
+---@field JobPoints                              JobPointsInfo
+---@field HomepointMasks                         integer[]
+---@field StatusIcons                            integer[]
+---@field StatusTimers                           integer[]
+---@field IsZoning                               boolean
+---@field Buffs                                  integer[]

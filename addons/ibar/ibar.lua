@@ -374,7 +374,7 @@ end );
 -- func: incoming_packet
 -- desc: Called when our addon receives an incoming packet.
 ---------------------------------------------------------------------------------------------------
----@param e PacketInEvent
+---@param e PacketInEventArgs
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
     -- Check for zone-in packets..
     if (e.id == 0x0A) then
