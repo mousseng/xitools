@@ -1,5 +1,22 @@
 local packets = {}
 
+packets.Types = {
+    ['ZoneIn']            = 0x000A,
+    ['ZoneOut']           = 0x000B,
+    ['NpcUpdate']         = 0x000E,
+    ['ChatMessage']       = 0x0017,
+    ['JobInfo']           = 0x001B,
+    ['ItemUpdate']        = 0x0020,
+    ['Action']            = 0x0028,
+    ['Basic']             = 0x0029,
+    ['Death']             = 0x002D,
+    ['SynthAnimation']    = 0x0030,
+    ['SynthResultPlayer'] = 0x006F,
+    ['CharStats']         = 0x0061,
+    ['CharSkills']        = 0x0062,
+    ['MenuMerit']         = 0x0063,
+}
+
 -------------------------------------------------------------------------------
 -- Server ID 0x000A: the zone-in packet.
 -------------------------------------------------------------------------------
@@ -34,10 +51,13 @@ end
 -- It is a variable-length packet, containing nested arrays of targets and
 -- actions.
 -------------------------------------------------------------------------------
+---@param packet userdata
+---@return ActionPacket
 function packets.ParseAction(packet)
     -- Collect top-level metadata. The category field will provide the context
     -- for the rest of the packet - that should be enough information to figure
     -- out what each target and action field are used for.
+    ---@type ActionPacket
     local action = {
         -- Windower code leads me to believe param and recast might be at
         -- different indices - 102 and 134, respectively. Confusing.
