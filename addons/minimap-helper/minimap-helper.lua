@@ -23,6 +23,7 @@ local function SetMinimapScale(scale, shouldSave)
     print(string.format('Setting scale for zone %d to %s', Module.currentZone, tostring(scale)))
 
     if shouldSave then
+        print('Saving config...')
         Module.config.zoneScales[Module.currentZone] = scale
         Settings.save()
     end
