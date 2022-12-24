@@ -379,14 +379,14 @@ ashita.events.register('packet_in', 'packet_in_cb', function(e)
     -- Check for zone-in packets..
     if (e.id == 0x0A) then
         -- Are we zoning into a mog house..
-        if (struct.unpack('b', e.data_raw, 0x80 + 1) == 1) then
+        if (struct.unpack('b', e.data, 0x80 + 1) == 1) then
             return false;
         end
 
         -- Pull the zone id from the packet..
-        local zoneId = struct.unpack('H', e.data_raw, 0x30 + 1);
+        local zoneId = struct.unpack('H', e.data, 0x30 + 1);
         if (zoneId == 0) then
-            zoneId = struct.unpack('H', e.data_raw, 0x42 + 1);
+            zoneId = struct.unpack('H', e.data, 0x42 + 1);
         end
 
         -- Update our mob list..
