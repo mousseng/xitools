@@ -30,6 +30,7 @@ local Packets = require('lin.packets')
 ---@class TgtSettings
 ---@field position_x integer
 ---@field position_y integer
+---@field showStatus boolean
 
 ---@class TgtModule
 ---@field config TgtSettings
@@ -327,6 +328,8 @@ end
 
 ---@param debuffs Debuffs
 local function DrawStatus(debuffs)
+    if not Module.config.showStatus then return end
+
     local now = os.time()
     Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 })
     DrawStatusEntry('D',  now < debuffs.dia, Colors.StatusWhite)
@@ -399,7 +402,7 @@ end
 ---@param e PacketInEventArgs
 function Module.OnPacket(e)
     -- don't track anything if we're not displaying it
-    if not Module.config.status then return end
+    if not Module.config.showStatus then return end
 
     -- clear state on zone changes
     if e.id == 0x0A then
@@ -409,8 +412,6 @@ function Module.OnPacket(e)
     elseif e.id == 0x0029 then
         HandleBasic(Module.debuffs, Packets.ParseBasic(e.data))
     end
-
-    e.blocked = true
 end
 
 function Module.OnLoad()
