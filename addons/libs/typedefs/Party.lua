@@ -1,0 +1,41 @@
+---@meta
+
+---@class Party
+---@field GetAllianceLeaderServerId       fun(self: Party ): integer
+---@field GetAlliancePartyLeaderServerId1 fun(self: Party ): integer
+---@field GetAlliancePartyLeaderServerId2 fun(self: Party ): integer
+---@field GetAlliancePartyLeaderServerId3 fun(self: Party ): integer
+---@field GetAlliancePartyVisible1        fun(self: Party ): integer
+---@field GetAlliancePartyVisible2        fun(self: Party ): integer
+---@field GetAlliancePartyVisible3        fun(self: Party ): integer
+---@field GetAlliancePartyMemberCount1    fun(self: Party ): integer
+---@field GetAlliancePartyMemberCount2    fun(self: Party ): integer
+---@field GetAlliancePartyMemberCount3    fun(self: Party ): integer
+---@field GetAllianceInvited              fun(self: Party ): integer
+---@field GetMemberIndex                  fun(self: Party, index: integer): integer
+---@field GetMemberNumber                 fun(self: Party, index: integer): integer
+---@field GetMemberName                   fun(self: Party, index: integer): string
+---@field GetMemberServerId               fun(self: Party, index: integer): integer
+---@field GetMemberTargetIndex            fun(self: Party, index: integer): integer
+---@field GetMemberLastUpdatedTimestamp   fun(self: Party, index: integer): integer
+---@field GetMemberHP                     fun(self: Party, index: integer): integer
+---@field GetMemberMP                     fun(self: Party, index: integer): integer
+---@field GetMemberTP                     fun(self: Party, index: integer): integer
+---@field GetMemberHPPercent              fun(self: Party, index: integer): integer
+---@field GetMemberMPPercent              fun(self: Party, index: integer): integer
+---@field GetMemberZone                   fun(self: Party, index: integer): integer
+---@field GetMemberZone2                  fun(self: Party, index: integer): integer
+---@field GetMemberFlagMask               fun(self: Party, index: integer): integer
+---@field GetMemberTreasureLot            fun(self: Party, index: integer, slot: integer): integer
+---@field GetMemberMonstrosityItemId      fun(self: Party, index: integer): integer
+---@field GetMemberMonstrosityPrefixFlag1 fun(self: Party, index: integer): integer
+---@field GetMemberMonstrosityPrefixFlag2 fun(self: Party, index: integer): integer
+---@field GetMemberMonstrosityName        fun(self: Party, index: integer): string
+---@field GetMemberMainJob                fun(self: Party, index: integer): integer
+---@field GetMemberMainJobLevel           fun(self: Party, index: integer): integer
+---@field GetMemberSubJob                 fun(self: Party, index: integer): integer
+---@field GetMemberSubJobLevel            fun(self: Party, index: integer): integer
+---@field GetMemberServerId2              fun(self: Party, index: integer): integer
+---@field GetMemberHPPercent2             fun(self: Party, index: integer): integer
+---@field GetMemberMPPercent2             fun(self: Party, index: integer): integer
+---@field GetMemberIsActive               fun(self: Party, index: integer): integer

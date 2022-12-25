@@ -95,54 +95,53 @@
 ---@field Jobs JobPointsEntry[]
 
 ---@class Player
----@field HPMax                                  integer
----@field MPMax                                  integer
----@field MainJob                                integer
----@field MainJobLevel                           integer
----@field SubJob                                 integer
----@field SubJobLevel                            integer
----@field ExpCurrent                             integer
----@field ExpNeeded                              integer
----@field Stats                                  PlayerStats
----@field StatsModifiers                         PlayerStats
----@field Attack                                 integer
----@field Defense                                integer
----@field Resists                                PlayerResists
----@field Title                                  integer
----@field Rank                                   integer
----@field RankPoints                             integer
----@field Homepoint                              integer
----@field Nation                                 integer
----@field Residence                              integer
----@field SuLevel                                integer
----@field HighestItemLevel                       integer
----@field ItemLevel                              integer
----@field MainHandItemLevel                      integer
----@field UnityInfo                              UnityInfo
----@field UnityPartialPersonalEvalutionPoints    integer
----@field UnityPersonalEvaluationPoints          integer
----@field UnityChatColorFlag                     integer
----@field MasteryJob                             integer
----@field MasteryJobLevel                        integer
----@field MasteryFlags                           integer
----@field MasteryUnknown0000                     integer
----@field MasteryExp                             integer
----@field MasteryExpNeeded                       integer
----@field CombatSkills                           CombatSkills
----@field CraftSkills                            CraftSkills
----@field AbilityInfo                            AbilityRecast[]
----@field MountRecast                            MountRecast
----@field DataLoadedFlags                        integer
----@field LimitPoints                            integer
----@field MeritPoints                            integer
----@field AssimilationPoints                     integer
----@field IsLimitBreaker                         boolean
----@field IsExperiencePointsLocked               boolean
----@field IsLimitModeEnabled                     boolean
----@field MeritPointsMax                         integer
----@field JobPoints                              JobPointsInfo
----@field HomepointMasks                         integer[]
----@field StatusIcons                            integer[]
----@field StatusTimers                           integer[]
----@field IsZoning                               boolean
----@field Buffs                                  integer[]
+---@field GetHPMax                               fun(self: Player): integer
+---@field GetMPMax                               fun(self: Player): integer
+---@field GetMainJob                             fun(self: Player): integer
+---@field GetMainJobLevel                        fun(self: Player): integer
+---@field GetSubJob                              fun(self: Player): integer
+---@field GetSubJobLevel                         fun(self: Player): integer
+---@field GetExpCurrent                          fun(self: Player): integer
+---@field GetExpNeeded                           fun(self: Player): integer
+---@field GetStats                               fun(self: Player): PlayerStats
+---@field GetStatsModifiers                      fun(self: Player): PlayerStats
+---@field GetAttack                              fun(self: Player): integer
+---@field GetDefense                             fun(self: Player): integer
+---@field GetResists                             fun(self: Player): PlayerResists
+---@field GetTitle                               fun(self: Player): integer
+---@field GetRank                                fun(self: Player): integer
+---@field GetRankPoints                          fun(self: Player): integer
+---@field GetHomepoint                           fun(self: Player): integer
+---@field GetNation                              fun(self: Player): integer
+---@field GetResidence                           fun(self: Player): integer
+---@field GetSuLevel                             fun(self: Player): integer
+---@field GetHighestItemLevel                    fun(self: Player): integer
+---@field GetItemLevel                           fun(self: Player): integer
+---@field GetMainHandItemLevel                   fun(self: Player): integer
+---@field GetUnityInfo                           fun(self: Player): UnityInfo
+---@field GetUnityPartialPersonalEvalutionPoints fun(self: Player): integer
+---@field GetUnityPersonalEvaluationPoints       fun(self: Player): integer
+---@field GetUnityChatColorFlag                  fun(self: Player): integer
+---@field GetMasteryJob                          fun(self: Player): integer
+---@field GetMasteryJobLevel                     fun(self: Player): integer
+---@field GetMasteryFlags                        fun(self: Player): integer
+---@field GetMasteryExp                          fun(self: Player): integer
+---@field GetMasteryExpNeeded                    fun(self: Player): integer
+---@field GetCombatSkills                        fun(self: Player): CombatSkills
+---@field GetCraftSkills                         fun(self: Player): CraftSkills
+---@field GetAbilityInfo                         fun(self: Player): AbilityRecast[]
+---@field GetMountRecast                         fun(self: Player): MountRecast
+---@field GetDataLoadedFlags                     fun(self: Player): integer
+---@field GetLimitPoints                         fun(self: Player): integer
+---@field GetMeritPoints                         fun(self: Player): integer
+---@field GetAssimilationPoints                  fun(self: Player): integer
+---@field GetIsLimitBreaker                      fun(self: Player): boolean
+---@field GetIsExperiencePointsLocked            fun(self: Player): boolean
+---@field GetIsLimitModeEnabled                  fun(self: Player): boolean
+---@field GetMeritPointsMax                      fun(self: Player): integer
+---@field GetJobPoints                           fun(self: Player): JobPointsInfo
+---@field GetHomepointMasks                      fun(self: Player): integer[]
+---@field GetStatusIcons                         fun(self: Player): integer[]
+---@field GetStatusTimers                        fun(self: Player): integer[]
+---@field GetIsZoning                            fun(self: Player): integer
+---@field GetBuffs                               fun(self: Player): integer[]

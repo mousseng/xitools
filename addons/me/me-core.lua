@@ -7,164 +7,231 @@ local Bit = require('bit')
 local Jobs = require('lin.jobs')
 local Text = require('lin.text')
 
+---@alias Vec2 integer[]
+---@alias Color number[]
+
+---@class MeModule
+---@field config               MeSettings
+---@field windowName           string
+---@field windowSize           Vec2
+---@field windowFlags          any
+---@field windowBg             Color
+---@field windowBgBorder       Color
+---@field windowBgBorderShadow Color
+---@field isWindowOpen         boolean[]
+---@field isLoaded             boolean
+
+---@class MeSettings
+---@field position_x integer
+---@field position_y integer
+
+local Colors = {
+    White  = { 1.00, 1.00, 1.00, 1.0 },
+    Yellow = { 1.00, 1.00, 0.00, 1.0 },
+    Orange = { 1.00, 0.64, 0.00, 1.0 },
+    Red    = { 0.95, 0.20, 0.20, 1.0 },
+
+    HpBar       = { 0.83, 0.33, 0.28, 1.0 },
+    MpBar       = { 0.82, 0.60, 0.27, 1.0 },
+    TpBar       = { 1.00, 1.00, 1.00, 1.0 },
+    TpBarActive = { 0.23, 0.67, 0.91, 1.0 },
+    XpBar       = { 0.01, 0.67, 0.07, 1.0 },
+    LpBar       = { 0.61, 0.32, 0.71, 1.0 },
+
+    FfxiGreyBg     = { 0.08, 0.08, 0.08, 0.8 },
+    FfxiGreyBorder = { 0.69, 0.68, 0.78, 1.0 },
+    FfxiAmber      = { 0.81, 0.81, 0.50, 1.0 },
+}
+
 ---@type MeModule
 local Module = {
     config = Settings.load(Defaults),
     windowName = 'Me_',
+    windowSize = { 277, 110 },
     windowFlags = Bit.bor(ImGuiWindowFlags_NoDecoration),
     windowPadding = { 10, 10 },
-    windowBg = { 0.08, 0.08, 0.08, 0.8 },
-    windowBgBorder = { 0.69, 0.68, 0.78, 1.0 },
-    windowBgBorderShadow = { 1.0, 0.0, 0.0, 1.0},
-    windowTextColor = { 1.0, 1.0, 1.0, 1.0 },
-    isWindowOpen = false,
+    windowBg = Colors.FfxiGreyBg,
+    windowBgBorder = Colors.FfxiGreyBorder,
+    windowBgBorderShadow = { 1.0, 0.0, 0.0, 1.0 },
+    isWindowOpen = { true, },
+    isLoaded = false,
 }
 
--- ashita.events.register('d3d_present', 'd3d_present_cb', function()
---     local lines = {}
+local function InitMe()
+    ---@type Entity
+    local player = GetPlayerEntity()
+    if player.Name == nil or player.Name == '' then
+        return
+    end
 
---     local party_data = AshitaCore:GetMemoryManager():GetParty()
---     local player_data = AshitaCore:GetMemoryManager():GetPlayer()
---     local player_entity = GetPlayerEntity()
-
---     if player_entity == nil or Jobs.GetJobAbbr(player_data:GetMainJob()) == nil then
---         Module.font.text = ''
---         return
---     end
-
---     local player = {
---         name = player_entity.Name or '',
-
---         main_job = Jobs.GetJobAbbr(player_data:GetMainJob()),
---         main_lv = player_data:GetMainJobLevel() or 0,
-
---         sub_job = Jobs.GetJobAbbr(player_data:GetSubJob()),
---         sub_lv = player_data:GetSubJobLevel() or 0,
-
---         cur_xp = player_data:GetExpCurrent() or 0,
---         max_xp = player_data:GetExpNeeded() or 0,
-
---         is_limit_mode = player_data:GetIsExperiencePointsLocked(),
---         merits = player_data:GetMeritPoints(),
-
---         cur_lp = player_data:GetLimitPoints(),
---         max_lp = 10000,
-
---         max_hp = player_data:GetHPMax() or 0,
---         cur_hp = party_data:GetMemberHP(0) or 0,
-
---         max_mp = player_data:GetMPMax() or 0,
---         cur_mp = party_data:GetMemberMP(0) or 0,
-
---         max_tp = 300,
---         cur_tp = math.floor(party_data:GetMemberTP(0) / 10) or 0,
---     }
-
---     local line1
---     if player.sub_job ~= '' and player.sub_job ~= nil then
---         line1 = string.format('%-11.11s [%s%2i/%s%2i]',
---             player.name,
---             player.main_job, player.main_lv,
---             player.sub_job, player.sub_lv)
---     else
---         line1 = string.format('%-17.17s [%s%2i]',
---             player.name,
---             player.main_job, player.main_lv)
---     end
-
---     local line2 = string.format('HP %4i/%4i %s',
---         player.cur_hp,
---         player.max_hp,
---         Text.PercentBar(12, player.cur_hp / player.max_hp))
-
---     local line3 = string.format('MP %4i/%4i %s',
---         player.cur_mp,
---         player.max_mp,
---         Text.PercentBar(12, player.cur_mp / player.max_mp))
-
---     local line4 = string.format('TP %4i/%4i %s',
---         player.cur_tp,
---         player.max_tp,
---         Text.PercentBar(12, player.cur_tp / player.max_tp))
-
---     local line5
---     if player.is_limit_mode
---     or player.cur_xp == 43999 then
---         line5 = string.format('LP %4.4s/%-4.4s %s',
---             Text.FormatXp(player.cur_lp, false),
---             Text.FormatXp(player.max_lp, false),
---             Text.PercentBar(12, player.cur_lp / player.max_lp))
---     else
---         line5 = string.format('XP %4.4s/%-4.4s %s',
---             Text.FormatXp(player.cur_xp, false),
---             Text.FormatXp(player.max_xp, false),
---             Text.PercentBar(12, player.cur_xp / player.max_xp))
---     end
-
---     table.insert(lines, line1)
---     table.insert(lines, Text.Colorize(line2, Text.GetHpColor(player.cur_hp / player.max_hp)))
---     table.insert(lines, Text.Colorize(line3, Text.GetHpColor(player.cur_mp / player.max_mp)))
---     table.insert(lines, Text.Colorize(line4, Text.GetTpColor(player.cur_tp / player.max_tp)))
---     table.insert(lines, line5)
-
---     Module.font.text = table.concat(lines, '\n')
--- end)
-
-local function DrawHeader()
+    Module.windowName = 'Me_' .. player.Name
+    Module.isLoaded = true
 end
 
+---@param name     string
+---@param job      integer
+---@param jobLevel integer
+---@param sub      integer?
+---@param subLevel integer?
+local function DrawHeader(name, job, jobLevel, sub, subLevel)
+    Imgui.Text(string.format('%s', name))
+
+    local jobs = ''
+    if sub ~= nil then
+        jobs = string.format('%s%i/%s%i', Jobs.GetJobAbbr(job), jobLevel, Jobs.GetJobAbbr(sub), subLevel)
+    else
+        jobs = string.format('%s%i', Jobs.GetJobAbbr(job), jobLevel)
+    end
+
+    local width = Imgui.CalcTextSize(jobs) + Module.windowPadding[1]
+
+    Imgui.SameLine()
+    Imgui.SetCursorPosX(Module.windowSize[1] - width)
+    Imgui.Text(jobs)
+end
+
+---@param title string
+---@param cur   integer
+---@param max   integer
 local function DrawBar(title, cur, max)
     local fraction = cur / max
-    local overlay = string.format('%i/%i', cur, max)
 
     Imgui.AlignTextToFramePadding()
     Imgui.Text(title)
     Imgui.SameLine()
-    Imgui.ProgressBar(fraction, { 200, 15 }, overlay)
+    Imgui.ProgressBar(fraction, { 200, 15 }, '')
+end
+
+---@param cur integer
+---@param max integer
+local function DrawHp(cur, max)
+    local title = string.format('HP %4i', cur)
+    local textColor = Colors.White
+    local barColor = Colors.HpBar
+
+    local frac = cur / max
+    if frac > 0.75 then
+        textColor = Colors.White
+    elseif frac > 0.50 then
+        textColor = Colors.Yellow
+    elseif frac > 0.25 then
+        textColor = Colors.Orange
+    elseif frac > 0.00 then
+        textColor = Colors.Red
+    end
+
+    Imgui.PushStyleColor(ImGuiCol_Text, textColor)
+    Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
+    DrawBar(title, cur, max)
+    Imgui.PopStyleColor(2)
+end
+
+---@param cur integer
+---@param max integer
+local function DrawMp(cur, max)
+    local title = string.format('MP %4i', cur)
+    local textColor = Colors.White
+    local barColor = Colors.FfxiAmber
+
+    local frac = cur / max
+    if frac > 0.75 then
+        textColor = Colors.White
+    elseif frac > 0.50 then
+        textColor = Colors.Yellow
+    elseif frac > 0.25 then
+        textColor = Colors.Orange
+    elseif frac > 0.00 then
+        textColor = Colors.Red
+    end
+
+    Imgui.PushStyleColor(ImGuiCol_Text, textColor)
+    Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
+    DrawBar(title, cur, max)
+    Imgui.PopStyleColor(2)
+end
+
+---@param cur integer
+---@param max integer
+local function DrawTp(cur, max)
+    local title = string.format('TP %4i', cur)
+    local textColor = Colors.White
+    local barColor = Colors.TpBar
+
+    if cur > 1000 then
+        textColor = Colors.TpBarActive
+        barColor = Colors.TpBarActive
+    end
+
+    Imgui.PushStyleColor(ImGuiCol_Text, textColor)
+    Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
+    DrawBar(title, cur, max)
+    Imgui.PopStyleColor(2)
+end
+
+---@param cur      integer
+---@param max      integer
+---@param isLocked boolean
+local function DrawXp(cur, max, isLocked)
+    if isLocked then
+        return
+    end
+
+    local barColor = Colors.XpBar
+    local title = string.format('XP %4i', Text.FormatXp(cur, true))
+
+    Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
+    DrawBar(title, cur, max)
+    Imgui.PopStyleColor()
+end
+
+---@param cur      integer
+---@param max      integer
+---@param isLocked boolean
+local function DrawLp(cur, max, isLocked)
+    if isLocked then
+        return
+    end
+
+    local barColor = Colors.LpBar
+    local title = string.format('LP %4i', type, Text.FormatXp(cur, true))
+
+    Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
+    DrawBar(title, cur, max)
+    Imgui.PopStyleColor()
 end
 
 ---@param player Player
+---@param party Party
 ---@param entity Entity
-local function DrawMe(player, entity)
-    Imgui.ShowDemoWindow()
-
-    local party = AshitaCore:GetMemoryManager():GetParty()
-
-    Imgui.SetNextWindowSize({ -1, -1 }, ImGuiCond_Always)
+local function DrawMe(player, party, entity)
+    Imgui.SetNextWindowSize(Module.windowSize, ImGuiCond_Always)
     Imgui.SetNextWindowPos({ Module.config.position_x, Module.config.position_y }, ImGuiCond_FirstUseEver)
     Imgui.PushStyleColor(ImGuiCol_WindowBg, Module.windowBg)
     Imgui.PushStyleColor(ImGuiCol_Border, Module.windowBgBorder)
     Imgui.PushStyleColor(ImGuiCol_BorderShadow, Module.windowBgBorderShadow)
     Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, Module.windowPadding)
+
     if Imgui.Begin(Module.windowName, Module.isWindowOpen, Module.windowFlags) then
         Imgui.PopStyleColor(3)
-        Imgui.PushStyleColor(ImGuiCol_Text, Module.windowTextColor)
+        Imgui.PushStyleColor(ImGuiCol_Text, Colors.White)
         Imgui.PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 })
 
-        Imgui.Text(string.format('%s', entity.Name))
-        if player:GetSubJob() ~= nil then
-            Imgui.Text(string.format(
-                '%s%i/%s%i',
-                Jobs.GetJobAbbr(player:GetMainJob()), player:GetMainJobLevel(),
-                Jobs.GetJobAbbr(player:GetSubJob()), player:GetSubJobLevel()
-            ))
-        else
-            Imgui.Text(string.format(
-                '%s%i/%s%i',
-                Jobs.GetJobAbbr(player:GetMainJob()), player:GetMainJobLevel()))
-        end
+        local isExpLocked = player:GetIsExperiencePointsLocked()
 
-        DrawBar('HP', party:GetMemberHP(0), player:GetHPMax())
-        DrawBar('MP', party:GetMemberMP(0), player:GetMPMax())
-        DrawBar('TP', party:GetMemberTP(0), 3000)
-        DrawBar('XP', player:GetExpCurrent(), player:GetExpNeeded())
+        DrawHeader(entity.Name, player:GetMainJob(), player:GetMainJobLevel(), player:GetSubJob(), player:GetSubJobLevel())
+        DrawHp(party:GetMemberHP(0), player:GetHPMax())
+        DrawMp(party:GetMemberMP(0), player:GetMPMax())
+        DrawTp(party:GetMemberTP(0), 3000)
+        DrawXp(player:GetExpCurrent(), player:GetExpNeeded(), isExpLocked)
+        DrawLp(player:GetLimitPoints(), 10000, not isExpLocked)
 
-        Imgui.PopStyleVar(1)
+        Imgui.PopStyleVar()
         Imgui.End()
     else
         Imgui.PopStyleColor(3)
     end
-    Imgui.PopStyleVar(1)
+
+    Imgui.PopStyleVar()
 end
 
 ---@param s MeSettings?
@@ -177,6 +244,11 @@ function Module.UpdateSettings(s)
 end
 
 function Module.OnPresent()
+    if not Module.isLoaded then
+        InitMe()
+        return
+    end
+
     ---@type Entity
     local entity = GetPlayerEntity()
 
@@ -188,15 +260,17 @@ function Module.OnPresent()
     ---@type Player
     local player = AshitaCore:GetMemoryManager():GetPlayer()
 
-    -- don't bother drawing if the player is zoning
-    if player.IsZoning then
+    -- don't bother drawing if the player is zoning or in character select
+    if player:GetMainJob() == 0 or player:GetIsZoning() == 1 then
         return
     end
 
-    DrawMe(player, entity)
+    local party = AshitaCore:GetMemoryManager():GetParty()
+    DrawMe(player, party, entity)
 end
 
 function Module.OnLoad()
+    InitMe()
 end
 
 function Module.OnUnload()

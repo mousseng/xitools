@@ -3,13 +3,6 @@ addon.author  = 'lin'
 addon.version = '2.0.0'
 addon.desc    = 'A simple text-based HUD for player status'
 
----@class MeModule
----@field config MeSettings
-
----@class MeSettings
----@field position_x integer
----@field position_y integer
-
 local Me = require('me-core')
 
 ashita.events.register('load',        'on_load',        Me.OnLoad)
