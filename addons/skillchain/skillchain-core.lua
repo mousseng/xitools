@@ -376,8 +376,6 @@ end
 ---@param mobs Skillchain[]
 ---@param showHeader boolean
 local function Draw(mobs, showHeader)
-    Imgui.ShowDemoWindow()
-
     local activeCount = 0
     for _, mob in pairs(mobs) do
         if #mob.chain > 0 then
