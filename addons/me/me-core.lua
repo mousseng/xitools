@@ -47,7 +47,7 @@ local function DrawHeader(name, job, jobLevel, sub, subLevel)
     Imgui.Text(string.format('%s', name))
 
     local jobs = ''
-    if sub ~= nil then
+    if sub ~= 0 then
         jobs = string.format('%s%i/%s%i', Jobs.GetJobAbbr(job), jobLevel, Jobs.GetJobAbbr(sub), subLevel)
     else
         jobs = string.format('%s%i', Jobs.GetJobAbbr(job), jobLevel)
