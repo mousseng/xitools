@@ -1,5 +1,5 @@
 require('common')
-local Bit = require('bit')
+local Styles = require('lin.imgui')
 local Imgui = require('imgui')
 local Settings = require('settings')
 local Defaults = require('recast-settings')
@@ -13,23 +13,7 @@ local TwoHours = require('recast-twohours')
 ---@field config               RecastSettings
 ---@field windowName           string
 ---@field windowSize           Vec2
----@field windowSpacing        Vec2
----@field windowFlags          any
----@field windowBg             Color
----@field windowBgBorder       Color
----@field windowBgBorderShadow Color
 ---@field isWindowOpen         boolean[]
-
-local Colors = {
-    White          = { 1.00, 1.00, 1.00, 1.0 },
-    Yellow         = { 1.00, 1.00, 0.00, 1.0 },
-    Orange         = { 1.00, 0.64, 0.00, 1.0 },
-    Red            = { 0.95, 0.20, 0.20, 1.0 },
-
-    FfxiGreyBg     = { 0.08, 0.08, 0.08, 0.8 },
-    FfxiGreyBorder = { 0.69, 0.68, 0.78, 1.0 },
-    FfxiAmber      = { 0.81, 0.81, 0.50, 1.0 },
-}
 
 ---@type RecastModule
 local Module = {
@@ -37,13 +21,6 @@ local Module = {
     sch_jp = 0,
     windowName = 'Recast',
     windowSize = { -1, -1 },
-    windowSpacing = { 8, 4 },
-    windowFlags = Bit.bor(ImGuiWindowFlags_NoDecoration),
-    windowPadding = { 10, 10 },
-    windowBg = Colors.FfxiGreyBg,
-    windowBgBorder = Colors.FfxiGreyBorder,
-    windowBgBorderShadow = { 1.0, 0.0, 0.0, 1.0 },
-    isWindowOpen = { true, },
 }
 
 ---@param s MeSettings?
@@ -99,11 +76,11 @@ end
 
 local function DrawTimer(timer)
     if timer.timer >= 1200 then
-        Imgui.PushStyleColor(ImGuiCol_Text, Colors.White)
+        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.White)
     elseif timer.timer < 1200 and timer.timer > 300 then
-        Imgui.PushStyleColor(ImGuiCol_Text, Colors.Yellow)
+        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.Yellow)
     else
-        Imgui.PushStyleColor(ImGuiCol_Text, Colors.Red)
+        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.Red)
     end
 
     local text = string.format('%s - %s', timer.name, format_timestamp(timer.timer))
@@ -112,30 +89,9 @@ local function DrawTimer(timer)
 end
 
 local function DrawRecast(timers)
-    Imgui.SetNextWindowSize(Module.windowSize, ImGuiCond_Always)
-    Imgui.SetNextWindowPos({ Module.config.position_x, Module.config.position_y }, ImGuiCond_FirstUseEver)
-    Imgui.PushStyleColor(ImGuiCol_WindowBg, Module.windowBg)
-    Imgui.PushStyleColor(ImGuiCol_Border, Module.windowBgBorder)
-    Imgui.PushStyleColor(ImGuiCol_BorderShadow, Module.windowBgBorderShadow)
-    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, Module.windowSpacing)
-    Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, Module.windowPadding)
-
-    if Imgui.Begin(Module.windowName, Module.isWindowOpen, Module.windowFlags) then
-        Imgui.PopStyleColor(3)
-        Imgui.PushStyleColor(ImGuiCol_Text, Colors.White)
-        Imgui.PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 })
-
-        for _, timer in pairs(timers) do
-            DrawTimer(timer)
-        end
-
-        Imgui.PopStyleVar()
-        Imgui.End()
-    else
-        Imgui.PopStyleColor(3)
+    for _, timer in pairs(timers) do
+        DrawTimer(timer)
     end
-
-    Imgui.PopStyleVar(2)
 end
 
 function Module.OnPresent()
@@ -237,7 +193,9 @@ function Module.OnPresent()
     end
 
     if #timers > 0 then
-        DrawRecast(timers)
+        Styles.DrawWindow(Module.windowName, Module.windowSize, Module.config.position_x, Module.config.position_y, function()
+            DrawRecast(timers)
+        end)
     end
 end
 

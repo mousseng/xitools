@@ -1,9 +1,8 @@
 local Imgui = require('imgui')
-local Bit = require('bit')
-
 local Settings = require('settings')
 local Defaults = require('skillchain-settings')
 
+local Styles = require('lin.imgui')
 local Packets = require('lin.packets')
 
 local BloodPacts = require('data.bloodpacts')
@@ -20,15 +19,11 @@ local Weaponskills = require('data.weaponskills')
 ---@field position_y integer
 
 ---@class SkillchainModule
----@field config    SkillchainSettings
----@field chains    Skillchain[]
----@field lastPulse integer
+---@field config               SkillchainSettings
+---@field chains               Skillchain[]
+---@field lastPulse            integer
 ---@field windowName           string
 ---@field windowSize           Vec2
----@field windowFlags          any
----@field windowBg             Color
----@field windowBgBorder       Color
----@field windowBgBorderShadow Color
 ---@field isWindowOpen         boolean[]
 
 ---@class Skillchain
@@ -45,37 +40,13 @@ local Weaponskills = require('data.weaponskills')
 ---@field bonus_damage number
 ---@field resonance Resonance
 
-local Colors = {
-    White          = { 1.00, 1.00, 1.00, 1.0 },
-    Yellow         = { 1.00, 1.00, 0.00, 1.0 },
-    Orange         = { 1.00, 0.64, 0.00, 1.0 },
-    Red            = { 0.95, 0.20, 0.20, 1.0 },
-
-    HpBar          = { 0.83, 0.33, 0.28, 1.0 },
-    MpBar          = { 0.82, 0.60, 0.27, 1.0 },
-    TpBar          = { 1.00, 1.00, 1.00, 1.0 },
-    TpBarActive    = { 0.23, 0.67, 0.91, 1.0 },
-    XpBar          = { 0.01, 0.67, 0.07, 1.0 },
-    LpBar          = { 0.61, 0.32, 0.71, 1.0 },
-
-    FfxiGreyBg     = { 0.08, 0.08, 0.08, 0.8 },
-    FfxiGreyBorder = { 0.69, 0.68, 0.78, 1.0 },
-    FfxiAmber      = { 0.81, 0.81, 0.50, 1.0 },
-}
-
 ---@type SkillchainModule
 local Module = {
     config = Settings.load(Defaults),
     chains = { },
     lastPulse = os.time(),
     windowName = 'Skillchain',
-    windowSize = { 400, -1 },
-    windowFlags = Bit.bor(ImGuiWindowFlags_NoDecoration),
-    windowPadding = { 10, 10 },
-    windowBg = Colors.FfxiGreyBg,
-    windowBgBorder = Colors.FfxiGreyBorder,
-    windowBgBorderShadow = { 1.0, 0.0, 0.0, 1.0 },
-    isWindowOpen = { true, },
+    windowSize = { -1, -1 },
 }
 
 -- Fetch an entity by its server ID. Helpful when looking up information from
@@ -338,7 +309,7 @@ end
 
 -- Draws a single skillchain.
 ---@param mob Skillchain
-local function DrawMob(mobId, mob)
+local function DrawMob(mob)
     -- Create the heading for our skillchain.
     Imgui.Text(mob.name)
     -- Fill out the body of our skillchain.
@@ -374,47 +345,17 @@ end
 
 -- Draws the whole list of active skillchains the user is aware of.
 ---@param mobs Skillchain[]
----@param showHeader boolean
-local function Draw(mobs, showHeader)
-    local activeCount = 0
+local function DrawSkillchain(mobs)
+    local i = 1
     for _, mob in pairs(mobs) do
         if #mob.chain > 0 then
-            activeCount = activeCount + 1
-        end
-    end
-
-    if activeCount == 0 then return end
-
-    Imgui.SetNextWindowSize(Module.windowSize, ImGuiCond_Always)
-    Imgui.SetNextWindowPos({ Module.config.position_x, Module.config.position_y }, ImGuiCond_FirstUseEver)
-    Imgui.PushStyleColor(ImGuiCol_WindowBg, Module.windowBg)
-    Imgui.PushStyleColor(ImGuiCol_Border, Module.windowBgBorder)
-    Imgui.PushStyleColor(ImGuiCol_BorderShadow, Module.windowBgBorderShadow)
-    Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, Module.windowPadding)
-
-    if Imgui.Begin(Module.windowName, Module.isWindowOpen, Module.windowFlags) then
-        Imgui.PopStyleColor(3)
-        Imgui.PushStyleColor(ImGuiCol_Text, Colors.White)
-        Imgui.PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 })
-
-        local i = 1
-        for mobId, mob in pairs(mobs) do
-            if #mob.chain > 0 then
-                if i > 1 then
-                    Imgui.Text('')
-                end
-                DrawMob(mobId, mob)
-                i = i + 1
+            if i > 1 then
+                Imgui.Text('')
             end
+            DrawMob(mob)
+            i = i + 1
         end
-
-        Imgui.PopStyleVar()
-        Imgui.End()
-    else
-        Imgui.PopStyleColor(3)
     end
-
-    Imgui.PopStyleVar()
 end
 
 -- Checks each skillchain we know about for expiry and deletes when appropriate.
@@ -504,7 +445,18 @@ function Module.OnPacket(e)
 end
 
 function Module.OnPresent()
-    Draw(Module.chains, Module.config.showHeader)
+    local activeCount = 0
+    for _, mob in pairs(Module.chains) do
+        if #mob.chain > 0 then
+            activeCount = activeCount + 1
+        end
+    end
+
+    if activeCount > 0 then
+        Styles.DrawWindow(Module.windowName, Module.windowSize, Module.config.position_x, Module.config.position_y, function()
+            DrawSkillchain(Module.chains)
+        end)
+    end
 
     local now = os.time()
     if now - Module.lastPulse > 1 then
