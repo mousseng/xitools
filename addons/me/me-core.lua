@@ -60,7 +60,7 @@ local Module = {
 local function InitMe()
     ---@type Entity
     local player = GetPlayerEntity()
-    if player.Name == nil or player.Name == '' then
+    if player == nil or player.Name == nil or player.Name == '' then
         return
     end
 
