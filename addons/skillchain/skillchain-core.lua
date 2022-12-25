@@ -1,3 +1,11 @@
+local Imgui = require('imgui')
+local Bit = require('bit')
+
+local Settings = require('settings')
+local Defaults = require('skillchain-settings')
+
+local Packets = require('lin.packets')
+
 local BloodPacts = require('data.bloodpacts')
 local ChainType = require('data.chaintype')
 local Elements = require('data.elements')
@@ -6,7 +14,69 @@ local NonChainingSkills = require('data.nonchainingskills')
 local Resonances = require('data.resonances')
 local Weaponskills = require('data.weaponskills')
 
-local core = { }
+---@class SkillchainSettings
+---@field showHeader boolean
+---@field position_x integer
+---@field position_y integer
+
+---@class SkillchainModule
+---@field config    SkillchainSettings
+---@field chains    Skillchain[]
+---@field lastPulse integer
+---@field windowName           string
+---@field windowSize           Vec2
+---@field windowFlags          any
+---@field windowBg             Color
+---@field windowBgBorder       Color
+---@field windowBgBorderShadow Color
+---@field isWindowOpen         boolean[]
+
+---@class Skillchain
+---@field name string
+---@field time number
+---@field chain SkillchainStep[]
+
+---@class SkillchainStep
+---@field id number
+---@field time number
+---@field type ChainType
+---@field name string
+---@field base_damage number
+---@field bonus_damage number
+---@field resonance Resonance
+
+local Colors = {
+    White          = { 1.00, 1.00, 1.00, 1.0 },
+    Yellow         = { 1.00, 1.00, 0.00, 1.0 },
+    Orange         = { 1.00, 0.64, 0.00, 1.0 },
+    Red            = { 0.95, 0.20, 0.20, 1.0 },
+
+    HpBar          = { 0.83, 0.33, 0.28, 1.0 },
+    MpBar          = { 0.82, 0.60, 0.27, 1.0 },
+    TpBar          = { 1.00, 1.00, 1.00, 1.0 },
+    TpBarActive    = { 0.23, 0.67, 0.91, 1.0 },
+    XpBar          = { 0.01, 0.67, 0.07, 1.0 },
+    LpBar          = { 0.61, 0.32, 0.71, 1.0 },
+
+    FfxiGreyBg     = { 0.08, 0.08, 0.08, 0.8 },
+    FfxiGreyBorder = { 0.69, 0.68, 0.78, 1.0 },
+    FfxiAmber      = { 0.81, 0.81, 0.50, 1.0 },
+}
+
+---@type SkillchainModule
+local Module = {
+    config = Settings.load(Defaults),
+    chains = { },
+    lastPulse = os.time(),
+    windowName = 'Skillchain',
+    windowSize = { 400, -1 },
+    windowFlags = Bit.bor(ImGuiWindowFlags_NoDecoration),
+    windowPadding = { 10, 10 },
+    windowBg = Colors.FfxiGreyBg,
+    windowBgBorder = Colors.FfxiGreyBorder,
+    windowBgBorderShadow = { 1.0, 0.0, 0.0, 1.0 },
+    isWindowOpen = { true, },
+}
 
 -- Fetch an entity by its server ID. Helpful when looking up information from
 -- packets, which tend to not include the entity index (since that's a client
@@ -80,7 +150,7 @@ end
 -- weaponskills.
 ---@param packet table
 ---@param mobs Skillchain[]
-function core.HandleWeaponskill(packet, mobs)
+local function HandleWeaponskill(packet, mobs)
     -- Don't care about skillchains we can't participate in
     if not isServerIdInParty(packet.actor_id) then
         return
@@ -152,7 +222,7 @@ end
 -- abilities.
 ---@param packet table
 ---@param mobs Skillchain[]
-function core.HandlePetAbility(packet, mobs)
+local function HandlePetAbility(packet, mobs)
     -- Don't care about skillchains we can't participate in
     if not isPetServerIdInParty(packet.actor_id)
     or BloodPacts[packet.param] == nil then
@@ -221,7 +291,7 @@ end
 -- magic abilities; only handles magic bursts currently, not BLU chains.
 ---@param packet table
 ---@param mobs Skillchain[]
-function core.HandleMagicAbility(packet, mobs)
+local function HandleMagicAbility(packet, mobs)
     -- Don't care about skillchains we can't participate in
     if not isServerIdInParty(packet.actor_id)
     or MagicBursts[packet.param] == nil then
@@ -268,39 +338,23 @@ end
 
 -- Draws a single skillchain.
 ---@param mob Skillchain
----@return string
-local function drawMob(mob)
-    local lines = { }
-
+local function DrawMob(mobId, mob)
     -- Create the heading for our skillchain.
-    table.insert(lines, mob.name)
-
+    Imgui.Text(mob.name)
     -- Fill out the body of our skillchain.
     for _, chain in pairs(mob.chain) do
         -- Is this the first step of a chain? If so, don't show burstable
         -- elements (since you can't burst).
         if chain.type == ChainType.Starter then
-            local t1 = string.format('  > %s [%i dmg]', chain.name, chain.base_damage)
-            local t2 = string.format('    %s', chain.resonance)
-
-            table.insert(lines, t1)
-            table.insert(lines, t2)
+            Imgui.BulletText(string.format('%s [%i dmg]\n%s', chain.name, chain.base_damage, chain.resonance))
         -- Otherwise, also display the bonus damage and burstable elements.
         elseif chain.type == ChainType.Skillchain then
-            local t1 = string.format('  > %s [%i + %i dmg]', chain.name, chain.base_damage, chain.bonus_damage or 0)
-            local t2 = string.format('    %s (%s)', chain.resonance, Elements[chain.resonance])
-
-            table.insert(lines, t1)
-            table.insert(lines, t2)
+            Imgui.BulletText(string.format('%s [%i + %i dmg]\n%s (%s)', chain.name, chain.base_damage, chain.bonus_damage or 0, chain.resonance, Elements[chain.resonance]))
         -- Display any magic bursts that occurred and their damage.
         elseif chain.type == ChainType.MagicBurst then
-            local t = string.format('    Magic Burst! %s [%i dmg]', chain.name, chain.base_damage)
-
-            table.insert(lines, t)
+            Imgui.BulletText(string.format('Magic Burst! %s [%i dmg]', chain.name, chain.base_damage))
         elseif chain.type == ChainType.Miss then
-            local t = string.format('  ! %s missed.', chain.name)
-
-            table.insert(lines, t)
+            Imgui.BulletText(string.format('%s missed.', chain.name))
         else
             -- chain.type == ChainType.Unknown
         end
@@ -311,44 +365,63 @@ local function drawMob(mob)
     if mob.time ~= nil then
         local time_remaining = 8 - math.abs(mob.time - os.time())
         if time_remaining >= 0 then
-            table.insert(lines, string.format('  > %is', time_remaining))
+            Imgui.BulletText(string.format('%is', time_remaining))
         else
-            table.insert(lines, '  x')
+            Imgui.BulletText('closed.')
         end
     end
-
-    table.insert(lines, '')
-    return table.concat(lines, '\n')
 end
 
 -- Draws the whole list of active skillchains the user is aware of.
 ---@param mobs Skillchain[]
 ---@param showHeader boolean
----@return string
-function core.Draw(mobs, showHeader)
-    local lines = { }
+local function Draw(mobs, showHeader)
+    Imgui.ShowDemoWindow()
 
-    if showHeader then
-        table.insert(lines, 'Skillchain Tracker')
-    end
-
+    local activeCount = 0
     for _, mob in pairs(mobs) do
         if #mob.chain > 0 then
-            table.insert(lines, drawMob(mob))
+            activeCount = activeCount + 1
         end
     end
 
-    -- Just clear out the last newline.
-    if lines[#lines] == '' then
-        lines[#lines] = nil
+    if activeCount == 0 then return end
+
+    Imgui.SetNextWindowSize(Module.windowSize, ImGuiCond_Always)
+    Imgui.SetNextWindowPos({ Module.config.position_x, Module.config.position_y }, ImGuiCond_FirstUseEver)
+    Imgui.PushStyleColor(ImGuiCol_WindowBg, Module.windowBg)
+    Imgui.PushStyleColor(ImGuiCol_Border, Module.windowBgBorder)
+    Imgui.PushStyleColor(ImGuiCol_BorderShadow, Module.windowBgBorderShadow)
+    Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, Module.windowPadding)
+
+    if Imgui.Begin(Module.windowName, Module.isWindowOpen, Module.windowFlags) then
+        Imgui.PopStyleColor(3)
+        Imgui.PushStyleColor(ImGuiCol_Text, Colors.White)
+        Imgui.PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 })
+
+        local i = 1
+        for mobId, mob in pairs(mobs) do
+            if #mob.chain > 0 then
+                if i > 1 then
+                    Imgui.Text('')
+                end
+                DrawMob(mobId, mob)
+                i = i + 1
+            end
+        end
+
+        Imgui.PopStyleVar()
+        Imgui.End()
+    else
+        Imgui.PopStyleColor(3)
     end
 
-    return table.concat(lines, '\n')
+    Imgui.PopStyleVar()
 end
 
 -- Checks each skillchain we know about for expiry and deletes when appropriate.
 ---@param chains Skillchain[]
-function core.RunGarbageCollector(chains)
+local function RunGarbageCollector(chains)
     for i, mob in pairs(chains) do
         if mob.time == nil and #mob.chain > 0 and mob.chain[#mob.chain].type == ChainType.Miss then
             -- this means our starter missed
@@ -365,4 +438,82 @@ function core.RunGarbageCollector(chains)
     end
 end
 
-return core
+---@param s SkillchainSettings?
+function Module.UpdateSettings(s)
+    if (s ~= nil) then
+        Module.config = s
+    end
+
+    Settings.save()
+end
+
+function Module.OnLoad()
+end
+
+function Module.OnUnload()
+    Module.UpdateSettings()
+end
+
+---@param e CommandEventArgs
+function Module.OnCommand(e)
+    local args = e.command:args()
+
+    if #args < 2 or args[1] ~= '/schain' then
+        return
+    end
+
+    if args[2] == 'header' then
+        Module.config.showHeader = not Module.config.showHeader
+    end
+
+    if args[2] == 'test' then
+        ---@type Skillchain
+        local testMob = {
+            chain = { },
+            name = 'Test Mob',
+            time = os.time(),
+        }
+
+        ---@type SkillchainStep
+        local testStep = {
+            name = 'Test Weaponskill',
+            resonance = Resonances[299],
+            base_damage = 69,
+            time = os.time(),
+            type = ChainType.Starter,
+        }
+
+        table.insert(testMob.chain, testStep)
+        table.insert(Module.chains, testMob)
+    end
+
+    e.blocked = true
+end
+
+---@param e PacketInEventArgs
+function Module.OnPacket(e)
+    if e.id == 0x28 then
+        local action = Packets.ParseAction(e.data_modified_raw)
+
+        if action.category == 3 then
+            HandleWeaponskill(action, Module.chains)
+        elseif action.category == 4 then
+            HandleMagicAbility(action, Module.chains)
+        elseif action.category == 13 then
+            HandlePetAbility(action, Module.chains)
+        end
+    end
+end
+
+function Module.OnPresent()
+    Draw(Module.chains, Module.config.showHeader)
+
+    local now = os.time()
+    if now - Module.lastPulse > 1 then
+        Module.lastPulse = now
+        RunGarbageCollector(Module.chains)
+    end
+end
+
+Settings.register('settings', 'settings_update', Module.UpdateSettings)
+return Module
