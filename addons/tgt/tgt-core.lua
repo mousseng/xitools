@@ -1,6 +1,76 @@
-local Text = require('lin.text')
+local Defaults = require('tgt-settings')
+local Settings = require('settings')
+local Bit = require('bit')
+local Imgui = require('imgui')
+local Packets = require('lin.packets')
 
-local core = { }
+---@class Debuffs
+---@field dia number
+---@field bio number
+---@field para number
+---@field slow number
+---@field grav number
+---@field blind number
+---@field silence number
+---@field sleep number
+---@field bind number
+---@field stun number
+---@field virus number
+---@field curse number
+---@field poison number
+---@field shock number
+---@field rasp number
+---@field choke number
+---@field frost number
+---@field burn number
+---@field drown number
+
+---@alias TrackedEnemies { [number]: Debuffs }
+
+---@class TgtSettings
+---@field position_x integer
+---@field position_y integer
+
+---@class TgtModule
+---@field config TgtSettings
+---@field debuffs TrackedEnemies
+
+local Colors = {
+    White          = { 1.00, 1.00, 1.00, 1.0 },
+    Yellow         = { 1.00, 1.00, 0.00, 1.0 },
+    Orange         = { 1.00, 0.64, 0.00, 1.0 },
+    Red            = { 0.95, 0.20, 0.20, 1.0 },
+    HpBar          = { 0.83, 0.33, 0.28, 1.0 },
+
+    StatusGrey     = { 1.00, 1.00, 1.00, 0.5 },
+    StatusWhite    = { 0.98, 0.92, 0.84, 1.0 },
+    StatusBlack    = { 0.60, 0.20, 0.80, 1.0 },
+    StatusYellow   = { 0.80, 0.80, 0.80, 1.0 },
+    StatusBrown    = { 1.00, 0.96, 0.56, 1.0 },
+    StatusGreen    = { 0.60, 0.80, 0.20, 1.0 },
+    StatusBlue     = { 0.28, 0.46, 1.00, 1.0 },
+    StatusRed      = { 0.80, 0.22, 0.00, 1.0 },
+    StatusCyan     = { 0.59, 0.80, 0.80, 1.0 },
+
+    FfxiGreyBg     = { 0.08, 0.08, 0.08, 0.8 },
+    FfxiGreyBorder = { 0.69, 0.68, 0.78, 1.0 },
+    FfxiAmber      = { 0.81, 0.81, 0.50, 1.0 },
+}
+
+---@type TgtModule
+local Module = {
+    config = Settings.load(Defaults),
+    debuffs = { },
+    windowName = 'Tgt',
+    windowSize = { 277, -1 },
+    windowFlags = Bit.bor(ImGuiWindowFlags_NoDecoration),
+    windowPadding = { 10, 10 },
+    windowBg = Colors.FfxiGreyBg,
+    windowBgBorder = Colors.FfxiGreyBorder,
+    windowBgBorderShadow = { 1.0, 0.0, 0.0, 1.0 },
+    isWindowOpen = { true, },
+    isLoaded = false,
+}
 
 -- The state we're operating on is the expiry time of the statuses
 local DefaultDebuffs = {
@@ -29,23 +99,6 @@ local DefaultDebuffs = {
     drown = 0,
 }
 
--- Just a little syntactical sugar. Takes a conditional and two functions, one
--- for when the conditional is truthy and one for falsey.
-local function when(cond, t, f)
-    if cond then return t()
-    else return f() end
-end
-
-local function grey()   return 255, 255, 255, 127 end
-local function white()  return 250, 235, 215 end
-local function black()  return 153,  50, 204 end
-local function yellow() return 205, 205, 205 end
-local function brown()  return 255, 246, 143 end
-local function green()  return 154, 205,  50 end
-local function blue()   return  72, 118, 255 end
-local function red()    return 205,  55,   0 end
-local function cyan()   return 150, 205, 205 end
-
 ---@param object table
 ---@return table
 local function deepCopy(object)
@@ -67,73 +120,8 @@ local function deepCopy(object)
 end
 
 ---@param debuffs TrackedEnemies
----@param includeStatus boolean
----@param includePreamble boolean
----@return string
-function core.Draw(debuffs, includeStatus, includePreamble)
-    local now = os.time()
-    local lines = { }
-    local target = GetEntity(AshitaCore:GetMemoryManager():GetTarget():GetTargetIndex(0))
-
-    -- do we have anything targeted?
-    if target ~= nil and target.Name ~= '' and target.TargetIndex ~= 0 then
-        local dist = string.format(
-            '[%.1fm]',
-            math.sqrt(target.Distance))
-
-        local line1 = string.format(
-            '%-17.17s %7s',
-            target.Name,
-            dist)
-
-        local line2 = string.format(
-            'HP      %3i%% %s',
-            target.HPPercent,
-            Text.PercentBar(12, target.HPPercent / 100))
-
-        -- build basic target display
-        if includePreamble then
-            table.insert(lines, '')
-        end
-
-        table.insert(lines, line1)
-        table.insert(lines, Text.Colorize(line2, Text.GetHpColor(target.HPPercent / 100)))
-
-        -- build advanced status display for target
-        -- DB PGSB Si Sl Bi PoSRCFBD
-        if includeStatus then
-            local tgt_debuffs = debuffs[target.ServerId] or deepCopy(DefaultDebuffs)
-            local line3 = string.format(
-                '%s%s %s%s%s%s %s %s %s %s%s%s%s%s%s%s',
-                -- '%s%s %s%s%s%s %s %s %s %s %s %s',
-                Text.Colorize('D',  when(now < tgt_debuffs.dia, white, grey)),
-                Text.Colorize('B',  when(now < tgt_debuffs.bio, black, grey)),
-                Text.Colorize('P',  when(now < tgt_debuffs.para, white, grey)),
-                Text.Colorize('S',  when(now < tgt_debuffs.slow, white, grey)),
-                Text.Colorize('G',  when(now < tgt_debuffs.grav, black, grey)),
-                Text.Colorize('B',  when(now < tgt_debuffs.blind, black, grey)),
-                Text.Colorize('Si', when(now < tgt_debuffs.silence, white, grey)),
-                Text.Colorize('Sl', when(now < tgt_debuffs.sleep, black, grey)),
-                Text.Colorize('Bi', when(now < tgt_debuffs.bind, black, grey)),
-                Text.Colorize('Po', when(now < tgt_debuffs.poison, black, grey)),
-                Text.Colorize('S',  when(now < tgt_debuffs.shock, yellow, grey)),
-                Text.Colorize('R',  when(now < tgt_debuffs.rasp, brown, grey)),
-                Text.Colorize('C',  when(now < tgt_debuffs.choke, green, grey)),
-                Text.Colorize('F',  when(now < tgt_debuffs.frost, cyan, grey)),
-                Text.Colorize('B',  when(now < tgt_debuffs.burn, red, grey)),
-                Text.Colorize('D',  when(now < tgt_debuffs.drown, blue, grey))
-            )
-
-            table.insert(lines, line3)
-        end
-    end
-
-    return table.concat(lines, '\n')
-end
-
----@param debuffs TrackedEnemies
 ---@param action any
-function core.HandleAction(debuffs, action)
+local function HandleAction(debuffs, action)
     local now = os.time()
 
     for _, target in pairs(action.targets) do
@@ -210,7 +198,7 @@ end
 
 ---@param debuffs TrackedEnemies
 ---@param basic any
-function core.HandleBasic(debuffs, basic)
+local function HandleBasic(debuffs, basic)
     -- if we're tracking a mob that dies, reset its status
     if basic.message == 6 and debuffs[basic.target] then
         debuffs[basic.target] = nil
@@ -261,4 +249,186 @@ function core.HandleBasic(debuffs, basic)
     end
 end
 
-return core
+---@param s TgtSettings?
+function Module.UpdateSettings(s)
+    if (s ~= nil) then
+        Module.config = s
+    end
+
+    Settings.save()
+end
+
+---@param name     string
+---@param distance number
+local function DrawHeader(name, distance)
+    Imgui.Text(name)
+
+    local dist = string.format('%.1fm', distance)
+    local width = Imgui.CalcTextSize(dist) + Module.windowPadding[1]
+
+    Imgui.SameLine()
+    Imgui.SetCursorPosX(Module.windowSize[1] - width)
+    Imgui.Text(dist)
+end
+
+---@param title   string
+---@param cur     integer
+---@param max     integer
+---@param overlay string?
+local function DrawBar(title, cur, max, overlay)
+    local fraction = cur / max
+
+    Imgui.AlignTextToFramePadding()
+    Imgui.Text(title)
+    Imgui.SameLine()
+    Imgui.ProgressBar(fraction, { 200, 15 }, overlay)
+end
+
+---@param hpPercent integer
+local function DrawHp(hpPercent)
+    local title = string.format('HP %3i%%%%', hpPercent)
+    local textColor = Colors.White
+    local barColor = Colors.HpBar
+
+    if hpPercent > 0.75 then
+        textColor = Colors.White
+    elseif hpPercent > 0.50 then
+        textColor = Colors.Yellow
+    elseif hpPercent > 0.25 then
+        textColor = Colors.Orange
+    elseif hpPercent >= 0.00 then
+        textColor = Colors.Red
+    end
+
+    Imgui.PushStyleColor(ImGuiCol_Text, textColor)
+    Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
+    DrawBar(title, hpPercent, 100, '')
+    Imgui.PopStyleColor(2)
+end
+
+local function DrawSeparator()
+    Imgui.PopStyleVar()
+    Imgui.Text('')
+    Imgui.SameLine()
+    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 })
+end
+
+local function DrawStatusEntry(text, isActive, color)
+    if isActive then
+        Imgui.PushStyleColor(ImGuiCol_Text, color)
+    else
+        Imgui.PushStyleColor(ImGuiCol_Text, Colors.StatusGrey)
+    end
+
+    Imgui.Text(text)
+    Imgui.SameLine()
+    Imgui.PopStyleColor()
+end
+
+---@param debuffs Debuffs
+local function DrawStatus(debuffs)
+    local now = os.time()
+    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 })
+    DrawStatusEntry('D',  now < debuffs.dia, Colors.StatusWhite)
+    DrawStatusEntry('B',  now < debuffs.bio, Colors.StatusBlack)
+    DrawSeparator()
+    DrawSeparator()
+    DrawStatusEntry('P',  now < debuffs.para, Colors.StatusWhite)
+    DrawStatusEntry('S',  now < debuffs.slow, Colors.StatusWhite)
+    DrawStatusEntry('G',  now < debuffs.grav, Colors.StatusBlack)
+    DrawStatusEntry('B',  now < debuffs.blind, Colors.StatusBlack)
+    DrawSeparator()
+    DrawSeparator()
+    DrawStatusEntry('Si', now < debuffs.silence, Colors.StatusWhite)
+    DrawSeparator()
+    DrawStatusEntry('Sl', now < debuffs.sleep, Colors.StatusBlack)
+    DrawSeparator()
+    DrawStatusEntry('Bi', now < debuffs.bind, Colors.StatusBlack)
+    DrawSeparator()
+    DrawStatusEntry('Po', now < debuffs.poison, Colors.StatusBlack)
+    DrawSeparator()
+    DrawSeparator()
+    DrawStatusEntry('S',  now < debuffs.shock, Colors.StatusYellow)
+    DrawStatusEntry('R',  now < debuffs.rasp, Colors.StatusBrown)
+    DrawStatusEntry('C',  now < debuffs.choke, Colors.StatusGreen)
+    DrawStatusEntry('F',  now < debuffs.frost, Colors.StatusCyan)
+    DrawStatusEntry('B',  now < debuffs.burn, Colors.StatusRed)
+    DrawStatusEntry('D',  now < debuffs.drown, Colors.StatusBlue)
+    Imgui.PopStyleVar()
+end
+
+---@param entity Entity
+local function DrawTgt(entity)
+    Imgui.SetNextWindowSize(Module.windowSize, ImGuiCond_Always)
+    Imgui.SetNextWindowPos({ Module.config.position_x, Module.config.position_y }, ImGuiCond_FirstUseEver)
+    Imgui.PushStyleColor(ImGuiCol_WindowBg, Module.windowBg)
+    Imgui.PushStyleColor(ImGuiCol_Border, Module.windowBgBorder)
+    Imgui.PushStyleColor(ImGuiCol_BorderShadow, Module.windowBgBorderShadow)
+    Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, Module.windowPadding)
+
+    if Imgui.Begin(Module.windowName, Module.isWindowOpen, Module.windowFlags) then
+        Imgui.PopStyleColor(3)
+        Imgui.PushStyleColor(ImGuiCol_Text, Colors.White)
+        Imgui.PushStyleVar(ImGuiStyleVar_FramePadding, { 0, 0 })
+
+        DrawHeader(entity.Name, math.sqrt(entity.Distance))
+        DrawHp(entity.HPPercent)
+        DrawStatus(Module.debuffs[entity.ServerId] or DefaultDebuffs)
+
+        Imgui.PopStyleVar()
+        Imgui.End()
+    else
+        Imgui.PopStyleColor(3)
+    end
+
+    Imgui.PopStyleVar()
+end
+
+function Module.OnPresent()
+    local targetId = AshitaCore:GetMemoryManager():GetTarget():GetTargetIndex(0)
+
+    -- don't bother drawing if we have no target
+    if targetId == 0 then
+        return
+    end
+
+    local entity = GetEntity(targetId)
+    DrawTgt(entity)
+end
+
+---@param e PacketInEventArgs
+function Module.OnPacket(e)
+    -- don't track anything if we're not displaying it
+    if not Module.config.status then return end
+
+    -- clear state on zone changes
+    if e.id == 0x0A then
+        Module.debuffs = { }
+    elseif e.id == 0x0028 then
+        HandleAction(Module.debuffs, Packets.ParseAction(e.data_modified_raw))
+    elseif e.id == 0x0029 then
+        HandleBasic(Module.debuffs, Packets.ParseBasic(e.data))
+    end
+
+    e.blocked = true
+end
+
+function Module.OnLoad()
+end
+
+function Module.OnUnload()
+    Module.UpdateSettings()
+end
+
+---@param e CommandEventArgs
+function Module.OnCommand(e)
+    local args = e.command:args()
+    if #args == 0 or args[1] ~= '/tgt' then
+        return
+    end
+
+    e.blocked = true
+end
+
+Settings.register('settings', 'settings_update', Module.UpdateSettings)
+return Module

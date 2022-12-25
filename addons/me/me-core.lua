@@ -26,17 +26,17 @@ local Text = require('lin.text')
 ---@field position_y integer
 
 local Colors = {
-    White  = { 1.00, 1.00, 1.00, 1.0 },
-    Yellow = { 1.00, 1.00, 0.00, 1.0 },
-    Orange = { 1.00, 0.64, 0.00, 1.0 },
-    Red    = { 0.95, 0.20, 0.20, 1.0 },
+    White          = { 1.00, 1.00, 1.00, 1.0 },
+    Yellow         = { 1.00, 1.00, 0.00, 1.0 },
+    Orange         = { 1.00, 0.64, 0.00, 1.0 },
+    Red            = { 0.95, 0.20, 0.20, 1.0 },
 
-    HpBar       = { 0.83, 0.33, 0.28, 1.0 },
-    MpBar       = { 0.82, 0.60, 0.27, 1.0 },
-    TpBar       = { 1.00, 1.00, 1.00, 1.0 },
-    TpBarActive = { 0.23, 0.67, 0.91, 1.0 },
-    XpBar       = { 0.01, 0.67, 0.07, 1.0 },
-    LpBar       = { 0.61, 0.32, 0.71, 1.0 },
+    HpBar          = { 0.83, 0.33, 0.28, 1.0 },
+    MpBar          = { 0.82, 0.60, 0.27, 1.0 },
+    TpBar          = { 1.00, 1.00, 1.00, 1.0 },
+    TpBarActive    = { 0.23, 0.67, 0.91, 1.0 },
+    XpBar          = { 0.01, 0.67, 0.07, 1.0 },
+    LpBar          = { 0.61, 0.32, 0.71, 1.0 },
 
     FfxiGreyBg     = { 0.08, 0.08, 0.08, 0.8 },
     FfxiGreyBorder = { 0.69, 0.68, 0.78, 1.0 },
@@ -46,8 +46,8 @@ local Colors = {
 ---@type MeModule
 local Module = {
     config = Settings.load(Defaults),
-    windowName = 'Me_',
-    windowSize = { 277, 110 },
+    windowName = 'Me',
+    windowSize = { 277, -1 },
     windowFlags = Bit.bor(ImGuiWindowFlags_NoDecoration),
     windowPadding = { 10, 10 },
     windowBg = Colors.FfxiGreyBg,
@@ -90,16 +90,17 @@ local function DrawHeader(name, job, jobLevel, sub, subLevel)
     Imgui.Text(jobs)
 end
 
----@param title string
----@param cur   integer
----@param max   integer
-local function DrawBar(title, cur, max)
+---@param title   string
+---@param cur     integer
+---@param max     integer
+---@param overlay string?
+local function DrawBar(title, cur, max, overlay)
     local fraction = cur / max
 
     Imgui.AlignTextToFramePadding()
     Imgui.Text(title)
     Imgui.SameLine()
-    Imgui.ProgressBar(fraction, { 200, 15 }, '')
+    Imgui.ProgressBar(fraction, { 200, 15 }, overlay)
 end
 
 ---@param cur integer
@@ -116,13 +117,13 @@ local function DrawHp(cur, max)
         textColor = Colors.Yellow
     elseif frac > 0.25 then
         textColor = Colors.Orange
-    elseif frac > 0.00 then
+    elseif frac >= 0.00 then
         textColor = Colors.Red
     end
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    DrawBar(title, cur, max)
+    DrawBar(title, cur, max, '')
     Imgui.PopStyleColor(2)
 end
 
@@ -140,13 +141,13 @@ local function DrawMp(cur, max)
         textColor = Colors.Yellow
     elseif frac > 0.25 then
         textColor = Colors.Orange
-    elseif frac > 0.00 then
+    elseif frac >= 0.00 and max > 0 then
         textColor = Colors.Red
     end
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    DrawBar(title, cur, max)
+    DrawBar(title, cur, max, '')
     Imgui.PopStyleColor(2)
 end
 
@@ -164,7 +165,7 @@ local function DrawTp(cur, max)
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    DrawBar(title, cur, max)
+    DrawBar(title, cur, max, '')
     Imgui.PopStyleColor(2)
 end
 
@@ -178,9 +179,10 @@ local function DrawXp(cur, max, isLocked)
 
     local barColor = Colors.XpBar
     local title = string.format('XP %4i', Text.FormatXp(cur, true))
+    local overlay = Text.FormatXp(max - cur, true)
 
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    DrawBar(title, cur, max)
+    DrawBar(title, cur, max, overlay)
     Imgui.PopStyleColor()
 end
 
