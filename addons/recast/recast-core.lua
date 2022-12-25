@@ -23,7 +23,7 @@ local Module = {
     windowSize = { -1, -1 },
 }
 
----@param s MeSettings?
+---@param s RecastSettings?
 function Module.UpdateSettings(s)
     if (s ~= nil) then
         Module.config = s
