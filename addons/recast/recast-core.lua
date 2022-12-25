@@ -9,6 +9,17 @@ local TwoHours = require('recast-twohours')
 ---@field position_x integer
 ---@field position_y integer
 
+---@class RecastModule
+---@field config               RecastSettings
+---@field windowName           string
+---@field windowSize           Vec2
+---@field windowSpacing        Vec2
+---@field windowFlags          any
+---@field windowBg             Color
+---@field windowBgBorder       Color
+---@field windowBgBorderShadow Color
+---@field isWindowOpen         boolean[]
+
 local Colors = {
     White          = { 1.00, 1.00, 1.00, 1.0 },
     Yellow         = { 1.00, 1.00, 0.00, 1.0 },
@@ -20,12 +31,13 @@ local Colors = {
     FfxiAmber      = { 0.81, 0.81, 0.50, 1.0 },
 }
 
--- Recast Variables
+---@type RecastModule
 local Module = {
     config = Settings.load(Defaults),
     sch_jp = 0,
     windowName = 'Recast',
     windowSize = { -1, -1 },
+    windowSpacing = { 8, 4 },
     windowFlags = Bit.bor(ImGuiWindowFlags_NoDecoration),
     windowPadding = { 10, 10 },
     windowBg = Colors.FfxiGreyBg,
@@ -105,6 +117,7 @@ local function DrawRecast(timers)
     Imgui.PushStyleColor(ImGuiCol_WindowBg, Module.windowBg)
     Imgui.PushStyleColor(ImGuiCol_Border, Module.windowBgBorder)
     Imgui.PushStyleColor(ImGuiCol_BorderShadow, Module.windowBgBorderShadow)
+    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, Module.windowSpacing)
     Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, Module.windowPadding)
 
     if Imgui.Begin(Module.windowName, Module.isWindowOpen, Module.windowFlags) then
@@ -122,7 +135,7 @@ local function DrawRecast(timers)
         Imgui.PopStyleColor(3)
     end
 
-    Imgui.PopStyleVar()
+    Imgui.PopStyleVar(2)
 end
 
 function Module.OnPresent()

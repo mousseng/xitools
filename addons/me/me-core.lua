@@ -14,6 +14,7 @@ local Text = require('lin.text')
 ---@field config               MeSettings
 ---@field windowName           string
 ---@field windowSize           Vec2
+---@field windowSpacing        Vec2
 ---@field windowFlags          any
 ---@field windowBg             Color
 ---@field windowBgBorder       Color
@@ -48,6 +49,7 @@ local Module = {
     config = Settings.load(Defaults),
     windowName = 'Me',
     windowSize = { 277, -1 },
+    windowSpacing = { 8, 4 },
     windowFlags = Bit.bor(ImGuiWindowFlags_NoDecoration),
     windowPadding = { 10, 10 },
     windowBg = Colors.FfxiGreyBg,
@@ -211,6 +213,7 @@ local function DrawMe(player, party, entity)
     Imgui.PushStyleColor(ImGuiCol_WindowBg, Module.windowBg)
     Imgui.PushStyleColor(ImGuiCol_Border, Module.windowBgBorder)
     Imgui.PushStyleColor(ImGuiCol_BorderShadow, Module.windowBgBorderShadow)
+    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, Module.windowSpacing)
     Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, Module.windowPadding)
 
     if Imgui.Begin(Module.windowName, Module.isWindowOpen, Module.windowFlags) then
@@ -233,7 +236,7 @@ local function DrawMe(player, party, entity)
         Imgui.PopStyleColor(3)
     end
 
-    Imgui.PopStyleVar()
+    Imgui.PopStyleVar(2)
 end
 
 ---@param s MeSettings?
