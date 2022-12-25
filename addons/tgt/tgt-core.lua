@@ -428,6 +428,10 @@ function Module.OnCommand(e)
         return
     end
 
+    if args[2] == 'status' then
+        Module.config.showStatus = not Module.config.showStatus
+    end
+
     e.blocked = true
 end
 
