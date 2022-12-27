@@ -9,7 +9,7 @@ local Zones = require('minimap-zones')
 local CurrentZone = nil
 local Scales = {
     Dungeon = 0.4,
-    City = 0.4,
+    City = 0.5,
     Field = 0.16,
 }
 
