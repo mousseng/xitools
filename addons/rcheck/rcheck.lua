@@ -1,37 +1,35 @@
 addon.name    = 'rcheck'
 addon.author  = 'lin'
-addon.version = '1.0.0'
+addon.version = '2.0.0'
 addon.desc    = 'Make ready-checking easy :)'
 
-local Set = require('core.set')
+local Set = require('lin.set')
 local Packets = require('lin.packets')
 
+local MessagePacket = 0x0017
 local PartyMessage = 4
-local OutChatPacket = 0xB5
-local IncChatPacket = 0x17
+local Prompt = 'Ready check, please / within 30 seconds! <call21>'
+local AllReady = 'All party members accounted for.'
+local Whitelist = Set.from_array({ '/', '\\', 'r', 'kronk' })
 
-local prompt = 'Ready check, please / within 30 seconds! <call21>'
-local all_ready = 'All party members accounted for.'
-local whitelist = Set.from_array({ '/', '\\', 'r', 'kronk' })
+local IsListening = false
+local Party = Set.new()
+local Ready = Set.new()
 
-local listening = false
-local party = Set.new()
-local ready = Set.new()
-
-local function get_party()
+local function GetParty()
     local result = Set.new()
-    local party = AshitaCore:GetMemoryManager():GetParty()
+    local partyMgr = AshitaCore:GetMemoryManager():GetParty()
 
     for i = 0, 17 do
-        if party:GetMemberActive(i) == 1 then
-            result:add(party:GetMemberName(i))
+        if partyMgr:GetMemberActive(i) == 1 then
+            result:add(partyMgr:GetMemberName(i))
         end
     end
 
     return result
 end
 
-local function get_player()
+local function GetPlayer()
     local result = Set.new()
     local player = GetPlayerEntity()
 
@@ -42,81 +40,61 @@ local function get_player()
     return result
 end
 
-local function send_message(text)
-    local player = GetPlayerEntity()
-    local zone = AshitaCore:GetDataManager():GetParty():GetMemberZone(0)
-
-    if player == nil or player.Name == nil or zone == nil then
-        -- shit's broke, bail before you do something stupid
-        return
-    end
-
-    local out = struct.pack('xxxxBBsx', 4, 0, text):totable()
-    out[1] = OutChatPacket
-    out[2] = #text + 2
-
-    AshitaCore:GetPacketManager():AddOutgoingPacket(OutChatPacket, out)
-
-    -- name string must be padded out with null bytes to a length of 15
-    local name = string.rpad(player.Name, string.char(0), 15)
-    local inc = struct.pack('xxxxBBhssx', 4, 0, zone, name, text):totable()
-    inc[1] = IncChatPacket
-    inc[2] = #text + 20 -- 2 uchars, 1 ushort, 16-byte sender
-
-    AshitaCore:GetPacketManager():AddIncomingPacket(IncChatPacket, inc)
+local function SendMessage(text)
+    AshitaCore:GetChatManager():QueueCommand(1, string.format('/p %s', text))
 end
 
-ashita.events.register('command', 'command_cb', function(e)
+ashita.events.register('command', 'command_handler', function(e)
     local args = e.command:args()
 
     if #args < 1 or (args[1] ~= '/rc' and args[1] ~= '/rcheck') then
         return false
     end
 
-    listening = true
-    party = get_party()
-    ready = get_player()
+    IsListening = true
+    Party = GetParty()
+    Ready = GetPlayer()
 
-    send_message(prompt)
+    SendMessage(Prompt)
 
     -- TODO: idk if this blows up, might have to hoist
     -- some of these vars up as parameters to the coroutines
     ashita.tasks.repeating(1, 29, 1, function()
-        if listening and Set.equals(ready, party) then
-            send_message(all_ready)
-            listening = false
+        if IsListening and Set.equals(Ready, Party) then
+            SendMessage(AllReady)
+            IsListening = false
         end
     end)
 
     ashita.tasks.once(30, function()
-        if listening and Set.equals(ready, party) then
-            send_message(all_ready)
-        elseif listening then
-            local missing = ready:difference(party)
-            local some_ready = string.format(
+        if IsListening and Set.equals(Ready, Party) then
+            SendMessage(AllReady)
+        elseif IsListening then
+            local missing = Ready:difference(Party)
+            local someReady = string.format(
                 '%i of %i ready. We\'re missing %s.',
-                ready:count(),
-                party:count(),
+                Ready:count(),
+                Party:count(),
                 table.concat(missing:to_array(), ', ')
             )
 
-            send_message(some_ready)
+            SendMessage(someReady)
         end
 
-        listening = false
+        IsListening = false
     end)
 
     return true
 end)
 
-ashita.events.register('packet_in', 'packet_in_cb', function(e)
-    if e.id == 0x17 and listening then
+ashita.events.register('packet_in', 'packet_in_handler', function(e)
+    if e.id == MessagePacket and IsListening then
         local msg = Packets.ParseChatMessage(e.data)
 
         if msg.type == PartyMessage
-        and whitelist:contains(string.trim(msg.text))
-        and not ready:contains(string.trim(msg.sender)) then
-            ready:add(msg.sender)
+        and Whitelist:contains(string.trim(msg.text))
+        and not Ready:contains(string.trim(msg.sender)) then
+            Ready:add(msg.sender)
         end
     end
 
