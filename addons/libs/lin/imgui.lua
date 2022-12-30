@@ -60,6 +60,22 @@ function linImgui.DrawBar(title, cur, max, overlay)
     Imgui.PopStyleColor(2)
 end
 
+---@param cur     integer
+---@param max     integer
+---@param size    Vec2
+---@param overlay string?
+function linImgui.DrawBar2(cur, max, size, overlay)
+    local fraction = cur / max
+
+    Imgui.PushStyleColor(ImGuiCol_FrameBg, linImgui.Colors.BarBackground)
+    Imgui.PushStyleColor(ImGuiCol_Border, linImgui.Colors.BarBorder)
+
+    Imgui.AlignTextToFramePadding()
+    Imgui.ProgressBar(fraction, size, overlay)
+
+    Imgui.PopStyleColor(2)
+end
+
 function linImgui.DrawWindow(name, size, x, y, drawStuff)
     Imgui.SetNextWindowSize(size, ImGuiCond_Always)
     Imgui.SetNextWindowPos({ x, y }, ImGuiCond_FirstUseEver)
