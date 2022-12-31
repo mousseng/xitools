@@ -26,3 +26,9 @@ a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 ## config
 these are my ashitacast configs. perhaps you'll find them useful; mostly i just
 want them under source control with the rest of my ashita stuff.
+
+## acknowledgements
+- atom0s for [ashita](https://github.com/AshitaXI/Ashita-v4beta), recast, and lots of other code that i've yoinked
+- thorny for lots of code that i've yoinked from the discord and [mobdb](https://github.com/ThornyFFXI/mobdb)
+- shinzaku for inspiring my imgui-fication with [`points`](https://github.com/Shinzaku/Points)
+- syllendel for the icons i yoinked from [his hud](https://github.com/Syllendel/CustomHUD)
