@@ -7,11 +7,10 @@ a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 - `rcheck` makes it easy to check party/alliance readiness by asking and doing
   the tallying for you
 - `skillchain` tracks active and potential skillchains and magic bursts
-- `tracker` is a primitive ability tracker tailored for the author
-- `logger` logs some simple packet data for diagnostic and dev purposes
-- `xp` tells you how much exp you've earned since you started earning, or over
-  a specified period of time
 - `minimap-helper` auto-configures the zoom for your Minimap plugin
+- `tracker` is a primitive ability tracker tailored for the author
+- `recast` is a fork of `recast` that has been imgui-fied
+- `logger` logs some simple packet data for diagnostic and dev purposes
 
 ### libs
 - `core/` libraries are intended to be fundamental building blocks - common data
