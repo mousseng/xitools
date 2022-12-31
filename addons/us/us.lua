@@ -10,7 +10,6 @@ local d3d8 = require('d3d8')
 local d3d8_device = d3d8.get_device()
 
 local Bit = require('bit')
-local Ffxi = require('lin.ffxi')
 local Jobs = require('lin.jobs')
 local Zones = require('lin.zones')
 local Styles = require('lin.imgui')
@@ -40,16 +39,17 @@ local Imgui = require('imgui')
 ---@field windowSize Vec2
 ---@field windowPos Vec2
 
-local Members = {
-    { windowName = 'Us_0', windowSize = { 277, -1 }, windowPos = { 400, 580 }, },
-    { windowName = 'Us_1', windowSize = { 277, -1 }, windowPos = { 400, 630 }, },
-    { windowName = 'Us_2', windowSize = { 277, -1 }, windowPos = { 400, 680 }, },
-    { windowName = 'Us_3', windowSize = { 277, -1 }, windowPos = { 400, 730 }, },
-    { windowName = 'Us_4', windowSize = { 277, -1 }, windowPos = { 400, 780 }, },
-    { windowName = 'Us_5', windowSize = { 277, -1 }, windowPos = { 400, 830 }, },
-}
-
 local Textures = { }
+
+local function IsChatExpanded()
+    -- courtesy of Syllendel
+	local pattern = "83EC??B9????????E8????????0FBF4C24??84C0"
+	local patternAddress = ashita.memory.find("FFXiMain.dll", 0, pattern, 0x04, 0);
+	local chatExpandedPointer = ashita.memory.read_uint32(patternAddress)+0xF1
+	local chatExpandedValue = ashita.memory.read_uint8(chatExpandedPointer)
+
+	return chatExpandedValue ~= 0
+end
 
 local function GetStPartyIndex()
     -- Courtesy of Thorny from the Ashita discord
@@ -74,6 +74,144 @@ local function CreateTexture(filePath)
         return nil
     end
 end
+
+local function GetStatusEffects(party, serverId)
+    -- courtesy of Thorny and Heals
+    for i = 0, 4 do
+        local sId = party:GetStatusIconsServerId(i)
+        if sId == serverId then
+            local icons_lo = party:GetStatusIcons(i)
+            local icons_hi = party:GetStatusIconsBitMask(i)
+            local effects = { }
+
+            for b = 0, 31 do
+                --[[ FIXME: lua doesn't handle 64bit return values properly..
+                --   FIXME: the next lines are a workaround by Thorny that cover most but not all cases..
+                --   FIXME: .. to try and retrieve the high bits of the buff id.
+                --   TODO:  revesit this once atom0s adjusted the API.
+                --]]
+                local high_bits
+                if b < 16 then
+                    high_bits = Bit.lshift(Bit.band(Bit.rshift(icons_hi, 2* b), 3), 8)
+                else
+                    local buffer = math.floor(icons_hi / 0xffffffff)
+                    high_bits = Bit.lshift(Bit.band(Bit.rshift(buffer, 2 * (b - 16)), 3), 8)
+                end
+
+                local buff_id = icons_lo[b+1] + high_bits
+                if (buff_id ~= 255) then
+                    table.insert(effects, buff_id)
+                end
+             end
+
+             return effects
+        end
+    end
+
+    return { }
+end
+
+local function GetPlayer(window)
+    local target = AshitaCore:GetMemoryManager():GetTarget()
+    local player = AshitaCore:GetMemoryManager():GetPlayer()
+    local party = AshitaCore:GetMemoryManager():GetParty()
+
+    local serverId = party:GetMemberServerId(0)
+    local stpt = GetStPartyIndex()
+    local buffs = player:GetBuffs()
+
+    return {
+        name = party:GetMemberName(0),
+        serverId = serverId,
+        isInZone = true,
+        isActive = true,
+        isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
+        isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
+        isPartyTarget = stpt ~= nil and stpt == 0,
+        isActionTarget = target:GetActionTargetActive() == 1 and serverId == target:GetActionTargetServerId(),
+        job = Jobs.GetJobAbbr(party:GetMemberMainJob(0)),
+        sub = Jobs.GetJobAbbr(party:GetMemberSubJob(0)),
+        jobLevel = party:GetMemberMainJobLevel(0),
+        subLevel = party:GetMemberSubJobLevel(0),
+        zoneId = party:GetMemberZone(0),
+        hpp = party:GetMemberHPPercent(0),
+        mpp = party:GetMemberMPPercent(0),
+        hp = party:GetMemberHP(0),
+        mp = party:GetMemberMP(0),
+        tp = party:GetMemberTP(0),
+        windowName = window.name,
+        windowSize = window.size,
+        windowPos = window.pos,
+        statusIds = buffs
+    }
+end
+
+local function GetMember(i, window)
+    local target = AshitaCore:GetMemoryManager():GetTarget()
+    local party = AshitaCore:GetMemoryManager():GetParty()
+
+    local serverId = party:GetMemberServerId(i)
+    local stpt = GetStPartyIndex()
+    local buffs = GetStatusEffects(party, serverId)
+
+    return {
+        name = party:GetMemberName(i),
+        serverId = serverId,
+        isInZone = party:GetMemberZone(i) == party:GetMemberZone(0),
+        isActive = party:GetMemberIsActive(i) == 1,
+        isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
+        isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
+        isPartyTarget = stpt ~= nil and stpt == i,
+        isActionTarget = target:GetActionTargetActive() == 1 and serverId == target:GetActionTargetServerId(),
+        job = Jobs.GetJobAbbr(party:GetMemberMainJob(i)),
+        sub = Jobs.GetJobAbbr(party:GetMemberSubJob(i)),
+        jobLevel = party:GetMemberMainJobLevel(i),
+        subLevel = party:GetMemberSubJobLevel(i),
+        zoneId = party:GetMemberZone(i),
+        hpp = party:GetMemberHPPercent(i),
+        mpp = party:GetMemberMPPercent(i),
+        hp = party:GetMemberHP(i),
+        mp = party:GetMemberMP(i),
+        tp = party:GetMemberTP(i),
+        windowName = window.name,
+        windowSize = window.size,
+        windowPos = window.pos,
+        statusIds = buffs
+    }
+end
+
+local AllianceWindows = {
+    { name = 'Us_1', size = { 277, -1 }, pos = { 392, 628 }, isVisible = function(party) return party:GetAlliancePartyMemberCount1() > 0 end },
+    { name = 'Us_2', size = { 277, -1 }, pos = { 107, 628 }, isVisible = function(party) return party:GetAlliancePartyMemberCount2() > 0 end },
+    { name = 'Us_3', size = { 277, -1 }, pos = { 000, 628 }, isVisible = function(party) return party:GetAlliancePartyMemberCount3() > 0 end },
+}
+
+local Alliances = {
+    ['Us_1'] = {
+        GetPlayer:bindn(AllianceWindows[1]),
+        GetMember:bindn(1, AllianceWindows[1]),
+        GetMember:bindn(2, AllianceWindows[1]),
+        GetMember:bindn(3, AllianceWindows[1]),
+        GetMember:bindn(4, AllianceWindows[1]),
+        GetMember:bindn(5, AllianceWindows[1]),
+    },
+    ['Us_2'] = {
+        GetMember:bindn(6, AllianceWindows[2]),
+        GetMember:bindn(7, AllianceWindows[2]),
+        GetMember:bindn(8, AllianceWindows[2]),
+        GetMember:bindn(9, AllianceWindows[2]),
+        GetMember:bindn(10, AllianceWindows[2]),
+        GetMember:bindn(11, AllianceWindows[2]),
+    },
+    ['Us_3'] = {
+        GetMember:bindn(12, AllianceWindows[3]),
+        GetMember:bindn(13, AllianceWindows[3]),
+        GetMember:bindn(14, AllianceWindows[3]),
+        GetMember:bindn(15, AllianceWindows[3]),
+        GetMember:bindn(16, AllianceWindows[3]),
+        GetMember:bindn(17, AllianceWindows[3]),
+    },
+}
 
 ---@param player PartyMember
 local function DrawName(player)
@@ -156,21 +294,24 @@ end
 
 ---@param player PartyMember
 local function DrawBuffs(player)
-    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 8, 2 })
-    for _, buffId in pairs(player.statusIds) do
-        if buffId > 0 then
+    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2, 2 })
+    for i = 1, 32 do
+        local buffId = player.statusIds[i]
+        if buffId ~= nil and buffId >= 0 then
             if Textures[buffId] == nil then
-                Textures[buffId] = CreateTexture(addon.path .. "icons\\" .. buffId .. ".png", 16, 16)
+                Textures[buffId] = CreateTexture(addon.path .. "icons\\" .. buffId .. ".png")
+            end
+
+            if i ~= 1 and i ~= 32 then
+                Imgui.SameLine()
             end
 
             local img = tonumber(ffi.cast("uint32_t", Textures[buffId]))
             Imgui.Image(img, { 16, 16 })
-            Imgui.SameLine()
         end
     end
 
     Imgui.PopStyleVar()
-    Imgui.NewLine()
 end
 
 ---@param player PartyMember
@@ -187,54 +328,29 @@ local function DrawPartyMember(player)
     end
 end
 
-local function DrawAlliance(allianceNum)
-    Styles.DrawWindow('Us', { 277, -1 }, Members[2].windowPos[1], Members[2].windowPos[2], function()
-        local player = AshitaCore:GetMemoryManager():GetPlayer()
-        local target = AshitaCore:GetMemoryManager():GetTarget()
-        local party = AshitaCore:GetMemoryManager():GetParty()
+local function DrawAlliance(alliance)
+    local party = AshitaCore:GetMemoryManager():GetParty()
+    if not alliance.isVisible(party) then return end
 
-        for i = allianceNum + 0, allianceNum + 5 do
-            local stpt = GetStPartyIndex()
-            local buffs = party:GetStatusIcons(i)
-            if i == 0 then
-                buffs = player:GetBuffs()
-            end
+    Styles.DrawWindow(alliance.name, alliance.size, alliance.pos[1], alliance.pos[2], function()
+        for _, getMember in pairs(Alliances[alliance.name]) do
+            local person = getMember()
 
-            ---@type PartyMember
-            local member = {
-                name = party:GetMemberName(i),
-                serverId = party:GetMemberServerId(i),
-                isInZone = party:GetMemberZone(i) == party:GetMemberZone(0),
-                isActive = party:GetMemberIsActive(i) == 1,
-                isTarget = (target:GetIsSubTargetActive() == 0 and party:GetMemberServerId(i) == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and party:GetMemberServerId(i) == target:GetServerId(1)),
-                isSubTarget = target:GetIsSubTargetActive() == 1 and party:GetMemberServerId(i) == target:GetServerId(0),
-                isPartyTarget = stpt ~= nil and stpt == i,
-                isActionTarget = target:GetActionTargetActive() == 1 and party:GetMemberServerId(i) == target:GetActionTargetServerId(),
-                job = Jobs.GetJobAbbr(party:GetMemberMainJob(i)),
-                sub = Jobs.GetJobAbbr(party:GetMemberSubJob(i)),
-                jobLevel = party:GetMemberMainJobLevel(i),
-                subLevel = party:GetMemberSubJobLevel(i),
-                zoneId = party:GetMemberZone(i),
-                hpp = party:GetMemberHPPercent(i),
-                mpp = party:GetMemberMPPercent(i),
-                hp = party:GetMemberHP(i),
-                mp = party:GetMemberMP(i),
-                tp = party:GetMemberTP(i),
-                windowName = Members[i + 1].windowName,
-                windowSize = Members[i + 1].windowSize,
-                windowPos = Members[i + 1].windowPos,
-                statusIds = buffs
-            }
-
-            if member.isActive and member.name ~= '' then
-                DrawPartyMember(member)
+            if person.isActive and person.name ~= '' then
+                DrawPartyMember(person)
             end
         end
     end)
 end
 
 local function DrawUs()
-    DrawAlliance(0)
+    if IsChatExpanded() then
+        return
+    end
+
+    for _, alliance in pairs(AllianceWindows) do
+        DrawAlliance(alliance)
+    end
 end
 
 ashita.events.register('d3d_present', 'd3d_present_handler', DrawUs)
@@ -247,31 +363,4 @@ ashita.events.register('command', 'command_handler', function(e)
     end
 
     e.blocked = true
-
-    local player = AshitaCore:GetMemoryManager():GetPlayer()
-    local pIcons = player:GetStatusIcons()
-    local p = ''
-    for x = 1, 32 do
-        p = p .. tostring(pIcons[x]) .. ', '
-    end
-    print(p)
-
-    local buffs = player:GetBuffs()
-    local b = ''
-    for _, v in pairs(buffs) do
-        b = b .. tostring(v) .. ', '
-    end
-    print(b)
-
-    local party = AshitaCore:GetMemoryManager():GetParty()
-    for i = 0, 5 do
-        local mask = party:GetStatusIconsBitMask(i)
-        local icons = party:GetStatusIcons(i)
-        local s = ''
-        for x = 1, 32 do
-            local buff = Bit.bor(icons[x], Bit.lshift(mask, 8))
-            s = s .. tostring(buff) .. ', '
-        end
-        print(s)
-    end
 end)
