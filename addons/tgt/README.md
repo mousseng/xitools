@@ -10,3 +10,9 @@ connection to the `me` window without cluttering it too much.
 `/tgt status` will toggle the status bar at the bottom. that attempts to display
 a very condensed list of status effects that afflict your target. some people
 prefer addons like `timers` for this, but this is less noisy.
+
+## todo
+- hide when chat is open
+- hide when map is open
+- incorporate `mobDb`/`ibar` information
+- add a toggle to show aforementioned information
