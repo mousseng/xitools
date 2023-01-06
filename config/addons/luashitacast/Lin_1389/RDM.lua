@@ -5,7 +5,7 @@ local profile = {
     Sets = {
         Base = {
             Main = "Centurion's sword",
-            -- Sub = "",
+            Sub = "Parana shield",
             -- Range = "",
             -- Ammo = "",
             -- Head = "",
@@ -18,7 +18,7 @@ local profile = {
             -- Ear1 = "",
             -- Ear2 = "",
             Ring1 = "San d'Orian ring",
-            -- Ring2 = "",
+            Ring2 = "Chariot band",
             Back = "Cotton cape",
         },
         Resting = {
@@ -69,6 +69,8 @@ profile.HandleCommand = function(args)
 end
 
 profile.HandleDefault = function()
+    gFunc.EquipSet('Base')
+
     local player = gData.GetPlayer()
     if player.IsMoving then
         gFunc.EquipSet('Movement')
@@ -76,8 +78,6 @@ profile.HandleDefault = function()
         gFunc.EquipSet('Resting')
     elseif player.Status == 'Engaged' then
         gFunc.EquipSet('Tp')
-    elseif player.Status == 'Idle' then
-        gFunc.EquipSet('Base')
     end
 end
 
@@ -85,6 +85,10 @@ profile.HandleAbility = function()
 end
 
 profile.HandleItem = function()
+    local item = gData.GetAction()
+    if item.Name == 'Ginger cookies' then
+        gFunc.Equip('Legs', 'Dream pants +1')
+    end
 end
 
 profile.HandlePrecast = function()
@@ -92,9 +96,18 @@ profile.HandlePrecast = function()
 end
 
 profile.HandleMidcast = function()
+    local spell = gData.GetAction()
+
     -- TODO: get wand for early-game casting
     -- TODO: get staves for late-game casting
-    gFunc.Equip('Neck', 'Justice Badge')
+    gFunc.Equip('Neck', "Justice Badge")
+    gFunc.Equip('Ring2', "Ascetic's Ring")
+
+    if spell.Name == 'Sneak' then
+        gFunc.Equip('Feet', "Dream boots +1")
+    elseif spell.Name == 'Invisible' then
+        gFunc.Equip('Hands', "Dream mittens +1")
+    end
 end
 
 profile.HandlePreshot = function()
