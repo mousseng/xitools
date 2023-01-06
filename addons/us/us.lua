@@ -24,7 +24,6 @@ local Imgui = require('imgui')
 ---@field isTarget boolean
 ---@field isSubTarget boolean
 ---@field isPartyTarget boolean
----@field isActionTarget boolean
 ---@field job string
 ---@field sub string
 ---@field jobLevel integer
@@ -128,7 +127,6 @@ local function GetPlayer(window)
         isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
         isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
         isPartyTarget = stpt ~= nil and stpt == 0,
-        isActionTarget = target:GetActionTargetActive() == 1 and serverId == target:GetActionTargetServerId(),
         job = Jobs.GetJobAbbr(party:GetMemberMainJob(0)),
         sub = Jobs.GetJobAbbr(party:GetMemberSubJob(0)),
         jobLevel = party:GetMemberMainJobLevel(0),
@@ -162,7 +160,6 @@ local function GetMember(i, window)
         isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
         isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
         isPartyTarget = stpt ~= nil and stpt == i,
-        isActionTarget = target:GetActionTargetActive() == 1 and serverId == target:GetActionTargetServerId(),
         job = Jobs.GetJobAbbr(party:GetMemberMainJob(i)),
         sub = Jobs.GetJobAbbr(party:GetMemberSubJob(i)),
         jobLevel = party:GetMemberMainJobLevel(i),
@@ -215,12 +212,14 @@ local Alliances = {
 
 ---@param player PartyMember
 local function DrawName(player)
-    if player.isSubTarget or player.isPartyTarget or player.isActionTarget then
+    if player.isSubTarget or player.isPartyTarget then
         Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.XpBar)
         Imgui.Text(string.format('> %s', player.name))
+        Imgui.PopStyleColor()
     elseif player.isTarget then
         Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.TpBarActive)
         Imgui.Text(string.format('>> %s', player.name))
+        Imgui.PopStyleColor()
     else
         Imgui.Text(string.format('%s', player.name))
     end
@@ -238,10 +237,6 @@ local function DrawName(player)
         Imgui.SameLine()
         Imgui.SetCursorPosX(player.windowSize[1] - width)
         Imgui.Text(jobs)
-    end
-
-    if player.isTarget or player.isSubTarget or player.isPartyTarget or player.isActionTarget then
-        Imgui.PopStyleColor()
     end
 end
 
