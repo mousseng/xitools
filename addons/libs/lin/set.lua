@@ -2,23 +2,7 @@
 * A shitty implementation of sets.
 --]]
 
-local set = {
-    __len = function(self)
-        local n = 0
-
-        for k, v in pairs(self) do
-            n = n + 1
-        end
-
-        return n
-    end,
-    __eq = function(lhs, rhs)
-        return lhs:count() == rhs:count() and set.diff(lhs, rhs):count() == 0
-    end,
-    __lt = function(lhs, rhs)
-        return false
-    end,
-}
+local set = {}
 
 --[[ Creates an empty set. ]]
 function set.new()
@@ -108,6 +92,24 @@ function set:values()
         i = i + 1
         if i <= n then return arr[i] end
     end
+end
+
+set.__len = function(self)
+    local n = 0
+
+    for k, v in pairs(self) do
+        n = n + 1
+    end
+
+    return n
+end
+
+set.__eq = function(lhs, rhs)
+    return lhs:count() == rhs:count() and set.diff(lhs, rhs):count() == 0
+end
+
+set.__lt = function(lhs, rhs)
+    return false
 end
 
 return set
