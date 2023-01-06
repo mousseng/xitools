@@ -135,7 +135,7 @@ local function DrawXp(cur, max, isLocked)
     end
 
     local barColor = Styles.Colors.XpBar
-    local title = string.format('XP %4i', Text.FormatXp(cur, true))
+    local title = string.format('XP %4s', Text.FormatXp(cur, cur > 9999))
     local overlay = Text.FormatXp(max - cur, true)
 
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
@@ -152,7 +152,7 @@ local function DrawLp(cur, max, isLocked)
     end
 
     local barColor = Styles.Colors.LpBar
-    local title = string.format('LP %4i', type, Text.FormatXp(cur, true))
+    local title = string.format('LP %4s', type, Text.FormatXp(cur, cur > 9999))
 
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     Styles.DrawBar(title, cur, max)

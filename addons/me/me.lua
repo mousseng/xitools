@@ -1,6 +1,6 @@
 addon.name    = 'me'
 addon.author  = 'lin'
-addon.version = '3.0.0'
+addon.version = '3.0.1'
 addon.desc    = 'A simple text-based HUD for player status'
 
 local Me = require('me-core')
