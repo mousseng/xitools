@@ -84,9 +84,9 @@ return {
     [213] = { name = 'burst_ii', burst_msg = 252, },
     [214] = { name = 'flood', burst_msg = 252, },
     [215] = { name = 'flood_ii', burst_msg = 252, },
-    -- [245] = { name = 'drain', burst_msg = 227 },
-    -- [246] = { name = 'drain_ii', burst_msg = 227 },
-    -- [247] = { name = 'aspir', burst_msg = 228 },
+    [245] = { name = 'drain', burst_msg = 274 },
+    [246] = { name = 'drain_ii', burst_msg = 274 },
+    [247] = { name = 'aspir', burst_msg = 275 },
 
     -- New garbage
     [218] = { name = 'meteor', burst_msg = 252, },
