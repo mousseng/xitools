@@ -4,25 +4,25 @@ local chat = require('chat')
 local profile = {
     Sets = {
         Base = {
-            Main = "Centurion's sword",
-            Sub = "Parana shield",
+            Main = "Centurion's Sword",
+            Sub = "Parana Shield",
             -- Range = "",
-            -- Ammo = "",
+            Ammo = "Morion Tathlum",
             -- Head = "",
-            Body = "Royal Footman's tunic",
-            Hands = "Royal Footman's gloves",
-            Legs = "Royal Footman's trousers",
-            Feet = "Royal Footman's clogs",
-            Neck = "Tiger stole",
-            Waist = "Friar's rope",
+            Body = "Ryl.Ftm. Tunic",
+            Hands = "Ryl.Ftm. Gloves",
+            Legs = "Ryl.Ftm. Trousers",
+            Feet = "Ryl.Ftm. Clogs",
+            Neck = "Tiger Stole",
+            Waist = "Friar's Rope",
             -- Ear1 = "",
             -- Ear2 = "",
-            Ring1 = "San d'Orian ring",
-            Ring2 = "Chariot band",
-            Back = "Cotton cape",
+            Ring1 = "San d'Orian Ring",
+            Ring2 = "Chariot Band",
+            Back = "Cotton Cape",
         },
         Resting = {
-            Main = "Pilgrim's wand",
+            Main = "Pilgrim's Wand",
         },
         Tp = { },
         Movement = { },
@@ -86,8 +86,8 @@ end
 
 profile.HandleItem = function()
     local item = gData.GetAction()
-    if item.Name == 'Ginger cookies' then
-        gFunc.Equip('Legs', 'Dream pants +1')
+    if item.Name == 'Orange Juice' then
+        gFunc.Equip('Legs', "Dream Pants +1")
     end
 end
 
@@ -98,15 +98,20 @@ end
 profile.HandleMidcast = function()
     local spell = gData.GetAction()
 
-    -- TODO: get wand for early-game casting
     -- TODO: get staves for late-game casting
-    gFunc.Equip('Neck', "Justice Badge")
-    gFunc.Equip('Ring2', "Ascetic's Ring")
+    gFunc.Equip('Main', "Yew Wand")
 
     if spell.Name == 'Sneak' then
-        gFunc.Equip('Feet', "Dream boots +1")
+        gFunc.Equip('Feet', "Dream Boots +1")
     elseif spell.Name == 'Invisible' then
-        gFunc.Equip('Hands', "Dream mittens +1")
+        gFunc.Equip('Hands', "Dream Mittens +1")
+    elseif spell.Type == 'White Magic' then
+        gFunc.Equip('Neck', "Justice Badge")
+        gFunc.Equip('Ring1', "San d'Orian Ring")
+        gFunc.Equip('Ring2', "Ascetic's Ring")
+    elseif spell.Type == 'Black Magic' then
+        gFunc.Equip('Ring1', "Hermit's Ring")
+        gFunc.Equip('Ring2', "Hermit's Ring")
     end
 end
 
