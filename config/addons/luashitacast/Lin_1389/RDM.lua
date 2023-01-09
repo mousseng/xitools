@@ -110,6 +110,7 @@ profile.HandleMidcast = function()
         gFunc.Equip('Ring1', "San d'Orian Ring")
         gFunc.Equip('Ring2', "Ascetic's Ring")
     elseif spell.Type == 'Black Magic' then
+        gFunc.Equip('Neck', "Black Silk Neckerchief")
         gFunc.Equip('Ring1', "Hermit's Ring")
         gFunc.Equip('Ring2', "Hermit's Ring")
     end
@@ -122,7 +123,28 @@ profile.HandleMidshot = function()
 end
 
 profile.HandleWeaponskill = function()
-    -- TODO: get str/dex/int/mnd gear
+    local weaponskill = gData.GetAction()
+    local strSkills = T{ 'Flat Blade', 'Circle Blade', 'Vorpal Blade' }
+    local dexSkills = T{ 'Fast Blade' }
+    local mndSkills = T{ 'Requiescat' }
+    local strMndSkills = T{ 'Shining Blade', 'Seraph Blade', 'Swift Blade', 'Savage Blade', 'Sanguine Blade', 'Knights of Round', 'Death Blossom' }
+    local strIntSkills = T{ 'Burning Blade', 'Red Lotus Blade' }
+    local hpSkills = T{ 'Spirits Within' }
+
+    if strSkills:contains(weaponskill.Name) then
+        gFunc.Equip('Ring1', "San d'Orian Ring")
+    elseif dexSkills:contains(weaponskill.Name) then
+    elseif mndSkills:contains(weaponskill.Name) then
+    elseif strMndSkills:contains(weaponskill.Name) then
+        gFunc.Equip('Neck', "Justice Badge")
+        gFunc.Equip('Ring1', "San d'Orian Ring")
+        gFunc.Equip('Ring2', "Ascetic's Ring")
+    elseif strIntSkills:contains(weaponskill.Name) then
+        gFunc.Equip('Neck', "Black Silk Neckerchief")
+        gFunc.Equip('Ring1', "Hermit's Ring")
+        gFunc.Equip('Ring2', "Hermit's Ring")
+    elseif hpSkills:contains(weaponskill.Name) then
+    end
 end
 
 return profile
