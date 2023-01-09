@@ -25,7 +25,7 @@ end
 -- Shorthand method to grab an entity's name (by server id, obviously) or a
 -- placeholder string if the entity can't be found.
 ---@param id number
----@param default_name string
+---@param default_name string?
 ---@return string
 function ffxi.GetEntityNameByServerId(id, default_name)
     local e = ffxi.GetEntityByServerId(id)
