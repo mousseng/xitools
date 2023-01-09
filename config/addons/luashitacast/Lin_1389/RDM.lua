@@ -26,6 +26,13 @@ local profile = {
         },
         Tp = { },
         Movement = { },
+        Glamour = {
+            Head = nil,
+            Body = "Dream Robe",
+            Hands = "Dream Mittens +1",
+            Legs = "Dream Pants +1",
+            Feet = "Dream Boots +1",
+        },
     },
     Packer = {
     },
@@ -46,6 +53,12 @@ profile.OnLoad = function()
     elseif player.SubJob == 'NIN' then
         AshitaCore:GetChatManager():QueueCommand(1, '/macro set 4')
     end
+
+    print(chat.header('LAC: RDM'):append(chat.message('setting glamour')))
+    ashita.tasks.once(3, function()
+        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 20')
+        AshitaCore:GetChatManager():QueueCommand(1, '/sl blink')
+    end)
 end
 
 profile.OnUnload = function()
