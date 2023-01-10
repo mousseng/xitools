@@ -1,8 +1,7 @@
 local Defaults = require('me-settings')
 local Settings = require('settings')
 
-local Imgui = require('imgui')
-local Styles = require('lin.imgui')
+local Imgui = require('lin.imgui')
 
 local Ffxi = require('lin.ffxi')
 local Jobs = require('lin.jobs')
@@ -54,7 +53,7 @@ local function DrawHeader(name, job, jobLevel, sub, subLevel)
         jobs = string.format('%s%i', Jobs.GetJobAbbr(job), jobLevel)
     end
 
-    local width = Imgui.CalcTextSize(jobs) + Styles.Styles.WindowPadding[1]
+    local width = Imgui.CalcTextSize(jobs) + Imgui.Lin.Styles.WindowPadding[1]
 
     Imgui.SameLine()
     Imgui.SetCursorPosX(Module.windowSize[1] - width)
@@ -65,23 +64,23 @@ end
 ---@param max integer
 local function DrawHp(cur, max)
     local title = string.format('HP %4i', cur)
-    local textColor = Styles.Colors.White
-    local barColor = Styles.Colors.HpBar
+    local textColor = Imgui.Lin.Colors.White
+    local barColor = Imgui.Lin.Colors.HpBar
 
     local frac = cur / max
     if frac > 0.75 then
-        textColor = Styles.Colors.White
+        textColor = Imgui.Lin.Colors.White
     elseif frac > 0.50 then
-        textColor = Styles.Colors.Yellow
+        textColor = Imgui.Lin.Colors.Yellow
     elseif frac > 0.25 then
-        textColor = Styles.Colors.Orange
+        textColor = Imgui.Lin.Colors.Orange
     elseif frac >= 0.00 then
-        textColor = Styles.Colors.Red
+        textColor = Imgui.Lin.Colors.Red
     end
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    Styles.DrawBar(title, cur, max, '')
+    Imgui.Lin.DrawBar(title, cur, max, '')
     Imgui.PopStyleColor(2)
 end
 
@@ -89,23 +88,23 @@ end
 ---@param max integer
 local function DrawMp(cur, max)
     local title = string.format('MP %4i', cur)
-    local textColor = Styles.Colors.White
-    local barColor = Styles.Colors.FfxiAmber
+    local textColor = Imgui.Lin.Colors.White
+    local barColor = Imgui.Lin.Colors.FfxiAmber
 
     local frac = cur / max
     if frac > 0.75 then
-        textColor = Styles.Colors.White
+        textColor = Imgui.Lin.Colors.White
     elseif frac > 0.50 then
-        textColor = Styles.Colors.Yellow
+        textColor = Imgui.Lin.Colors.Yellow
     elseif frac > 0.25 then
-        textColor = Styles.Colors.Orange
+        textColor = Imgui.Lin.Colors.Orange
     elseif frac >= 0.00 and max > 0 then
-        textColor = Styles.Colors.Red
+        textColor = Imgui.Lin.Colors.Red
     end
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    Styles.DrawBar(title, cur, max, '')
+    Imgui.Lin.DrawBar(title, cur, max, '')
     Imgui.PopStyleColor(2)
 end
 
@@ -113,17 +112,17 @@ end
 ---@param max integer
 local function DrawTp(cur, max)
     local title = string.format('TP %4i', cur)
-    local textColor = Styles.Colors.White
-    local barColor = Styles.Colors.TpBar
+    local textColor = Imgui.Lin.Colors.White
+    local barColor = Imgui.Lin.Colors.TpBar
 
     if cur > 1000 then
-        textColor = Styles.Colors.TpBarActive
-        barColor = Styles.Colors.TpBarActive
+        textColor = Imgui.Lin.Colors.TpBarActive
+        barColor = Imgui.Lin.Colors.TpBarActive
     end
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    Styles.DrawBar(title, cur, max, '')
+    Imgui.Lin.DrawBar(title, cur, max, '')
     Imgui.PopStyleColor(2)
 end
 
@@ -135,12 +134,12 @@ local function DrawXp(cur, max, isLocked)
         return
     end
 
-    local barColor = Styles.Colors.XpBar
+    local barColor = Imgui.Lin.Colors.XpBar
     local title = string.format('XP %4s', Text.FormatXp(cur, cur > 9999))
     local overlay = Text.FormatXp(max - cur, true)
 
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    Styles.DrawBar(title, cur, max, overlay)
+    Imgui.Lin.DrawBar(title, cur, max, overlay)
     Imgui.PopStyleColor()
 end
 
@@ -152,11 +151,11 @@ local function DrawLp(cur, max, isLocked)
         return
     end
 
-    local barColor = Styles.Colors.LpBar
+    local barColor = Imgui.Lin.Colors.LpBar
     local title = string.format('LP %4s', type, Text.FormatXp(cur, cur > 9999))
 
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    Styles.DrawBar(title, cur, max)
+    Imgui.Lin.DrawBar(title, cur, max)
     Imgui.PopStyleColor()
 end
 
@@ -207,7 +206,7 @@ function Module.OnPresent()
     end
 
     local party = AshitaCore:GetMemoryManager():GetParty()
-    Styles.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
+    Imgui.Lin.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
         DrawMe(player, party, entity)
     end)
 end

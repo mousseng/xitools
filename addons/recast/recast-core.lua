@@ -1,7 +1,6 @@
 require('common')
 local Ffxi = require('lin.ffxi')
-local Styles = require('lin.imgui')
-local Imgui = require('imgui')
+local Imgui = require('lin.imgui')
 local Settings = require('settings')
 local Defaults = require('recast-settings')
 local TwoHours = require('recast-twohours')
@@ -77,11 +76,11 @@ end
 
 local function DrawTimer(timer)
     if timer.timer >= 1200 then
-        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.White)
+        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Lin.Colors.White)
     elseif timer.timer < 1200 and timer.timer > 300 then
-        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.Yellow)
+        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Lin.Colors.Yellow)
     else
-        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.Red)
+        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Lin.Colors.Red)
     end
 
     local text = string.format('%s - %s', timer.name, format_timestamp(timer.timer))
@@ -194,7 +193,7 @@ function Module.OnPresent()
     end
 
     if #timers > 0 then
-        Styles.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
+        Imgui.Lin.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
             DrawRecast(timers)
         end)
     end

@@ -1,16 +1,16 @@
 local Bit = require('bit')
 local Imgui = require('imgui')
 
-local linImgui = {}
+Imgui.Lin = {}
 
-linImgui.Styles = {
+Imgui.Lin.Styles = {
     ItemSpacing   = { 8, 4 },
     WindowPadding = { 10, 10 },
     FramePadding  = { 0, 0 },
     BarSize       = { 200, 15 },
 }
 
-linImgui.Colors = {
+Imgui.Lin.Colors = {
     White          = { 1.00, 1.00, 1.00, 1.0 },
     Yellow         = { 1.00, 1.00, 0.00, 1.0 },
     Orange         = { 1.00, 0.64, 0.00, 1.0 },
@@ -46,16 +46,16 @@ linImgui.Colors = {
 ---@param cur     integer
 ---@param max     integer
 ---@param overlay string?
-function linImgui.DrawBar(title, cur, max, overlay)
+function Imgui.Lin.DrawBar(title, cur, max, overlay)
     local fraction = cur / max
 
-    Imgui.PushStyleColor(ImGuiCol_FrameBg, linImgui.Colors.BarBackground)
-    Imgui.PushStyleColor(ImGuiCol_Border, linImgui.Colors.BarBorder)
+    Imgui.PushStyleColor(ImGuiCol_FrameBg, Imgui.Lin.Colors.BarBackground)
+    Imgui.PushStyleColor(ImGuiCol_Border, Imgui.Lin.Colors.BarBorder)
 
     Imgui.AlignTextToFramePadding()
     Imgui.Text(title)
     Imgui.SameLine()
-    Imgui.ProgressBar(fraction, linImgui.Styles.BarSize, overlay)
+    Imgui.ProgressBar(fraction, Imgui.Lin.Styles.BarSize, overlay)
 
     Imgui.PopStyleColor(2)
 end
@@ -64,11 +64,11 @@ end
 ---@param max     integer
 ---@param size    Vec2
 ---@param overlay string?
-function linImgui.DrawBar2(cur, max, size, overlay)
+function Imgui.Lin.DrawBar2(cur, max, size, overlay)
     local fraction = cur / max
 
-    Imgui.PushStyleColor(ImGuiCol_FrameBg, linImgui.Colors.BarBackground)
-    Imgui.PushStyleColor(ImGuiCol_Border, linImgui.Colors.BarBorder)
+    Imgui.PushStyleColor(ImGuiCol_FrameBg, Imgui.Lin.Colors.BarBackground)
+    Imgui.PushStyleColor(ImGuiCol_Border, Imgui.Lin.Colors.BarBorder)
 
     Imgui.AlignTextToFramePadding()
     Imgui.ProgressBar(fraction, size, overlay)
@@ -80,20 +80,20 @@ end
 ---@param size Vec2
 ---@param pos Vec2
 ---@param drawStuff function
-function linImgui.DrawWindow(name, size, pos, drawStuff)
+function Imgui.Lin.DrawWindow(name, size, pos, drawStuff)
     Imgui.SetNextWindowSize(size, ImGuiCond_Always)
     Imgui.SetNextWindowPos(pos, ImGuiCond_FirstUseEver)
 
-    Imgui.PushStyleColor(ImGuiCol_WindowBg, linImgui.Colors.FfxiGreyBg)
-    Imgui.PushStyleColor(ImGuiCol_Border, linImgui.Colors.FfxiGreyBorder)
-    Imgui.PushStyleColor(ImGuiCol_BorderShadow, linImgui.Colors.BorderShadow)
-    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, linImgui.Styles.ItemSpacing)
-    Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, linImgui.Styles.WindowPadding)
+    Imgui.PushStyleColor(ImGuiCol_WindowBg, Imgui.Lin.Colors.FfxiGreyBg)
+    Imgui.PushStyleColor(ImGuiCol_Border, Imgui.Lin.Colors.FfxiGreyBorder)
+    Imgui.PushStyleColor(ImGuiCol_BorderShadow, Imgui.Lin.Colors.BorderShadow)
+    Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, Imgui.Lin.Styles.ItemSpacing)
+    Imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, Imgui.Lin.Styles.WindowPadding)
 
     if Imgui.Begin(name, { true }, Bit.bor(ImGuiWindowFlags_NoDecoration)) then
         Imgui.PopStyleColor(3)
-        Imgui.PushStyleColor(ImGuiCol_Text, linImgui.Colors.White)
-        Imgui.PushStyleVar(ImGuiStyleVar_FramePadding, linImgui.Styles.FramePadding)
+        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Lin.Colors.White)
+        Imgui.PushStyleVar(ImGuiStyleVar_FramePadding, Imgui.Lin.Styles.FramePadding)
 
         drawStuff()
 
@@ -107,4 +107,4 @@ function linImgui.DrawWindow(name, size, pos, drawStuff)
     Imgui.PopStyleVar(2)
 end
 
-return linImgui
+return Imgui

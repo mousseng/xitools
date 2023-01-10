@@ -1,8 +1,7 @@
 local Defaults = require('tgt-settings')
 local Settings = require('settings')
-local Imgui = require('imgui')
 local Ffxi = require('lin.ffxi')
-local Styles = require('lin.imgui')
+local Imgui = require('lin.imgui')
 local Packets = require('lin.packets')
 
 ---@class Debuffs
@@ -240,7 +239,7 @@ local function DrawHeader(name, distance)
     Imgui.Text(name)
 
     local dist = string.format('%.1fm', distance)
-    local width = Imgui.CalcTextSize(dist) + Styles.Styles.WindowPadding[1]
+    local width = Imgui.CalcTextSize(dist) + Imgui.Lin.Styles.WindowPadding[1]
 
     Imgui.SameLine()
     Imgui.SetCursorPosX(Module.windowSize[1] - width)
@@ -250,22 +249,22 @@ end
 ---@param hpPercent integer
 local function DrawHp(hpPercent)
     local title = string.format('HP %3i%%%%', hpPercent)
-    local textColor = Styles.Colors.White
-    local barColor = Styles.Colors.HpBar
+    local textColor = Imgui.Lin.Colors.White
+    local barColor = Imgui.Lin.Colors.HpBar
 
     if hpPercent > 0.75 then
-        textColor = Styles.Colors.White
+        textColor = Imgui.Lin.Colors.White
     elseif hpPercent > 0.50 then
-        textColor = Styles.Colors.Yellow
+        textColor = Imgui.Lin.Colors.Yellow
     elseif hpPercent > 0.25 then
-        textColor = Styles.Colors.Orange
+        textColor = Imgui.Lin.Colors.Orange
     elseif hpPercent >= 0.00 then
-        textColor = Styles.Colors.Red
+        textColor = Imgui.Lin.Colors.Red
     end
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    Styles.DrawBar(title, hpPercent, 100, '')
+    Imgui.Lin.DrawBar(title, hpPercent, 100, '')
     Imgui.PopStyleColor(2)
 end
 
@@ -280,7 +279,7 @@ local function DrawStatusEntry(text, isActive, color)
     if isActive then
         Imgui.PushStyleColor(ImGuiCol_Text, color)
     else
-        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.StatusGrey)
+        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Lin.Colors.StatusGrey)
     end
 
     Imgui.Text(text)
@@ -294,31 +293,31 @@ local function DrawStatus(debuffs)
 
     local now = os.time()
     Imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 })
-    DrawStatusEntry('D',  now < debuffs.dia, Styles.Colors.StatusWhite)
-    DrawStatusEntry('B',  now < debuffs.bio, Styles.Colors.StatusBlack)
+    DrawStatusEntry('D',  now < debuffs.dia, Imgui.Lin.Colors.StatusWhite)
+    DrawStatusEntry('B',  now < debuffs.bio, Imgui.Lin.Colors.StatusBlack)
     DrawSeparator()
     DrawSeparator()
-    DrawStatusEntry('P',  now < debuffs.para, Styles.Colors.StatusWhite)
-    DrawStatusEntry('S',  now < debuffs.slow, Styles.Colors.StatusWhite)
-    DrawStatusEntry('G',  now < debuffs.grav, Styles.Colors.StatusBlack)
-    DrawStatusEntry('B',  now < debuffs.blind, Styles.Colors.StatusBlack)
+    DrawStatusEntry('P',  now < debuffs.para, Imgui.Lin.Colors.StatusWhite)
+    DrawStatusEntry('S',  now < debuffs.slow, Imgui.Lin.Colors.StatusWhite)
+    DrawStatusEntry('G',  now < debuffs.grav, Imgui.Lin.Colors.StatusBlack)
+    DrawStatusEntry('B',  now < debuffs.blind, Imgui.Lin.Colors.StatusBlack)
     DrawSeparator()
     DrawSeparator()
-    DrawStatusEntry('Si', now < debuffs.silence, Styles.Colors.StatusWhite)
+    DrawStatusEntry('Si', now < debuffs.silence, Imgui.Lin.Colors.StatusWhite)
     DrawSeparator()
-    DrawStatusEntry('Sl', now < debuffs.sleep, Styles.Colors.StatusBlack)
+    DrawStatusEntry('Sl', now < debuffs.sleep, Imgui.Lin.Colors.StatusBlack)
     DrawSeparator()
-    DrawStatusEntry('Bi', now < debuffs.bind, Styles.Colors.StatusBlack)
+    DrawStatusEntry('Bi', now < debuffs.bind, Imgui.Lin.Colors.StatusBlack)
     DrawSeparator()
-    DrawStatusEntry('Po', now < debuffs.poison, Styles.Colors.StatusBlack)
+    DrawStatusEntry('Po', now < debuffs.poison, Imgui.Lin.Colors.StatusBlack)
     DrawSeparator()
     DrawSeparator()
-    DrawStatusEntry('S',  now < debuffs.shock, Styles.Colors.StatusYellow)
-    DrawStatusEntry('R',  now < debuffs.rasp, Styles.Colors.StatusBrown)
-    DrawStatusEntry('C',  now < debuffs.choke, Styles.Colors.StatusGreen)
-    DrawStatusEntry('F',  now < debuffs.frost, Styles.Colors.StatusCyan)
-    DrawStatusEntry('B',  now < debuffs.burn, Styles.Colors.StatusRed)
-    DrawStatusEntry('D',  now < debuffs.drown, Styles.Colors.StatusBlue)
+    DrawStatusEntry('S',  now < debuffs.shock, Imgui.Lin.Colors.StatusYellow)
+    DrawStatusEntry('R',  now < debuffs.rasp, Imgui.Lin.Colors.StatusBrown)
+    DrawStatusEntry('C',  now < debuffs.choke, Imgui.Lin.Colors.StatusGreen)
+    DrawStatusEntry('F',  now < debuffs.frost, Imgui.Lin.Colors.StatusCyan)
+    DrawStatusEntry('B',  now < debuffs.burn, Imgui.Lin.Colors.StatusRed)
+    DrawStatusEntry('D',  now < debuffs.drown, Imgui.Lin.Colors.StatusBlue)
     Imgui.PopStyleVar()
 end
 
@@ -338,7 +337,7 @@ function Module.OnPresent()
     end
 
     local entity = GetEntity(targetId)
-    Styles.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
+    Imgui.Lin.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
         DrawTgt(entity)
     end)
 end

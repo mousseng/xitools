@@ -13,8 +13,7 @@ local Bit = require('bit')
 local Jobs = require('lin.jobs')
 local Ffxi = require('lin.ffxi')
 local Zones = require('lin.zones')
-local Styles = require('lin.imgui')
-local Imgui = require('imgui')
+local Imgui = require('lin.imgui')
 
 ---@class PartyMember
 ---@field name string
@@ -191,11 +190,11 @@ local Alliances = {
 ---@param player PartyMember
 local function DrawName(player)
     if player.isSubTarget or player.isPartyTarget then
-        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.XpBar)
+        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Lin.Colors.XpBar)
         Imgui.Text(string.format('> %s', player.name))
         Imgui.PopStyleColor()
     elseif player.isTarget then
-        Imgui.PushStyleColor(ImGuiCol_Text, Styles.Colors.TpBarActive)
+        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Colors.TpBarActive)
         Imgui.Text(string.format('>> %s', player.name))
         Imgui.PopStyleColor()
     else
@@ -210,7 +209,7 @@ local function DrawName(player)
             jobs = string.format('%s%i', player.job, player.jobLevel)
         end
 
-        local width = Imgui.CalcTextSize(jobs) + Styles.Styles.WindowPadding[1]
+        local width = Imgui.CalcTextSize(jobs) + Imgui.Lin.Styles.WindowPadding[1]
 
         Imgui.SameLine()
         Imgui.SetCursorPosX(player.windowSize[1] - width)
@@ -225,43 +224,43 @@ end
 
 ---@param player PartyMember
 local function DrawHp(player)
-    local textColor = Styles.Colors.White
-    local barColor = Styles.Colors.HpBar
+    local textColor = Imgui.Lin.Colors.White
+    local barColor = Imgui.Lin.Colors.HpBar
     local overlay = string.format('%i', player.hp)
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    Styles.DrawBar2(player.hpp, 100, { 80, 15 }, overlay)
+    Imgui.Lin.DrawBar2(player.hpp, 100, { 80, 15 }, overlay)
     Imgui.PopStyleColor(2)
 end
 
 ---@param player PartyMember
 local function DrawMp(player)
-    local textColor = Styles.Colors.White
-    local barColor = Styles.Colors.MpBar
+    local textColor = Imgui.Lin.Colors.White
+    local barColor = Imgui.Lin.Colors.MpBar
     local overlay = string.format('%i', player.mp)
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     Imgui.SameLine()
-    Styles.DrawBar2(player.mpp, 100, { 80, 15 }, overlay)
+    Imgui.Lin.DrawBar2(player.mpp, 100, { 80, 15 }, overlay)
     Imgui.PopStyleColor(2)
 end
 
 ---@param player PartyMember
 local function DrawTp(player)
-    local textColor = Styles.Colors.White
-    local barColor = Styles.Colors.TpBar
+    local textColor = Imgui.Lin.Colors.White
+    local barColor = Imgui.Lin.Colors.TpBar
     local overlay = string.format('%i', player.tp)
 
     if player.tp >= 1000 then
-        barColor = Styles.Colors.TpBarActive
+        barColor = Imgui.Lin.Colors.TpBarActive
     end
 
     Imgui.PushStyleColor(ImGuiCol_Text, textColor)
     Imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     Imgui.SameLine()
-    Styles.DrawBar2(player.tp, 3000, { 80, 15 }, overlay)
+    Imgui.Lin.DrawBar2(player.tp, 3000, { 80, 15 }, overlay)
     Imgui.PopStyleColor(2)
 end
 
@@ -305,7 +304,7 @@ local function DrawAlliance(alliance)
     local party = AshitaCore:GetMemoryManager():GetParty()
     if not alliance.isVisible(party) then return end
 
-    Styles.DrawWindow(alliance.name, alliance.size, alliance.pos, function()
+    Imgui.Lin.DrawWindow(alliance.name, alliance.size, alliance.pos, function()
         for _, getMember in pairs(Alliances[alliance.name]) do
             local person = getMember()
 

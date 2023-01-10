@@ -1,9 +1,8 @@
-local Imgui = require('imgui')
 local Settings = require('settings')
 local Defaults = require('skillchain-settings')
 
 local Ffxi = require('lin.ffxi')
-local Styles = require('lin.imgui')
+local Imgui = require('lin.imgui')
 local Packets = require('lin.packets')
 
 local BloodPacts = require('data.bloodpacts')
@@ -454,7 +453,7 @@ function Module.OnPresent()
     end
 
     if activeCount > 0 and not Ffxi.IsChatExpanded() then
-        Styles.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
+        Imgui.Lin.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
             DrawSkillchain(Module.chains)
         end)
     end
