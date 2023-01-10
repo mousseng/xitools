@@ -1,6 +1,6 @@
 addon.name    = 'minimap-helper'
 addon.author  = 'lin'
-addon.version = '1.2.0'
+addon.version = '1.3.0'
 addon.desc    = 'Automates minimap scale changes'
 
 local Packets = require('lin.packets')
