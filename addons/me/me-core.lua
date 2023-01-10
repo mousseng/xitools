@@ -4,6 +4,7 @@ local Settings = require('settings')
 local Imgui = require('imgui')
 local Styles = require('lin.imgui')
 
+local Ffxi = require('lin.ffxi')
 local Jobs = require('lin.jobs')
 local Text = require('lin.text')
 
@@ -192,7 +193,8 @@ function Module.OnPresent()
     local entity = GetPlayerEntity()
 
     -- don't bother drawing if the player doesn't exist
-    if entity == nil then
+    -- or if there's UI in the way
+    if entity == nil or Ffxi.IsChatExpanded() then
         return
     end
 

@@ -85,4 +85,31 @@ function ffxi.IsPetServerIdInParty(id)
     return false
 end
 
+--- Determines if the chat window is fully-expanded.
+---@return boolean
+function ffxi.IsChatExpanded()
+    -- courtesy of Syllendel
+	local pattern = "83EC??B9????????E8????????0FBF4C24??84C0"
+	local patternAddress = ashita.memory.find("FFXiMain.dll", 0, pattern, 0x04, 0);
+	local chatExpandedPointer = ashita.memory.read_uint32(patternAddress)+0xF1
+	local chatExpandedValue = ashita.memory.read_uint8(chatExpandedPointer)
+
+	return chatExpandedValue ~= 0
+end
+
+--- Fetches the party index of your <stpt> target, if it exists.
+---@return integer?
+function ffxi.GetStPartyIndex()
+    -- Courtesy of Thorny from the Ashita discord
+    local ptr = AshitaCore:GetPointerManager():Get('party')
+    ptr = ashita.memory.read_uint32(ptr)
+    ptr = ashita.memory.read_uint32(ptr)
+    local isActive = (ashita.memory.read_uint32(ptr + 0x54) ~= 0)
+    if isActive then
+        return ashita.memory.read_uint8(ptr + 0x50)
+    else
+        return nil
+    end
+end
+
 return ffxi

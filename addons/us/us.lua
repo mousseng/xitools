@@ -11,6 +11,7 @@ local d3d8_device = d3d8.get_device()
 
 local Bit = require('bit')
 local Jobs = require('lin.jobs')
+local Ffxi = require('lin.ffxi')
 local Zones = require('lin.zones')
 local Styles = require('lin.imgui')
 local Imgui = require('imgui')
@@ -39,29 +40,6 @@ local Imgui = require('imgui')
 ---@field windowPos Vec2
 
 local Textures = { }
-
-local function IsChatExpanded()
-    -- courtesy of Syllendel
-	local pattern = "83EC??B9????????E8????????0FBF4C24??84C0"
-	local patternAddress = ashita.memory.find("FFXiMain.dll", 0, pattern, 0x04, 0);
-	local chatExpandedPointer = ashita.memory.read_uint32(patternAddress)+0xF1
-	local chatExpandedValue = ashita.memory.read_uint8(chatExpandedPointer)
-
-	return chatExpandedValue ~= 0
-end
-
-local function GetStPartyIndex()
-    -- Courtesy of Thorny from the Ashita discord
-    local ptr = AshitaCore:GetPointerManager():Get('party')
-    ptr = ashita.memory.read_uint32(ptr)
-    ptr = ashita.memory.read_uint32(ptr)
-    local isActive = (ashita.memory.read_uint32(ptr + 0x54) ~= 0)
-    if isActive then
-        return ashita.memory.read_uint8(ptr + 0x50)
-    else
-        return nil
-    end
-end
 
 ---@param filePath string
 local function CreateTexture(filePath)
@@ -116,7 +94,7 @@ local function GetPlayer(window)
     local party = AshitaCore:GetMemoryManager():GetParty()
 
     local serverId = party:GetMemberServerId(0)
-    local stpt = GetStPartyIndex()
+    local stpt = Ffxi.GetStPartyIndex()
     local buffs = player:GetBuffs()
 
     return {
@@ -149,7 +127,7 @@ local function GetMember(i, window)
     local party = AshitaCore:GetMemoryManager():GetParty()
 
     local serverId = party:GetMemberServerId(i)
-    local stpt = GetStPartyIndex()
+    local stpt = Ffxi.GetStPartyIndex()
     local buffs = GetStatusEffects(party, serverId)
 
     return {
@@ -339,7 +317,7 @@ local function DrawAlliance(alliance)
 end
 
 local function DrawUs()
-    if IsChatExpanded() then
+    if Ffxi.IsChatExpanded() or GetPlayerEntity() == nil then
         return
     end
 

@@ -1,4 +1,5 @@
 require('common')
+local Ffxi = require('lin.ffxi')
 local Styles = require('lin.imgui')
 local Imgui = require('imgui')
 local Settings = require('settings')
@@ -101,7 +102,7 @@ function Module.OnPresent()
     local timers    = T{}
 
     local playerJob = mmPlayer:GetMainJob()
-    if playerJob == nil or playerJob == 0 then
+    if playerJob == nil or playerJob == 0 or Ffxi.IsChatExpanded() then
         return
     end
 

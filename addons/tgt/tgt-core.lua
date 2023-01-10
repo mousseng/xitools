@@ -1,7 +1,8 @@
 local Defaults = require('tgt-settings')
 local Settings = require('settings')
-local Styles = require('lin.imgui')
 local Imgui = require('imgui')
+local Ffxi = require('lin.ffxi')
+local Styles = require('lin.imgui')
 local Packets = require('lin.packets')
 
 ---@class Debuffs
@@ -331,8 +332,8 @@ end
 function Module.OnPresent()
     local targetId = AshitaCore:GetMemoryManager():GetTarget():GetTargetIndex(0)
 
-    -- don't bother drawing if we have no target
-    if targetId == 0 then
+    -- don't bother drawing if we have no target or have UI in the way
+    if targetId == 0 or Ffxi.IsChatExpanded() then
         return
     end
 
