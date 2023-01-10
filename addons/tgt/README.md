@@ -12,7 +12,6 @@ a very condensed list of status effects that afflict your target. some people
 prefer addons like `timers` for this, but this is less noisy.
 
 ## todo
-- hide when chat is open
 - hide when map is open
 - hide status information on friendly/non-applicable characters
 - show job-specific statuses (bard should see their own songs, for example)

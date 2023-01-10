@@ -3,6 +3,7 @@ a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 
 ## addons
 - `me` is a simple hud for displaying the player's basic status
+- `us` is a simple hud for displaying the party's basic status
 - `tgt` is a simple hud for display the target's basic status
 - `rcheck` makes it easy to check party/alliance readiness by asking and doing
   the tallying for you
