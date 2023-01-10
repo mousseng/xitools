@@ -9,10 +9,10 @@ local profile = {
             -- Range = "",
             Ammo = "Morion Tathlum",
             -- Head = "",
-            Body = "Ryl.Ftm. Tunic",
+            Body = "Savage Separates",
             Hands = "Ryl.Ftm. Gloves",
-            Legs = "Ryl.Ftm. Trousers",
-            Feet = "Ryl.Ftm. Clogs",
+            Legs = "Savage Loincloth",
+            Feet = "Savage Gaiters",
             Neck = "Tiger Stole",
             Waist = "Friar's Rope",
             -- Ear1 = "",
@@ -120,9 +120,12 @@ profile.HandleMidcast = function()
         gFunc.Equip('Hands', "Dream Mittens +1")
     elseif spell.Type == 'White Magic' then
         gFunc.Equip('Neck', "Justice Badge")
+        gFunc.Equip('Hands', "Savage Gauntlets")
+        gFunc.Equip('Legs', "Savage Loincloth")
         gFunc.Equip('Ring1', "San d'Orian Ring")
         gFunc.Equip('Ring2', "Ascetic's Ring")
     elseif spell.Type == 'Black Magic' then
+        gFunc.Equip('Body', "Ryl.Ftm. Tunic")
         gFunc.Equip('Neck', "Black Silk Neckerchief")
         gFunc.Equip('Ring1', "Hermit's Ring")
         gFunc.Equip('Ring2', "Hermit's Ring")
@@ -145,14 +148,27 @@ profile.HandleWeaponskill = function()
     local hpSkills = T{ 'Spirits Within' }
 
     if strSkills:contains(weaponskill.Name) then
+        gFunc.Equip('Body', "Savage Separates")
+        gFunc.Equip('Feet', "Savage Gaiters")
         gFunc.Equip('Ring1', "San d'Orian Ring")
     elseif dexSkills:contains(weaponskill.Name) then
     elseif mndSkills:contains(weaponskill.Name) then
+        gFunc.Equip('Neck', "Justice Badge")
+        gFunc.Equip('Hands', "Savage Gauntlets")
+        gFunc.Equip('Legs', "Savage Loincloth")
+        gFunc.Equip('Ring1', "San d'Orian Ring")
+        gFunc.Equip('Ring2', "Ascetic's Ring")
     elseif strMndSkills:contains(weaponskill.Name) then
+        gFunc.Equip('Body', "Savage Separates")
+        gFunc.Equip('Hands', "Savage Gauntlets")
+        gFunc.Equip('Legs', "Savage Loincloth")
+        gFunc.Equip('Feet', "Savage Gaiters")
         gFunc.Equip('Neck', "Justice Badge")
         gFunc.Equip('Ring1', "San d'Orian Ring")
         gFunc.Equip('Ring2', "Ascetic's Ring")
     elseif strIntSkills:contains(weaponskill.Name) then
+        gFunc.Equip('Body', "Savage Separates")
+        gFunc.Equip('Feet', "Savage Gaiters")
         gFunc.Equip('Neck', "Black Silk Neckerchief")
         gFunc.Equip('Ring1', "Hermit's Ring")
         gFunc.Equip('Ring2', "Hermit's Ring")
