@@ -305,7 +305,7 @@ local function DrawAlliance(alliance)
     local party = AshitaCore:GetMemoryManager():GetParty()
     if not alliance.isVisible(party) then return end
 
-    Styles.DrawWindow(alliance.name, alliance.size, alliance.pos[1], alliance.pos[2], function()
+    Styles.DrawWindow(alliance.name, alliance.size, alliance.pos, function()
         for _, getMember in pairs(Alliances[alliance.name]) do
             local person = getMember()
 

@@ -194,7 +194,7 @@ function Module.OnPresent()
     end
 
     if #timers > 0 then
-        Styles.DrawWindow(Module.windowName, Module.windowSize, Module.config.position_x, Module.config.position_y, function()
+        Styles.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
             DrawRecast(timers)
         end)
     end

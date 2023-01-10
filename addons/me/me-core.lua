@@ -207,7 +207,7 @@ function Module.OnPresent()
     end
 
     local party = AshitaCore:GetMemoryManager():GetParty()
-    Styles.DrawWindow(Module.windowName, Module.windowSize, Module.config.position_x, Module.config.position_y, function()
+    Styles.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
         DrawMe(player, party, entity)
     end)
 end

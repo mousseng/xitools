@@ -338,7 +338,7 @@ function Module.OnPresent()
     end
 
     local entity = GetEntity(targetId)
-    Styles.DrawWindow(Module.windowName, Module.windowSize, Module.config.position_x, Module.config.position_y, function()
+    Styles.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
         DrawTgt(entity)
     end)
 end

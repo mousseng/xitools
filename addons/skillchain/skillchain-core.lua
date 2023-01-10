@@ -454,7 +454,7 @@ function Module.OnPresent()
     end
 
     if activeCount > 0 and not Ffxi.IsChatExpanded() then
-        Styles.DrawWindow(Module.windowName, Module.windowSize, Module.config.position_x, Module.config.position_y, function()
+        Styles.DrawWindow(Module.windowName, Module.windowSize, { Module.config.position_x, Module.config.position_y }, function()
             DrawSkillchain(Module.chains)
         end)
     end

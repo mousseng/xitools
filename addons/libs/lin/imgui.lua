@@ -76,9 +76,13 @@ function linImgui.DrawBar2(cur, max, size, overlay)
     Imgui.PopStyleColor(2)
 end
 
-function linImgui.DrawWindow(name, size, x, y, drawStuff)
+---@param name string
+---@param size Vec2
+---@param pos Vec2
+---@param drawStuff function
+function linImgui.DrawWindow(name, size, pos, drawStuff)
     Imgui.SetNextWindowSize(size, ImGuiCond_Always)
-    Imgui.SetNextWindowPos({ x, y }, ImGuiCond_FirstUseEver)
+    Imgui.SetNextWindowPos(pos, ImGuiCond_FirstUseEver)
 
     Imgui.PushStyleColor(ImGuiCol_WindowBg, linImgui.Colors.FfxiGreyBg)
     Imgui.PushStyleColor(ImGuiCol_Border, linImgui.Colors.FfxiGreyBorder)
