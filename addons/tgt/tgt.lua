@@ -1,8 +1,9 @@
 addon.name    = 'tgt'
 addon.author  = 'lin'
-addon.version = '3.0.0'
+addon.version = '3.1.0'
 addon.desc    = 'A simple text-based HUD for target status'
 
+require('common')
 local Settings = require('settings')
 local Ffxi = require('lin.ffxi')
 local Imgui = require('lin.imgui')

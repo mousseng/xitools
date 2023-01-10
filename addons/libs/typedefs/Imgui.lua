@@ -1,0 +1,2 @@
+---@meta
+---@alias Vec2 integer[]
