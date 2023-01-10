@@ -3,6 +3,7 @@ addon.author  = 'lin'
 addon.version = '3.1.0'
 addon.desc    = 'A little skillchain tracker so you know when things happen'
 
+require('common')
 local Settings = require('settings')
 local Ffxi = require('lin.ffxi')
 local Imgui = require('lin.imgui')

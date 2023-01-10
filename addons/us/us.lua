@@ -4,16 +4,15 @@ addon.version = '1.0.0'
 addon.desc    = 'A simple text-based HUD for party status'
 
 require('common')
-
+local Bit = require('bit')
 local ffi = require('ffi')
 local d3d8 = require('d3d8')
 local d3d8_device = d3d8.get_device()
 
-local Bit = require('bit')
-local Jobs = require('lin.jobs')
 local Ffxi = require('lin.ffxi')
-local Zones = require('lin.zones')
 local Imgui = require('lin.imgui')
+local Jobs = require('lin.jobs')
+local Zones = require('lin.zones')
 
 ---@class PartyMember
 ---@field name string
