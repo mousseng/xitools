@@ -193,7 +193,7 @@ local function DrawName(player)
         Imgui.Text(string.format('> %s', player.name))
         Imgui.PopStyleColor()
     elseif player.isTarget then
-        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Colors.TpBarActive)
+        Imgui.PushStyleColor(ImGuiCol_Text, Imgui.Lin.Colors.TpBarActive)
         Imgui.Text(string.format('>> %s', player.name))
         Imgui.PopStyleColor()
     else

@@ -248,7 +248,7 @@ local function DrawHeader(name, distance)
     local width = Imgui.CalcTextSize(dist) + Imgui.Lin.Styles.WindowPadding[1]
 
     Imgui.SameLine()
-    Imgui.SetCursorPosX(Module.windowSize[1] - width)
+    Imgui.SetCursorPosX(Config.windowSize[1] - width)
     Imgui.Text(dist)
 end
 
