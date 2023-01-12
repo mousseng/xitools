@@ -1,2 +1,4 @@
 ---@meta
 ---@alias Vec2 integer[]
+---@alias Vec3 integer[]
+---@alias Vec4 integer[]

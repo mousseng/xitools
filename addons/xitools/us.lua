@@ -12,6 +12,16 @@ local zones = require('utils.zones')
 local Textures = { }
 local Alliances = { }
 
+-- notes on PartyMemberFlagMask
+-- bit 0: ?
+-- bit 1: ?
+-- bit 2: party leader
+-- bit 3: alli leader
+-- bit 4: ?
+-- bit 5: ?
+-- bit 6: ?
+-- bit 7: level sync target
+
 ---@param filePath string
 local function CreateTexture(filePath)
     -- Courtesy of Thorny's mobDb
@@ -74,6 +84,9 @@ local function GetPlayer(options)
         serverId = serverId,
         isInZone = true,
         isActive = true,
+        isPartyLeader = bit.band(party:GetMemberFlagMask(0), 4) == 4,
+        isAllianceLeader = bit.band(party:GetMemberFlagMask(0), 8) == 8,
+        isSyncTarget = bit.band(party:GetMemberFlagMask(0), 256) == 256,
         isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
         isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
         isPartyTarget = stpt ~= nil and stpt == 0,
@@ -108,6 +121,9 @@ local function GetMember(i, window)
         serverId = serverId,
         isInZone = party:GetMemberZone(i) == party:GetMemberZone(0),
         isActive = party:GetMemberIsActive(i) == 1,
+        isPartyLeader = bit.band(party:GetMemberFlagMask(i), 4) == 4,
+        isAllianceLeader = bit.band(party:GetMemberFlagMask(i), 8) == 8,
+        isSyncTarget = bit.band(party:GetMemberFlagMask(i), 256) == 256,
         isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
         isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
         isPartyTarget = stpt ~= nil and stpt == i,
@@ -128,20 +144,60 @@ local function GetMember(i, window)
     }
 end
 
+---@param pos Vec2
+---@param color Vec4
+local function DrawDot(pos, color)
+    local realColor = imgui.GetColorU32(color)
+    imgui.GetWindowDrawList():AddCircleFilled(pos, 3, realColor, 0)
+end
+
 ---@param player PartyMember
 local function DrawName(player)
+    -- the "party status dots" are intended to be a prefix to the player's name,
+    -- so we want any target indicators to come beforehand.
     if player.isSubTarget or player.isPartyTarget then
         imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.XpBar)
-        imgui.Text(string.format('> %s', player.name))
-        imgui.PopStyleColor()
+        imgui.Text('>')
+        imgui.SameLine()
     elseif player.isTarget then
         imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.TpBarActive)
-        imgui.Text(string.format('>> %s', player.name))
-        imgui.PopStyleColor()
+        imgui.Text('>>')
+        imgui.SameLine()
     else
-        imgui.Text(string.format('%s', player.name))
+        imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.White)
     end
 
+    -- unfortunately, we can't draw circles inline (without using images, that
+    -- is). instead, we have to manually place them on the screen, and manually
+    -- offset the succeeding text.
+    local originX, originY = imgui.GetCursorScreenPos()
+    local offsetX = 0
+
+    if player.isAllianceLeader then
+        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.TpBarActive)
+        offsetX = offsetX + 6
+    end
+
+    if player.isPartyLeader then
+        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.FfxiAmber)
+        offsetX = offsetX + 6
+    end
+
+    if player.isSyncTarget then
+        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.Red)
+        offsetX = offsetX + 6
+    end
+
+    local windowX = imgui.GetCursorPosX()
+    imgui.SetCursorPosX(windowX + offsetX)
+
+    imgui.Text(player.name)
+    imgui.PopStyleColor()
+
+    -- we can use the top right corner for more cool stuff, but imgui doesn't do
+    -- right-alignment (as far as i'm aware). again, we must do it ourselves:
+    -- calculate the width of our displayed item, and offset it from the width
+    -- of the window. this probably won't work with a dynamically-sized window.
     local castbar = AshitaCore:GetMemoryManager():GetCastBar()
     if player.showCastbar and castbar:GetCount() ~= 0 then
         imgui.SameLine()
