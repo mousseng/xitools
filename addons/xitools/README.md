@@ -1,5 +1,11 @@
 # xitools
-todo
+a suite of UI replacement components.
+- `me` displays information about the player
+- `us` displays information about the party
+- `tgt` displays information about your target or subtarget
+
+## usage
+`/xitools` (or `/xit`) will bring up the config menu
 
 ## todo
 - [ ] `all`: hide ui when in cutscene
@@ -12,4 +18,4 @@ todo
 - [ ] `tgt`: hide status information on friendly/non-applicable characters
 - [ ] `tgt`: show job-specific statuses (bard should see their own songs, for example)
 - [ ] `tgt`: incorporate `mobDb`/`ibar` information
-- [ ] `tgt`: add a toggle to show aforementioned information
+- [ ] `tgt`: show target and subtarget simultaneously

@@ -1,0 +1,6 @@
+/lac disable
+/equip head 'Dream Hat +1'
+/wait 35
+/item 'Dream Hat +1' <me>
+/wait 3
+/lac enable

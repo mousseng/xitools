@@ -159,4 +159,11 @@ ashita.events.register('command', 'command_handler', function(e)
     if #args == 1 or args[2] == 'config' then
         options.tools.config.isVisible[1] = not options.tools.config.isVisible[1]
     end
+
+    if args[2] == 'debug' then
+        local pt = AshitaCore:GetMemoryManager():GetParty():GetMemberFlagMask(0)
+        print('flags: '       .. tostring(pt))
+        print('flags & 4: '   .. tostring(bit.band(pt, 4)))
+        print('flags & 256: ' .. tostring(bit.band(pt, 256)))
+    end
 end)
