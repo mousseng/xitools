@@ -13,7 +13,7 @@ local Textures = { }
 local Alliances = { }
 
 -- notes on PartyMemberFlagMask
--- bit 0: ?
+-- bit 0: ? maybe party 2?
 -- bit 1: ?
 -- bit 2: party leader
 -- bit 3: alli leader
