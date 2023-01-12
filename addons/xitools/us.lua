@@ -245,7 +245,7 @@ local function DrawMp(player)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar3(player.mpp, 100, { 80, 15 }, overlay)
+    ui.DrawBar2(player.mpp, 100, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
