@@ -59,7 +59,7 @@ local function GetStatusEffects(party, serverId)
     return { }
 end
 
-local function GetPlayer(window)
+local function GetPlayer(options)
     local target = AshitaCore:GetMemoryManager():GetTarget()
     local player = AshitaCore:GetMemoryManager():GetPlayer()
     local party = AshitaCore:GetMemoryManager():GetParty()
@@ -70,6 +70,7 @@ local function GetPlayer(window)
 
     return {
         name = party:GetMemberName(0),
+        showCastbar = options.showCastbar[1],
         serverId = serverId,
         isInZone = true,
         isActive = true,
@@ -86,9 +87,9 @@ local function GetPlayer(window)
         hp = party:GetMemberHP(0),
         mp = party:GetMemberMP(0),
         tp = party:GetMemberTP(0),
-        windowName = window.name,
-        windowSize = window.size,
-        windowPos = window.pos,
+        windowName = options.alliance1.name,
+        windowSize = options.alliance1.size,
+        windowPos = options.alliance1.pos,
         statusIds = buffs
     }
 end
@@ -103,6 +104,7 @@ local function GetMember(i, window)
 
     return {
         name = party:GetMemberName(i),
+        showCastbar = false,
         serverId = serverId,
         isInZone = party:GetMemberZone(i) == party:GetMemberZone(0),
         isActive = party:GetMemberIsActive(i) == 1,
@@ -140,7 +142,12 @@ local function DrawName(player)
         imgui.Text(string.format('%s', player.name))
     end
 
-    if player.job ~= nil then
+    local castbar = AshitaCore:GetMemoryManager():GetCastBar()
+    if player.showCastbar and castbar:GetCount() ~= 0 then
+        imgui.SameLine()
+        imgui.SetCursorPosX(player.windowSize[1] - (80 + 10))
+        ui.DrawBar2(castbar:GetPercent() * 100, 100, { 80, 8 }, '')
+    elseif player.job ~= nil then
         local jobStr = ''
         if player.sub ~= nil then
             jobStr = string.format('%s%i/%s%i', player.job, player.jobLevel, player.sub, player.subLevel)
@@ -169,7 +176,7 @@ local function DrawHp(player)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar2(player.hpp, 100, { 80, 15 }, overlay)
+    ui.DrawBar3(player.hpp, 100, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -182,7 +189,7 @@ local function DrawMp(player)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(player.mpp, 100, { 80, 15 }, overlay)
+    ui.DrawBar3(player.mpp, 100, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -255,7 +262,7 @@ end
 local us = {
     Load = function(options)
         Alliances['xitools.us.1'] = {
-            GetPlayer:bindn(options.alliance1),
+            GetPlayer:bindn(options),
             GetMember:bindn(1, options.alliance1),
             GetMember:bindn(2, options.alliance1),
             GetMember:bindn(3, options.alliance1),
@@ -284,6 +291,7 @@ local us = {
         if imgui.BeginTabItem('us') then
             imgui.Checkbox('Enabled', options.isVisible)
             imgui.Checkbox('Hide when solo', options.hideWhenSolo)
+            imgui.Checkbox('Display cast bar', options.showCastbar)
             if imgui.InputInt2('Alliance 1', options.alliance1.pos) then
                 imgui.SetWindowPos(options.alliance1.name, options.alliance1.pos)
             end

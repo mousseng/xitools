@@ -46,6 +46,7 @@ local defaultOptions = T{
         us = T{
             isVisible = T{ false },
             hideWhenSolo = T{ false },
+            showCastbar = T{ true },
             alliance1 = T{
                 isVisible = T{ true },
                 name = 'xitools.us.1',

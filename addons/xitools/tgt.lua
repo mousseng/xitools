@@ -299,7 +299,7 @@ local tgt = {
     DrawConfig = function(options)
         if imgui.BeginTabItem('tgt') then
             imgui.Checkbox('Enabled', options.isVisible)
-            imgui.Checkbox('Show Debuffs', options.showStatus)
+            imgui.Checkbox('Show debuffs', options.showStatus)
             if imgui.InputInt2('Position', options.pos) then
                 imgui.SetWindowPos(options.name, options.pos)
             end

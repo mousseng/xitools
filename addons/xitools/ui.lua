@@ -75,6 +75,31 @@ function ui.DrawBar2(cur, max, size, overlay)
     imgui.PopStyleColor(2)
 end
 
+---@param cur     integer
+---@param max     integer
+---@param size    Vec2
+---@param overlay string?
+function ui.DrawBar3(cur, max, size, overlay)
+    local fraction = cur / max
+    local borderColor = ui.Colors.BarBorder
+
+    if max > 0 and fraction <= 0.25 then
+        borderColor = ui.Colors.Red
+    elseif max > 0 and fraction <= 0.50 then
+        borderColor = ui.Colors.Orange
+    elseif max > 0 and fraction <= 0.75 then
+        borderColor = ui.Colors.Yellow
+    end
+
+    imgui.PushStyleColor(ImGuiCol_FrameBg, ui.Colors.BarBackground)
+    imgui.PushStyleColor(ImGuiCol_Border, borderColor)
+
+    imgui.AlignTextToFramePadding()
+    imgui.ProgressBar(fraction, size, overlay)
+
+    imgui.PopStyleColor(2)
+end
+
 ---@param config table
 ---@param drawStuff function
 function ui.DrawWindow(config, drawStuff)
