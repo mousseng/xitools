@@ -316,6 +316,7 @@ end
 
 ---@type xitool
 local us = {
+    Name = 'us',
     Load = function(options)
         Alliances['xitools.us.1'] = {
             GetPlayer:bindn(options),
@@ -342,6 +343,7 @@ local us = {
             GetMember:bindn(17, options.alliance3),
         }
     end,
+    HandlePacketOut = function(e, options) end,
     HandlePacket = function(e, options) end,
     DrawConfig = function(options)
         if imgui.BeginTabItem('us') then

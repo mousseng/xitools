@@ -131,6 +131,7 @@ function ffxi.IsMapOpen()
     local menuName = ffxi.GetMenuName()
     return menuName:match('menu%s+map.*') ~= nil
         or menuName:match('menu%s+scanlist.*') ~= nil
+        or menuName:match('menu%s+cnqframe') ~= nil
 end
 
 local jobs = {

@@ -11,15 +11,18 @@ local settings = require('settings')
 local ui = require('ui')
 
 ---@class xitool
----@field Load         function
----@field DrawMain     function
----@field DrawConfig   function
----@field HandlePacket function
+---@field Load            function
+---@field DrawMain        function
+---@field DrawConfig      function
+---@field HandlePacket    function
+---@field HandlePacketOut function
 
 local tools = {
-    me = require('me'),
-    us = require('us'),
-    tgt = require('tgt'),
+    require('me'),
+    require('us'),
+    require('tgt'),
+    require('crafty'),
+    require('logger'),
 }
 
 local defaultOptions = T{
@@ -77,6 +80,42 @@ local defaultOptions = T{
             pos = T{ 100, 100 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
+        crafty = T{
+            isVisible = T{ false },
+            isEnabled = T{ true },
+            name = 'xitools.crafty',
+            size = T{ -1, -1 },
+            pos = T{ 100, 100 },
+            flags = ImGuiWindowFlags_NoResize,
+            skills = T{
+                [0] = T{ 0.0 },
+                [1] = T{ 0.0 },
+                [2] = T{ 0.0 },
+                [3] = T{ 0.0 },
+                [4] = T{ 0.0 },
+                [5] = T{ 0.0 },
+                [6] = T{ 0.0 },
+                [7] = T{ 0.0 },
+                [8] = T{ 0.0 },
+            },
+            history = T{},
+        },
+        logger = T{
+            isVisible = T{ false },
+            loggedPackets = T{
+                inbound = T{
+                    [0x028] = { true },
+                    [0x029] = { true },
+                    [0x030] = { true },
+                    [0x062] = { true },
+                    [0x06F] = { true },
+                    [0x070] = { true },
+                },
+                outbound = T{
+                    [0x096] = { true },
+                },
+            }
+        },
     },
 }
 
@@ -98,8 +137,8 @@ local function DrawConfig()
         imgui.Text('Tool settings')
         imgui.Separator()
         if imgui.BeginTabBar('xitools.config.tabs') then
-            for name, tool in pairs(tools) do
-                tool.DrawConfig(options.tools[name])
+            for i, tool in ipairs(tools) do
+                tool.DrawConfig(options.tools[tool.Name])
             end
 
             imgui.EndTabBar()
@@ -118,8 +157,8 @@ settings.register('settings', 'settings_update', function (s)
 end)
 
 ashita.events.register('load', 'load_handler', function()
-    for name, tool in pairs(tools) do
-        tool.Load(options.tools[name])
+    for i, tool in ipairs(tools) do
+        tool.Load(options.tools[tool.Name])
     end
 end)
 
@@ -130,22 +169,33 @@ end)
 ashita.events.register('d3d_present', 'd3d_present_handler', function()
     DrawConfig()
 
+    -- if imgui.Begin('debug') then
+    --     imgui.Text(ffxi.GetMenuName())
+    --     imgui.End()
+    -- end
+
     if (options.globals.hideUnderChat[1] and ffxi.IsChatExpanded())
     or (options.globals.hideUnderMap[1] and ffxi.IsMapOpen())
     or (options.globals.hideWhileLoading[1] and GetPlayerEntity() == nil) then
         return
     end
 
-    for name, tool in pairs(tools) do
-        if options.tools[name].isVisible[1] then
-            tool.DrawMain(options.tools[name])
+    for i, tool in ipairs(tools) do
+        if options.tools[tool.Name].isVisible[1] then
+            tool.DrawMain(options.tools[tool.Name])
         end
     end
 end)
 
+ashita.events.register('packet_out', 'packet_out_handler', function(e)
+    for i, tool in ipairs(tools) do
+        tool.HandlePacketOut(e, options.tools[tool.Name])
+    end
+end)
+
 ashita.events.register('packet_in', 'packet_in_handler', function(e)
-    for name, tool in pairs(tools) do
-        tool.HandlePacket(e, options.tools[name])
+    for i, tool in ipairs(tools) do
+        tool.HandlePacket(e, options.tools[tool.Name])
     end
 end)
 
@@ -160,10 +210,11 @@ ashita.events.register('command', 'command_handler', function(e)
         options.tools.config.isVisible[1] = not options.tools.config.isVisible[1]
     end
 
-    if args[2] == 'debug' then
-        local pt = AshitaCore:GetMemoryManager():GetParty():GetMemberFlagMask(0)
-        print('flags: '       .. tostring(pt))
-        print('flags & 4: '   .. tostring(bit.band(pt, 4)))
-        print('flags & 256: ' .. tostring(bit.band(pt, 256)))
+    if #args == 2 and T{'craft','crafty'}:contains(args[2]) then
+        options.tools.crafty.isVisible[1] = not options.tools.crafty.isVisible[1]
+    end
+
+    if #args == 3 and T{'craft','crafty'}:contains(args[2]) and T{'cl','clear'}:contains(args[3]) then
+        options.tools.crafty.history = T{}
     end
 end)

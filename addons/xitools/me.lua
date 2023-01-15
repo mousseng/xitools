@@ -1,7 +1,7 @@
 require('common')
-local ui = require('ui')
-local imgui = require('imgui')
 local ffxi = require('utils.ffxi')
+local imgui = require('imgui')
+local ui = require('ui')
 
 ---@param name     string
 ---@param job      integer
@@ -140,7 +140,9 @@ end
 
 ---@type xitool
 local me = {
+    Name = 'me',
     Load = function(options) end,
+    HandlePacketOut = function(e, options) end,
     HandlePacket = function(e, options) end,
     DrawConfig = function(options)
         if imgui.BeginTabItem('me') then

@@ -282,18 +282,20 @@ end
 
 ---@type xitool
 local tgt = {
+    Name = 'tgt',
     Load = function(options) end,
+    HandlePacketOut = function(e, options) end,
     HandlePacket = function(e, options)
         -- don't track anything if we're not displaying it
         if not options.showStatus[1] then return end
 
         -- clear state on zone changes
-        if e.id == 0x0A then
+        if e.id == 0x00A then
             TrackedEnemies = { }
-        elseif e.id == 0x0028 then
-            HandleAction(TrackedEnemies, packets.ParseAction(e.data_modified_raw))
-        elseif e.id == 0x0029 then
-            HandleBasic(TrackedEnemies, packets.ParseBasic(e.data))
+        elseif e.id == 0x028 then
+            HandleAction(TrackedEnemies, packets.inbound.action.parse(e.data_modified_raw))
+        elseif e.id == 0x029 then
+            HandleBasic(TrackedEnemies, packets.inbound.basic.parse(e.data))
         end
     end,
     DrawConfig = function(options)
