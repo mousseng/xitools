@@ -6,6 +6,8 @@ local recipesByIngredients = require('data.recipesByIngredients')
 local recipesBySkill = require('data.recipesBySkill')
 local ui = require('ui')
 
+local iconTimes = '\xef\x81\x97'
+local iconCheck = '\xef\x81\x98'
 local imguiLeafNode = bit.bor(ImGuiTreeNodeFlags_Leaf, ImGuiTreeNodeFlags_NoTreePushOnOpen)
 local textBaseWidth = imgui.CalcTextSize('A')
 local inProgSynth = nil
@@ -71,82 +73,100 @@ local function DrawSkills(skills)
     imgui.PopStyleVar()
 end
 
-local function DrawRecipe(recipe, inv, res)
-    local skillReqs = T{}
+local function DrawRecipe(recipe, skills, inv, res)
     for skillId, skillLevel in ipairs(recipe.skills) do
         if skillLevel > 0 then
-            skillReqs:append(('%s %i'):format(skillsMap[skillId], skillLevel))
+            local indicator = iconTimes
+            if skills[skillId][1] + 14 > skillLevel then
+                indicator = iconCheck
+                imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusGreen)
+            else
+                imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusRed)
+            end
+            imgui.TreeNodeEx(('%s %s %i'):format(indicator, skillsMap[skillId], skillLevel), imguiLeafNode)
+            imgui.PopStyleColor()
         end
     end
-    imgui.TreeNodeEx(skillReqs:join(', '), imguiLeafNode)
 
     if recipe.keyItem > 0 then
         local hasKeyItem = AshitaCore:GetMemoryManager():GetPlayer():HasKeyItem(recipe.keyItem)
         local keyItemName = res:GetString('keyitems.names', recipe.keyItem)
-        local indicator = '\xef\x80\x8d'
+        local indicator = iconTimes
         if hasKeyItem then
-            indicator = '\xef\x80\x8c'
+            indicator = iconCheck
+            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusGreen)
+        else
+            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusRed)
         end
-        imgui.TreeNodeEx(('   %s %s'):format(indicator, keyItemName), imguiLeafNode)
+        imgui.TreeNodeEx(('%s %s'):format(indicator, keyItemName), imguiLeafNode)
+        imgui.PopStyleColor()
     end
 
     local crystalCount = inv[recipe.crystal] or 0
-    local crystalName = res:GetItemById(recipe.crystal).Name[1]
+    local crystalName = res:GetItemById(recipe.crystal).LogNameSingular[1]
     imgui.TreeNodeEx(('(%3i) %s'):format(crystalCount, crystalName), imguiLeafNode)
 
     for _, ingredientId in ipairs(recipe.ingredients) do
         local ingredientCount = inv[ingredientId] or 0
-        local ingredientName = res:GetItemById(ingredientId).Name[1]
+        local ingredientName = res:GetItemById(ingredientId).LogNameSingular[1]
         imgui.TreeNodeEx(('(%3i) %s'):format(ingredientCount, ingredientName), imguiLeafNode)
     end
 end
 
 local recipeFilter = { '' }
-local function DrawFilteredRecipes(filter)
-    -- there are thousands of recipes in the game, and drawing all of them in
-    -- imgui is going to be a huge performance hit. we could certainly limit the
-    -- search to >2 characters, but i feel it's better to just truncate the list
-
-    -- TODO: do the search when the filter value changes, then store the results
-    local resultCount = 0
+local searchResults = T{ [''] = T{ } }
+local function FilterRecipes(filter)
     local res = AshitaCore:GetResourceManager()
-    local inv = GetInventoryTotals()
-
-    for skillId, recipeList in ipairs(recipesBySkill) do
-        for _, recipe in ipairs(recipeList) do
-            -- the abbreviated names are not always conducive to search, so we
-            -- will test against both it and the full name
-            local item = res:GetItemById(recipe.result)
-            local itemName = item.Name[1]
-            local fullName = item.LogNameSingular[1]
-            if itemName:lower():match(filter) or fullName:lower():match(filter) then
-                resultCount = resultCount + 1
-
-                -- only render stuff up to our stop point, but count all the
-                -- results we find for reporting purposes
-                if resultCount <= 32 then
-                    imgui.PushID(('%s%i'):format(recipe.result, recipe.id))
-                    if imgui.TreeNode(('%s x%i'):format(itemName, recipe.count)) then
-                        DrawRecipe(recipe, inv, res)
-                        imgui.TreePop()
-                    end
-                    imgui.PopID()
+    if searchResults[filter] == nil then
+        searchResults[filter] = T{ }
+        for skillId, recipeList in ipairs(recipesBySkill) do
+            for _, recipe in ipairs(recipeList) do
+                -- the abbreviated names are not always conducive to search, so we
+                -- will test against both it and the full name
+                local item = res:GetItemById(recipe.result)
+                local itemName = item.Name[1]
+                local fullName = item.LogNameSingular[1]
+                if itemName:lower():match(filter)
+                or fullName:lower():match(filter) then
+                    searchResults[filter]:append(recipe)
                 end
             end
         end
     end
+end
 
-    if resultCount > 32 then
-        imgui.TreeNodeEx(('%i recipes found; results truncated.'):format(resultCount), imguiLeafNode)
+local function DrawFilteredRecipes(skills, filteredRecipes)
+    -- there are thousands of recipes in the game, and drawing all of them in
+    -- imgui is going to be a huge performance hit. we could certainly limit the
+    -- search to >2 characters, but i feel it's better to just truncate the list
+    local res = AshitaCore:GetResourceManager()
+    local inv = GetInventoryTotals()
+    local displayCount = math.min(32, #filteredRecipes)
+
+    for i=1,displayCount do
+        local recipe = filteredRecipes[i]
+        local itemName = res:GetItemById(recipe.result).LogNameSingular[1]
+
+        imgui.PushID(('%s%i'):format(recipe.result, recipe.id))
+        if imgui.TreeNode(('%s x%i'):format(itemName, recipe.count)) then
+            DrawRecipe(recipe, skills, inv, res)
+            imgui.TreePop()
+        end
+        imgui.PopID()
+    end
+
+    if #filteredRecipes > 32 then
+        imgui.TreeNodeEx(('%i recipes found; results truncated'):format(#filteredRecipes), imguiLeafNode)
     end
 end
 
-local function DrawRecipes()
+local function DrawRecipes(skills)
     if imgui.CollapsingHeader('Recipe List') then
-        imgui.InputText('search recipes', recipeFilter, 256)
-        if recipeFilter[1] ~= '' then
-            DrawFilteredRecipes(recipeFilter[1]:lower())
+        if imgui.InputText('search recipes', recipeFilter, 256) then
+            FilterRecipes(recipeFilter[1]:lower())
         end
+
+        DrawFilteredRecipes(skills, searchResults[recipeFilter[1]])
     end
 end
 
@@ -244,8 +264,8 @@ local crafty = {
                 -- a good item ID was found during the request
                 if synth.item ~= 29695 or inProgSynth.item == 0 then
                     inProgSynth.item = synth.item
+                    inProgSynth.count = synth.count
                 end
-                inProgSynth.count = synth.count
                 inProgSynth.lost = T{}
                 for _, itemId in pairs(synth.lost) do
                     if itemId > 0 then
@@ -297,7 +317,7 @@ local crafty = {
     DrawMain = function(options)
         ui.DrawNormalWindow(options, function()
             DrawSkills(options.skills)
-            DrawRecipes()
+            DrawRecipes(options.skills)
             DrawHistory(options.history)
             for i = 0, 8 do
                 DrawCraft(i)
