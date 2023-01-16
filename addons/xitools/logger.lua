@@ -235,7 +235,7 @@ local logger = {
     end,
     DrawConfig = function(options)
         if imgui.BeginTabItem('log') then
-            imgui.Checkbox('Enabled', options.isVisible)
+            imgui.Checkbox('Enabled', options.isEnabled)
 
             imgui.Text('Inbound Packets')
             imgui.Separator()

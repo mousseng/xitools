@@ -2,7 +2,7 @@
 a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 
 ## addons
-- `xitools` is a suite of UI replacement components
+- `xitools` is a suite of UI replacement components, check its README for details
 - `recast` is a fork of `recast` that has been imgui-fied
 - `skillchain` tracks active and potential skillchains and magic bursts
 - `rcheck` makes it easy to check party/alliance readiness by asking and doing

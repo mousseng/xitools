@@ -146,7 +146,7 @@ local me = {
     HandlePacket = function(e, options) end,
     DrawConfig = function(options)
         if imgui.BeginTabItem('me') then
-            imgui.Checkbox('Enabled', options.isVisible)
+            imgui.Checkbox('Enabled', options.isEnabled)
             if imgui.InputInt2('Position', options.pos) then
                 imgui.SetWindowPos(options.name, options.pos)
             end

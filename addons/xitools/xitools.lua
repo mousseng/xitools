@@ -34,21 +34,24 @@ local defaultOptions = T{
     },
     tools = T{
         config = T{
-            isVisible = T{ false },
+            isEnabled = T{ true },
+            isVisible = T{ true },
             name = 'xitools.config',
             size = T{ -1, -1 },
             pos = T{ 100, 100 },
             flags = ImGuiWindowFlags_NoResize,
         },
         me = T{
-            isVisible = T{ false },
+            isEnabled = T{ false },
+            isVisible = T{ true },
             name = 'xitools.me',
             size = T{ 277, -1 },
             pos = T{ 100, 100 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
         us = T{
-            isVisible = T{ false },
+            isEnabled = T{ false },
+            isVisible = T{ true },
             hideWhenSolo = T{ false },
             showCastbar = T{ true },
             alliance1 = T{
@@ -74,7 +77,8 @@ local defaultOptions = T{
             },
         },
         tgt = T{
-            isVisible = T{ false },
+            isEnabled = T{ false },
+            isVisible = T{ true },
             showStatus = T{ false },
             name = 'xitools.tgt',
             size = T{ 277, -1 },
@@ -82,8 +86,8 @@ local defaultOptions = T{
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
         crafty = T{
-            isVisible = T{ false },
-            isEnabled = T{ true },
+            isEnabled = T{ false },
+            isVisible = T{ true },
             name = 'xitools.crafty',
             size = T{ -1, -1 },
             pos = T{ 100, 100 },
@@ -102,6 +106,7 @@ local defaultOptions = T{
             history = T{},
         },
         logger = T{
+            isEnabled = T{ false },
             isVisible = T{ false },
             loggedPackets = T{
                 inbound = T{
@@ -167,7 +172,6 @@ ashita.events.register('unload', 'unload_handler', function()
     settings.save()
 end)
 
-local demo = { true }
 ashita.events.register('d3d_present', 'd3d_present_handler', function()
     if options.globals.showDemo[1] then
         imgui.ShowDemoWindow(options.globals.showDemo)
@@ -182,7 +186,7 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
     end
 
     for i, tool in ipairs(tools) do
-        if options.tools[tool.Name].isVisible[1] then
+        if options.tools[tool.Name].isEnabled[1] then
             tool.DrawMain(options.tools[tool.Name])
         end
     end
@@ -190,13 +194,17 @@ end)
 
 ashita.events.register('packet_out', 'packet_out_handler', function(e)
     for i, tool in ipairs(tools) do
-        tool.HandlePacketOut(e, options.tools[tool.Name])
+        if options.tools[tool.Name].isEnabled[1] then
+            tool.HandlePacketOut(e, options.tools[tool.Name])
+        end
     end
 end)
 
 ashita.events.register('packet_in', 'packet_in_handler', function(e)
     for i, tool in ipairs(tools) do
-        tool.HandlePacket(e, options.tools[tool.Name])
+        if options.tools[tool.Name].isEnabled[1] then
+            tool.HandlePacket(e, options.tools[tool.Name])
+        end
     end
 end)
 

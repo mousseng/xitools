@@ -347,7 +347,7 @@ local us = {
     HandlePacket = function(e, options) end,
     DrawConfig = function(options)
         if imgui.BeginTabItem('us') then
-            imgui.Checkbox('Enabled', options.isVisible)
+            imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Hide when solo', options.hideWhenSolo)
             imgui.Checkbox('Display cast bar', options.showCastbar)
             if imgui.InputInt2('Alliance 1', options.alliance1.pos) then
