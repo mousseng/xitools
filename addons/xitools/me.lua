@@ -158,8 +158,7 @@ local me = {
         local entity = GetPlayerEntity()
 
         -- don't bother drawing if the player doesn't exist
-        -- or if there's UI in the way
-        if entity == nil or ffxi.IsChatExpanded() then
+        if entity == nil then
             return
         end
 
