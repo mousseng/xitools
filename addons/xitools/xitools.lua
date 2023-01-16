@@ -27,6 +27,7 @@ local tools = {
 
 local defaultOptions = T{
     globals = T{
+        showDemo = T{ false },
         hideUnderMap = T{ true },
         hideUnderChat = T{ true },
         hideWhileLoading = T{ true },
@@ -124,7 +125,7 @@ local options = settings.load(defaultOptions)
 local function DrawConfig()
     if not options.tools.config.isVisible then return end
 
-    ui.DrawWindow(options.tools.config, function()
+    ui.DrawNormalWindow(options.tools.config, function()
         imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingSome)
 
         imgui.Text('Global settings')
@@ -166,13 +167,13 @@ ashita.events.register('unload', 'unload_handler', function()
     settings.save()
 end)
 
+local demo = { true }
 ashita.events.register('d3d_present', 'd3d_present_handler', function()
-    DrawConfig()
+    if options.globals.showDemo[1] then
+        imgui.ShowDemoWindow(options.globals.showDemo)
+    end
 
-    -- if imgui.Begin('debug') then
-    --     imgui.Text(ffxi.GetMenuName())
-    --     imgui.End()
-    -- end
+    DrawConfig()
 
     if (options.globals.hideUnderChat[1] and ffxi.IsChatExpanded())
     or (options.globals.hideUnderMap[1] and ffxi.IsMapOpen())
@@ -208,6 +209,10 @@ ashita.events.register('command', 'command_handler', function(e)
 
     if #args == 1 or args[2] == 'config' then
         options.tools.config.isVisible[1] = not options.tools.config.isVisible[1]
+    end
+
+    if #args == 2 and args[2] == 'demo' then
+        demo[1] = true
     end
 
     if #args == 2 and T{'craft','crafty'}:contains(args[2]) then

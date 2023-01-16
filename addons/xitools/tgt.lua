@@ -314,7 +314,7 @@ local tgt = {
         if targetId == 0 then return end
 
         local entity = GetEntity(targetId)
-        ui.DrawWindow(options, function()
+        ui.DrawUiWindow(options, function()
             DrawTgt(entity, options)
         end)
     end,

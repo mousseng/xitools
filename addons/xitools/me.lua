@@ -172,7 +172,7 @@ local me = {
         end
 
         local party = AshitaCore:GetMemoryManager():GetParty()
-        ui.DrawWindow(options, function()
+        ui.DrawUiWindow(options, function()
             DrawMe(player, party, entity, options)
         end)
     end,

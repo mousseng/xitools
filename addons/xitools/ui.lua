@@ -100,9 +100,23 @@ function ui.DrawBar3(cur, max, size, overlay)
     imgui.PopStyleColor(2)
 end
 
+function ui.DrawNormalWindow(config, drawStuff)
+    imgui.SetNextWindowSize(config.size)
+    imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
+
+    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
+        drawStuff()
+
+        local x, y = imgui.GetWindowPos()
+        config.pos[1] = x
+        config.pos[2] = y
+        imgui.End()
+    end
+end
+
 ---@param config table
 ---@param drawStuff function
-function ui.DrawWindow(config, drawStuff)
+function ui.DrawUiWindow(config, drawStuff)
     imgui.SetNextWindowSize(config.size)
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 

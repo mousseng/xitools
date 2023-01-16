@@ -303,7 +303,7 @@ local function DrawPartyMember(player)
 end
 
 local function DrawAlliance(alliance)
-    ui.DrawWindow(alliance, function()
+    ui.DrawUiWindow(alliance, function()
         for _, getMember in pairs(Alliances[alliance.name]) do
             local person = getMember()
 
