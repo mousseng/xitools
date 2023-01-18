@@ -66,6 +66,59 @@ local function HandleAction(debuffs, action)
                 local message = ability.message
                 debuffs[target.id] = debuffs[target.id] or DeepCopy(DefaultDebuffs)
 
+                -- Magic bursted debuffs
+                -- Supposedly, the following debuffs can burst:
+                --   dia i, ii, iii
+                --   bio i, ii, iii
+                --   paralyze i, ii
+                --   stun
+                --   elemental dots
+                -- Dia, Bio, and the Elements burst with message 252, the normal
+                -- magic burst message. Stun seems to be 268. Para shows in the
+                -- database as  having burst message 84, and Para2 shows as not
+                -- having a magic burst message. PServer nonsense?
+                if message == 84 or message == 252 or message == 268 then
+                    if spell == 58 or spell == 80 then -- para/para2
+                        debuffs[target.id].para = now + 120
+                    elseif spell == 252 then -- stun
+                        debuffs[target.id].stun = now + 5
+                    end
+
+                    if spell == 239 then -- shock
+                        debuffs[target.id].shock = now + 120
+                    elseif spell == 238 then -- rasp
+                        debuffs[target.id].rasp = now + 120
+                    elseif spell == 237 then -- choke
+                        debuffs[target.id].choke = now + 120
+                    elseif spell == 236 then -- frost
+                        debuffs[target.id].frost = now + 120
+                    elseif spell == 235 then -- burn
+                        debuffs[target.id].burn = now + 120
+                    elseif spell == 240 then -- drown
+                        debuffs[target.id].drown = now + 120
+                    end
+
+                    local expiry = 0
+                    if spell == 23 or spell == 33 or spell == 230 then
+                        expiry = now + 60
+                    elseif spell == 24 or spell == 231 then
+                        expiry = now + 120
+                    elseif spell == 25 or spell == 232 then
+                        expiry = now + 150
+                    else
+                        -- something went wrong
+                        expiry = nil
+                    end
+
+                    if spell == 23 or spell == 24 or spell == 25 or spell == 33 then
+                        debuffs[target.id].dia = expiry
+                        debuffs[target.id].bio = 0
+                    elseif spell == 230 or spell == 231 or spell == 232 then
+                        debuffs[target.id].dia = 0
+                        debuffs[target.id].bio = expiry
+                    end
+                end
+
                 -- Bio and Dia
                 if message == 2 or message == 264 then
                     local expiry = 0
