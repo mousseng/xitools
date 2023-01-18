@@ -44,11 +44,12 @@ local resultsMap = {
     [4] = 'HQ3',
 }
 
--- this is probably too expensive to be running as often as we are, but fuck it
 local function GetInventoryTotals()
     local inv = AshitaCore:GetMemoryManager():GetInventory()
     local cumInv = {}
-    for i = 0, inv:GetContainerCount(0) do
+    -- the inventory array is not guaranteed to be compact, but counting id=0 or
+    -- id=65535 is fine
+    for i = 1, inv:GetContainerCountMax(0) do
         local slot = inv:GetContainerItem(0, i)
         if cumInv[slot.Id] == nil then
             cumInv[slot.Id] = slot.Count
@@ -74,6 +75,7 @@ local function DrawSkills(skills)
 end
 
 local function DrawRecipe(recipe, skills, inv, res)
+    -- first we display the skill requirements and whether the player meets them
     for skillId, skillLevel in ipairs(recipe.skills) do
         if skillLevel > 0 then
             local indicator = iconTimes
@@ -88,6 +90,7 @@ local function DrawRecipe(recipe, skills, inv, res)
         end
     end
 
+    -- then we show any key item requirements
     if recipe.keyItem > 0 then
         local hasKeyItem = AshitaCore:GetMemoryManager():GetPlayer():HasKeyItem(recipe.keyItem)
         local keyItemName = res:GetString('keyitems.names', recipe.keyItem)
@@ -102,10 +105,13 @@ local function DrawRecipe(recipe, skills, inv, res)
         imgui.PopStyleColor()
     end
 
+    -- finally the ingredient list begins with the crystal
     local crystalCount = inv[recipe.crystal] or 0
     local crystalName = res:GetItemById(recipe.crystal).LogNameSingular[1]
     imgui.TreeNodeEx(('(%3i) %s'):format(crystalCount, crystalName), imguiLeafNode)
 
+    -- and ends with the remaining items
+    -- TODO: compact duplicates into "x2" or whatever
     for _, ingredientId in ipairs(recipe.ingredients) do
         local ingredientCount = inv[ingredientId] or 0
         local ingredientName = res:GetItemById(ingredientId).LogNameSingular[1]
@@ -119,6 +125,7 @@ local function FilterRecipes(filter)
     local res = AshitaCore:GetResourceManager()
     if searchResults[filter] == nil then
         searchResults[filter] = T{ }
+        -- TODO: remove the "by skill" bits
         for skillId, recipeList in ipairs(recipesBySkill) do
             for _, recipe in ipairs(recipeList) do
                 -- the abbreviated names are not always conducive to search, so we
@@ -194,9 +201,15 @@ local function DrawHistory(history)
                 imgui.Text(('%s'):format(resultsMap[synth.result] or 'Unknown'))
 
                 imgui.TableNextColumn()
-                if synth.skillup ~= nil then
-                    imgui.Text(('%s %+.1f'):format(skillsMap[synth.skillup.skillId] or synth.skillup.skillId, synth.skillup.change))
+                local skillups = T{ }
+                for skillId, skillup in pairs(synth.skillup) do
+                    if skillup.change ~= nil then
+                        skillups:append(('%s +%.1f'):format(skillsAbbrMap[skillId] or skillId, skillup.change))
+                    elseif not skillup.isSkillupAllowed then
+                        skillups:append(('%s %s'):format(skillsAbbrMap[skillId] or skillId, iconTimes))
+                    end
                 end
+                imgui.Text(skillups:join(' '))
 
                 for _, itemId in pairs(synth.lost) do
                     imgui.TableNextRow()
@@ -207,9 +220,6 @@ local function DrawHistory(history)
             imgui.EndTable()
         end
     end
-end
-
-local function DrawCraft(skillId)
 end
 
 ---@type xitool
@@ -238,7 +248,7 @@ local crafty = {
                 item = targetRecipe.itemId,
                 count = targetRecipe.count,
                 lost = nil,
-                skillup = nil,
+                skillup = T{ },
             }
         end
     end,
@@ -266,10 +276,20 @@ local crafty = {
                     inProgSynth.item = synth.item
                     inProgSynth.count = synth.count
                 end
+
                 inProgSynth.lost = T{}
                 for _, itemId in pairs(synth.lost) do
                     if itemId > 0 then
                         inProgSynth.lost:append(itemId)
+                    end
+                end
+
+                for _, skill in pairs(synth.skill) do
+                    if skill.skillId > 0 then
+                        inProgSynth.skillup[skill.skillId - 48] = {
+                            isSkillupAllowed = skill.isSkillupAllowed,
+                            change = nil,
+                        }
                     end
                 end
 
@@ -286,19 +306,11 @@ local crafty = {
             local player = GetPlayerEntity()
             if basic.message == 38 and player ~= nil and basic.target == player.ServerId then
                 local latestSynth = options.history:first()
-                latestSynth.skillup = {
-                    skillId = basic.param - 48,
-                    change = basic.value / 10,
-                }
-
+                latestSynth.skillup[basic.param - 48].change = basic.value / 10
                 options.skills[basic.param - 48][1] = options.skills[basic.param - 48][1] + (basic.value / 10)
             elseif basic.message == 310 and player ~= nil and basic.target == player.ServerId then
                 local latestSynth = options.history:first()
-                latestSynth.skillup = {
-                    skillId = basic.param - 48,
-                    change = -basic.value / 10,
-                }
-
+                latestSynth.skillup[basic.param - 48].change = -basic.value / 10
                 options.skills[basic.param - 48][1] = options.skills[basic.param - 48][1] - (basic.value / 10)
             end
         end
@@ -319,9 +331,6 @@ local crafty = {
             DrawSkills(options.skills)
             DrawRecipes(options.skills)
             DrawHistory(options.history)
-            for i = 0, 8 do
-                DrawCraft(i)
-            end
         end)
     end,
 }
