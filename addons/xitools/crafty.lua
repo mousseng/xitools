@@ -13,7 +13,6 @@ local textBaseWidth = imgui.CalcTextSize('A')
 local inProgSynth = nil
 
 local skillsMap = {
-    [0] = 'Fishing',
     [1] = 'Woodworking',
     [2] = 'Smithing',
     [3] = 'Goldsmithing',
@@ -25,7 +24,6 @@ local skillsMap = {
 }
 
 local skillsAbbrMap = {
-    [0] = 'FSH',
     [1] = 'CRP',
     [2] = 'BSM',
     [3] = 'GSM',
@@ -204,9 +202,9 @@ local function DrawHistory(history)
                 local skillups = T{ }
                 for skillId, skillup in pairs(synth.skillup) do
                     if skillup.change ~= nil then
-                        skillups:append(('%s +%.1f'):format(skillsAbbrMap[skillId] or skillId, skillup.change))
-                    elseif not skillup.isSkillupAllowed then
-                        skillups:append(('%s %s'):format(skillsAbbrMap[skillId] or skillId, iconTimes))
+                        skillups:append(('%s %+.1f'):format(skillsAbbrMap[skillId] or skillId, skillup.change))
+                    -- elseif not skillup.isSkillupAllowed then
+                    --     skillups:append(('%s %s'):format(skillsAbbrMap[skillId] or skillId, iconTimes))
                     end
                 end
                 imgui.Text(skillups:join(' '))
@@ -304,11 +302,11 @@ local crafty = {
             if basic.param < 48 or basic.param > 57 then return end
 
             local player = GetPlayerEntity()
-            if basic.message == 38 and player ~= nil and basic.target == player.ServerId then
+            if basic.message == 38 and player ~= nil and basic.target == player.ServerId and basic.param > 48 and basic.param < 58 then
                 local latestSynth = options.history:first()
                 latestSynth.skillup[basic.param - 48].change = basic.value / 10
                 options.skills[basic.param - 48][1] = options.skills[basic.param - 48][1] + (basic.value / 10)
-            elseif basic.message == 310 and player ~= nil and basic.target == player.ServerId then
+            elseif basic.message == 310 and player ~= nil and basic.target == player.ServerId and basic.param > 48 and basic.param < 58 then
                 local latestSynth = options.history:first()
                 latestSynth.skillup[basic.param - 48].change = -basic.value / 10
                 options.skills[basic.param - 48][1] = options.skills[basic.param - 48][1] - (basic.value / 10)

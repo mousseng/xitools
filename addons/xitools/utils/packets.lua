@@ -24,6 +24,27 @@ local outboundStartSynth = {
     end,
 }
 
+local outboundFishingAction = {
+    id = 0x110,
+    name = 'Fishing Action',
+    parse = function(packet)
+        local fishingAction = {
+            player = struct.unpack('I', packet, 0x04 + 1),
+            fishHp = struct.unpack('I', packet, 0x08 + 1),
+            playerIdx = struct.unpack('H', packet, 0x0C + 1),
+            action = struct.unpack('B', packet, 0x0E + 1),
+            catchKey = struct.unpack('I', packet, 0x10 + 1),
+        }
+
+        return fishingAction
+    end,
+    actionMap = {
+        ['Cast'] = 2,
+        ['Catch'] = 3,
+        ['Stop'] = 4,
+    },
+}
+
 local inboundZoneIn = {
     id = 0x00A,
     name = 'Zone In',
@@ -53,6 +74,23 @@ local inboundChatMessage = {
         }
 
         return chatmessage
+    end
+}
+
+local inboundCaughtFish = {
+    id = 0x027,
+    name = 'Fish Catch',
+    ---@param packet string
+    parse = function(packet)
+        local fish = {
+            player = struct.unpack('I', packet, 0x04 + 1),
+            playerIdx = struct.unpack('I', packet, 0x08 + 1),
+            message = struct.unpack('H', packet, 0x0A + 1),
+            fishId = struct.unpack('H', packet, 0x10 + 1),
+            count = struct.unpack('B', packet, 0x14 + 1),
+        }
+
+        return fish
     end
 }
 
@@ -200,6 +238,22 @@ local inboundSynthAnimation = {
         }
 
         return synthAnimation
+    end
+}
+
+local inboundNpcMessage = {
+    id = 0x036,
+    name = 'NPC Message',
+    ---@param packet string
+    parse = function(packet)
+        local message = {
+            sender     = struct.unpack('I', packet, 0x04 + 1),
+            sender_idx = struct.unpack('H', packet, 0x08 + 1),
+            message    = struct.unpack('H', packet, 0x0A + 1),
+            mode       = struct.unpack('B', packet, 0x0C + 1),
+        }
+
+        return message
     end
 }
 
@@ -407,12 +461,27 @@ local inboundSynthResultOther = {
     end
 }
 
+local inboundFishBiteInfo = {
+    id = 0x115,
+    name = 'Fishing Bite Info',
+    parse = function(packet)
+        local fishBite = {
+            biteId = struct.unpack('I', packet, 0x0A + 1),
+            catchKey = struct.unpack('I', packet, 0x14 + 1),
+        }
+
+        return fishBite
+    end,
+}
+
 local packets = {
     outbound = {
         sorted = {
             outboundStartSynth,
+            outboundFishingAction,
         },
         startSynth = outboundStartSynth,
+        fishingAction = outboundFishingAction,
     },
     inbound = {
         sorted = {
@@ -420,24 +489,30 @@ local packets = {
             inboundAction,
             inboundDeath,
             inboundChatMessage,
+            inboundNpcMessage,
             inboundZoneIn,
             inboundCharStats,
             inboundCharSkills,
             inboundSynthAnimation,
             inboundSynthResultPlayer,
             inboundSynthResultOther,
+            inboundFishBiteInfo,
+            inboundCaughtFish,
         },
         zoneIn = inboundZoneIn,
         chatMessage = inboundChatMessage,
+        fishCatch = inboundCaughtFish,
         action = inboundAction,
         basic = inboundBasic,
         death = inboundDeath,
         synthAnimation = inboundSynthAnimation,
+        npcMessage = inboundNpcMessage,
         charStats = inboundCharStats,
         charSkills = inboundCharSkills,
         menuMerit = inboundMenuMerit,
         synthResultPlayer = inboundSynthResultPlayer,
         synthResultOther = inboundSynthResultOther,
+        fishBiteInfo = inboundFishBiteInfo,
     },
 }
 

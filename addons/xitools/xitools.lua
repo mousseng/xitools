@@ -22,6 +22,7 @@ local tools = {
     require('us'),
     require('tgt'),
     require('crafty'),
+    require('fishe'),
     require('logger'),
 }
 
@@ -103,6 +104,16 @@ local defaultOptions = T{
                 [7] = T{ 0.0 },
                 [8] = T{ 0.0 },
             },
+            history = T{},
+        },
+        fishe = T{
+            isEnabled = T{ false },
+            isVisible = T{ true },
+            name = 'xitools.fishe',
+            size = T{ -1, -1 },
+            pos = T{ 100, 100 },
+            flags = ImGuiWindowFlags_None,
+            skill = T{ 0.0 },
             history = T{},
         },
         logger = T{
@@ -220,7 +231,7 @@ ashita.events.register('command', 'command_handler', function(e)
     end
 
     if #args == 2 and args[2] == 'demo' then
-        demo[1] = true
+        options.globals.showDemo[1] = true
     end
 
     if #args == 2 and T{'craft','crafty'}:contains(args[2]) then
@@ -229,5 +240,13 @@ ashita.events.register('command', 'command_handler', function(e)
 
     if #args == 3 and T{'craft','crafty'}:contains(args[2]) and T{'cl','clear'}:contains(args[3]) then
         options.tools.crafty.history = T{}
+    end
+
+    if #args == 2 and T{'fish','fishe'}:contains(args[2]) then
+        options.tools.fishe.isVisible[1] = not options.tools.fishe.isVisible[1]
+    end
+
+    if #args == 3 and T{'fish','fishe'}:contains(args[2]) and T{'cl','clear'}:contains(args[3]) then
+        options.tools.fishe.history = T{}
     end
 end)
