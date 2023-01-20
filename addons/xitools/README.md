@@ -4,11 +4,13 @@ a suite of UI replacement components.
 - `us` displays information about the party
 - `tgt` displays information about your target or subtarget
 - `crafty` is a crafting skill tracker and recipe list
+- `fishe` is a fishing skill tracker and hook monitor
 - `log` is a dev tool that dumps packets to a log file, probably not useful
 
 ## usage
 `/xitools` (or `/xit`) will bring up the config menu
 `/xitools crafty` (or `/xit craft`) will open the `crafty` window if it's enabled
+`/xitools fishe` (or `/xit fish`) will open the `fishe` window if it's enabled
 
 ## todo
 - [ ] `all`: hide ui when in cutscene
