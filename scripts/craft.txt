@@ -1,40 +1,40 @@
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
 /lastsynth
-/wait 21
+/wait 24
