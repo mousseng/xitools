@@ -1,31 +1,353 @@
 require 'common'
 local chat = require('chat')
 
+local Level30 = {
+    Base = {
+        Main = "Centurion's Sword",
+        Sub = "Parana Shield",
+        -- Range = "",
+        Ammo = "Morion Tathlum",
+        -- Head = "",
+        Body = "Ryl.Ftm. Tunic",
+        Hands = "Savage Gauntlets",
+        Legs = "Dream Pants +1",
+        Feet = "Savage Gaiters",
+        Neck = "Tiger Stole",
+        Waist = "Friar's Rope",
+        -- Ear1 = "",
+        Ear2 = "Cunning Earring",
+        Ring1 = "San d'Orian Ring",
+        Ring2 = "Chariot Band",
+        Back = "Cotton Cape",
+    },
+    Rest = {
+        Main = "Pilgrim's Wand",
+    },
+    Tp = {
+        -- Main = "",
+        -- Sub = "",
+        -- Range = "",
+        -- Ammo = "",
+        -- Head = "",
+        -- Body = "",
+        Hands = "Ryl.Ftm. Gloves",
+        -- Legs = "",
+        -- Feet = "",
+        -- Neck = "",
+        -- Waist = "",
+        -- Ear1 = "",
+        -- Ear2 = "",
+        -- Ring1 = "",
+        -- Ring2 = "",
+        -- Back = "",
+    },
+    Str = {
+        -- Main = "",
+        -- Sub = "",
+        -- Range = "",
+        -- Ammo = "",
+        -- Head = "",
+        -- Body = "",
+        -- Hands = "",
+        -- Legs = "",
+        Feet = "Savage Gaiters",
+        -- Neck = "",
+        -- Waist = "",
+        -- Ear1 = "",
+        -- Ear2 = "",
+        Ring1 = "San d'Orian Ring",
+        -- Ring2 = "",
+        -- Back = "",
+    },
+    Dex = {
+        -- Main = "",
+        -- Sub = "",
+        -- Range = "",
+        -- Ammo = "",
+        -- Head = "",
+        -- Body = "",
+        -- Hands = "",
+        -- Legs = "",
+        -- Feet = "",
+        -- Neck = "",
+        -- Waist = "",
+        -- Ear1 = "",
+        -- Ear2 = "",
+        -- Ring1 = "",
+        -- Ring2 = "",
+        -- Back = "",
+    },
+    Int = {
+        Main = "Yew Wand",
+        -- Sub = "",
+        -- Range = "",
+        Ammo = "Morion Tathlum",
+        -- Head = "",
+        Body = "Ryl.Ftm. Tunic",
+        -- Hands = "",
+        -- Legs = "",
+        -- Feet = "",
+        Neck = "Black Neckerchief",
+        Waist = "Wizard's Belt",
+        -- Ear1 = "",
+        Ear2 = "Cunning Earring",
+        Ring1 = "Hermit's Ring",
+        Ring2 = "Hermit's Ring",
+        -- Back = "",
+    },
+    Mnd = {
+        Main = "Yew Wand",
+        -- Sub = "",
+        -- Range = "",
+        -- Ammo = "",
+        -- Head = "",
+        Body = "Ryl.Ftm. Tunic",
+        Hands = "Savage Gauntlets",
+        -- Legs = "",
+        -- Feet = "",
+        Neck = "Justice Badge",
+        Waist = "Friar's Rope",
+        -- Ear1 = "",
+        -- Ear2 = "",
+        Ring1 = "San d'Orian Ring",
+        Ring2 = "Ascetic's Ring",
+        -- Back = "",
+    },
+}
+
+local Level40 = {
+    Base = {
+        Main = "Fencing Degen",
+        Sub = "Parana Shield",
+        -- Range = "",
+        Ammo = "Morion Tathlum",
+        -- Head = "",
+        Body = "Savage Separates",
+        Hands = "Savage Gauntlets",
+        Legs = "Savage Loincloth",
+        Feet = "Savage Gaiters",
+        Neck = "Tiger Stole",
+        Waist = "Friar's Rope",
+        -- Ear1 = "",
+        Ear2 = "Cunning Earring",
+        Ring1 = "San d'Orian Ring",
+        Ring2 = "Chariot Band",
+        Back = "Cotton Cape",
+    },
+    Rest = {
+        Main = "Pilgrim's Wand",
+    },
+    Tp = {
+        -- Main = "",
+        -- Sub = "",
+        -- Range = "",
+        -- Ammo = "",
+        -- Head = "",
+        -- Body = "",
+        Hands = "Ryl.Ftm. Gloves",
+        -- Legs = "",
+        -- Feet = "",
+        -- Neck = "",
+        -- Waist = "",
+        -- Ear1 = "",
+        -- Ear2 = "",
+        -- Ring1 = "",
+        -- Ring2 = "",
+        -- Back = "",
+    },
+    Str = {
+        -- Main = "",
+        -- Sub = "",
+        -- Range = "",
+        -- Ammo = "",
+        -- Head = "",
+        Body = "Savage Separates",
+        -- Hands = "",
+        -- Legs = "",
+        Feet = "Savage Gaiters",
+        -- Neck = "",
+        -- Waist = "",
+        -- Ear1 = "",
+        -- Ear2 = "",
+        Ring1 = "San d'Orian Ring",
+        -- Ring2 = "",
+        -- Back = "",
+    },
+    Dex = {
+        -- Main = "",
+        -- Sub = "",
+        -- Range = "",
+        -- Ammo = "",
+        -- Head = "",
+        -- Body = "",
+        -- Hands = "",
+        -- Legs = "",
+        -- Feet = "",
+        -- Neck = "",
+        -- Waist = "",
+        -- Ear1 = "",
+        -- Ear2 = "",
+        -- Ring1 = "",
+        -- Ring2 = "",
+        -- Back = "",
+    },
+    Int = {
+        Main = "Fencing Degen",
+        -- Sub = "",
+        -- Range = "",
+        Ammo = "Morion Tathlum",
+        -- Head = "",
+        Body = "Ryl.Ftm. Tunic",
+        -- Hands = "",
+        -- Legs = "",
+        -- Feet = "",
+        Neck = "Black Neckerchief",
+        Waist = "Wizard's Belt",
+        -- Ear1 = "",
+        Ear2 = "Cunning Earring",
+        Ring1 = "Hermit's Ring",
+        Ring2 = "Hermit's Ring",
+        -- Back = "",
+    },
+    Mnd = {
+        Main = "Fencing Degen",
+        -- Sub = "",
+        -- Range = "",
+        -- Ammo = "",
+        -- Head = "",
+        Body = "Ryl.Ftm. Tunic",
+        Hands = "Savage Gauntlets",
+        Legs = "Savage Loincloth",
+        -- Feet = "",
+        Neck = "Justice Badge",
+        Waist = "Friar's Rope",
+        -- Ear1 = "",
+        -- Ear2 = "",
+        Ring1 = "San d'Orian Ring",
+        Ring2 = "Ascetic's Ring",
+        -- Back = "",
+    },
+}
+
 local profile = {
     Sets = {
         Base = {
-            Main = "Centurion's Sword",
+            Main = "Fencing Degen",
             Sub = "Parana Shield",
             -- Range = "",
             Ammo = "Morion Tathlum",
             -- Head = "",
             Body = "Savage Separates",
-            Hands = "Ryl.Ftm. Gloves",
+            Hands = "Savage Gauntlets",
             Legs = "Savage Loincloth",
             Feet = "Savage Gaiters",
             Neck = "Tiger Stole",
             Waist = "Friar's Rope",
             -- Ear1 = "",
-            -- Ear2 = "",
+            Ear2 = "Cunning Earring",
             Ring1 = "San d'Orian Ring",
             Ring2 = "Chariot Band",
             Back = "Cotton Cape",
         },
-        Resting = {
+        Rest = {
             Main = "Pilgrim's Wand",
         },
-        Tp = { },
+        Tp = {
+            -- Main = "",
+            -- Sub = "",
+            -- Range = "",
+            -- Ammo = "",
+            -- Head = "",
+            -- Body = "",
+            Hands = "Ryl.Ftm. Gloves",
+            -- Legs = "",
+            -- Feet = "",
+            -- Neck = "",
+            -- Waist = "",
+            -- Ear1 = "",
+            -- Ear2 = "",
+            -- Ring1 = "",
+            -- Ring2 = "",
+            -- Back = "",
+        },
+        Str = {
+            -- Main = "",
+            -- Sub = "",
+            -- Range = "",
+            -- Ammo = "",
+            -- Head = "",
+            Body = "Savage Separates",
+            -- Hands = "",
+            -- Legs = "",
+            Feet = "Savage Gaiters",
+            -- Neck = "",
+            -- Waist = "",
+            -- Ear1 = "",
+            -- Ear2 = "",
+            Ring1 = "San d'Orian Ring",
+            -- Ring2 = "",
+            -- Back = "",
+        },
+        Dex = {
+            -- Main = "",
+            -- Sub = "",
+            -- Range = "",
+            -- Ammo = "",
+            -- Head = "",
+            -- Body = "",
+            -- Hands = "",
+            -- Legs = "",
+            -- Feet = "",
+            -- Neck = "",
+            -- Waist = "",
+            -- Ear1 = "",
+            -- Ear2 = "",
+            -- Ring1 = "",
+            -- Ring2 = "",
+            -- Back = "",
+        },
+        Int = {
+            Main = "Fencing Degen",
+            -- Sub = "",
+            -- Range = "",
+            Ammo = "Morion Tathlum",
+            -- Head = "",
+            Body = "Ryl.Ftm. Tunic",
+            -- Hands = "",
+            -- Legs = "",
+            -- Feet = "",
+            Neck = "Black Neckerchief",
+            Waist = "Wizard's Belt",
+            -- Ear1 = "",
+            Ear2 = "Cunning Earring",
+            Ring1 = "Hermit's Ring",
+            Ring2 = "Hermit's Ring",
+            -- Back = "",
+        },
+        Mnd = {
+            Main = "Fencing Degen",
+            -- Sub = "",
+            -- Range = "",
+            -- Ammo = "",
+            -- Head = "",
+            Body = "Ryl.Ftm. Tunic",
+            Hands = "Savage Gauntlets",
+            Legs = "Savage Loincloth",
+            -- Feet = "",
+            Neck = "Justice Badge",
+            Waist = "Friar's Rope",
+            -- Ear1 = "",
+            -- Ear2 = "",
+            Ring1 = "San d'Orian Ring",
+            Ring2 = "Ascetic's Ring",
+            -- Back = "",
+        },
         Movement = { },
+        Fish = {
+            Range = "Bamboo Fish. Rod",
+            Ammo = "Insect Ball",
+            Hands = "Fsh. Gloves",
+        },
         Glamour = {
             Head = nil,
             Body = "Dream Robe",
@@ -39,11 +361,13 @@ local profile = {
 }
 
 profile.OnLoad = function()
-    local player = gData.GetPlayer()
     gSettings.AllowAddSet = true
     gSettings.SoloMode = false
+    gSettings.FishMode = false
+
     AshitaCore:GetChatManager():QueueCommand(1, '/macro book 2')
 
+    local player = gData.GetPlayer()
     if player.SubJob == 'WHM' then
         AshitaCore:GetChatManager():QueueCommand(1, '/macro set 1')
     elseif player.SubJob == 'BLM' then
@@ -54,9 +378,13 @@ profile.OnLoad = function()
         AshitaCore:GetChatManager():QueueCommand(1, '/macro set 4')
     end
 
-    print(chat.header('LAC: RDM'):append(chat.message('setting glamour')))
+    AshitaCore:GetChatManager():QueueCommand(1, '/sl self on')
+    AshitaCore:GetChatManager():QueueCommand(1, '/sl others on')
+    AshitaCore:GetChatManager():QueueCommand(1, '/sl target on')
+
     ashita.tasks.once(3, function()
-        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 20')
+        print(chat.header('LAC: RDM'):append(chat.message('setting glamour')))
+        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 19')
         AshitaCore:GetChatManager():QueueCommand(1, '/sl blink')
     end)
 end
@@ -66,30 +394,52 @@ end
 
 profile.HandleCommand = function(args)
     if #args == 0 then return end
-    if args[1] == 'solo' and not gSettings.SoloMode then
-        gSettings.SoloMode = true
-        print(chat.header('LAC: RDM'):append(chat.message('enabling solo mode')))
-        AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Main')
-        AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Sub')
-        AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Range')
-    elseif args[1] == 'solo' and gSettings.SoloMode then
-        gSettings.SoloMode = false
-        print(chat.header('LAC: RDM'):append(chat.message('disabling solo mode')))
-        AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Main')
-        AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Sub')
-        AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Range')
+
+    if args[1] == 'solo' then
+        if (#args == 1 and not gSettings.SoloMode) or (#args == 2 and args[2] == 'on') then
+            gSettings.SoloMode = true
+            print(chat.header('LAC: RDM'):append(chat.message('enabling solo mode')))
+            AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Main')
+            AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Sub')
+            AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Range')
+        elseif (#args == 1 and gSettings.SoloMode) or (#args == 2 and args[2] == 'off') then
+            gSettings.SoloMode = false
+            print(chat.header('LAC: RDM'):append(chat.message('disabling solo mode')))
+            AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Main')
+            AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Sub')
+            AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Range')
+        end
+    end
+
+    if args[1] == 'fish' then
+        if (#args == 1 and not gSettings.FishMode) or (#args == 2 and args[2] == 'on') then
+            gSettings.FishMode = true
+            print(chat.header('LAC: RDM'):append(chat.message('enabling fish mode')))
+            AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable')
+            gFunc.ForceEquipSet('Fish')
+        elseif (#args == 1 and gSettings.FishMode) or (#args == 2 and args[2] == 'off') then
+            gSettings.FishMode = false
+            print(chat.header('LAC: RDM'):append(chat.message('disabling fish mode')))
+            AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable')
+        end
     end
 end
 
 profile.HandleDefault = function()
+    gFunc.EquipSet(Level30.Base)
+    gFunc.EquipSet(Level40.Base)
     gFunc.EquipSet('Base')
 
     local player = gData.GetPlayer()
     if player.IsMoving then
         gFunc.EquipSet('Movement')
     elseif player.Status == 'Resting' then
-        gFunc.EquipSet('Resting')
+        gFunc.EquipSet(Level30.Rest)
+        gFunc.EquipSet(Level40.Rest)
+        gFunc.EquipSet('Rest')
     elseif player.Status == 'Engaged' then
+        gFunc.EquipSet(Level30.Tp)
+        gFunc.EquipSet(Level40.Tp)
         gFunc.EquipSet('Tp')
     end
 end
@@ -105,30 +455,23 @@ profile.HandleItem = function()
 end
 
 profile.HandlePrecast = function()
-    -- TODO: get fast-cast gear
 end
 
 profile.HandleMidcast = function()
     local spell = gData.GetAction()
-
-    -- TODO: get staves for late-game casting
-    gFunc.Equip('Main', "Yew Wand")
 
     if spell.Name == 'Sneak' then
         gFunc.Equip('Feet', "Dream Boots +1")
     elseif spell.Name == 'Invisible' then
         gFunc.Equip('Hands', "Dream Mittens +1")
     elseif spell.Type == 'White Magic' then
-        gFunc.Equip('Neck', "Justice Badge")
-        gFunc.Equip('Hands', "Savage Gauntlets")
-        gFunc.Equip('Legs', "Savage Loincloth")
-        gFunc.Equip('Ring1', "San d'Orian Ring")
-        gFunc.Equip('Ring2', "Ascetic's Ring")
+        gFunc.EquipSet(Level30.Mnd)
+        gFunc.EquipSet(Level40.Mnd)
+        gFunc.EquipSet('Mnd')
     elseif spell.Type == 'Black Magic' then
-        gFunc.Equip('Body', "Ryl.Ftm. Tunic")
-        gFunc.Equip('Neck', "Black Silk Neckerchief")
-        gFunc.Equip('Ring1', "Hermit's Ring")
-        gFunc.Equip('Ring2', "Hermit's Ring")
+        gFunc.EquipSet(Level30.Int)
+        gFunc.EquipSet(Level40.Int)
+        gFunc.EquipSet('Int')
     end
 end
 
@@ -148,30 +491,31 @@ profile.HandleWeaponskill = function()
     local hpSkills = T{ 'Spirits Within' }
 
     if strSkills:contains(weaponskill.Name) then
-        gFunc.Equip('Body', "Savage Separates")
-        gFunc.Equip('Feet', "Savage Gaiters")
-        gFunc.Equip('Ring1', "San d'Orian Ring")
+        gFunc.EquipSet(Level30.Str)
+        gFunc.EquipSet(Level40.Str)
+        gFunc.EquipSet('Str')
     elseif dexSkills:contains(weaponskill.Name) then
+        gFunc.EquipSet(Level30.Dex)
+        gFunc.EquipSet(Level40.Dex)
+        gFunc.EquipSet('Dex')
     elseif mndSkills:contains(weaponskill.Name) then
-        gFunc.Equip('Neck', "Justice Badge")
-        gFunc.Equip('Hands', "Savage Gauntlets")
-        gFunc.Equip('Legs', "Savage Loincloth")
-        gFunc.Equip('Ring1', "San d'Orian Ring")
-        gFunc.Equip('Ring2', "Ascetic's Ring")
+        gFunc.EquipSet(Level30.Mnd)
+        gFunc.EquipSet(Level40.Mnd)
+        gFunc.EquipSet('Mnd')
     elseif strMndSkills:contains(weaponskill.Name) then
-        gFunc.Equip('Body', "Savage Separates")
-        gFunc.Equip('Hands', "Savage Gauntlets")
-        gFunc.Equip('Legs', "Savage Loincloth")
-        gFunc.Equip('Feet', "Savage Gaiters")
-        gFunc.Equip('Neck', "Justice Badge")
-        gFunc.Equip('Ring1', "San d'Orian Ring")
-        gFunc.Equip('Ring2', "Ascetic's Ring")
+        gFunc.EquipSet(Level30.Str)
+        gFunc.EquipSet(Level40.Str)
+        gFunc.EquipSet('Str')
+        gFunc.EquipSet(Level30.Mnd)
+        gFunc.EquipSet(Level40.Mnd)
+        gFunc.EquipSet('Mnd')
     elseif strIntSkills:contains(weaponskill.Name) then
-        gFunc.Equip('Body', "Savage Separates")
-        gFunc.Equip('Feet', "Savage Gaiters")
-        gFunc.Equip('Neck', "Black Silk Neckerchief")
-        gFunc.Equip('Ring1', "Hermit's Ring")
-        gFunc.Equip('Ring2', "Hermit's Ring")
+        gFunc.EquipSet(Level30.Str)
+        gFunc.EquipSet(Level40.Str)
+        gFunc.EquipSet('Str')
+        gFunc.EquipSet(Level30.Int)
+        gFunc.EquipSet(Level40.Int)
+        gFunc.EquipSet('Int')
     elseif hpSkills:contains(weaponskill.Name) then
     end
 end

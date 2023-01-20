@@ -7,12 +7,12 @@ local profile = {
             Main = "Pilgrim's Wand",
             -- Sub = "",
             -- Range = "",
-            -- Ammo = "Morion Tathlum",
+            Ammo = "Morion Tathlum",
             -- Head = "",
             Body = "Ryl.Ftm. Tunic",
-            Hands = "Dream Gloves +1",
+            Hands = "Savage Gauntlets",
             Legs = "Dream Pants +1",
-            Feet = "Dream Boots +1",
+            Feet = "Savage Gaiters",
             Neck = "Justice Badge",
             Waist = "Friar's Rope",
             -- Ear1 = "",
@@ -111,6 +111,7 @@ profile.HandleMidcast = function()
         gFunc.Equip('Ring1', "San d'Orian Ring")
         gFunc.Equip('Ring2', "Ascetic's Ring")
     elseif spell.Type == 'Black Magic' then
+        gFunc.Equip('Neck', "Black Neckerchief")
         gFunc.Equip('Ring1', "Hermit's Ring")
         gFunc.Equip('Ring2', "Hermit's Ring")
     end
