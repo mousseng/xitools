@@ -1,7 +1,8 @@
 require('common')
 local imgui = require('imgui')
-local packets = require('utils.packets')
 local ui = require('ui')
+local packets = require('utils.packets')
+local vanatime = require('utils.vanatime')
 
 local textBaseWidth = imgui.CalcTextSize('A')
 local currentLine = {
@@ -171,9 +172,62 @@ local fishMessages = {
     [0x36] = 'caught a giga fish',
 }
 
+local poolResets = {
+    [ 0] = 4,
+    [ 1] = 4,
+    [ 2] = 4,
+    [ 3] = 4,
+    [ 4] = 6,
+    [ 5] = 6,
+    [ 6] = 7,
+    [ 7] = 17,
+    [ 8] = 17,
+    [ 9] = 17,
+    [10] = 17,
+    [11] = 17,
+    [12] = 17,
+    [13] = 17,
+    [14] = 17,
+    [15] = 17,
+    [16] = 17,
+    [17] = 18,
+    [18] = 20,
+    [19] = 20,
+    [20] = 0,
+    [21] = 0,
+    [22] = 0,
+    [23] = 0,
+}
+
 local function DrawCurrent()
-    if currentLine.hook then imgui.Text(currentLine.hook) end
-    if currentLine.feel then imgui.Text(currentLine.feel) end
+    imgui.Separator()
+
+    if currentLine.hook then
+        imgui.Text(currentLine.hook)
+    end
+
+    if currentLine.feel then
+        if currentLine.feel == 'good feeling' then
+            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusGreen)
+        elseif currentLine.feel == 'bad feeling' then
+            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusYellow)
+        else
+            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusRed)
+        end
+
+        imgui.Text(currentLine.feel)
+        imgui.PopStyleColor()
+        imgui.Separator()
+    end
+
+    local date = vanatime.get_current_date()
+    local time = vanatime.get_current_time()
+    local moon = AshitaCore:GetResourceManager():GetString('moonphases', date.moon_phase)
+    local day = AshitaCore:GetResourceManager():GetString('days', date.weekday)
+
+    imgui.Text(('%s (%2i%%%%)'):format(moon, date.moon_percent))
+    imgui.Text(('%-13s %02i:%02i'):format(day, time.h, time.m))
+    imgui.Text(('Next restock: %02i:00'):format(poolResets[math.floor(time.h)]))
 end
 
 local function DrawHistory(history)
