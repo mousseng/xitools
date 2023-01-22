@@ -343,10 +343,18 @@ local profile = {
             -- Back = "",
         },
         Movement = { },
+        Solo = {
+            Main = "Fencing Degen",
+            Sub = "Parana Shield",
+            Range = nil,
+        },
         Fish = {
             Range = "Bamboo Fish. Rod",
             Ammo = "Insect Ball",
+            Body = "Fsh. Tunica",
             Hands = "Fsh. Gloves",
+            Legs = "Fisherman's Hose",
+            Feet = "Fisherman's Boots",
         },
         Glamour = {
             Head = nil,
@@ -399,15 +407,9 @@ profile.HandleCommand = function(args)
         if (#args == 1 and not gSettings.SoloMode) or (#args == 2 and args[2] == 'on') then
             gSettings.SoloMode = true
             print(chat.header('LAC: RDM'):append(chat.message('enabling solo mode')))
-            AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Main')
-            AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Sub')
-            AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable Range')
         elseif (#args == 1 and gSettings.SoloMode) or (#args == 2 and args[2] == 'off') then
             gSettings.SoloMode = false
             print(chat.header('LAC: RDM'):append(chat.message('disabling solo mode')))
-            AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Main')
-            AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Sub')
-            AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable Range')
         end
     end
 
@@ -415,12 +417,9 @@ profile.HandleCommand = function(args)
         if (#args == 1 and not gSettings.FishMode) or (#args == 2 and args[2] == 'on') then
             gSettings.FishMode = true
             print(chat.header('LAC: RDM'):append(chat.message('enabling fish mode')))
-            AshitaCore:GetChatManager():QueueCommand(-1, '/lac disable')
-            gFunc.ForceEquipSet('Fish')
         elseif (#args == 1 and gSettings.FishMode) or (#args == 2 and args[2] == 'off') then
             gSettings.FishMode = false
             print(chat.header('LAC: RDM'):append(chat.message('disabling fish mode')))
-            AshitaCore:GetChatManager():QueueCommand(-1, '/lac enable')
         end
     end
 end
@@ -441,6 +440,14 @@ profile.HandleDefault = function()
         gFunc.EquipSet(Level30.Tp)
         gFunc.EquipSet(Level40.Tp)
         gFunc.EquipSet('Tp')
+    end
+
+    if gSettings.SoloMode then
+        gFunc.EquipSet('Solo')
+    end
+
+    if gSettings.FishMode then
+        gFunc.EquipSet('Fish')
     end
 end
 
