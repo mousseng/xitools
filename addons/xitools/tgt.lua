@@ -3,6 +3,17 @@ local imgui = require('imgui')
 local ui = require('ui')
 local packets = require('utils.packets')
 
+local Threnodies = {
+    [454] = 'fire',
+    [455] = 'ice',
+    [456] = 'wind',
+    [457] = 'earth',
+    [458] = 'lightning',
+    [459] = 'water',
+    [460] = 'light',
+    [461] = 'dark',
+}
+
 -- The state we're operating on is the expiry time of the statuses
 ---@type Debuffs
 local DefaultDebuffs = {
@@ -29,6 +40,11 @@ local DefaultDebuffs = {
     frost = 0,
     burn = 0,
     drown = 0,
+    -- bard stuff
+    requiem = 0,
+    elegy = 0,
+    threnody = 0,
+    threnodyEle = nil,
 }
 
 local TrackedEnemies = { }
@@ -51,6 +67,26 @@ local function DeepCopy(object)
         return setmetatable(new_table, getmetatable(obj))
     end
     return _copy(object)
+end
+
+local function GetThrenodyColor(element)
+    if element == 'light' then
+        return ui.Colors.StatusWhite
+    elseif element == 'dark' then
+        return ui.Colors.StatusBlack
+    elseif element == 'fire' then
+        return ui.Colors.StatusRed
+    elseif element == 'ice' then
+        return ui.Colors.StatusCyan
+    elseif element == 'wind' then
+        return ui.Colors.StatusGreen
+    elseif element == 'earth' then
+        return ui.Colors.StatusBrown
+    elseif element == 'lightning' then
+        return ui.Colors.StatusYellow
+    elseif element == 'water' then
+        return ui.Colors.StatusBlue
+    end
 end
 
 ---@param debuffs TrackedEnemies
@@ -162,7 +198,7 @@ local function HandleAction(debuffs, action)
                     elseif spell <= 229 and spell >= 220 then -- poison/2
                         debuffs[target.id].poison = now + 120
                     end
-                -- Elemental debuffs
+                -- Elemental debuffs and bard songs
                 elseif message == 237 or message == 278 then
                     if spell == 239 then -- shock
                         debuffs[target.id].shock = now + 120
@@ -176,6 +212,29 @@ local function HandleAction(debuffs, action)
                         debuffs[target.id].burn = now + 120
                     elseif spell == 240 then -- drown
                         debuffs[target.id].drown = now + 120
+                    elseif spell == 376 or spell == 463 then -- horde/foe lullaby
+                        -- base is 30, but merits and song+
+                        debuffs[target.id].sleep = now + 60
+                    -- foe requiems; estimating extended durations
+                    elseif spell == 368 then
+                        debuffs[target.id].requiem = now + 100
+                    elseif spell == 369 then
+                        debuffs[target.id].requiem = now + 150
+                    elseif spell == 370 then
+                        debuffs[target.id].requiem = now + 200
+                    elseif spell == 371 then
+                        debuffs[target.id].requiem = now + 250
+                    elseif spell == 372 then
+                        debuffs[target.id].requiem = now + 300
+                    elseif spell == 373 then
+                        debuffs[target.id].requiem = now + 350
+                    elseif spell == 421 then
+                        debuffs[target.id].elegy = now + 150
+                    elseif spell == 422 then
+                        debuffs[target.id].elegy = now + 250
+                    elseif spell >= 454 and spell <= 461 then -- threnodies
+                        debuffs[target.id].threnody = now + 120
+                        debuffs[target.id].threnodyEle = Threnodies[spell]
                     end
                 end
             end
@@ -232,6 +291,13 @@ local function HandleBasic(debuffs, basic)
             debuffs[basic.target].dia = 0
         elseif basic.param == 135 then
             debuffs[basic.target].bio = 0
+        elseif basic.param == 192 then
+            debuffs[basic.target].requiem = 0
+        elseif basic.param == 194 then
+            debuffs[basic.target].elegy = 0
+        elseif basic.param == 217 then
+            debuffs[basic.target].threnody = 0
+            debuffs[basic.target].threnodyEle = nil
         end
     end
 end
@@ -301,6 +367,7 @@ local function DrawStatus(debuffs)
     DrawSeparator()
     DrawStatusEntry('P',  now < debuffs.para, ui.Colors.StatusWhite)
     DrawStatusEntry('S',  now < debuffs.slow, ui.Colors.StatusWhite)
+    DrawStatusEntry('E',  now < debuffs.elegy, ui.Colors.StatusBrown)
     DrawStatusEntry('G',  now < debuffs.grav, ui.Colors.StatusBlack)
     DrawStatusEntry('B',  now < debuffs.blind, ui.Colors.StatusBlack)
     DrawSeparator()
@@ -313,6 +380,8 @@ local function DrawStatus(debuffs)
     DrawSeparator()
     DrawStatusEntry('Po', now < debuffs.poison, ui.Colors.StatusBlack)
     DrawSeparator()
+    DrawStatusEntry('Rq', now < debuffs.requiem, ui.Colors.StatusWhite)
+    DrawSeparator()
     DrawSeparator()
     DrawStatusEntry('S',  now < debuffs.shock, ui.Colors.StatusYellow)
     DrawStatusEntry('R',  now < debuffs.rasp, ui.Colors.StatusBrown)
@@ -320,6 +389,16 @@ local function DrawStatus(debuffs)
     DrawStatusEntry('F',  now < debuffs.frost, ui.Colors.StatusCyan)
     DrawStatusEntry('B',  now < debuffs.burn, ui.Colors.StatusRed)
     DrawStatusEntry('D',  now < debuffs.drown, ui.Colors.StatusBlue)
+
+    if debuffs.threnodyEle ~= nil then
+        imgui.NewLine()
+        imgui.Text('Threnody: ')
+        imgui.SameLine()
+        imgui.PushStyleColor(ImGuiCol_Text, GetThrenodyColor(debuffs.threnodyEle))
+        imgui.Text(debuffs.threnodyEle)
+        imgui.PopStyleColor()
+    end
+
     imgui.PopStyleVar()
 end
 
