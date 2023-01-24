@@ -168,8 +168,26 @@ local fishMessages = {
     [0x2C] = 'you might suck',
     [0x2D] = 'you probably suck',
     [0x2E] = 'you definitely suck',
-    [0x35] = 'KEEN_ANGLERS_SENSE',
+    [0x35] = 'good feeling', -- TODO: keen sense has its own packet
     [0x36] = 'caught a giga fish',
+}
+
+local fish = T{
+    624, 2216, 3965, 4288, 4289, 4290, 4291, 4304, 4305, 4306, 4307, 4308, 4309,
+    4310, 4311, 4312, 4313, 4314, 4315, 4316, 4317, 4318, 4319, 4354, 4360,
+    4361, 4379, 4383, 4384, 4385, 4399, 4401, 4402, 4403, 4426, 4427, 4428,
+    4429, 4443, 4451, 4454, 4461, 4462, 4463, 4464, 4469, 4470, 4471, 4472,
+    4473, 4474, 4475, 4476, 4477, 4478, 4479, 4480, 4481, 4482, 4483, 4484,
+    4485, 4500, 4514, 4515, 4528, 4579, 4580, 5120, 5121, 5122, 5123, 5124,
+    5125, 5126, 5127, 5128, 5129, 5130, 5131, 5132, 5133, 5134, 5135, 5136,
+    5137, 5138, 5139, 5140, 5141, 5446, 5447, 5448, 5449, 5450, 5451, 5452,
+    5453, 5454, 5455, 5456, 5457, 5458, 5459, 5460, 5461, 5462, 5463, 5464,
+    5465, 5466, 5467, 5468, 5469, 5470, 5471, 5472, 5473, 5474, 5475, 5476,
+    5534, 5535, 5536, 5537, 5538, 5539, 5540, 5714, 5715, 5812, 5813, 5814,
+    5815, 5816, 5817, 5818, 5948, 5949, 5950, 5951, 5952, 5953, 5954, 5955,
+    5957, 5959, 5960, 5961, 5962, 5963, 5993, 5995, 5997, 6144, 6145, 6146,
+    6333, 6334, 6335, 6336, 6337, 6338, 6371, 6372, 6373, 6374, 6375, 6376,
+    6489,
 }
 
 local poolResets = {
@@ -199,10 +217,25 @@ local poolResets = {
     [23] = 0,
 }
 
-local function DrawCurrent()
-    imgui.Separator()
+local function GetInventoryTotals(inv)
+    local cumInv = {}
+    -- the inventory array is not guaranteed to be compact, but counting id=0 or
+    -- id=65535 is fine
+    for i = 1, inv:GetContainerCountMax(0) do
+        local slot = inv:GetContainerItem(0, i)
+        if cumInv[slot.Id] == nil then
+            cumInv[slot.Id] = slot.Count
+        else
+            cumInv[slot.Id] = cumInv[slot.Id] + slot.Count
+        end
+    end
 
+    return cumInv
+end
+
+local function DrawCurrent()
     if currentLine.hook then
+        imgui.Separator()
         imgui.Text(currentLine.hook)
     end
 
@@ -210,14 +243,13 @@ local function DrawCurrent()
         if currentLine.feel == 'good feeling' then
             imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusGreen)
         elseif currentLine.feel == 'bad feeling' then
-            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusYellow)
+            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.Yellow)
         else
-            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.StatusRed)
+            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.Red)
         end
 
         imgui.Text(currentLine.feel)
         imgui.PopStyleColor()
-        imgui.Separator()
     end
 
     local date = vanatime.get_current_date()
@@ -225,9 +257,24 @@ local function DrawCurrent()
     local moon = AshitaCore:GetResourceManager():GetString('moonphases', date.moon_phase)
     local day = AshitaCore:GetResourceManager():GetString('days', date.weekday)
 
-    imgui.Text(('%s (%2i%%%%)'):format(moon, date.moon_percent))
+    imgui.Separator()
+    imgui.Text(('%-15s %2i%%%%'):format(moon, date.moon_percent))
     imgui.Text(('%-13s %02i:%02i'):format(day, time.h, time.m))
-    imgui.Text(('Next restock: %02i:00'):format(poolResets[math.floor(time.h)]))
+    imgui.Text(('Restock at... %02i:00'):format(poolResets[math.floor(time.h)]))
+end
+
+local function DrawHaul()
+    imgui.Separator()
+    local invMgr = AshitaCore:GetMemoryManager():GetInventory()
+    imgui.Text(('%i free slot(s)'):format(invMgr:GetContainerCountMax(0) - invMgr:GetContainerCount(0)))
+
+    local inv = GetInventoryTotals(invMgr)
+    for itemId, count in pairs(inv) do
+        if fish:contains(itemId) then
+            local fishName = AshitaCore:GetResourceManager():GetItemById(itemId).Name[1]
+            imgui.Text(('%3ix %s'):format(count, fishName))
+        end
+    end
 end
 
 local function DrawHistory(history)
@@ -298,10 +345,11 @@ local fishe = {
 
             local zone = AshitaCore:GetMemoryManager():GetParty():GetMemberZone(0)
             local offset = fishMessageOffsets[zone]
+            if offset == nil then return end
             local realMessage = (msg.message % 0x8000) - offset
 
             local hookMsgs = T{ 0x08, 0x32, 0x33, 0x34, }
-            local feelMsgs = T{ 0x29, 0x2A, 0x2B, }
+            local feelMsgs = T{ 0x29, 0x2A, 0x2B, 0x35, }
 
             if hookMsgs:contains(realMessage) then
                 currentLine.hook = fishMessages[realMessage]
@@ -322,6 +370,7 @@ local fishe = {
         ui.DrawNormalWindow(options, function()
             imgui.Text(('%-13s %5.1f'):format('Fishe', options.skill[1]))
             DrawCurrent()
+            DrawHaul()
             DrawHistory(options.history)
         end)
     end,
