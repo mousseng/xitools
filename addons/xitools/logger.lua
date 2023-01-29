@@ -87,6 +87,19 @@ local function WriteBasic(basic)
     Dump('in 0x029', output)
 end
 
+local function WriteSpecial(special)
+    local output =
+        string.format('sender: %i\n', special.sender) ..
+        string.format('param1: %i\n', special.param1) ..
+        string.format('param2: %i\n', special.param2) ..
+        string.format('param3: %i\n', special.param3) ..
+        string.format('param4: %i\n', special.param4) ..
+        string.format('senderIdx: %i\n', special.senderIdx) ..
+        string.format('message: %i (0x%x)\n', special.message, special.message)
+
+    Dump('in 0x02A', output)
+end
+
 local function WriteSynthAnimation(synthAnim)
     local output =
         string.format('player: %i', synthAnim.player) .. '\n' ..
@@ -208,6 +221,8 @@ local function DispatchPacketIn(e)
         WriteAction(packet)
     elseif e.id == 0x029 then
         WriteBasic(packets.inbound.basic.parse(e.data))
+    elseif e.id == 0x02A then
+        WriteSpecial(packets.inbound.special.parse(e.data))
     elseif e.id == 0x030 then
         WriteSynthAnimation(packets.inbound.synthAnimation.parse(e.data))
     elseif e.id == 0x062 then

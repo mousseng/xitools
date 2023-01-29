@@ -205,6 +205,26 @@ local inboundBasic = {
     end
 }
 
+local inboundSpecial = {
+    id = 0x02A,
+    name = 'Special',
+    ---@param packet string
+    parse = function(packet)
+        local special = {
+            sender = struct.unpack('i4', packet, 0x04 + 1),
+            param1 = struct.unpack('i4', packet, 0x08 + 1),
+            param2 = struct.unpack('i4', packet, 0x0C + 1),
+            param3 = struct.unpack('i4', packet, 0x10 + 1),
+            param4 = struct.unpack('i4', packet, 0x14 + 1),
+            senderIdx = struct.unpack('i2', packet, 0x18 + 1),
+            message = struct.unpack('i2', packet, 0x1A + 1),
+            -- name = struct.unpack('s', packet, 0x1E + 1),
+        }
+
+        return special
+    end
+}
+
 local inboundDeath = {
     id = 0x02D,
     name = 'Death',
@@ -486,6 +506,7 @@ local packets = {
     inbound = {
         sorted = {
             inboundBasic,
+            inboundSpecial,
             inboundAction,
             inboundDeath,
             inboundChatMessage,
@@ -504,6 +525,7 @@ local packets = {
         fishCatch = inboundCaughtFish,
         action = inboundAction,
         basic = inboundBasic,
+        special = inboundSpecial,
         death = inboundDeath,
         synthAnimation = inboundSynthAnimation,
         npcMessage = inboundNpcMessage,
