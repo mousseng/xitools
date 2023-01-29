@@ -165,9 +165,9 @@ local fishMessages = {
     [0x29] = 'good feeling',
     [0x2A] = 'bad feeling',
     [0x2B] = 'terrible feeling',
-    [0x2C] = 'you might suck',
-    [0x2D] = 'you probably suck',
-    [0x2E] = 'you definitely suck',
+    [0x2C] = 'skill issue',
+    [0x2D] = 'big skill issue',
+    [0x2E] = 'yuge skill issue',
     [0x35] = 'good feeling', -- TODO: keen sense has its own packet
     [0x36] = 'caught a giga fish',
 }
@@ -233,10 +233,25 @@ local function GetInventoryTotals(inv)
     return cumInv
 end
 
+local function GetMessageViaOffset(messageId)
+    local zone = AshitaCore:GetMemoryManager():GetParty():GetMemberZone(0)
+    local offset = fishMessageOffsets[zone]
+    if offset == nil then
+        return nil
+    end
+    return (messageId % 0x8000) - offset
+end
+
 local function DrawCurrent()
     if currentLine.hook then
         imgui.Separator()
-        imgui.Text(currentLine.hook)
+        if currentLine.hook:startswith('snagged') then
+            imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.TpBarActive)
+            imgui.Text(currentLine.hook)
+            imgui.PopStyleColor()
+        else
+            imgui.Text(currentLine.hook)
+        end
     end
 
     if currentLine.feel then
@@ -339,17 +354,25 @@ local fishe = {
                 latestCatch.skillup = basic.value / 10
                 options.skill[1] = options.skill[1] + (basic.value / 10)
             end
+        elseif e.id == 0x02A then
+            -- keen senses
+            local special = packets.inbound.special.parse(e.data)
+            local realMessage = GetMessageViaOffset(special.message)
+            if realMessage == nil then return end
+
+            if realMessage == 0x35 then
+                local fishName = AshitaCore:GetResourceManager():GetItemById(special.param1).Name[1]
+                currentLine.hook = ('snagged %s'):format(fishName)
+            end
         elseif e.id == 0x036 then
             local msg = packets.inbound.npcMessage.parse(e.data)
             if msg.sender ~= player.ServerId then return end
 
-            local zone = AshitaCore:GetMemoryManager():GetParty():GetMemberZone(0)
-            local offset = fishMessageOffsets[zone]
-            if offset == nil then return end
-            local realMessage = (msg.message % 0x8000) - offset
+            local realMessage = GetMessageViaOffset(msg.message)
+            if realMessage == nil then return end
 
             local hookMsgs = T{ 0x08, 0x32, 0x33, 0x34, }
-            local feelMsgs = T{ 0x29, 0x2A, 0x2B, 0x35, }
+            local feelMsgs = T{ 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, }
 
             if hookMsgs:contains(realMessage) then
                 currentLine.hook = fishMessages[realMessage]
