@@ -70,9 +70,14 @@ local tracker = {
 
                         local _, existingTimer = tracker.ActiveItems:find_if(function(v) return v.id == target.id end)
                         if existingTimer == nil then
+                            local serverId = target.id
+                            if action.category == Ability then
+                                serverId = action.actor_id
+                            end
+
                             local castInfo = {
                                 id = target.id,
-                                name = ffxi.GetEntityNameByServerId(target.id),
+                                name = ffxi.GetEntityNameByServerId(serverId),
                                 time = os.time(),
                             }
 
