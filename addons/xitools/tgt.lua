@@ -424,10 +424,11 @@ local tgt = {
         if not options.showStatus[1] then return end
 
         -- clear state on zone changes
+        -- TODO: clear mob state on death
         if e.id == 0x00A then
             TrackedEnemies = { }
         elseif e.id == 0x028 then
-            HandleAction(TrackedEnemies, packets.inbound.action.parse(e.data_modified_raw))
+            HandleAction(TrackedEnemies, packets.inbound.action.parse(e.data_raw))
         elseif e.id == 0x029 then
             HandleBasic(TrackedEnemies, packets.inbound.basic.parse(e.data))
         end
