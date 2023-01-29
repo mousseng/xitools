@@ -314,35 +314,38 @@ local function DrawAlliance(alliance)
     end)
 end
 
+local function UpdateAlliances(options)
+    Alliances['xitools.us.1'] = {
+        GetPlayer:bindn(options),
+        GetMember:bindn(1, options.alliance1),
+        GetMember:bindn(2, options.alliance1),
+        GetMember:bindn(3, options.alliance1),
+        GetMember:bindn(4, options.alliance1),
+        GetMember:bindn(5, options.alliance1),
+    }
+    Alliances['xitools.us.2'] = {
+        GetMember:bindn(6, options.alliance2),
+        GetMember:bindn(7, options.alliance2),
+        GetMember:bindn(8, options.alliance2),
+        GetMember:bindn(9, options.alliance2),
+        GetMember:bindn(10, options.alliance2),
+        GetMember:bindn(11, options.alliance2),
+    }
+    Alliances['xitools.us.3'] = {
+        GetMember:bindn(12, options.alliance3),
+        GetMember:bindn(13, options.alliance3),
+        GetMember:bindn(14, options.alliance3),
+        GetMember:bindn(15, options.alliance3),
+        GetMember:bindn(16, options.alliance3),
+        GetMember:bindn(17, options.alliance3),
+    }
+end
+
 ---@type xitool
 local us = {
     Name = 'us',
-    Load = function(options)
-        Alliances['xitools.us.1'] = {
-            GetPlayer:bindn(options),
-            GetMember:bindn(1, options.alliance1),
-            GetMember:bindn(2, options.alliance1),
-            GetMember:bindn(3, options.alliance1),
-            GetMember:bindn(4, options.alliance1),
-            GetMember:bindn(5, options.alliance1),
-        }
-        Alliances['xitools.us.2'] = {
-            GetMember:bindn(6, options.alliance2),
-            GetMember:bindn(7, options.alliance2),
-            GetMember:bindn(8, options.alliance2),
-            GetMember:bindn(9, options.alliance2),
-            GetMember:bindn(10, options.alliance2),
-            GetMember:bindn(11, options.alliance2),
-        }
-        Alliances['xitools.us.3'] = {
-            GetMember:bindn(12, options.alliance3),
-            GetMember:bindn(13, options.alliance3),
-            GetMember:bindn(14, options.alliance3),
-            GetMember:bindn(15, options.alliance3),
-            GetMember:bindn(16, options.alliance3),
-            GetMember:bindn(17, options.alliance3),
-        }
-    end,
+    UpdateSettings = UpdateAlliances,
+    Load = UpdateAlliances,
     HandlePacketOut = function(e, options) end,
     HandlePacket = function(e, options) end,
     DrawConfig = function(options)

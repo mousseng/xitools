@@ -11,6 +11,7 @@ local settings = require('settings')
 local ui = require('ui')
 
 ---@class xitool
+---@field UpdateSettings  function
 ---@field Load            function
 ---@field DrawMain        function
 ---@field DrawConfig      function
@@ -96,9 +97,6 @@ local defaultOptions = T{
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
             trackers = T{
                 -- for type: 4 is spell, 6 is job ability
-                T{ IsEnabled = T{ false }, Id = 547, Name = '', Type = 6, Duration =  30, ActiveItems = T{}, }, -- provoke
-                T{ IsEnabled = T{ false }, Id = 556, Name = '', Type = 6, Duration =  60, ActiveItems = T{}, }, -- sneak
-                T{ IsEnabled = T{ false }, Id = 588, Name = '', Type = 6, Duration =  60, ActiveItems = T{}, }, -- trick
                 T{ IsEnabled = T{ false }, Id =  57, Name = '', Type = 4, Duration = 180, ActiveItems = T{}, }, -- haste
                 T{ IsEnabled = T{ false }, Id = 109, Name = '', Type = 4, Duration = 150, ActiveItems = T{}, }, -- refresh
                 T{ IsEnabled = T{ false }, Id = 108, Name = '', Type = 4, Duration =  75, ActiveItems = T{}, }, -- regen i
@@ -112,6 +110,12 @@ local defaultOptions = T{
                 T{ IsEnabled = T{ false }, Id = 397, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet iv
                 T{ IsEnabled = T{ false }, Id = 399, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- sword madrigal
                 T{ IsEnabled = T{ false }, Id = 400, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- blade madrigal
+                T{ IsEnabled = T{ false }, Id =  35, Name = '', Type = 6, Duration =  30, ActiveItems = T{}, }, -- provoke
+                T{ IsEnabled = T{ false }, Id =  44, Name = '', Type = 6, Duration =  60, ActiveItems = T{}, }, -- sneak
+                T{ IsEnabled = T{ false }, Id =  76, Name = '', Type = 6, Duration =  60, ActiveItems = T{}, }, -- trick
+                T{ IsEnabled = T{ false }, Id =  74, Name = '', Type = 6, Duration = 600, ActiveItems = T{}, }, -- e.seal
+                T{ IsEnabled = T{ false }, Id =  75, Name = '', Type = 6, Duration = 600, ActiveItems = T{}, }, -- d.seal
+                T{ IsEnabled = T{ false }, Id =  83, Name = '', Type = 6, Duration = 780, ActiveItems = T{}, }, -- convert
             },
         },
         crafty = T{
@@ -151,6 +155,7 @@ local defaultOptions = T{
                 inbound = T{
                     [0x028] = { true },
                     [0x029] = { true },
+                    [0x02A] = { true },
                     [0x030] = { true },
                     [0x062] = { true },
                     [0x06F] = { true },
@@ -199,6 +204,12 @@ settings.register('settings', 'settings_update', function (s)
     end
 
     settings.save()
+
+    for _, tool in ipairs(tools) do
+        if tool.UpdateSettings ~= nil then
+            tool.UpdateSettings(options.tools[tool.Name])
+        end
+    end
 end)
 
 ashita.events.register('load', 'load_handler', function()
