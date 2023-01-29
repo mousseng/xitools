@@ -35,8 +35,8 @@ local Level30 = {
         -- Feet = "",
         -- Neck = "",
         -- Waist = "",
-        -- Ear1 = "",
-        -- Ear2 = "",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
         -- Ring1 = "",
         -- Ring2 = "",
         -- Back = "",
@@ -132,7 +132,7 @@ local Level40 = {
         Ear2 = "Cunning Earring",
         Ring1 = "San d'Orian Ring",
         Ring2 = "Chariot Band",
-        Back = "Cotton Cape",
+        Back = "Black Cape",
     },
     Rest = {
         Main = "Pilgrim's Wand",
@@ -207,7 +207,7 @@ local Level40 = {
         Ear2 = "Cunning Earring",
         Ring1 = "Hermit's Ring",
         Ring2 = "Hermit's Ring",
-        -- Back = "",
+        Back = "Black Cape",
     },
     Mnd = {
         Main = "Fencing Degen",
@@ -225,7 +225,7 @@ local Level40 = {
         -- Ear2 = "",
         Ring1 = "San d'Orian Ring",
         Ring2 = "Ascetic's Ring",
-        -- Back = "",
+        Back = "White Cape",
     },
 }
 
@@ -247,7 +247,7 @@ local profile = {
             Ear2 = "Cunning Earring",
             Ring1 = "San d'Orian Ring",
             Ring2 = "Chariot Band",
-            Back = "Cotton Cape",
+            Back = "Black Cape",
         },
         Rest = {
             Main = "Pilgrim's Wand",
@@ -322,7 +322,7 @@ local profile = {
             Ear2 = "Cunning Earring",
             Ring1 = "Hermit's Ring",
             Ring2 = "Hermit's Ring",
-            -- Back = "",
+            Back = "Black Cape",
         },
         Mnd = {
             Main = "Fencing Degen",
@@ -340,16 +340,16 @@ local profile = {
             -- Ear2 = "",
             Ring1 = "San d'Orian Ring",
             Ring2 = "Ascetic's Ring",
-            -- Back = "",
+            Back = "White Cape",
         },
         Movement = { },
         Solo = {
-            Main = "Fencing Degen",
-            Sub = "Parana Shield",
+            Main = "Buzzard Tuck",
+            Sub = "Fencing Degen",
             Range = nil,
         },
         Fish = {
-            Range = "Bamboo Fish. Rod",
+            Range = "Halcyon Rod",
             Ammo = "Insect Ball",
             Body = "Fsh. Tunica",
             Hands = "Fsh. Gloves",
@@ -367,6 +367,68 @@ local profile = {
     Packer = {
     },
 }
+
+local function SilentToggle(slot, shouldDisable)
+    if slot == 'all' then
+        for i = 1,16 do
+            gState.Disabled[i] = shouldDisable
+        end
+        return
+    end
+
+    local slotIndex = gData.GetEquipSlot(slot)
+    if slotIndex ~= 0 then
+        gState.Disabled[slotIndex] = shouldDisable
+    end
+end
+
+local function SilentEnable(slot)
+    SilentToggle(slot, false)
+end
+
+local function SilentDisable(slot)
+    SilentToggle(slot, true)
+end
+
+local function ToggleSoloMode(shouldEnable)
+    gSettings.SoloMode = shouldEnable
+
+    if shouldEnable then
+        print(chat.header('LAC: RDM'):append(chat.message('enabling solo mode')))
+        gFunc.ForceEquipSet('Solo')
+        SilentDisable('Main')
+        SilentDisable('Sub')
+        SilentDisable('Range')
+    else
+        print(chat.header('LAC: RDM'):append(chat.message('disabling solo mode')))
+        SilentEnable('Main')
+        SilentEnable('Sub')
+        SilentEnable('Range')
+    end
+end
+
+local function ToggleFishMode(shouldEnable)
+    gSettings.FishMode = shouldEnable
+
+    if shouldEnable then
+        print(chat.header('LAC: RDM'):append(chat.message('enabling fish mode')))
+        gFunc.ForceEquipSet('Fish')
+        SilentDisable('Range')
+        SilentDisable('Ammo')
+        SilentDisable('Body')
+        SilentDisable('Hands')
+        SilentDisable('Legs')
+        SilentDisable('Feet')
+    else
+        print(chat.header('LAC: RDM'):append(chat.message('disabling fish mode')))
+        SilentEnable('Range')
+        SilentEnable('Ammo')
+        SilentEnable('Body')
+        SilentEnable('Hands')
+        SilentEnable('Legs')
+        SilentEnable('Feet')
+    end
+end
 
 profile.OnLoad = function()
     gSettings.AllowAddSet = true
@@ -404,23 +466,11 @@ profile.HandleCommand = function(args)
     if #args == 0 then return end
 
     if args[1] == 'solo' then
-        if (#args == 1 and not gSettings.SoloMode) or (#args == 2 and args[2] == 'on') then
-            gSettings.SoloMode = true
-            print(chat.header('LAC: RDM'):append(chat.message('enabling solo mode')))
-        elseif (#args == 1 and gSettings.SoloMode) or (#args == 2 and args[2] == 'off') then
-            gSettings.SoloMode = false
-            print(chat.header('LAC: RDM'):append(chat.message('disabling solo mode')))
-        end
+        ToggleSoloMode((#args == 1 and not gSettings.SoloMode) or (#args == 2 and args[2] == 'on'))
     end
 
     if args[1] == 'fish' then
-        if (#args == 1 and not gSettings.FishMode) or (#args == 2 and args[2] == 'on') then
-            gSettings.FishMode = true
-            print(chat.header('LAC: RDM'):append(chat.message('enabling fish mode')))
-        elseif (#args == 1 and gSettings.FishMode) or (#args == 2 and args[2] == 'off') then
-            gSettings.FishMode = false
-            print(chat.header('LAC: RDM'):append(chat.message('disabling fish mode')))
-        end
+        ToggleFishMode((#args == 1 and not gSettings.FishMode) or (#args == 2 and args[2] == 'on'))
     end
 end
 
@@ -440,14 +490,6 @@ profile.HandleDefault = function()
         gFunc.EquipSet(Level30.Tp)
         gFunc.EquipSet(Level40.Tp)
         gFunc.EquipSet('Tp')
-    end
-
-    if gSettings.SoloMode then
-        gFunc.EquipSet('Solo')
-    end
-
-    if gSettings.FishMode then
-        gFunc.EquipSet('Fish')
     end
 end
 
@@ -524,6 +566,14 @@ profile.HandleWeaponskill = function()
         gFunc.EquipSet(Level40.Int)
         gFunc.EquipSet('Int')
     elseif hpSkills:contains(weaponskill.Name) then
+    end
+
+    if gSettings.SoloMode then
+        gFunc.EquipSet('Solo')
+    end
+
+    if gSettings.FishMode then
+        gFunc.EquipSet('Fish')
     end
 end
 

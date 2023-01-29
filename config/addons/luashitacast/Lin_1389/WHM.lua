@@ -19,7 +19,7 @@ local profile = {
             Ear2 = "Cunning Earring",
             Ring1 = "San d'Orian Ring",
             Ring2 = "Chariot Band",
-            Back = "Cotton Cape",
+            Back = "White Cape",
         },
         Rest = {
             Main = "Pilgrim's Wand",
@@ -40,7 +40,7 @@ local profile = {
             Ear2 = "Cunning Earring",
             Ring1 = "Hermit's Ring",
             Ring2 = "Hermit's Ring",
-            -- Back = "",
+            Back = "Black Cape",
         },
         Mnd = {
             Main = "Yew Wand",
@@ -58,7 +58,7 @@ local profile = {
             -- Ear2 = "",
             Ring1 = "San d'Orian Ring",
             Ring2 = "Ascetic's Ring",
-            -- Back = "",
+            Back = "White Cape",
         },
         Movement = { },
         Solo = {
@@ -91,7 +91,7 @@ profile.OnLoad = function()
 
     ashita.tasks.once(3, function()
         print(chat.header('LAC: WHM'):append(chat.message('setting glamour')))
-        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 19')
+        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 20')
         AshitaCore:GetChatManager():QueueCommand(1, '/sl blink')
     end)
 end
