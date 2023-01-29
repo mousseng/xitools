@@ -15,7 +15,6 @@ local Threnodies = {
 }
 
 -- The state we're operating on is the expiry time of the statuses
----@type Debuffs
 local DefaultDebuffs = {
     -- standard fare
     dia = 0,
@@ -89,7 +88,7 @@ local function GetThrenodyColor(element)
     end
 end
 
----@param debuffs TrackedEnemies
+---@param debuffs table
 ---@param action any
 local function HandleAction(debuffs, action)
     local now = os.time()
@@ -141,9 +140,6 @@ local function HandleAction(debuffs, action)
                         expiry = now + 120
                     elseif spell == 25 or spell == 232 then
                         expiry = now + 150
-                    else
-                        -- something went wrong
-                        expiry = nil
                     end
 
                     if spell == 23 or spell == 24 or spell == 25 or spell == 33 then
@@ -165,9 +161,6 @@ local function HandleAction(debuffs, action)
                         expiry = now + 120
                     elseif spell == 25 or spell == 232 then
                         expiry = now + 150
-                    else
-                        -- something went wrong
-                        expiry = nil
                     end
 
                     if spell == 23 or spell == 24 or spell == 25 or spell == 33 then
@@ -244,7 +237,7 @@ local function HandleAction(debuffs, action)
     end
 end
 
----@param debuffs TrackedEnemies
+---@param debuffs table
 ---@param basic any
 local function HandleBasic(debuffs, basic)
     -- if we're tracking a mob that dies, reset its status
@@ -359,7 +352,7 @@ local function DrawStatusEntry(text, isActive, color)
     imgui.PopStyleColor()
 end
 
----@param debuffs Debuffs
+---@param debuffs table
 local function DrawStatus(debuffs)
     local now = os.time()
     imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 })
