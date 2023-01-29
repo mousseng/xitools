@@ -187,6 +187,8 @@ local function HandleAction(debuffs, action)
                         debuffs[target.id].grav = now + 120
                     elseif spell == 254 or spell == 276 then -- blind/blind2
                         debuffs[target.id].blind = now + 180
+                    elseif spell == 112 then -- flash
+                        debuffs[target.id].blind = now + 12
                     elseif spell == 59 or spell == 359 then -- silence/ga
                         debuffs[target.id].silence = now + 120
                     elseif spell == 253 or spell == 259 or spell == 273 or spell == 274 then -- sleep/2/ga/2
@@ -259,7 +261,7 @@ local function HandleBasic(debuffs, basic)
             debuffs[basic.target].poison = 0
         elseif basic.param == 4 or basic.param == 566 then
             debuffs[basic.target].para = 0
-        elseif basic.param == 5 then
+        elseif basic.param == 5 or basic.param == 156 then
             debuffs[basic.target].blind = 0
         elseif basic.param == 6 then
             debuffs[basic.target].silence = 0
