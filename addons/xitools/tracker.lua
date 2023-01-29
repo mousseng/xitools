@@ -12,7 +12,7 @@ local function GetSpellName(id)
 end
 
 local function GetAbilityName(id)
-    return AshitaCore:GetResourceManager():GetAbilityById(id).Name[1]
+    return AshitaCore:GetResourceManager():GetAbilityById(id + 512).Name[1]
 end
 
 local function IsInParty(serverId)
