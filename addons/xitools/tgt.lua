@@ -112,7 +112,7 @@ local function HandleAction(debuffs, action)
                 -- magic burst message. Stun seems to be 268. Para shows in the
                 -- database as  having burst message 84, and Para2 shows as not
                 -- having a magic burst message. PServer nonsense?
-                if message == 84 or message == 252 or message == 268 then
+                if message == 84 or message == 252 or message == 268 or message == 271 then
                     if spell == 58 or spell == 80 then -- para/para2
                         debuffs[target.id].para = now + 120
                     elseif spell == 252 then -- stun
