@@ -373,8 +373,6 @@ local us = {
     },
     UpdateSettings = UpdateAlliances,
     Load = UpdateAlliances,
-    HandlePacketOut = function(e, options) end,
-    HandlePacket = function(e, options) end,
     DrawConfig = function(options)
         if imgui.BeginTabItem('us') then
             imgui.Checkbox('Enabled', options.isEnabled)

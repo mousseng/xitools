@@ -87,7 +87,6 @@ local tracker = {
             end
         end
     end,
-    HandlePacketOut = function(e, options) end,
     HandlePacket = function(e, options)
         -- TODO: cancel bard song timers when a song is overwritten
         if e.id == 0x28 then

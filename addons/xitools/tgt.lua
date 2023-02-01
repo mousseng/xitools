@@ -420,8 +420,6 @@ local tgt = {
         pos = T{ 100, 100 },
         flags = bit.bor(ImGuiWindowFlags_NoDecoration),
     },
-    Load = function(options) end,
-    HandlePacketOut = function(e, options) end,
     HandlePacket = function(e, options)
         -- don't track anything if we're not displaying it
         if not options.showStatus[1] then return end

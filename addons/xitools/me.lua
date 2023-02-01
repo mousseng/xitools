@@ -150,9 +150,6 @@ local me = {
         pos = T{ 100, 100 },
         flags = bit.bor(ImGuiWindowFlags_NoDecoration),
     },
-    Load = function(options) end,
-    HandlePacketOut = function(e, options) end,
-    HandlePacket = function(e, options) end,
     DrawConfig = function(options)
         if imgui.BeginTabItem('me') then
             imgui.Checkbox('Enabled', options.isEnabled)

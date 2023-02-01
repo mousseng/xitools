@@ -255,7 +255,6 @@ local logger = {
             },
         }
     },
-    Load = function(options) end,
     HandlePacketOut = function(e, options)
         if options.loggedPackets.outbound[e.id] and options.loggedPackets.outbound[e.id][1] then
             DispatchPacketOut(e)
