@@ -111,7 +111,7 @@ local function DrawTrackers(trackers)
             local elapsed = now - activeItem.time
 
             if elapsed > trackedItem.Duration[1] + 5 then
-                table.remove(trackedItem.ActiveItems[1], idx)
+                table.remove(trackedItem.ActiveItems, idx)
             elseif elapsed > trackedItem.Duration[1] then
                 imgui.TextDisabled(('%s %s'):format(Arrow, activeItem.name))
             else
