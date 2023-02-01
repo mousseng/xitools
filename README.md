@@ -8,8 +8,6 @@ a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 - `rcheck` makes it easy to check party/alliance readiness by asking and doing
   the tallying for you
 - `minimap-helper` auto-configures the zoom for your Minimap plugin
-- `tracker` is a primitive ability tracker tailored for the author
-- `logger` logs some simple packet data for diagnostic and dev purposes
 
 ## config
 these are my ashitacast configs. perhaps you'll find them useful; mostly i just
