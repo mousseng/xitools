@@ -62,7 +62,7 @@ local profile = {
             Body = { "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
             Hands = { "Savage Gauntlets", "Dream Mittens +1" },
             Legs = { "Savage Loincloth", "Dream Pants +1" },
-            Feet = { "Savage Gaiters", "Dream Boots +1" },
+            Feet = { "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
             Neck = { "Tiger Stole" },
             Waist = { "Friar's Rope" },
             Ear1 = { },
@@ -137,7 +137,7 @@ local profile = {
             Body = { "Ryl.Ftm. Tunic" },
             -- Hands = { },
             -- Legs = { },
-            -- Feet = { },
+            Feet = { "Warlock's Boots" },
             Neck = { "Black Neckerchief" },
             Waist = { "Wizard's Belt" },
             -- Ear1 = { },
@@ -155,7 +155,7 @@ local profile = {
             -- Body = { },
             Hands = { "Savage Gauntlets" },
             Legs = { "Savage Loincloth" },
-            -- Feet = { },
+            Feet = { "Warlock's Boots" },
             Neck = { "Justice Badge" },
             Waist = { "Friar's Rope" },
             -- Ear1 = { },
@@ -243,12 +243,12 @@ profile.HandleDefault = function()
     end
 
     gFunc.EquipSet('Base')
-    if player.IsMoving then
-        gFunc.EquipSet('Movement')
-    elseif player.Status == 'Resting' then
+    if player.Status == 'Resting' then
         gFunc.EquipSet('Rest')
     elseif player.Status == 'Engaged' then
         gFunc.EquipSet('Tp')
+    elseif player.IsMoving then
+        gFunc.EquipSet('Movement')
     end
 end
 
