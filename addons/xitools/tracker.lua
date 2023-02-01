@@ -1,3 +1,5 @@
+require('common')
+local bit = require('bit')
 local imgui = require('imgui')
 local ui = require('ui')
 local ffxi = require('utils.ffxi')
@@ -46,6 +48,36 @@ end
 ---@type xitool
 local tracker = {
     Name = 'tracker',
+    DefaultSettings = T{
+        isEnabled = T{ false },
+        isVisible = T{ true },
+        name = 'xitools.tracker',
+        size = T{ -1, -1 },
+        pos = T{ 100, 100 },
+        flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        trackers = T{
+            -- for type: 4 is spell, 6 is job ability
+            T{ IsEnabled = T{ false }, Id =  57, Name = '', Type = 4, Duration = 180, ActiveItems = T{}, }, -- haste
+            T{ IsEnabled = T{ false }, Id = 109, Name = '', Type = 4, Duration = 150, ActiveItems = T{}, }, -- refresh
+            T{ IsEnabled = T{ false }, Id = 108, Name = '', Type = 4, Duration =  75, ActiveItems = T{}, }, -- regen i
+            T{ IsEnabled = T{ false }, Id = 110, Name = '', Type = 4, Duration =  60, ActiveItems = T{}, }, -- regen ii
+            T{ IsEnabled = T{ false }, Id = 111, Name = '', Type = 4, Duration =  60, ActiveItems = T{}, }, -- regen iii
+            T{ IsEnabled = T{ false }, Id = 386, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- ballad i
+            T{ IsEnabled = T{ false }, Id = 387, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- ballad ii
+            T{ IsEnabled = T{ false }, Id = 394, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet i
+            T{ IsEnabled = T{ false }, Id = 395, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet ii
+            T{ IsEnabled = T{ false }, Id = 396, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet iii
+            T{ IsEnabled = T{ false }, Id = 397, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet iv
+            T{ IsEnabled = T{ false }, Id = 399, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- sword madrigal
+            T{ IsEnabled = T{ false }, Id = 400, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- blade madrigal
+            T{ IsEnabled = T{ false }, Id =  35, Name = '', Type = 6, Duration =  30, ActiveItems = T{}, }, -- provoke
+            T{ IsEnabled = T{ false }, Id =  44, Name = '', Type = 6, Duration =  60, ActiveItems = T{}, }, -- sneak
+            T{ IsEnabled = T{ false }, Id =  76, Name = '', Type = 6, Duration =  60, ActiveItems = T{}, }, -- trick
+            T{ IsEnabled = T{ false }, Id =  74, Name = '', Type = 6, Duration = 600, ActiveItems = T{}, }, -- e.seal
+            T{ IsEnabled = T{ false }, Id =  75, Name = '', Type = 6, Duration = 600, ActiveItems = T{}, }, -- d.seal
+            T{ IsEnabled = T{ false }, Id =  83, Name = '', Type = 6, Duration = 780, ActiveItems = T{}, }, -- convert
+        },
+    },
     Load = function(options)
         for _, tracker in pairs(options.trackers) do
             if tracker.Type == Spell then

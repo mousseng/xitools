@@ -237,6 +237,24 @@ end
 ---@type xitool
 local logger = {
     Name = 'logger',
+    DefaultSettings = T{
+        isEnabled = T{ false },
+        isVisible = T{ false },
+        loggedPackets = T{
+            inbound = T{
+                [0x028] = { true },
+                [0x029] = { true },
+                [0x02A] = { true },
+                [0x030] = { true },
+                [0x062] = { true },
+                [0x06F] = { true },
+                [0x070] = { true },
+            },
+            outbound = T{
+                [0x096] = { true },
+            },
+        }
+    },
     Load = function(options) end,
     HandlePacketOut = function(e, options)
         if options.loggedPackets.outbound[e.id] and options.loggedPackets.outbound[e.id][1] then

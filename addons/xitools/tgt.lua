@@ -1,4 +1,5 @@
 require('common')
+local bit = require('bit')
 local imgui = require('imgui')
 local ui = require('ui')
 local packets = require('utils.packets')
@@ -410,6 +411,15 @@ end
 ---@type xitool
 local tgt = {
     Name = 'tgt',
+    DefaultSettings = T{
+        isEnabled = T{ false },
+        isVisible = T{ true },
+        showStatus = T{ false },
+        name = 'xitools.tgt',
+        size = T{ 277, -1 },
+        pos = T{ 100, 100 },
+        flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+    },
     Load = function(options) end,
     HandlePacketOut = function(e, options) end,
     HandlePacket = function(e, options)

@@ -344,6 +344,33 @@ end
 ---@type xitool
 local us = {
     Name = 'us',
+    DefaultSettings = T{
+        isEnabled = T{ false },
+        isVisible = T{ true },
+        hideWhenSolo = T{ false },
+        showCastbar = T{ true },
+        alliance1 = T{
+            isVisible = T{ true },
+            name = 'xitools.us.1',
+            size = T{ 277, -1 },
+            pos = T{ 392, 628 },
+            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        },
+        alliance2 = T{
+            isVisible = T{ true },
+            name = 'xitools.us.2',
+            size = T{ 277, -1 },
+            pos = T{ 107, 628 },
+            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        },
+        alliance3 = T{
+            isVisible = T{ true },
+            name = 'xitools.us.3',
+            size = T{ 277, -1 },
+            pos = T{ 000, 628 },
+            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        },
+    },
     UpdateSettings = UpdateAlliances,
     Load = UpdateAlliances,
     HandlePacketOut = function(e, options) end,

@@ -1,4 +1,5 @@
 require('common')
+local bit = require('bit')
 local ffxi = require('utils.ffxi')
 local imgui = require('imgui')
 local ui = require('ui')
@@ -141,6 +142,14 @@ end
 ---@type xitool
 local me = {
     Name = 'me',
+    DefaultSettings = T{
+        isEnabled = T{ false },
+        isVisible = T{ true },
+        name = 'xitools.me',
+        size = T{ 277, -1 },
+        pos = T{ 100, 100 },
+        flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+    },
     Load = function(options) end,
     HandlePacketOut = function(e, options) end,
     HandlePacket = function(e, options) end,

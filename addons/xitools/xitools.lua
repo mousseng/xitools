@@ -4,28 +4,39 @@ addon.version = '0.8'
 addon.desc    = 'A humble UI toolkit'
 
 require('common')
-local bit = require('bit')
 local ffxi = require('utils.ffxi')
 local imgui = require('imgui')
 local settings = require('settings')
 local ui = require('ui')
 
 ---@class xitool
----@field UpdateSettings  function
----@field Load            function
----@field DrawMain        function
+---@field Name            string
+---@field Aliases         string[]?
+---@field DefaultSettings table
+---@field UpdateSettings  function?
+---@field Load            function?
+---@field HandlePacket    function?
+---@field HandlePacketOut function?
+---@field HandleCommand   function?
 ---@field DrawConfig      function
----@field HandlePacket    function
----@field HandlePacketOut function
+---@field DrawMain        function
+
+local me = require('me')
+local us = require('us')
+local tgt = require('tgt')
+local tracker = require('tracker')
+local crafty = require('crafty')
+local fishe = require('fishe')
+local logger = require('logger')
 
 local tools = {
-    require('me'),
-    require('us'),
-    require('tgt'),
-    require('tracker'),
-    require('crafty'),
-    require('fishe'),
-    require('logger'),
+    me,
+    us,
+    tgt,
+    tracker,
+    crafty,
+    fishe,
+    logger,
 }
 
 local defaultOptions = T{
@@ -38,134 +49,19 @@ local defaultOptions = T{
     tools = T{
         config = T{
             isEnabled = T{ true },
-            isVisible = T{ true },
+            isVisible = T{ false },
             name = 'xitools.config',
             size = T{ -1, -1 },
             pos = T{ 100, 100 },
             flags = ImGuiWindowFlags_NoResize,
         },
-        me = T{
-            isEnabled = T{ false },
-            isVisible = T{ true },
-            name = 'xitools.me',
-            size = T{ 277, -1 },
-            pos = T{ 100, 100 },
-            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
-        },
-        us = T{
-            isEnabled = T{ false },
-            isVisible = T{ true },
-            hideWhenSolo = T{ false },
-            showCastbar = T{ true },
-            alliance1 = T{
-                isVisible = T{ true },
-                name = 'xitools.us.1',
-                size = T{ 277, -1 },
-                pos = T{ 392, 628 },
-                flags = bit.bor(ImGuiWindowFlags_NoDecoration),
-            },
-            alliance2 = T{
-                isVisible = T{ true },
-                name = 'xitools.us.2',
-                size = T{ 277, -1 },
-                pos = T{ 107, 628 },
-                flags = bit.bor(ImGuiWindowFlags_NoDecoration),
-            },
-            alliance3 = T{
-                isVisible = T{ true },
-                name = 'xitools.us.3',
-                size = T{ 277, -1 },
-                pos = T{ 000, 628 },
-                flags = bit.bor(ImGuiWindowFlags_NoDecoration),
-            },
-        },
-        tgt = T{
-            isEnabled = T{ false },
-            isVisible = T{ true },
-            showStatus = T{ false },
-            name = 'xitools.tgt',
-            size = T{ 277, -1 },
-            pos = T{ 100, 100 },
-            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
-        },
-        tracker = T{
-            isEnabled = T{ false },
-            isVisible = T{ true },
-            name = 'xitools.tracker',
-            size = T{ -1, -1 },
-            pos = T{ 100, 100 },
-            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
-            trackers = T{
-                -- for type: 4 is spell, 6 is job ability
-                T{ IsEnabled = T{ false }, Id =  57, Name = '', Type = 4, Duration = 180, ActiveItems = T{}, }, -- haste
-                T{ IsEnabled = T{ false }, Id = 109, Name = '', Type = 4, Duration = 150, ActiveItems = T{}, }, -- refresh
-                T{ IsEnabled = T{ false }, Id = 108, Name = '', Type = 4, Duration =  75, ActiveItems = T{}, }, -- regen i
-                T{ IsEnabled = T{ false }, Id = 110, Name = '', Type = 4, Duration =  60, ActiveItems = T{}, }, -- regen ii
-                T{ IsEnabled = T{ false }, Id = 111, Name = '', Type = 4, Duration =  60, ActiveItems = T{}, }, -- regen iii
-                T{ IsEnabled = T{ false }, Id = 386, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- ballad i
-                T{ IsEnabled = T{ false }, Id = 387, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- ballad ii
-                T{ IsEnabled = T{ false }, Id = 394, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet i
-                T{ IsEnabled = T{ false }, Id = 395, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet ii
-                T{ IsEnabled = T{ false }, Id = 396, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet iii
-                T{ IsEnabled = T{ false }, Id = 397, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- minuet iv
-                T{ IsEnabled = T{ false }, Id = 399, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- sword madrigal
-                T{ IsEnabled = T{ false }, Id = 400, Name = '', Type = 4, Duration = 120, ActiveItems = T{}, }, -- blade madrigal
-                T{ IsEnabled = T{ false }, Id =  35, Name = '', Type = 6, Duration =  30, ActiveItems = T{}, }, -- provoke
-                T{ IsEnabled = T{ false }, Id =  44, Name = '', Type = 6, Duration =  60, ActiveItems = T{}, }, -- sneak
-                T{ IsEnabled = T{ false }, Id =  76, Name = '', Type = 6, Duration =  60, ActiveItems = T{}, }, -- trick
-                T{ IsEnabled = T{ false }, Id =  74, Name = '', Type = 6, Duration = 600, ActiveItems = T{}, }, -- e.seal
-                T{ IsEnabled = T{ false }, Id =  75, Name = '', Type = 6, Duration = 600, ActiveItems = T{}, }, -- d.seal
-                T{ IsEnabled = T{ false }, Id =  83, Name = '', Type = 6, Duration = 780, ActiveItems = T{}, }, -- convert
-            },
-        },
-        crafty = T{
-            isEnabled = T{ false },
-            isVisible = T{ true },
-            name = 'xitools.crafty',
-            size = T{ -1, -1 },
-            pos = T{ 100, 100 },
-            flags = ImGuiWindowFlags_NoResize,
-            skills = T{
-                [0] = T{ 0.0 },
-                [1] = T{ 0.0 },
-                [2] = T{ 0.0 },
-                [3] = T{ 0.0 },
-                [4] = T{ 0.0 },
-                [5] = T{ 0.0 },
-                [6] = T{ 0.0 },
-                [7] = T{ 0.0 },
-                [8] = T{ 0.0 },
-            },
-            history = T{},
-        },
-        fishe = T{
-            isEnabled = T{ false },
-            isVisible = T{ true },
-            name = 'xitools.fishe',
-            size = T{ -1, -1 },
-            pos = T{ 100, 100 },
-            flags = ImGuiWindowFlags_None,
-            skill = T{ 0.0 },
-            history = T{},
-        },
-        logger = T{
-            isEnabled = T{ false },
-            isVisible = T{ false },
-            loggedPackets = T{
-                inbound = T{
-                    [0x028] = { true },
-                    [0x029] = { true },
-                    [0x02A] = { true },
-                    [0x030] = { true },
-                    [0x062] = { true },
-                    [0x06F] = { true },
-                    [0x070] = { true },
-                },
-                outbound = T{
-                    [0x096] = { true },
-                },
-            }
-        },
+        me = me.DefaultSettings,
+        us = us.DefaultSettings,
+        tgt = tgt.DefaultSettings,
+        tracker = tracker.DefaultSettings,
+        crafty = crafty.DefaultSettings,
+        fishe = fishe.DefaultSettings,
+        logger = logger.DefaultSettings,
     },
 }
 
@@ -213,8 +109,10 @@ settings.register('settings', 'settings_update', function (s)
 end)
 
 ashita.events.register('load', 'load_handler', function()
-    for i, tool in ipairs(tools) do
-        tool.Load(options.tools[tool.Name])
+    for _, tool in ipairs(tools) do
+        if tool.Load ~= nil then
+            tool.Load(options.tools[tool.Name])
+        end
     end
 end)
 
@@ -243,16 +141,16 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
 end)
 
 ashita.events.register('packet_out', 'packet_out_handler', function(e)
-    for i, tool in ipairs(tools) do
-        if options.tools[tool.Name].isEnabled[1] then
+    for _, tool in ipairs(tools) do
+        if options.tools[tool.Name].isEnabled[1] and tool.HandlePacketOut ~= nil then
             tool.HandlePacketOut(e, options.tools[tool.Name])
         end
     end
 end)
 
 ashita.events.register('packet_in', 'packet_in_handler', function(e)
-    for i, tool in ipairs(tools) do
-        if options.tools[tool.Name].isEnabled[1] then
+    for _, tool in ipairs(tools) do
+        if options.tools[tool.Name].isEnabled[1] and tool.HandlePacket ~= nil then
             tool.HandlePacket(e, options.tools[tool.Name])
         end
     end
@@ -260,32 +158,25 @@ end)
 
 ashita.events.register('command', 'command_handler', function(e)
     local args = e.command:args()
+    local cmd = args[1]
+    local verb = args[2]
 
-    if #args == 0 or not T{'/xit','/xitools'}:contains(args[1]) then
+    if cmd == nil or (cmd ~= '/xit' and cmd ~= '/xitools') then
         return
     end
 
-    if #args == 1 or args[2] == 'config' then
+    if verb == nil or verb == 'config' then
         options.tools.config.isVisible[1] = not options.tools.config.isVisible[1]
     end
 
-    if #args == 2 and args[2] == 'demo' then
+    if verb == 'demo' then
         options.globals.showDemo[1] = true
     end
 
-    if #args == 2 and T{'craft','crafty'}:contains(args[2]) then
-        options.tools.crafty.isVisible[1] = not options.tools.crafty.isVisible[1]
-    end
-
-    if #args == 3 and T{'craft','crafty'}:contains(args[2]) and T{'cl','clear'}:contains(args[3]) then
-        options.tools.crafty.history = T{}
-    end
-
-    if #args == 2 and T{'fish','fishe'}:contains(args[2]) then
-        options.tools.fishe.isVisible[1] = not options.tools.fishe.isVisible[1]
-    end
-
-    if #args == 3 and T{'fish','fishe'}:contains(args[2]) and T{'cl','clear'}:contains(args[3]) then
-        options.tools.fishe.history = T{}
+    for _, tool in ipairs(tools) do
+        if tool.HandleCommand ~= nil and (verb == tool.Name or (tool.Aliases and tool.Aliases:contains(verb))) then
+            local remainder = args:slice(3, #args - 2)
+            tool.HandleCommand(remainder, options.tools[tool.Name])
+        end
     end
 end)

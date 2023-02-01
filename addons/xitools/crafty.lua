@@ -223,7 +223,36 @@ end
 ---@type xitool
 local crafty = {
     Name = 'crafty',
-    Load = function(options) end,
+    Aliases = T{ 'c', 'craft' },
+    DefaultSettings = T{
+        isEnabled = T{ false },
+        isVisible = T{ true },
+        name = 'xitools.crafty',
+        size = T{ -1, -1 },
+        pos = T{ 100, 100 },
+        flags = ImGuiWindowFlags_NoResize,
+        skills = T{
+            [0] = T{ 0.0 },
+            [1] = T{ 0.0 },
+            [2] = T{ 0.0 },
+            [3] = T{ 0.0 },
+            [4] = T{ 0.0 },
+            [5] = T{ 0.0 },
+            [6] = T{ 0.0 },
+            [7] = T{ 0.0 },
+            [8] = T{ 0.0 },
+        },
+        history = T{},
+    },
+    HandleCommand = function(args, options)
+        if #args == 0 then
+            options.isVisible[1] = not options.isVisible[1]
+        end
+
+        if #args == 1 and (args[1] == 'cl' or args[1] == 'clear') then
+            options.history = T{}
+        end
+    end,
     HandlePacketOut = function(e, options)
         -- if we've requested a synth from the server, start our in-progress
         -- tracker. speculate on the results, since "Mangled Mess" isn't a very

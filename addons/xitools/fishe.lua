@@ -324,7 +324,26 @@ end
 ---@type xitool
 local fishe = {
     Name = 'fishe',
-    Load = function(options) end,
+    Aliases = T{ 'f', 'fish' },
+    DefaultSettings = T{
+        isEnabled = T{ false },
+        isVisible = T{ true },
+        name = 'xitools.fishe',
+        size = T{ -1, -1 },
+        pos = T{ 100, 100 },
+        flags = ImGuiWindowFlags_None,
+        skill = T{ 0.0 },
+        history = T{},
+    },
+    HandleCommand = function(args, options)
+        if #args == 0 then
+            options.isVisible[1] = not options.isVisible[1]
+        end
+
+        if #args == 1 and (args[1] == 'cl' or args[1] == 'clear') then
+            options.history = T{}
+        end
+    end,
     HandlePacketOut = function(e, options)
         if e.id == packets.outbound.fishingAction.id then
             currentLine = {
