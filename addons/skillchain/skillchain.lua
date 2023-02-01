@@ -337,9 +337,15 @@ local function DrawMob(mob)
     -- Create the footer for our skillchain, noting the remaining window and
     -- including a spacer between the mobs.
     if mob.time ~= nil then
-        local time_remaining = 8 - math.abs(mob.time - os.time())
+        local time_remaining = 10 - math.abs(mob.time - os.time())
         if time_remaining >= 0 then
-            Imgui.BulletText(string.format('%is', time_remaining))
+            -- you must wait 3 seconds before weaponskilling, but the remaining
+            -- 7 seconds are free game for burst and skilling
+            if time_remaining <= 7 then
+                Imgui.BulletText(string.format('%is - go!', time_remaining))
+            else
+                Imgui.BulletText(string.format('%is - wait...', time_remaining))
+            end
         else
             Imgui.BulletText('closed.')
         end
@@ -368,12 +374,12 @@ local function RunGarbageCollector(chains)
         if mob.time == nil and #mob.chain > 0 and mob.chain[#mob.chain].type == ChainType.Miss then
             -- this means our starter missed
             local timeSince = os.time() - mob.chain[#mob.chain].time
-            if timeSince > 10 then
+            if timeSince > 12 then
                 chains[i] = nil
             end
         elseif mob.time ~= nil then
             local timeSince = os.time() - mob.time
-            if timeSince > 15 then
+            if timeSince > 16 then
                 chains[i] = nil
             end
         end
