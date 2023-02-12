@@ -24,6 +24,7 @@ local ui = require('ui')
 local me = require('me')
 local us = require('us')
 local tgt = require('tgt')
+local pet = require('pet')
 local tracker = require('tracker')
 local crafty = require('crafty')
 local fishe = require('fishe')
@@ -33,6 +34,7 @@ local tools = {
     me,
     us,
     tgt,
+    pet,
     tracker,
     crafty,
     fishe,
@@ -61,6 +63,7 @@ local defaultOptions = T{
         me = me.DefaultSettings,
         us = us.DefaultSettings,
         tgt = tgt.DefaultSettings,
+        pet = pet.DefaultSettings,
         tracker = tracker.DefaultSettings,
         crafty = crafty.DefaultSettings,
         fishe = fishe.DefaultSettings,
