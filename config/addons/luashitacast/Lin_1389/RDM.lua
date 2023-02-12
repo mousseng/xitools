@@ -1,71 +1,25 @@
 require 'common'
-local chat = require('chat')
-
-local function ToggleSoloMode(shouldEnable)
-    local player = gData.GetPlayer()
-    local header = string.format('LAC: %s', player.MainJob)
-    gSettings.SoloMode = shouldEnable
-
-    if shouldEnable then
-        print(chat.header(header):append(chat.message('enabling solo mode')))
-        if player.SubJob == 'NIN' then
-            gFunc.ForceEquipSet('SoloNin')
-        else
-            gFunc.ForceEquipSet('Solo')
-        end
-        gFunc.Disable('Main')
-        gFunc.Disable('Sub')
-        gFunc.Disable('Range')
-    else
-        print(chat.header(header):append(chat.message('disabling solo mode')))
-        gFunc.Enable('Main')
-        gFunc.Enable('Sub')
-        gFunc.Enable('Range')
-    end
-end
-
-local function ToggleFishMode(shouldEnable)
-    local player = gData.GetPlayer()
-    local header = string.format('LAC: %s', player.MainJob)
-    gSettings.FishMode = shouldEnable
-
-    if shouldEnable then
-        print(chat.header(header):append(chat.message('enabling fish mode')))
-        gFunc.ForceEquipSet('Fish')
-        gFunc.Disable('Range')
-        gFunc.Disable('Ammo')
-        gFunc.Disable('Body')
-        gFunc.Disable('Hands')
-        gFunc.Disable('Legs')
-        gFunc.Disable('Feet')
-    else
-        print(chat.header(header):append(chat.message('disabling fish mode')))
-        gFunc.Enable('Range')
-        gFunc.Enable('Ammo')
-        gFunc.Enable('Body')
-        gFunc.Enable('Hands')
-        gFunc.Enable('Legs')
-        gFunc.Enable('Feet')
-    end
-end
-
-local currentLevel = 0
+local levelSync = gFunc.LoadFile('common/levelSync.lua')
+local setGlamour = gFunc.LoadFile('common/glamour.lua')
+local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
+local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
+local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
 
 local profile = {
     Sets = {
         Base_Priority = {
             Main = { "Fencing Degen", "Yew Wand" },
             Sub = { "Parana Shield" },
-            Range = { },
+            -- Range = { },
             Ammo = { "Morion Tathlum" },
-            Head = { "Dream Hat +1" },
+            Head = { "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
             Body = { "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
             Hands = { "Savage Gauntlets", "Dream Mittens +1" },
             Legs = { "Savage Loincloth", "Dream Pants +1" },
             Feet = { "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
             Neck = { "Tiger Stole" },
             Waist = { "Friar's Rope" },
-            Ear1 = { },
+            -- Ear1 = { },
             Ear2 = { "Cunning Earring" },
             Ring1 = { "San d'Orian Ring" },
             Ring2 = { "Chariot Band" },
@@ -92,7 +46,7 @@ local profile = {
             -- Ring2 = { },
             -- Back = { },
         },
-        Str = {
+        Str_Priority = {
             -- Main = { },
             -- Sub = { },
             -- Range = { },
@@ -110,7 +64,7 @@ local profile = {
             -- Ring2 = { },
             -- Back = { },
         },
-        Dex = {
+        Dex_Priority = {
             -- Main = { },
             -- Sub = { },
             -- Range = { },
@@ -128,12 +82,12 @@ local profile = {
             -- Ring2 = { },
             -- Back = { },
         },
-        Int = {
+        Int_Priority = {
             Main = { "Fencing Degen", "Yew Wand" },
             -- Sub = { },
             -- Range = { },
             Ammo = { "Morion Tathlum" },
-            -- Head = { },
+            Head = { { Name = "displaced", Level = 10 } },
             Body = { "Ryl.Ftm. Tunic" },
             -- Hands = { },
             -- Legs = { },
@@ -146,7 +100,7 @@ local profile = {
             Ring2 = { "Hermit's Ring" },
             Back = { "Black Cape" },
         },
-        Mnd = {
+        Mnd_Priority = {
             Main = { "Fencing Degen", "Yew Wand" },
             -- Sub = { },
             -- Range = { },
@@ -154,7 +108,7 @@ local profile = {
             -- Head = { },
             -- Body = { },
             Hands = { "Savage Gauntlets" },
-            Legs = { "Savage Loincloth" },
+            Legs = { "Warlock's Tights", "Savage Loincloth" },
             Feet = { "Warlock's Boots" },
             Neck = { "Justice Badge" },
             Waist = { "Friar's Rope" },
@@ -164,14 +118,15 @@ local profile = {
             Ring2 = { "Ascetic's Ring" },
             Back = { "White Cape" },
         },
-        Movement = { },
+        Movement = {
+        },
         Solo = {
-            Main = "Buzzard Tuck",
+            Main = "T.K. Army Sword",
             Sub = "Parana Shield",
         },
         SoloNin = {
-            Main = "Buzzard Tuck",
-            Sub = "Fencing Degen",
+            Main = "T.K. Army Sword",
+            Sub = "Buzzard Tuck",
         },
         Fish = {
             Main = nil,
@@ -206,11 +161,7 @@ profile.OnLoad = function()
     AshitaCore:GetChatManager():QueueCommand(1, '/sl others on')
     AshitaCore:GetChatManager():QueueCommand(1, '/sl target on')
 
-    ashita.tasks.once(3, function()
-        print(chat.header('LAC: RDM'):append(chat.message('setting glamour')))
-        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 19')
-        AshitaCore:GetChatManager():QueueCommand(1, '/sl blink')
-    end)
+    setGlamour(19)
 end
 
 profile.OnUnload = function()
@@ -220,27 +171,13 @@ end
 
 profile.HandleCommand = function(args)
     if #args == 0 then return end
-
-    if args[1] == 'solo' then
-        local toggleToOn = #args == 1 and not gSettings.SoloMode
-        local forceToOn = #args == 2 and args[2] == 'on'
-        ToggleSoloMode(toggleToOn or forceToOn)
-    end
-
-    if args[1] == 'fish' then
-        local toggleToOn = #args == 1 and not gSettings.FishMode
-        local forceToOn = #args == 2 and args[2] == 'on'
-        ToggleFishMode(toggleToOn or forceToOn)
-    end
+    handleSoloMode(args)
+    handleFishMode(args)
 end
 
 profile.HandleDefault = function()
     local player = gData.GetPlayer()
-
-    if currentLevel ~= player.MainJobSync then
-        currentLevel = player.MainJobSync
-        gFunc.EvaluateLevels(profile.Sets, currentLevel)
-    end
+    levelSync(profile.Sets)
 
     gFunc.EquipSet('Base')
     if player.Status == 'Resting' then
@@ -277,6 +214,16 @@ profile.HandleMidcast = function()
     elseif spell.Type == 'Black Magic' then
         gFunc.EquipSet('Int')
     end
+
+    if spell.Skill == 'Healing Magic' then
+        gFunc.Equip('Legs', "Warlock's Tights")
+    elseif spell.Skill == 'Enhancing Magic' then
+        gFunc.Equip('Legs', "Warlock's Tights")
+    elseif spell.Skill == 'Enfeebling Magic' then
+        gFunc.Equip('Main', "Fencing Degen")
+    end
+
+    conserveMp(profile.Sets.Base)
 end
 
 profile.HandlePreshot = function()
