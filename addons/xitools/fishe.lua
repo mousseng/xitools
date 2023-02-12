@@ -4,6 +4,8 @@ local ui = require('ui')
 local packets = require('utils.packets')
 local vanatime = require('utils.vanatime')
 
+local Scale = 1.0
+
 local textBaseWidth = imgui.CalcTextSize('A')
 local currentLine = {
     hook = nil,
@@ -294,7 +296,7 @@ end
 
 local function DrawHistory(history)
     if imgui.CollapsingHeader('Catch History') then
-        if imgui.BeginTable('xitool.fishe.history', 2, ImGuiTableFlags_ScrollY, { textBaseWidth * 32, 400 }) then
+        if imgui.BeginTable('xitool.fishe.history', 2, ImGuiTableFlags_ScrollY, { textBaseWidth * 32, 400 * Scale }) then
             local res = AshitaCore:GetResourceManager()
             imgui.TableSetupScrollFreeze(0, 1)
             imgui.TableSetupColumn('Catch', ImGuiTableColumnFlags_NoHide, textBaseWidth * 20)
@@ -400,7 +402,7 @@ local fishe = {
             end
         end
     end,
-    DrawConfig = function(options)
+    DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('fishe') then
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.InputFloat('Fishe Level', options.skill, 0.1, 0.1, '%.1f')
@@ -408,8 +410,10 @@ local fishe = {
             imgui.EndTabItem()
         end
     end,
-    DrawMain = function(options)
-        ui.DrawNormalWindow(options, function()
+    DrawMain = function(options, gOptions)
+        Scale = gOptions.uiScale[1]
+        ui.DrawNormalWindow(options, gOptions, function()
+            imgui.SetWindowFontScale(Scale)
             imgui.Text(('%-13s %5.1f'):format('Fishe', options.skill[1]))
             DrawCurrent()
             DrawHaul()

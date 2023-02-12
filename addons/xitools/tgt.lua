@@ -4,6 +4,8 @@ local imgui = require('imgui')
 local ui = require('ui')
 local packets = require('utils.packets')
 
+local Scale = 1.0
+
 local Threnodies = {
     [454] = 'fire',
     [455] = 'ice',
@@ -116,6 +118,8 @@ local function HandleAction(debuffs, action)
                 if message == 84 or message == 252 or message == 268 or message == 271 then
                     if spell == 58 or spell == 80 then -- para/para2
                         debuffs[target.id].para = now + 120
+                    elseif spell == 56 or spell == 79 then -- slow/slow2
+                        debuffs[target.id].slow = now + 180
                     elseif spell == 252 then -- stun
                         debuffs[target.id].stun = now + 5
                     end
@@ -305,10 +309,10 @@ local function DrawHeader(name, distance, options)
     imgui.Text(name)
 
     local dist = string.format('%.1fm', distance)
-    local width = imgui.CalcTextSize(dist) + ui.Styles.WindowPadding[1]
+    local width = imgui.CalcTextSize(dist) + ui.Styles.WindowPadding[1] * Scale
 
     imgui.SameLine()
-    imgui.SetCursorPosX(options.size[1] - width)
+    imgui.SetCursorPosX(options.size[1] * Scale - width)
     imgui.Text(dist)
 end
 
@@ -330,7 +334,7 @@ local function DrawHp(hpPercent)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar(title, hpPercent, 100, '')
+    ui.DrawBar(title, hpPercent, 100, ui.Scale(ui.Styles.BarSize, Scale), '')
     imgui.PopStyleColor(2)
 end
 
@@ -416,7 +420,7 @@ local tgt = {
         isVisible = T{ true },
         showStatus = T{ false },
         name = 'xitools.tgt',
-        size = T{ 277, -1 },
+        size = T{ 276, -1 },
         pos = T{ 100, 100 },
         flags = bit.bor(ImGuiWindowFlags_NoDecoration),
     },
@@ -434,7 +438,7 @@ local tgt = {
             HandleBasic(TrackedEnemies, packets.inbound.basic.parse(e.data))
         end
     end,
-    DrawConfig = function(options)
+    DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('tgt') then
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Show debuffs', options.showStatus)
@@ -444,13 +448,16 @@ local tgt = {
             imgui.EndTabItem()
         end
     end,
-    DrawMain = function(options)
+    DrawMain = function(options, gOptions)
         -- don't bother drawing if we have no target
         local targetId = AshitaCore:GetMemoryManager():GetTarget():GetTargetIndex(0)
         if targetId == 0 then return end
 
+        Scale = gOptions.uiScale[1]
+
         local entity = GetEntity(targetId)
-        ui.DrawUiWindow(options, function()
+        ui.DrawUiWindow(options, gOptions, function()
+            imgui.SetWindowFontScale(Scale)
             DrawTgt(entity, options)
         end)
     end,

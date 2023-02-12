@@ -4,6 +4,8 @@ local ffxi = require('utils.ffxi')
 local imgui = require('imgui')
 local ui = require('ui')
 
+local Scale = 1.0
+
 ---@param name     string
 ---@param job      integer
 ---@param jobLevel integer
@@ -19,10 +21,10 @@ local function DrawHeader(name, job, jobLevel, sub, subLevel, options)
         jobStr = string.format('%s%i', ffxi.GetJobAbbr(job), jobLevel)
     end
 
-    local width = imgui.CalcTextSize(jobStr) + ui.Styles.WindowPadding[1]
+    local width = imgui.CalcTextSize(jobStr) + ui.Styles.WindowPadding[1] * Scale
 
     imgui.SameLine()
-    imgui.SetCursorPosX(options.size[1] - width)
+    imgui.SetCursorPosX(options.size[1] * Scale - width)
     imgui.Text(jobStr)
 end
 
@@ -46,7 +48,7 @@ local function DrawHp(cur, max)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar(title, cur, max, '')
+    ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale), '')
     imgui.PopStyleColor(2)
 end
 
@@ -70,7 +72,7 @@ local function DrawMp(cur, max)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar(title, cur, max, '')
+    ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale), '')
     imgui.PopStyleColor(2)
 end
 
@@ -88,7 +90,7 @@ local function DrawTp(cur, max)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar(title, cur, max, '')
+    ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale), '')
     imgui.PopStyleColor(2)
 end
 
@@ -105,7 +107,7 @@ local function DrawXp(cur, max, isLocked)
     local overlay = ffxi.FormatXp(max - cur, true)
 
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar(title, cur, max, overlay)
+    ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale), overlay)
     imgui.PopStyleColor()
 end
 
@@ -121,7 +123,7 @@ local function DrawLp(cur, max, isLocked)
     local title = string.format('LP %4s', type, ffxi.FormatXp(cur, cur > 9999))
 
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar(title, cur, max)
+    ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale))
     imgui.PopStyleColor()
 end
 
@@ -146,11 +148,11 @@ local me = {
         isEnabled = T{ false },
         isVisible = T{ true },
         name = 'xitools.me',
-        size = T{ 277, -1 },
+        size = T{ 276, -1 },
         pos = T{ 100, 100 },
         flags = bit.bor(ImGuiWindowFlags_NoDecoration),
     },
-    DrawConfig = function(options)
+    DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('me') then
             imgui.Checkbox('Enabled', options.isEnabled)
             if imgui.InputInt2('Position', options.pos) then
@@ -159,7 +161,7 @@ local me = {
             imgui.EndTabItem()
         end
     end,
-    DrawMain = function(options)
+    DrawMain = function(options, gOptions)
         ---@type Entity
         local entity = GetPlayerEntity()
 
@@ -176,8 +178,11 @@ local me = {
             return
         end
 
+        Scale = gOptions.uiScale[1]
+
         local party = AshitaCore:GetMemoryManager():GetParty()
-        ui.DrawUiWindow(options, function()
+        ui.DrawUiWindow(options, gOptions, function()
+            imgui.SetWindowFontScale(Scale)
             DrawMe(player, party, entity, options)
         end)
     end,

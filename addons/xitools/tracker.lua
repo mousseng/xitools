@@ -5,6 +5,8 @@ local ui = require('ui')
 local ffxi = require('utils.ffxi')
 local packets = require('utils.packets')
 
+local Scale = 1.0
+
 local Spell = 4
 local Ability = 6
 local Arrow = '\xef\x81\xa1'
@@ -105,7 +107,7 @@ local function DrawTrackers(trackers)
     local now = os.time()
     for _, trackedItem in ipairs(trackers) do
         imgui.Text(trackedItem.Name[1])
-        imgui.Indent(10)
+        imgui.Indent(10 * Scale)
 
         for idx, activeItem in ipairs(trackedItem.ActiveItems) do
             local elapsed = now - activeItem.time
@@ -172,7 +174,7 @@ local tracker = {
             end
         end
     end,
-    DrawConfig = function(options)
+    DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('tracker') then
             imgui.Checkbox('Enabled', options.isEnabled)
 
@@ -275,12 +277,16 @@ local tracker = {
             imgui.EndTabItem()
         end
     end,
-    DrawMain = function(options)
+    DrawMain = function(options, gOptions)
         local activeSpells = Where(options.spells, HasActiveItems)
         local activeAbilities = Where(options.abilities, HasActiveItems)
         if #activeSpells == 0 and #activeAbilities == 0 then return end
 
-        ui.DrawUiWindow(options, function()
+        Scale = gOptions.uiScale[1]
+
+        ui.DrawUiWindow(options, gOptions, function()
+            imgui.SetWindowFontScale(Scale)
+
             if #activeSpells > 0 then
                 DrawTrackers(activeSpells)
             end

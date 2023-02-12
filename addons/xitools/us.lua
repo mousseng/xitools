@@ -9,6 +9,8 @@ local ui = require('ui')
 local ffxi = require('utils.ffxi')
 local zones = require('utils.zones')
 
+local Scale = 1.0
+
 local Textures = { }
 local Alliances = { }
 
@@ -148,7 +150,7 @@ end
 ---@param color Vec4
 local function DrawDot(pos, color)
     local realColor = imgui.GetColorU32(color)
-    imgui.GetWindowDrawList():AddCircleFilled(pos, 3, realColor, 0)
+    imgui.GetWindowDrawList():AddCircleFilled(pos, 3 * Scale, realColor, 0)
 end
 
 ---@param player PartyMember
@@ -174,22 +176,22 @@ local function DrawName(player)
     local offsetX = 0
 
     if player.isAllianceLeader then
-        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.TpBarActive)
-        offsetX = offsetX + 6
+        DrawDot({originX + offsetX + 3 * Scale, originY + 6 * Scale}, ui.Colors.TpBarActive)
+        offsetX = offsetX + 6 * Scale
     end
 
     if player.isPartyLeader then
-        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.FfxiAmber)
-        offsetX = offsetX + 6
+        DrawDot({originX + offsetX + 3 * Scale, originY + 6 * Scale}, ui.Colors.FfxiAmber)
+        offsetX = offsetX + 6 * Scale
     end
 
     if player.isSyncTarget then
-        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.Red)
-        offsetX = offsetX + 6
+        DrawDot({originX + offsetX + 3 * Scale, originY + 6 * Scale}, ui.Colors.Red)
+        offsetX = offsetX + 6 * Scale
     end
 
     local windowX = imgui.GetCursorPosX()
-    imgui.SetCursorPosX(windowX + offsetX)
+    imgui.SetCursorPosX(windowX + offsetX * Scale)
 
     imgui.Text(player.name)
     imgui.PopStyleColor()
@@ -201,8 +203,8 @@ local function DrawName(player)
     local castbar = AshitaCore:GetMemoryManager():GetCastBar()
     if player.showCastbar and castbar:GetCount() ~= 0 then
         imgui.SameLine()
-        imgui.SetCursorPosX(player.windowSize[1] - (80 + 10))
-        ui.DrawBar2(castbar:GetPercent() * 100, 100, { 80, 8 }, '')
+        imgui.SetCursorPosX((player.windowSize[1] * Scale) - (80 + 10) * Scale)
+        ui.DrawBar2(castbar:GetPercent() * 100, 100, ui.Scale({ 80, 8 }, Scale), '')
     elseif player.job ~= nil then
         local jobStr = ''
         if player.sub ~= nil then
@@ -211,10 +213,10 @@ local function DrawName(player)
             jobStr = string.format('%s%i', player.job, player.jobLevel)
         end
 
-        local width = imgui.CalcTextSize(jobStr) + ui.Styles.WindowPadding[1]
+        local width = imgui.CalcTextSize(jobStr) + ui.Styles.WindowPadding[1] * Scale
 
         imgui.SameLine()
-        imgui.SetCursorPosX(player.windowSize[1] - width)
+        imgui.SetCursorPosX((player.windowSize[1] * Scale) - width)
         imgui.Text(jobStr)
     end
 end
@@ -232,7 +234,7 @@ local function DrawHp(player)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar3(player.hpp, 100, { 80, 15 }, overlay)
+    ui.DrawBar3(player.hpp, 100, ui.Scale({ 80, 15 }, Scale), overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -245,7 +247,7 @@ local function DrawMp(player)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(player.mpp, 100, { 80, 15 }, overlay)
+    ui.DrawBar2(player.mpp, 100, ui.Scale({ 80, 15 }, Scale), overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -262,13 +264,13 @@ local function DrawTp(player)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(player.tp, 3000, { 80, 15 }, overlay)
+    ui.DrawBar2(player.tp, 3000, ui.Scale({ 80, 15 }, Scale), overlay)
     imgui.PopStyleColor(2)
 end
 
 ---@param player PartyMember
 local function DrawBuffs(player)
-    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2, 2 })
+    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Scale({ 2, 2 }, Scale))
     for i = 1, 32 do
         local buffId = player.statusIds[i]
         if buffId ~= nil and buffId >= 0 then
@@ -281,7 +283,7 @@ local function DrawBuffs(player)
             end
 
             local img = tonumber(ffi.cast("uint32_t", Textures[buffId]))
-            imgui.Image(img, { 16, 16 })
+            imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
         end
     end
 
@@ -302,8 +304,9 @@ local function DrawPartyMember(player)
     end
 end
 
-local function DrawAlliance(alliance)
-    ui.DrawUiWindow(alliance, function()
+local function DrawAlliance(alliance, gOptions)
+    ui.DrawUiWindow(alliance, gOptions, function()
+        imgui.SetWindowFontScale(Scale)
         for _, getMember in pairs(Alliances[alliance.name]) do
             local person = getMember()
 
@@ -352,28 +355,28 @@ local us = {
         alliance1 = T{
             isVisible = T{ true },
             name = 'xitools.us.1',
-            size = T{ 277, -1 },
+            size = T{ 276, -1 },
             pos = T{ 392, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
         alliance2 = T{
             isVisible = T{ true },
             name = 'xitools.us.2',
-            size = T{ 277, -1 },
+            size = T{ 276, -1 },
             pos = T{ 107, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
         alliance3 = T{
             isVisible = T{ true },
             name = 'xitools.us.3',
-            size = T{ 277, -1 },
+            size = T{ 276, -1 },
             pos = T{ 000, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
     },
     UpdateSettings = UpdateAlliances,
     Load = UpdateAlliances,
-    DrawConfig = function(options)
+    DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('us') then
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Hide when solo', options.hideWhenSolo)
@@ -390,21 +393,23 @@ local us = {
             imgui.EndTabItem()
         end
     end,
-    DrawMain = function(options)
+    DrawMain = function(options, gOptions)
         local party = AshitaCore:GetMemoryManager():GetParty()
         local alliCount1 = party:GetAlliancePartyMemberCount1()
         local alliCount2 = party:GetAlliancePartyMemberCount2()
         local alliCount3 = party:GetAlliancePartyMemberCount3()
 
+        Scale = gOptions.uiScale[1]
+
         if (options.hideWhenSolo[1] and alliCount1 > 1)
         or (not options.hideWhenSolo[1] and alliCount1 > 0) then
-            DrawAlliance(options.alliance1)
+            DrawAlliance(options.alliance1, gOptions)
         end
         if alliCount2 > 0 then
-            DrawAlliance(options.alliance2)
+            DrawAlliance(options.alliance2, gOptions)
         end
         if alliCount3 > 0 then
-            DrawAlliance(options.alliance3)
+            DrawAlliance(options.alliance3, gOptions)
         end
     end,
 }

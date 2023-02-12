@@ -6,6 +6,8 @@ local recipesByIngredients = require('data.recipesByIngredients')
 local recipesBySkill = require('data.recipesBySkill')
 local ui = require('ui')
 
+local Scale = 1.0
+
 local iconTimes = '\xef\x81\x97'
 local iconCheck = '\xef\x81\x98'
 local imguiLeafNode = bit.bor(ImGuiTreeNodeFlags_Leaf, ImGuiTreeNodeFlags_NoTreePushOnOpen)
@@ -177,7 +179,7 @@ end
 
 local function DrawHistory(history)
     if imgui.CollapsingHeader('Craft History') then
-        if imgui.BeginTable('xitool.crafty.history', 3, ImGuiTableFlags_ScrollY, { textBaseWidth * 60, 400 }) then
+        if imgui.BeginTable('xitool.crafty.history', 3, ImGuiTableFlags_ScrollY, { textBaseWidth * 60, 400 * Scale }) then
             local res = AshitaCore:GetResourceManager()
             imgui.TableSetupScrollFreeze(0, 1)
             imgui.TableSetupColumn('Synth', ImGuiTableColumnFlags_NoHide, textBaseWidth * 30)
@@ -342,7 +344,7 @@ local crafty = {
             end
         end
     end,
-    DrawConfig = function(options)
+    DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('crafty') then
             imgui.Checkbox('Enabled', options.isEnabled)
 
@@ -353,8 +355,10 @@ local crafty = {
             imgui.EndTabItem()
         end
     end,
-    DrawMain = function(options)
-        ui.DrawNormalWindow(options, function()
+    DrawMain = function(options, gOptions)
+        Scale = gOptions.uiScale[1]
+        ui.DrawNormalWindow(options, gOptions, function()
+            imgui.SetWindowFontScale(Scale)
             DrawSkills(options.skills)
             DrawRecipes(options.skills)
             DrawHistory(options.history)

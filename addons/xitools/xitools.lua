@@ -45,6 +45,9 @@ local defaultOptions = T{
         hideUnderMap = T{ true },
         hideUnderChat = T{ true },
         hideWhileLoading = T{ true },
+        uiScale = T{ 1.0 },
+        baseW = 7,
+        baseH = 14,
     },
     tools = T{
         config = T{
@@ -70,7 +73,7 @@ local options = settings.load(defaultOptions)
 local function DrawConfig()
     if not options.tools.config.isVisible then return end
 
-    ui.DrawNormalWindow(options.tools.config, function()
+    ui.DrawNormalWindow(options.tools.config, options.globals, function()
         imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingSome)
 
         imgui.Text('Global settings')
@@ -78,13 +81,17 @@ local function DrawConfig()
         imgui.Checkbox('Hide while map open', options.globals.hideUnderMap)
         imgui.Checkbox('Hide while chat open', options.globals.hideUnderChat)
         imgui.Checkbox('Hide while loading', options.globals.hideWhileLoading)
+        if imgui.InputFloat('UI Scale', options.globals.uiScale, 0.01, 0.025) then
+            imgui.SetWindowFontScale(options.globals.uiScale[1])
+            options.globals.baseH, options.globals.baseH = imgui.CalcTextSize('A')
+        end
         imgui.NewLine()
 
         imgui.Text('Tool settings')
         imgui.Separator()
         if imgui.BeginTabBar('xitools.config.tabs') then
             for i, tool in ipairs(tools) do
-                tool.DrawConfig(options.tools[tool.Name])
+                tool.DrawConfig(options.tools[tool.Name], options.globals)
             end
 
             imgui.EndTabBar()
@@ -103,7 +110,7 @@ settings.register('settings', 'settings_update', function (s)
 
     for _, tool in ipairs(tools) do
         if tool.UpdateSettings ~= nil then
-            tool.UpdateSettings(options.tools[tool.Name])
+            tool.UpdateSettings(options.tools[tool.Name], options.globals)
         end
     end
 end)
@@ -111,7 +118,7 @@ end)
 ashita.events.register('load', 'load_handler', function()
     for _, tool in ipairs(tools) do
         if tool.Load ~= nil then
-            tool.Load(options.tools[tool.Name])
+            tool.Load(options.tools[tool.Name], options.globals)
         end
     end
 end)
@@ -135,7 +142,7 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
 
     for i, tool in ipairs(tools) do
         if options.tools[tool.Name].isEnabled[1] then
-            tool.DrawMain(options.tools[tool.Name])
+            tool.DrawMain(options.tools[tool.Name], options.globals)
         end
     end
 end)
@@ -143,7 +150,7 @@ end)
 ashita.events.register('packet_out', 'packet_out_handler', function(e)
     for _, tool in ipairs(tools) do
         if options.tools[tool.Name].isEnabled[1] and tool.HandlePacketOut ~= nil then
-            tool.HandlePacketOut(e, options.tools[tool.Name])
+            tool.HandlePacketOut(e, options.tools[tool.Name], options.globals)
         end
     end
 end)
@@ -151,7 +158,7 @@ end)
 ashita.events.register('packet_in', 'packet_in_handler', function(e)
     for _, tool in ipairs(tools) do
         if options.tools[tool.Name].isEnabled[1] and tool.HandlePacket ~= nil then
-            tool.HandlePacket(e, options.tools[tool.Name])
+            tool.HandlePacket(e, options.tools[tool.Name], options.globals)
         end
     end
 end)
@@ -176,7 +183,7 @@ ashita.events.register('command', 'command_handler', function(e)
     for _, tool in ipairs(tools) do
         if tool.HandleCommand ~= nil and (verb == tool.Name or (tool.Aliases and tool.Aliases:contains(verb))) then
             local remainder = args:slice(3, #args - 2)
-            tool.HandleCommand(remainder, options.tools[tool.Name])
+            tool.HandleCommand(remainder, options.tools[tool.Name], options.globals)
         end
     end
 end)

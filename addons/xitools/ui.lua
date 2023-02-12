@@ -6,7 +6,7 @@ local ui = {
         WindowPadding     = { 10, 10 },
         FramePaddingNone  = { 0, 0 },
         FramePaddingSome  = { 4, 2 },
-        BarSize           = { 200, 15 },
+        BarSize           = { 199, 15 },
     },
     Colors = {
         White          = { 1.00, 1.00, 1.00, 1.0 },
@@ -41,11 +41,21 @@ local ui = {
     },
 }
 
+function ui.Scale(vector, scale)
+    local scaledVec = T{}
+
+    for _, value in ipairs(vector) do
+        scaledVec:append(value * scale)
+    end
+
+    return scaledVec
+end
+
 ---@param title   string
 ---@param cur     integer
 ---@param max     integer
 ---@param overlay string?
-function ui.DrawBar(title, cur, max, overlay)
+function ui.DrawBar(title, cur, max, size, overlay)
     local fraction = cur / max
 
     imgui.PushStyleColor(ImGuiCol_FrameBg, ui.Colors.BarBackground)
@@ -54,7 +64,7 @@ function ui.DrawBar(title, cur, max, overlay)
     imgui.AlignTextToFramePadding()
     imgui.Text(title)
     imgui.SameLine()
-    imgui.ProgressBar(fraction, ui.Styles.BarSize, overlay)
+    imgui.ProgressBar(fraction, size, overlay)
 
     imgui.PopStyleColor(2)
 end
@@ -100,8 +110,8 @@ function ui.DrawBar3(cur, max, size, overlay)
     imgui.PopStyleColor(2)
 end
 
-function ui.DrawNormalWindow(config, drawStuff)
-    imgui.SetNextWindowSize(config.size)
+function ui.DrawNormalWindow(config, gConfig, drawStuff)
+    imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
     if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
@@ -116,15 +126,15 @@ end
 
 ---@param config table
 ---@param drawStuff function
-function ui.DrawUiWindow(config, drawStuff)
-    imgui.SetNextWindowSize(config.size)
+function ui.DrawUiWindow(config, gConfig, drawStuff)
+    imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
     imgui.PushStyleColor(ImGuiCol_WindowBg, ui.Colors.FfxiGreyBg)
     imgui.PushStyleColor(ImGuiCol_Border, ui.Colors.FfxiGreyBorder)
     imgui.PushStyleColor(ImGuiCol_BorderShadow, ui.Colors.BorderShadow)
-    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Styles.ItemSpacing)
-    imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, ui.Styles.WindowPadding)
+    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Scale(ui.Styles.ItemSpacing, gConfig.uiScale[1]))
+    imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, ui.Scale(ui.Styles.WindowPadding, gConfig.uiScale[1]))
 
     if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
         imgui.PopStyleColor(3)
