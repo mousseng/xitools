@@ -1,6 +1,6 @@
 addon.name    = 'skillchain'
 addon.author  = 'lin'
-addon.version = '3.1.0'
+addon.version = '3.2.0'
 addon.desc    = 'A little skillchain tracker so you know when things happen'
 
 require('common')
@@ -276,37 +276,30 @@ local function HandleMagicAbility(packet, mobs)
     for i = 1, packet.target_count do
         local target = packet.targets[i]
 
-        -- Set up our display data
-        ---@type Skillchain
-        local mob = mobs[target.id] or {
-            name = getEntityByServerId(target.id).Name,
-            time = nil,
-            chain = { },
-        }
+        -- MB targets must have a skillchain already
+        local mob = mobs[target.id]
+        if mob then
+            for j = 1, target.action_count do
+                local action = target.actions[j]
 
-        for j = 1, target.action_count do
-            local action = target.actions[j]
+                ---@type SkillchainStep
+                local chain_step = nil
 
-            ---@type SkillchainStep
-            local chain_step = nil
+                if action.message == MagicBursts[packet.param].burst_msg then
+                    chain_step = {
+                        id = packet.param,
+                        time = os.time(),
+                        type = ChainType.MagicBurst,
+                        name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[1],
+                        base_damage = action.param,
+                        bonus_damage = nil,
+                        resonance = nil,
+                    }
 
-            if action.message == MagicBursts[packet.param].burst_msg then
-                chain_step = {
-                    id = packet.param,
-                    time = os.time(),
-                    type = ChainType.MagicBurst,
-                    name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[1],
-                    base_damage = action.param,
-                    bonus_damage = nil,
-                    resonance = nil,
-                }
-
-                table.insert(mob.chain, chain_step)
+                    table.insert(mob.chain, chain_step)
+                end
             end
         end
-
-        -- Replace the existing mob information or add the new one
-        mobs[target.id] = mob
     end
 end
 
