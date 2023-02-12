@@ -2,6 +2,7 @@
 a suite of UI replacement components.
 - `me` displays information about the player
 - `us` displays information about the party
+- `pet` displays information about your pet
 - `tgt` displays information about your target or subtarget
 - `tracker` displays configurable timers for spells and abilities
 - `crafty` is a crafting skill tracker and recipe list

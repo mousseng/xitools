@@ -1,9 +1,8 @@
 # minimap-helper
 are you tired of having to type out the zoom value every time you change zones?
-me too, so using this will remember your choices and automatically set the zoom.
-each zone defaults to 0.5 until i can collect a more useful set of values.
+me too, so using this just splat a value for you.
 
 ## usage
-`/mmh 0.16` will set the minimap zoom for the current zone to 0.16 and it will
-remember that selection for the future. please note, this won't detect any zoom
-values set through `/minimap` itself.
+load it and forget it. i was having trouble with getting the settings to save,
+so i just have it default to vaguely-appropriate values with no configuration.
+you can change those if you'd like by tweaking the `minimap-zones.lua` values.
