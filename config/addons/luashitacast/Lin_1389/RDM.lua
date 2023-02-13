@@ -3,6 +3,7 @@ local levelSync = gFunc.LoadFile('common/levelSync.lua')
 local setGlamour = gFunc.LoadFile('common/glamour.lua')
 local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
 local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
+local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
 local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
 
 local profile = {
@@ -13,7 +14,7 @@ local profile = {
             -- Range = { },
             Ammo = { "Morion Tathlum" },
             Head = { "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
-            Body = { "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
+            Body = { "Warlock's Tabard", "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
             Hands = { "Savage Gauntlets", "Dream Mittens +1" },
             Legs = { "Savage Loincloth", "Dream Pants +1" },
             Feet = { "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
@@ -71,7 +72,7 @@ local profile = {
             -- Ammo = { },
             -- Head = { },
             -- Body = { },
-            -- Hands = { },
+            Hands = { "Warlock's Gloves" },
             -- Legs = { },
             -- Feet = { },
             -- Neck = { },
@@ -123,28 +124,26 @@ local profile = {
         Solo = {
             Main = "T.K. Army Sword",
             Sub = "Parana Shield",
+            Hands = "Warlock's Gloves",
         },
         SoloNin = {
             Main = "T.K. Army Sword",
             Sub = "Buzzard Tuck",
+            Hands = "Warlock's Gloves",
         },
         Fish = {
-            Main = nil,
-            Sub = nil,
             Range = "Halcyon Rod",
             Ammo = "Insect Ball",
-            Head = nil,
             Body = "Fsh. Tunica",
             Hands = "Fsh. Gloves",
             Legs = "Fisherman's Hose",
             Feet = "Fisherman's Boots",
-            Neck = nil,
-            Waist = nil,
-            Ear1 = nil,
-            Ear2 = nil,
-            Ring1 = nil,
-            Ring2 = nil,
-            Back = nil,
+        },
+        Helm = {
+            Body = "Field Tunica",
+            Hands = "Field Gloves",
+            Legs = "Field Hose",
+            Feet = "Field Boots",
         },
     },
 }
@@ -156,6 +155,7 @@ profile.OnLoad = function()
 
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
     AshitaCore:GetChatManager():QueueCommand(1, '/macro book 2')
     AshitaCore:GetChatManager():QueueCommand(1, '/sl self on')
     AshitaCore:GetChatManager():QueueCommand(1, '/sl others on')
@@ -167,12 +167,14 @@ end
 profile.OnUnload = function()
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /solo /lac fwd solo')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe /lac fwd fish')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm /lac fwd helm')
 end
 
 profile.HandleCommand = function(args)
     if #args == 0 then return end
     handleSoloMode(args)
     handleFishMode(args)
+    handleHelmMode(args)
 end
 
 profile.HandleDefault = function()
@@ -221,6 +223,11 @@ profile.HandleMidcast = function()
         gFunc.Equip('Legs', "Warlock's Tights")
     elseif spell.Skill == 'Enfeebling Magic' then
         gFunc.Equip('Main', "Fencing Degen")
+        gFunc.Equip('Body', "Warlock's Tabard")
+    end
+
+    if gSettings.SoloMode then
+        gFunc.Equip('Body', "Warlock's Tabard")
     end
 
     conserveMp(profile.Sets.Base)
