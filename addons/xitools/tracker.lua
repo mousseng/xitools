@@ -10,6 +10,9 @@ local Scale = 1.0
 local Spell = 4
 local Ability = 6
 local Arrow = '\xef\x81\xa1'
+local Plus = '\xef\x81\xa7'
+local Trash = '\xef\x87\xb8'
+local Link = '\xef\x83\x81'
 
 local function GetSpellName(id)
     local spell = AshitaCore:GetResourceManager():GetSpellById(id)
@@ -60,7 +63,18 @@ local function HasActiveItems(tracker)
 end
 
 local function TryToTrackSpell(spell, trackers)
-    local isTracked = function(v) return v.IsEnabled[1] and v.Id[1] == spell.param end
+    local checkId = function(obj)
+        return obj.Id[1] == spell.param
+    end
+
+    local isAliased = function(v)
+        return v ~= nil and v:any(checkId)
+    end
+
+    local isTracked = function(v)
+        return v.IsEnabled[1] and (checkId(v) or isAliased(v.Aliases))
+    end
+
     local _, tracker = trackers:find_if(isTracked)
 
     if tracker ~= nil then
@@ -84,7 +98,18 @@ local function TryToTrackSpell(spell, trackers)
 end
 
 local function TryToTrackAbility(ability, trackers)
-    local isTracked = function(v) return v.IsEnabled[1] and v.Id[1] == ability.param end
+    local checkId = function(obj)
+        return obj.Id[1] == ability.param
+    end
+
+    local isAliased = function(v)
+        return v ~= nil and v:any(checkId)
+    end
+
+    local isTracked = function(v)
+        return v.IsEnabled[1] and (checkId(v) or isAliased(v.Aliases))
+    end
+
     local _, tracker = trackers:find_if(isTracked)
 
     if tracker ~= nil then
@@ -126,6 +151,101 @@ local function DrawTrackers(trackers)
     end
 end
 
+local function ConfigTrackers(title, trackers, getName)
+    if imgui.CollapsingHeader(title) then
+        local textBaseWidth = imgui.CalcTextSize('A')
+
+        for idx, trackedItem in ipairs(trackers) do
+            imgui.PushID(('%s%i.IsEnabled'):format(title, idx))
+            imgui.Checkbox('', trackedItem.IsEnabled)
+            imgui.PopID()
+
+            imgui.SameLine()
+            imgui.SetNextItemWidth(80 * Scale)
+            imgui.PushID(('%s%i.Id'):format(title, idx))
+            if imgui.InputInt('', trackedItem.Id) then
+                trackedItem.Name[1] = getName(trackedItem.Id[1])
+            end
+            imgui.PopID()
+
+            imgui.SameLine()
+            imgui.SetNextItemWidth(130 * Scale)
+            imgui.PushID(('%s%i.Name'):format(title, idx))
+            imgui.InputText('', trackedItem.Name, 256)
+            imgui.PopID()
+
+            imgui.SameLine()
+            imgui.SetNextItemWidth(80 * Scale)
+            imgui.PushID(('%s%i.Duration'):format(title, idx))
+            imgui.InputInt('', trackedItem.Duration)
+            imgui.PopID()
+
+            imgui.SameLine()
+            imgui.PushID(('%s%i.AliasButton'):format(title, idx))
+            if imgui.Button('\xef\x83\x81 Alias') then
+                if trackedItem.Aliases == nil then
+                    trackedItem.Aliases = T{ }
+                end
+                table.insert(trackedItem.Aliases, { Id = { 0 }, Name = { '' } })
+            end
+            imgui.PopID()
+
+            imgui.SameLine()
+            imgui.PushID(('%s%i.RemoveButton'):format(title, idx))
+            if imgui.Button('\xef\x87\xb8 Delete') then
+                table.remove(trackers, idx)
+            end
+            imgui.PopID()
+
+            if trackedItem.Aliases ~= nil and #trackedItem.Aliases > 0 then
+                imgui.Indent(textBaseWidth * 4)
+                if imgui.CollapsingHeader(('%s Aliases##%i'):format(trackedItem.Name[1], trackedItem.Id[1])) then
+                    local tag = ('%s Aliases##%i Region'):format(trackedItem.Name[1], trackedItem.Id[1])
+                    local size = { imgui.GetContentRegionAvail(), 300 }
+
+                    if imgui.BeginChild(tag, size) then
+                        for jdx, alias in ipairs(trackedItem.Aliases) do
+                            imgui.SetNextItemWidth(80 * Scale)
+                            imgui.PushID(('%s%i.Alias%i.Id'):format(title, idx, jdx))
+                            if imgui.InputInt('', alias.Id) then
+                                alias.Name[1] = getName(alias.Id[1])
+                            end
+                            imgui.PopID()
+
+                            imgui.SameLine()
+                            imgui.SetNextItemWidth(130 + 164 * Scale)
+                            imgui.PushID(('%s%i.Alias%i.Name'):format(title, idx, jdx))
+                            imgui.InputText('', alias.Name, 256)
+                            imgui.PopID()
+
+                            imgui.SameLine()
+                            imgui.PushID(('%s%i.Alias%i.DeleteButton'):format(title, idx, jdx))
+                            if imgui.Button('\xef\x87\xb8') then
+                                table.remove(trackedItem.Aliases, jdx)
+                            end
+                            imgui.PopID()
+                        end
+
+                        imgui.EndChild()
+                    end
+                end
+
+                imgui.Unindent(textBaseWidth * 4)
+            end
+        end
+
+        if imgui.Button('\xef\x81\xa7 Track another') then
+            trackers:append(T{
+                IsEnabled = { false },
+                Id = { 0 },
+                Name = { '' },
+                Duration = { 0 },
+                ActiveItems = T{},
+            })
+        end
+    end
+end
+
 ---@type xitool
 local tracker = {
     Name = 'tracker',
@@ -136,29 +256,8 @@ local tracker = {
         size = T{ -1, -1 },
         pos = T{ 100, 100 },
         flags = bit.bor(ImGuiWindowFlags_NoDecoration),
-        spells = T{
-            T{ IsEnabled = { false }, Id = {  57 }, Name = { "Haste" },            Duration = { 180 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 109 }, Name = { "Refresh" },          Duration = { 150 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 108 }, Name = { "Regen" },            Duration = {  75 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 110 }, Name = { "Regen II" },         Duration = {  60 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 111 }, Name = { "Regen III" },        Duration = {  60 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 386 }, Name = { "Mage's Ballad" },    Duration = { 120 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 387 }, Name = { "Mage's Ballad II" }, Duration = { 120 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 394 }, Name = { "Valor Minuet" },     Duration = { 120 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 395 }, Name = { "Valor Minuet II" },  Duration = { 120 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 396 }, Name = { "Valor Minuet III" }, Duration = { 120 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 397 }, Name = { "Valor Minuet IV" },  Duration = { 120 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 399 }, Name = { "Sword Madrigal" },   Duration = { 120 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = { 400 }, Name = { "Blade Madrigal" },   Duration = { 120 }, ActiveItems = T{}, },
-        },
-        abilities = T{
-            T{ IsEnabled = { false }, Id = {  35 }, Name = { "Provoke" },        Duration = {  30 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = {  44 }, Name = { "Sneak Attack" },   Duration = {  60 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = {  76 }, Name = { "Trick Attack" },   Duration = {  60 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = {  74 }, Name = { "Elemental Seal" }, Duration = { 600 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = {  75 }, Name = { "Divine Seal" },    Duration = { 600 }, ActiveItems = T{}, },
-            T{ IsEnabled = { false }, Id = {  83 }, Name = { "Convert" },        Duration = { 780 }, ActiveItems = T{}, },
-        },
+        spells = T{ },
+        abilities = T{ },
     },
     HandlePacket = function(e, options)
         -- TODO: cancel bard song timers when a song is overwritten
@@ -183,96 +282,10 @@ local tracker = {
             end
 
             imgui.Separator()
-            if imgui.CollapsingHeader('Tracked Spells') then
-                for idx, spell in ipairs(options.spells) do
-                    imgui.PushID(('spell%i.IsEnabled'):format(idx))
-                    imgui.Checkbox('', spell.IsEnabled)
-                    imgui.PopID()
-
-                    imgui.SameLine()
-                    imgui.SetNextItemWidth(80)
-                    imgui.PushID(('spell%i.Id'):format(idx))
-                    if imgui.InputInt('', spell.Id) then
-                        spell.Name[1] = GetSpellName(spell.Id[1])
-                    end
-                    imgui.PopID()
-
-                    imgui.SameLine()
-                    imgui.SetNextItemWidth(130)
-                    imgui.PushID(('spell%i.Name'):format(idx))
-                    imgui.InputText('', spell.Name, 256)
-                    imgui.PopID()
-
-                    imgui.SameLine()
-                    imgui.SetNextItemWidth(80)
-                    imgui.PushID(('spell%i.Duration'):format(idx))
-                    imgui.InputInt('', spell.Duration)
-                    imgui.PopID()
-
-                    imgui.SameLine()
-                    imgui.PushID(('spell%i.RemoveButton'):format(idx))
-                    if imgui.Button('\xef\x87\xb8 Delete') then
-                        table.remove(options.spells, idx)
-                    end
-                    imgui.PopID()
-                end
-
-                if imgui.Button('\xef\x81\xa7 Track another spell') then
-                    options.spells:append(T{
-                        IsEnabled = { false },
-                        Id = { 0 },
-                        Name = { '' },
-                        Duration = { 0 },
-                        ActiveItems = T{},
-                    })
-                end
-            end
+            ConfigTrackers('Spells', options.spells, GetSpellName)
 
             imgui.Separator()
-            if imgui.CollapsingHeader('Tracked Abilities') then
-                for idx, ability in ipairs(options.abilities) do
-                    imgui.PushID(('ability%i.IsEnabled'):format(idx))
-                    imgui.Checkbox('', ability.IsEnabled)
-                    imgui.PopID()
-
-                    imgui.SameLine()
-                    imgui.SetNextItemWidth(80)
-                    imgui.PushID(('ability%i.Id'):format(idx))
-                    if imgui.InputInt('', ability.Id) then
-                        ability.Name[1] = GetAbilityName(ability.Id[1])
-                    end
-                    imgui.PopID()
-
-                    imgui.SameLine()
-                    imgui.SetNextItemWidth(130)
-                    imgui.PushID(('ability%i.Name'):format(idx))
-                    imgui.InputText('', ability.Name, 256)
-                    imgui.PopID()
-
-                    imgui.SameLine()
-                    imgui.SetNextItemWidth(80)
-                    imgui.PushID(('ability%i.Duration'):format(idx))
-                    imgui.InputInt('', ability.Duration)
-                    imgui.PopID()
-
-                    imgui.SameLine()
-                    imgui.PushID(('ability%i.RemoveButton'):format(idx))
-                    if imgui.Button('\xef\x87\xb8 Delete') then
-                        table.remove(options.abilities, idx)
-                    end
-                    imgui.PopID()
-                end
-
-                if imgui.Button('\xef\x81\xa7 Track another ability') then
-                    options.abilities:append(T{
-                        IsEnabled = { false },
-                        Id = { 0 },
-                        Name = { '' },
-                        Duration = { 0 },
-                        ActiveItems = T{},
-                    })
-                end
-            end
+            ConfigTrackers('Abilities', options.abilities, GetAbilityName)
 
             imgui.EndTabItem()
         end
