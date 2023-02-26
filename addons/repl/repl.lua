@@ -47,7 +47,7 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
         imgui.PopID()
 
         imgui.PushID('repl.output')
-        imgui.InputTextMultiline('', output, 4096, size, ImGuiInputTextFlags_ReadOnly)
+        imgui.InputTextMultiline('', output, 4096 * 32, size, ImGuiInputTextFlags_ReadOnly)
         imgui.PopID()
 
         imgui.End()
