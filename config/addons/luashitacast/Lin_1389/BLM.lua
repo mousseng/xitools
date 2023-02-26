@@ -1,16 +1,19 @@
 require 'common'
-local chat = require('chat')
-
-local currentLevel = 0
+local levelSync = gFunc.LoadFile('common/levelSync.lua')
+local handleGlamour = gFunc.LoadFile('common/glamour.lua')
+local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
+local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
+local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
+local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
 
 local profile = {
     Sets = {
         Base_Priority = {
-            Main = { "Yew Wand" },
+            Main = { "Yew Wand +1" },
             Sub = { "Parana Shield" },
             Range = { },
             Ammo = { "Morion Tathlum" },
-            Head = { "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
+            Head = { "Gold Hairpin", { Name = "displaced", Level = 10 }, "Dream Hat +1" },
             Body = { "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
             Hands = { "Savage Gauntlets", "Dream Mittens +1" },
             Legs = { "Savage Loincloth", "Dream Pants +1" },
@@ -27,7 +30,7 @@ local profile = {
             Main = { "Pilgrim's Wand" },
         },
         Int_Priority = {
-            Main = { "Yew Wand" },
+            Main = { "Yew Wand +1" },
             -- Sub = { },
             -- Range = { },
             Ammo = { "Morion Tathlum" },
@@ -37,15 +40,15 @@ local profile = {
             -- Legs = { },
             Feet = { "Warlock's Boots" },
             Neck = { "Black Neckerchief" },
-            Waist = { "Wizard's Belt" },
+            Waist = { "Shaman's Rope" },
             -- Ear1 = { },
             Ear2 = { "Cunning Earring" },
-            Ring1 = { "Hermit's Ring" },
-            Ring2 = { "Hermit's Ring" },
+            Ring1 = { "Eremite's Ring" },
+            Ring2 = { "Eremite's Ring" },
             Back = { "Black Cape" },
         },
         Mnd_Priority = {
-            Main = { "Yew Wand" },
+            Main = { "Yew Wand +1" },
             -- Sub = { },
             -- Range = { },
             -- Ammo = { },
@@ -58,8 +61,8 @@ local profile = {
             Waist = { "Friar's Rope" },
             -- Ear1 = { },
             -- Ear2 = { },
-            Ring1 = { "San d'Orian Ring" },
-            Ring2 = { "Ascetic's Ring" },
+            Ring1 = { "Saintly Ring" },
+            Ring2 = { "Saintly Ring" },
             Back = { "White Cape" },
         },
     },
@@ -67,32 +70,39 @@ local profile = {
 
 profile.OnLoad = function()
     gSettings.AllowAddSet = true
+    gSettings.SoloMode = false
+    gSettings.FishMode = false
+    gSettings.HelmMode = false
 
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /glam /lac fwd glam')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
     AshitaCore:GetChatManager():QueueCommand(1, '/macro book 2')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl self on')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl others on')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl target on')
-
-    ashita.tasks.once(3, function()
-        print(chat.header('LAC: BLM'):append(chat.message('setting glamour')))
-        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 19')
-        AshitaCore:GetChatManager():QueueCommand(1, '/sl blink')
-    end)
 end
 
 profile.OnUnload = function()
+    handleSoloMode('solo off')
+    handleFishMode('fish off')
+    handleHelmMode('helm off')
+
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /glam')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /solo')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm')
 end
 
 profile.HandleCommand = function(args)
+    if #args == 0 then return end
+    handleGlamour(args)
+    handleSoloMode(args)
+    handleFishMode(args)
+    handleHelmMode(args)
 end
 
 profile.HandleDefault = function()
     local player = gData.GetPlayer()
-
-    if currentLevel ~= player.MainJobSync then
-        currentLevel = player.MainJobSync
-        gFunc.EvaluateLevels(profile.Sets, currentLevel)
-    end
+    levelSync(profile.Sets)
 
     gFunc.EquipSet('Base')
     if player.Status == 'Resting' then
@@ -125,6 +135,8 @@ profile.HandleMidcast = function()
     elseif spell.Type == 'Black Magic' then
         gFunc.EquipSet('Int')
     end
+
+    conserveMp(profile.Sets.Base)
 end
 
 profile.HandlePreshot = function()

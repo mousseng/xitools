@@ -4,52 +4,46 @@ local handleGlamour = gFunc.LoadFile('common/glamour.lua')
 local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
 local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
 local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
-local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
 
 local profile = {
     Sets = {
         Base_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            Sub = { "Parana Shield" },
-            -- Range = { },
-            Ammo = { "Morion Tathlum" },
-            Head = { "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
-            Body = { "Warlock's Tabard", "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
-            Hands = { "Savage Gauntlets", "Dream Mittens +1" },
-            Legs = { "Savage Loincloth", "Dream Pants +1" },
-            Feet = { "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
-            Neck = { "Tiger Stole" },
-            Waist = { "Friar's Rope" },
-            -- Ear1 = { },
-            Ear2 = { "Cunning Earring" },
+            Main = { "Shinobi-Gatana", "Wakizashi" },
+            Sub = { "Shinobi-Gatana", "Wakizashi" },
+            Range = { "Platoon Disc" },
+            Ammo = { "Shuriken" },
+            Head = { "Mrc. Hachimaki", "Ryl.Ftm. Bandana", "Dream Hat +1" },
+            Body = { "Beetle Harness", "Brass Harness +1", "Dream Robe" },
+            Hands = { "Savage Gauntlets", "Mrc. Tekko", "Ryl.Ftm. Gloves", "Dream Mittens +1" },
+            Legs = { "Savage Loincloth", "Mrc. Sitabaki", "Brass Subligar", "Dream Pants +1" },
+            Feet = { "Savage Gaiters", "Beetle Leggings", "Brass Leggings", "Dream Boots +1" },
+            Neck = { "Tiger Stole", "Wing Pendant" },
+            Waist = { "Warrior's Belt", "Leather Belt" },
+            Ear1 = { "Beetle Earring +1" },
+            Ear2 = { "Beetle Earring +1" },
             Ring1 = { "San d'Orian Ring" },
             Ring2 = { "Chariot Band" },
-            Back = { "Black Cape", "Cotton Cape" },
+            Back = { "Rabbit Mantle" },
         },
         Rest_Priority = {
-            Main = { "Pilgrim's Wand" },
         },
         Tp_Priority = {
-            -- Main = { },
-            -- Sub = { },
             -- Range = { },
             -- Ammo = { },
             -- Head = { },
             -- Body = { },
-            Hands = { "Ryl.Ftm. Gloves" },
+            -- Hands = { },
             -- Legs = { },
             -- Feet = { },
             -- Neck = { },
             -- Waist = { },
-            Ear1 = { "Beetle Earring +1" },
-            Ear2 = { "Beetle Earring +1" },
+            -- Ear1 = { },
+            -- Ear2 = { },
             Ring1 = { "Balance Ring" },
             Ring2 = { "Balance Ring" },
             -- Back = { },
         },
         Str_Priority = {
-            -- Main = { },
-            -- Sub = { },
             -- Range = { },
             -- Ammo = { },
             -- Head = { },
@@ -66,13 +60,11 @@ local profile = {
             -- Back = { },
         },
         Dex_Priority = {
-            -- Main = { },
-            -- Sub = { },
             -- Range = { },
             -- Ammo = { },
             -- Head = { },
             -- Body = { },
-            Hands = { "Warlock's Gloves" },
+            -- Hands = { },
             -- Legs = { },
             -- Feet = { },
             -- Neck = { },
@@ -84,75 +76,43 @@ local profile = {
             -- Back = { },
         },
         Int_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            -- Sub = { },
             -- Range = { },
             Ammo = { "Morion Tathlum" },
-            Head = { "Warlock's Chapeau", { Name = "displaced", Level = 10 } },
+            Head = { { Name = "displaced", Level = 10 } },
             Body = { "Ryl.Ftm. Tunic" },
             -- Hands = { },
             -- Legs = { },
-            Feet = { "Warlock's Boots" },
+            -- Feet = { },
             Neck = { "Black Neckerchief" },
-            Waist = { "Wizard's Belt" },
+            -- Waist = { },
             -- Ear1 = { },
             Ear2 = { "Cunning Earring" },
             Ring1 = { "Eremite's Ring" },
             Ring2 = { "Eremite's Ring" },
-            Back = { "Black Cape" },
+            -- Back = { },
         },
         Mnd_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            -- Sub = { },
             -- Range = { },
             -- Ammo = { },
             -- Head = { },
             -- Body = { },
             Hands = { "Savage Gauntlets" },
-            Legs = { "Warlock's Tights", "Savage Loincloth" },
-            Feet = { "Warlock's Boots" },
+            Legs = { "Savage Loincloth" },
+            -- Feet = { },
             Neck = { "Justice Badge" },
             Waist = { "Friar's Rope" },
             -- Ear1 = { },
             -- Ear2 = { },
             Ring1 = { "Saintly Ring" },
             Ring2 = { "Saintly Ring" },
-            Back = { "White Cape" },
+            -- Back = { },
         },
         Glamour = {
             Head = "remove",
-            Body = "Savage Separates",
-            Hands = "Savage Gauntlets",
-            Legs = "Warlock's Tights",
-            Feet = "Warlock's Boots",
-        },
-        Movement = {
-        },
-        Solo = {
-            Main = "Hornetneedle",
-            Sub = "Parana Shield",
-            Hands = "Warlock's Gloves",
-            Legs = "Warlock's Tights",
-        },
-        SoloNin = {
-            Main = "Ryl.Grd. Fleuret",
-            Sub = "Hornetneedle",
-            Hands = "Warlock's Gloves",
-            Legs = "Warlock's Tights",
-        },
-        Fish = {
-            Range = "Halcyon Rod",
-            Ammo = "Insect Ball",
-            Body = "Fsh. Tunica",
-            Hands = "Fsh. Gloves",
+            Body = "Brass Harness +1",
+            Hands = "remove",
             Legs = "Fisherman's Hose",
-            Feet = "Fisherman's Boots",
-        },
-        Helm = {
-            Body = "Field Tunica",
-            Hands = "Field Gloves",
-            Legs = "Field Hose",
-            Feet = "Field Boots",
+            Feet = "Dream Boots +1",
         },
     },
 }
@@ -167,7 +127,7 @@ profile.OnLoad = function()
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
-    AshitaCore:GetChatManager():QueueCommand(1, '/macro book 2')
+    AshitaCore:GetChatManager():QueueCommand(1, '/macro book 4')
 end
 
 profile.OnUnload = function()
@@ -198,12 +158,6 @@ profile.HandleDefault = function()
         gFunc.EquipSet('Rest')
     elseif player.Status == 'Engaged' then
         gFunc.EquipSet('Tp')
-    elseif player.IsMoving then
-        gFunc.EquipSet('Movement')
-    end
-
-    if gSettings.SoloMode then
-        gFunc.EquipSet('Solo')
     end
 end
 
@@ -218,38 +172,14 @@ profile.HandleItem = function()
 end
 
 profile.HandlePrecast = function()
-    gFunc.Equip('Head', "Warlock's Chapeau")
 end
 
 profile.HandleMidcast = function()
     local spell = gData.GetAction()
-
-    if spell.Name == 'Sneak' then
-        gFunc.Equip('Feet', "Dream Boots +1")
-    elseif spell.Name == 'Invisible' then
-        gFunc.Equip('Hands', "Dream Mittens +1")
-    elseif spell.Type == 'White Magic' then
-        gFunc.EquipSet('Mnd')
-    elseif spell.Type == 'Black Magic' then
+    if spell.Name:startswith('Hyoton')
+    or spell.Name:startswith('Suiton') then
         gFunc.EquipSet('Int')
     end
-
-    if spell.Skill == 'Healing Magic' then
-        gFunc.Equip('Legs', "Warlock's Tights")
-    elseif spell.Skill == 'Elemental Magic' then
-        gFunc.Equip('Head', "Warlock's Chapeau")
-    elseif spell.Skill == 'Enhancing Magic' then
-        gFunc.Equip('Legs', "Warlock's Tights")
-    elseif spell.Skill == 'Enfeebling Magic' then
-        gFunc.Equip('Main', "Fencing Degen")
-        gFunc.Equip('Body', "Warlock's Tabard")
-    end
-
-    if gSettings.SoloMode then
-        gFunc.Equip('Body', "Warlock's Tabard")
-    end
-
-    conserveMp(profile.Sets.Base)
 end
 
 profile.HandlePreshot = function()
@@ -260,34 +190,21 @@ end
 
 profile.HandleWeaponskill = function()
     local weaponskill = gData.GetAction()
-    local strSkills = T{ 'Flat Blade', 'Circle Blade', 'Vorpal Blade' }
-    local dexSkills = T{ 'Fast Blade' }
-    local mndSkills = T{ 'Requiescat' }
-    local strMndSkills = T{ 'Shining Blade', 'Seraph Blade', 'Swift Blade', 'Savage Blade', 'Sanguine Blade', 'Knights of Round', 'Death Blossom' }
-    local strIntSkills = T{ 'Burning Blade', 'Red Lotus Blade' }
-    local hpSkills = T{ 'Spirits Within' }
+    local strDexSkills = T{ 'Blade: Rin', 'Blade: Retsu', 'Blade: Jin', 'Blade: Ten', 'Blade: Ku' }
+    local strIntSkills = T{ 'Blade: Teki', 'Blade: To', 'Blade: Chi', 'Blade: Ei', }
+    local dexIntSkills = T{ 'Blade: Yu' }
 
-    if strSkills:contains(weaponskill.Name) then
+    if strDexSkills:contains(weaponskill.Name) then
         gFunc.EquipSet('Str')
-    elseif dexSkills:contains(weaponskill.Name) then
         gFunc.EquipSet('Dex')
-    elseif mndSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Mnd')
-    elseif strMndSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Str')
-        gFunc.EquipSet('Mnd')
     elseif strIntSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Str')
         gFunc.EquipSet('Int')
-    elseif hpSkills:contains(weaponskill.Name) then
-    end
-
-    if gSettings.SoloMode then
-        gFunc.EquipSet('Solo')
-    end
-
-    if gSettings.FishMode then
-        gFunc.EquipSet('Fish')
+        gFunc.EquipSet('Str')
+    elseif dexIntSkills:contains(weaponskill.Name) then
+        gFunc.EquipSet('Int')
+        gFunc.EquipSet('Dex')
+    elseif weaponskill.Name == 'Blade: Shun' then
+        gFunc.EquipSet('Dex')
     end
 end
 

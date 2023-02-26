@@ -1,5 +1,10 @@
 require 'common'
-local chat = require('chat')
+local levelSync = gFunc.LoadFile('common/levelSync.lua')
+local handleGlamour = gFunc.LoadFile('common/glamour.lua')
+local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
+local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
+local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
+local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
 
 local profile = {
     Sets = {
@@ -83,62 +88,43 @@ profile.OnLoad = function()
     gSettings.AllowAddSet = true
     gSettings.SoloMode = false
     gSettings.FishMode = false
+    gSettings.HelmMode = false
 
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /glam /lac fwd glam')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
     AshitaCore:GetChatManager():QueueCommand(1, '/macro book 2')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl self on')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl others on')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl target on')
-
-    ashita.tasks.once(3, function()
-        print(chat.header('LAC: WHM'):append(chat.message('setting glamour')))
-        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 20')
-        AshitaCore:GetChatManager():QueueCommand(1, '/sl blink')
-    end)
 end
 
 profile.OnUnload = function()
+    handleSoloMode('solo off')
+    handleFishMode('fish off')
+    handleHelmMode('helm off')
+
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /glam')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /solo')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm')
 end
 
 profile.HandleCommand = function(args)
     if #args == 0 then return end
-
-    if args[1] == 'solo' then
-        if (#args == 1 and not gSettings.SoloMode) or (#args == 2 and args[2] == 'on') then
-            gSettings.SoloMode = true
-            print(chat.header('LAC: WHM'):append(chat.message('enabling solo mode')))
-        elseif (#args == 1 and gSettings.SoloMode) or (#args == 2 and args[2] == 'off') then
-            gSettings.SoloMode = false
-            print(chat.header('LAC: WHM'):append(chat.message('disabling solo mode')))
-        end
-    end
-
-    if args[1] == 'fish' then
-        if (#args == 1 and not gSettings.FishMode) or (#args == 2 and args[2] == 'on') then
-            gSettings.FishMode = true
-            print(chat.header('LAC: WHM'):append(chat.message('enabling fish mode')))
-        elseif (#args == 1 and gSettings.FishMode) or (#args == 2 and args[2] == 'off') then
-            gSettings.FishMode = false
-            print(chat.header('LAC: WHM'):append(chat.message('disabling fish mode')))
-        end
-    end
+    handleGlamour(args)
+    handleSoloMode(args)
+    handleFishMode(args)
+    handleHelmMode(args)
 end
 
 profile.HandleDefault = function()
-    gFunc.EquipSet('Base')
-
     local player = gData.GetPlayer()
+    levelSync(profile.Sets)
+
+    gFunc.EquipSet('Base')
     if player.IsMoving then
         gFunc.EquipSet('Movement')
     elseif player.Status == 'Resting' then
         gFunc.EquipSet('Rest')
-    end
-
-    if gSettings.SoloMode then
-        gFunc.EquipSet('Solo')
-    end
-
-    if gSettings.FishMode then
-        gFunc.EquipSet('Fish')
     end
 end
 
@@ -167,6 +153,8 @@ profile.HandleMidcast = function()
     elseif spell.Type == 'Black Magic' then
         gFunc.EquipSet('Int')
     end
+
+    conserveMp(profile.Sets.Base)
 end
 
 profile.HandlePreshot = function()

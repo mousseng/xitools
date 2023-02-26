@@ -1,6 +1,10 @@
 require 'common'
-
-local currentLevel = 0
+local levelSync = gFunc.LoadFile('common/levelSync.lua')
+local handleGlamour = gFunc.LoadFile('common/glamour.lua')
+local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
+local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
+local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
+local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
 
 local profile = {
     Sets = {
@@ -66,31 +70,39 @@ local profile = {
 
 profile.OnLoad = function()
     gSettings.AllowAddSet = true
-    AshitaCore:GetChatManager():QueueCommand(1, '/macro book 3')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl self on')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl others on')
-    AshitaCore:GetChatManager():QueueCommand(1, '/sl target on')
+    gSettings.SoloMode = false
+    gSettings.FishMode = false
+    gSettings.HelmMode = false
 
-    ashita.tasks.once(3, function()
-        print(chat.header('LAC: SMN'):append(chat.message('setting glamour')))
-        AshitaCore:GetChatManager():QueueCommand(1, '/lockstyleset 20')
-        AshitaCore:GetChatManager():QueueCommand(1, '/sl blink')
-    end)
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /glam /lac fwd glam')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
+    AshitaCore:GetChatManager():QueueCommand(1, '/macro book 3')
 end
 
 profile.OnUnload = function()
+    handleSoloMode('solo off')
+    handleFishMode('fish off')
+    handleHelmMode('helm off')
+
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /glam')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /solo')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe')
+    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm')
 end
 
 profile.HandleCommand = function(args)
+    if #args == 0 then return end
+    handleGlamour(args)
+    handleSoloMode(args)
+    handleFishMode(args)
+    handleHelmMode(args)
 end
 
 profile.HandleDefault = function()
     local player = gData.GetPlayer()
-
-    if currentLevel ~= player.MainJobSync then
-        currentLevel = player.MainJobSync
-        gFunc.EvaluateLevels(profile.Sets, currentLevel)
-    end
+    levelSync(profile.Sets)
 
     gFunc.EquipSet('Base')
     if player.Status == 'Resting' then
@@ -123,6 +135,8 @@ profile.HandleMidcast = function()
     elseif spell.Type == 'Black Magic' then
         gFunc.EquipSet('Int')
     end
+
+    conserveMp(profile.Sets.Base)
 end
 
 profile.HandlePreshot = function()
