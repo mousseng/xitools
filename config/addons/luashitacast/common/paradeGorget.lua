@@ -1,8 +1,10 @@
+local ignoredSlots = { 5, 10, 11, 12, 13, 14, 15, 16 }
+
 local function IsParadeGorgetActive()
     local player = gData.GetPlayer()
     local hpFromAccs = 0
 
-    for i = 10, 17 do
+    for _, i in ipairs(ignoredSlots) do
         local slot = gEquip.GetCurrentEquip(i)
         if slot.Item ~= nil then
             local item = AshitaCore:GetResourceManager():GetItemById(slot.Id)

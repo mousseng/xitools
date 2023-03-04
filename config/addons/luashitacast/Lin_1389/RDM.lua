@@ -5,6 +5,8 @@ local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
 local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
 local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
 local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
+local handleSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
+local handleDaggerWs = gFunc.LoadFile('common/weaponskills/dagger.lua')
 
 local profile = {
     Sets = {
@@ -34,13 +36,13 @@ local profile = {
             -- Sub = { },
             -- Range = { },
             -- Ammo = { },
-            -- Head = { },
-            -- Body = { },
-            Hands = { "Ryl.Ftm. Gloves" },
-            -- Legs = { },
+            Head = { "Super Ribbon" },
+            Body = { "Brigandine" },
+            Hands = { "Warlock's Gloves", "Ryl.Ftm. Gloves" },
+            Legs = { "Cmb.Cst. Slacks" },
             -- Feet = { },
             -- Neck = { },
-            -- Waist = { },
+            Waist = { "Tilt Belt" },
             Ear1 = { "Beetle Earring +1" },
             Ear2 = { "Beetle Earring +1" },
             Ring1 = { "Balance Ring" },
@@ -52,12 +54,12 @@ local profile = {
             -- Sub = { },
             -- Range = { },
             -- Ammo = { },
-            -- Head = { },
+            Head = { "Super Ribbon" },
             Body = { "Savage Separates" },
             -- Hands = { },
             -- Legs = { },
             Feet = { "Savage Gaiters" },
-            -- Neck = { },
+            Neck = { "Spike Necklace" },
             -- Waist = { },
             -- Ear1 = { },
             -- Ear2 = { },
@@ -70,12 +72,12 @@ local profile = {
             -- Sub = { },
             -- Range = { },
             -- Ammo = { },
-            -- Head = { },
-            -- Body = { },
+            Head = { "Super Ribbon" },
+            Body = { "Brigandine" },
             Hands = { "Warlock's Gloves" },
             -- Legs = { },
             -- Feet = { },
-            -- Neck = { },
+            Neck = { "Spike Necklace" },
             -- Waist = { },
             -- Ear1 = { },
             -- Ear2 = { },
@@ -88,9 +90,9 @@ local profile = {
             -- Sub = { },
             -- Range = { },
             Ammo = { "Morion Tathlum" },
-            Head = { "Warlock's Chapeau", { Name = "displaced", Level = 10 } },
+            Head = { "Warlock's Chapeau", "Super Ribbon", { Name = "displaced", Level = 10 } },
             Body = { "Ryl.Ftm. Tunic" },
-            -- Hands = { },
+            Hands = { "Sly Gauntlets" },
             -- Legs = { },
             Feet = { "Warlock's Boots" },
             Neck = { "Black Neckerchief" },
@@ -106,7 +108,7 @@ local profile = {
             -- Sub = { },
             -- Range = { },
             -- Ammo = { },
-            -- Head = { },
+            Head = { "Super Ribbon" },
             -- Body = { },
             Hands = { "Savage Gauntlets" },
             Legs = { "Warlock's Tights", "Savage Loincloth" },
@@ -132,13 +134,11 @@ local profile = {
             Main = "Hornetneedle",
             Sub = "Parana Shield",
             Hands = "Warlock's Gloves",
-            Legs = "Warlock's Tights",
         },
         SoloNin = {
-            Main = "Ryl.Grd. Fleuret",
+            Main = "Dst. Baselard",
             Sub = "Hornetneedle",
             Hands = "Warlock's Gloves",
-            Legs = "Warlock's Tights",
         },
         Fish = {
             Range = "Halcyon Rod",
@@ -198,6 +198,10 @@ profile.HandleDefault = function()
         gFunc.EquipSet('Rest')
     elseif player.Status == 'Engaged' then
         gFunc.EquipSet('Tp')
+
+        if player.HPP <= 75 and player.TP <= 1000 then
+            gFunc.Equip('Ring1', "Fencer's Ring")
+        end
     elseif player.IsMoving then
         gFunc.EquipSet('Movement')
     end
@@ -260,35 +264,8 @@ end
 
 profile.HandleWeaponskill = function()
     local weaponskill = gData.GetAction()
-    local strSkills = T{ 'Flat Blade', 'Circle Blade', 'Vorpal Blade' }
-    local dexSkills = T{ 'Fast Blade' }
-    local mndSkills = T{ 'Requiescat' }
-    local strMndSkills = T{ 'Shining Blade', 'Seraph Blade', 'Swift Blade', 'Savage Blade', 'Sanguine Blade', 'Knights of Round', 'Death Blossom' }
-    local strIntSkills = T{ 'Burning Blade', 'Red Lotus Blade' }
-    local hpSkills = T{ 'Spirits Within' }
-
-    if strSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Str')
-    elseif dexSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Dex')
-    elseif mndSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Mnd')
-    elseif strMndSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Str')
-        gFunc.EquipSet('Mnd')
-    elseif strIntSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Str')
-        gFunc.EquipSet('Int')
-    elseif hpSkills:contains(weaponskill.Name) then
-    end
-
-    if gSettings.SoloMode then
-        gFunc.EquipSet('Solo')
-    end
-
-    if gSettings.FishMode then
-        gFunc.EquipSet('Fish')
-    end
+    handleSwordWs(weaponskill.Name)
+    handleDaggerWs(weaponskill.Name)
 end
 
 return profile
