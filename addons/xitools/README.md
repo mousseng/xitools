@@ -9,6 +9,8 @@ a suite of UI replacement components.
 - `fishe` is a fishing skill tracker and hook monitor
 - `log` is a dev tool that dumps packets to a log file, probably not useful
 
+![us](./img/us.png)
+
 ## usage
 `/xitools` (or `/xit`) will bring up the config menu
 `/xitools crafty` (or `/xit c`) will open the `crafty` window if it's enabled
