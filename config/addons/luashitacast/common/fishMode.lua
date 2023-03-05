@@ -1,5 +1,14 @@
 local chat = require('chat')
 
+local fishSet = {
+    Range = "Halcyon Rod",
+    Ammo = "Insect Ball",
+    Body = "Fsh. Tunica",
+    Hands = "Fsh. Gloves",
+    Legs = "Fisherman's Hose",
+    Feet = "Fisherman's Boots",
+}
+
 local function ToggleFishMode(shouldEnable)
     local player = gData.GetPlayer()
     local header = string.format('LAC: %s', player.MainJob)
@@ -7,7 +16,7 @@ local function ToggleFishMode(shouldEnable)
 
     if shouldEnable then
         print(chat.header(header):append(chat.message('enabling fish mode')))
-        gFunc.ForceEquipSet('Fish')
+        gFunc.ForceEquipSet(fishSet)
         gFunc.Disable('Range')
         gFunc.Disable('Ammo')
         gFunc.Disable('Body')

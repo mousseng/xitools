@@ -1,5 +1,12 @@
 local chat = require('chat')
 
+local helmSet = {
+    Body = "Field Tunica",
+    Hands = "Field Gloves",
+    Legs = "Field Hose",
+    Feet = "Field Boots",
+}
+
 local function ToggleHelmMode(shouldEnable)
     local player = gData.GetPlayer()
     local header = string.format('LAC: %s', player.MainJob)
@@ -7,7 +14,7 @@ local function ToggleHelmMode(shouldEnable)
 
     if shouldEnable then
         print(chat.header(header):append(chat.message('enabling helm mode')))
-        gFunc.ForceEquipSet('Helm')
+        gFunc.ForceEquipSet(helmSet)
         gFunc.Disable('Body')
         gFunc.Disable('Hands')
         gFunc.Disable('Legs')

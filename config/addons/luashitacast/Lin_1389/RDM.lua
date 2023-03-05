@@ -22,7 +22,7 @@ local profile = {
             Feet = { "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
             Neck = { "Tiger Stole" },
             Waist = { "Friar's Rope" },
-            -- Ear1 = { },
+            Ear1 = { "Moldavite Earring" },
             Ear2 = { "Cunning Earring" },
             Ring1 = { "San d'Orian Ring" },
             Ring2 = { "Chariot Band" },
@@ -60,7 +60,7 @@ local profile = {
             -- Legs = { },
             Feet = { "Savage Gaiters" },
             Neck = { "Spike Necklace" },
-            -- Waist = { },
+            Waist = { "Ryl.Kgt. Belt" },
             -- Ear1 = { },
             -- Ear2 = { },
             Ring1 = { "San d'Orian Ring" },
@@ -78,7 +78,7 @@ local profile = {
             -- Legs = { },
             -- Feet = { },
             Neck = { "Spike Necklace" },
-            -- Waist = { },
+            Waist = { "Ryl.Kgt. Belt" },
             -- Ear1 = { },
             -- Ear2 = { },
             Ring1 = { "Balance Ring" },
@@ -96,7 +96,7 @@ local profile = {
             -- Legs = { },
             Feet = { "Warlock's Boots" },
             Neck = { "Black Neckerchief" },
-            Waist = { "Wizard's Belt" },
+            Waist = { "Ryl.Kgt. Belt", "Wizard's Belt" },
             -- Ear1 = { },
             Ear2 = { "Cunning Earring" },
             Ring1 = { "Eremite's Ring" },
@@ -114,7 +114,7 @@ local profile = {
             Legs = { "Warlock's Tights", "Savage Loincloth" },
             Feet = { "Warlock's Boots" },
             Neck = { "Justice Badge" },
-            Waist = { "Friar's Rope" },
+            Waist = { "Ryl.Kgt. Belt", "Friar's Rope" },
             -- Ear1 = { },
             -- Ear2 = { },
             Ring1 = { "Saintly Ring" },
@@ -139,20 +139,6 @@ local profile = {
             Main = "Dst. Baselard",
             Sub = "Hornetneedle",
             Hands = "Warlock's Gloves",
-        },
-        Fish = {
-            Range = "Halcyon Rod",
-            Ammo = "Insect Ball",
-            Body = "Fsh. Tunica",
-            Hands = "Fsh. Gloves",
-            Legs = "Fisherman's Hose",
-            Feet = "Fisherman's Boots",
-        },
-        Helm = {
-            Body = "Field Tunica",
-            Hands = "Field Gloves",
-            Legs = "Field Hose",
-            Feet = "Field Boots",
         },
     },
 }
@@ -242,6 +228,7 @@ profile.HandleMidcast = function()
         gFunc.Equip('Legs', "Warlock's Tights")
     elseif spell.Skill == 'Elemental Magic' then
         gFunc.Equip('Head', "Warlock's Chapeau")
+        gFunc.Equip('Ear1', "Moldavite Earring")
     elseif spell.Skill == 'Enhancing Magic' then
         gFunc.Equip('Legs', "Warlock's Tights")
     elseif spell.Skill == 'Enfeebling Magic' then
