@@ -9,9 +9,9 @@ local profile = {
     Sets = {
         Base_Priority = {
             Main = { "Shinobi-Gatana", "Wakizashi" },
-            Sub = { "Shinobi-Gatana", "Wakizashi" },
-            Range = { "Platoon Disc" },
-            Ammo = { "Shuriken" },
+            Sub = { "Mercenary's Knife", "Shinobi-Gatana", "Wakizashi" },
+            -- Range = { "Platoon Disc" },
+            Ammo = { "Shuriken", "Pebble" },
             Head = { "Mrc. Hachimaki", "Ryl.Ftm. Bandana", "Dream Hat +1" },
             Body = { "Beetle Harness", "Brass Harness +1", "Dream Robe" },
             Hands = { "Savage Gauntlets", "Mrc. Tekko", "Ryl.Ftm. Gloves", "Dream Mittens +1" },
@@ -109,7 +109,7 @@ local profile = {
         },
         Glamour = {
             Head = "remove",
-            Body = "Brass Harness +1",
+            Body = "Beetle Harness",
             Hands = "remove",
             Legs = "Fisherman's Hose",
             Feet = "Dream Boots +1",
@@ -176,8 +176,12 @@ end
 
 profile.HandleMidcast = function()
     local spell = gData.GetAction()
-    if spell.Name:startswith('Hyoton')
-    or spell.Name:startswith('Suiton') then
+    if spell.Name:startswith('Huton')
+    or spell.Name:startswith('Hyoton')
+    or spell.Name:startswith('Katon')
+    or spell.Name:startswith('Suiton')
+    or spell.Name:startswith('Raiton')
+    or spell.Name:startswith('Doton') then
         gFunc.EquipSet('Int')
     end
 end
