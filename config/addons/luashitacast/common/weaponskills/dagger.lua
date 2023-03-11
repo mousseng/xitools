@@ -6,7 +6,7 @@ local dexAgiSkills = T{ 'Shark Bite' }
 local dexIntSkills = T{ 'Gust Slash', 'Cyclone', 'Aeolian Edge' }
 local dexChrSkills = T{ 'Dancing Edge' }
 
-local function HandleDaggerWs(wsName)
+local function HandleWs(wsName)
     if dexSkills:contains(wsName) then
         gFunc.EquipSet('Dex')
     elseif agiSkills:contains(wsName) then
@@ -27,4 +27,4 @@ local function HandleDaggerWs(wsName)
     end
 end
 
-return HandleDaggerWs
+return HandleWs

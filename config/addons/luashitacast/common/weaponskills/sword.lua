@@ -5,7 +5,7 @@ local strMndSkills = T{ 'Shining Blade', 'Seraph Blade', 'Swift Blade', 'Savage 
 local strIntSkills = T{ 'Burning Blade', 'Red Lotus Blade' }
 local hpSkills = T{ 'Spirits Within' }
 
-local function HandleSwordWs(wsName)
+local function HandleWs(wsName)
     if strSkills:contains(wsName) then
         gFunc.EquipSet('Str')
     elseif dexSkills:contains(wsName) then
@@ -22,4 +22,4 @@ local function HandleSwordWs(wsName)
     end
 end
 
-return HandleSwordWs
+return HandleWs

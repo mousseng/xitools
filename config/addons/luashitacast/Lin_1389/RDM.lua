@@ -1,5 +1,6 @@
 require 'common'
 local levelSync = gFunc.LoadFile('common/levelSync.lua')
+local handleCudgel = gFunc.LoadFile('common/cudgel.lua')
 local handleGlamour = gFunc.LoadFile('common/glamour.lua')
 local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
 local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
@@ -131,13 +132,13 @@ local profile = {
         Movement = {
         },
         Solo = {
-            Main = "Hornetneedle",
+            Main = "Saber",
             Sub = "Parana Shield",
             Hands = "Warlock's Gloves",
         },
         SoloNin = {
-            Main = "Dst. Baselard",
-            Sub = "Hornetneedle",
+            Main = "Saber",
+            Sub = "Ryl.Grd. Fleuret",
             Hands = "Warlock's Gloves",
         },
     },
@@ -173,6 +174,7 @@ profile.HandleCommand = function(args)
     handleSoloMode(args)
     handleFishMode(args)
     handleHelmMode(args)
+    handleCudgel(args)
 end
 
 profile.HandleDefault = function()
@@ -214,11 +216,7 @@ end
 profile.HandleMidcast = function()
     local spell = gData.GetAction()
 
-    if spell.Name == 'Sneak' then
-        gFunc.Equip('Feet', "Dream Boots +1")
-    elseif spell.Name == 'Invisible' then
-        gFunc.Equip('Hands', "Dream Mittens +1")
-    elseif spell.Type == 'White Magic' then
+    if spell.Type == 'White Magic' then
         gFunc.EquipSet('Mnd')
     elseif spell.Type == 'Black Magic' then
         gFunc.EquipSet('Int')
@@ -226,14 +224,28 @@ profile.HandleMidcast = function()
 
     if spell.Skill == 'Healing Magic' then
         gFunc.Equip('Legs', "Warlock's Tights")
+        gFunc.Equip('Neck', "Healing Torque")
     elseif spell.Skill == 'Elemental Magic' then
         gFunc.Equip('Head', "Warlock's Chapeau")
+        gFunc.Equip('Neck', "Elemental Torque")
         gFunc.Equip('Ear1', "Moldavite Earring")
     elseif spell.Skill == 'Enhancing Magic' then
         gFunc.Equip('Legs', "Warlock's Tights")
+        gFunc.Equip('Neck', "Enhancing Torque")
     elseif spell.Skill == 'Enfeebling Magic' then
         gFunc.Equip('Main', "Fencing Degen")
         gFunc.Equip('Body', "Warlock's Tabard")
+        gFunc.Equip('Neck', "Enfeebling Torque")
+    elseif spell.Skill == 'Divine Magic' then
+        gFunc.Equip('Neck', "Divine Torque")
+    elseif spell.Skill == 'Dark Magic' then
+        gFunc.Equip('Neck', "Dark Torque")
+    end
+
+    if spell.Name == 'Sneak' then
+        gFunc.Equip('Feet', "Dream Boots +1")
+    elseif spell.Name == 'Invisible' then
+        gFunc.Equip('Hands', "Dream Mittens +1")
     end
 
     if gSettings.SoloMode then

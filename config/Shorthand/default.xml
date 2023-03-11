@@ -1,0 +1,508 @@
+<shorthand>
+
+	<settings>
+		<packetws>false</packetws>
+		<gearcheck>true</gearcheck>
+		<impact>false</impact>
+		<honor>false</honor>
+		<dispelga>false</dispelga>
+		<debug>false</dispelga>
+	</settings>
+
+	<!-- Ninjutsu -->
+		<spell id="338">
+			<name>u</name>
+			<name>utsu</name>
+			<name>u1</name>
+			<name>utsu1</name>
+		</spell>
+		<spell id="339">
+			<name>u2</name>
+			<name>utsu2</name>
+		</spell>
+		<spell id="340">
+			<name>u3</name>
+			<name>utsu3</name>
+		</spell>
+
+		<spell id="323">
+			<name>hy</name>
+			<name>hyo</name>
+		</spell>
+		<spell id="324">
+			<name>hy2</name>
+			<name>hyo2</name>
+		</spell>
+		<spell id="325">
+			<name>hy3</name>
+			<name>hyo3</name>
+		</spell>
+
+		<spell id="320">
+			<name>ka</name>
+			<name>kat</name>
+		</spell>
+		<spell id="321">
+			<name>ka2</name>
+			<name>kat2</name>
+		</spell>
+		<spell id="322">
+			<name>ka3</name>
+			<name>kat3</name>
+		</spell>
+
+		<spell id="335">
+			<name>su</name>
+			<name>sui</name>
+		</spell>
+		<spell id="336">
+			<name>su2</name>
+			<name>sui2</name>
+		</spell>
+		<spell id="337">
+			<name>su3</name>
+			<name>sui3</name>
+		</spell>
+
+		<spell id="332">
+			<name>rai</name>
+		</spell>
+		<spell id="333">
+			<name>rai2</name>
+		</spell>
+		<spell id="334">
+			<name>rai3</name>
+		</spell>
+
+		<spell id="329">
+			<name>do</name>
+			<name>dot</name>
+		</spell>
+		<spell id="330">
+			<name>do2</name>
+			<name>dot2</name>
+		</spell>
+		<spell id="331">
+			<name>do3</name>
+			<name>dot3</name>
+		</spell>
+
+		<spell id="326">
+			<name>hu</name>
+			<name>hut</name>
+		</spell>
+		<spell id="327">
+			<name>hu2</name>
+			<name>hut2</name>
+		</spell>
+		<spell id="328">
+			<name>hu3</name>
+			<name>hut3</name>
+		</spell>
+
+		<spell id="353">
+			<name>tonko</name>
+		</spell>
+
+	<!-- Seals -->
+		<ability id="74">
+			<name>ds</name>
+		</ability>
+
+		<ability id="75">
+			<name>es</name>
+		</ability>
+
+	<!-- Debuffs -->
+		<spell id="59">
+			<name>si</name>
+			<name>sil</name>
+		</spell>
+
+		<spell id="253">
+			<name>sl</name>
+			<name>sle</name>
+			<name>slp</name>
+		</spell>
+
+		<spell id="259">
+			<name>sl2</name>
+			<name>sle2</name>
+			<name>slp2</name>
+		</spell>
+
+		<spell id="258">
+			<name>bi</name>
+		</spell>
+
+	<!-- Self-Buffs -->
+		<spell id="53">
+			<name>bl</name>
+		</spell>
+
+		<spell id="54">
+			<name>ss</name>
+		</spell>
+
+		<spell id="55">
+			<name>aq</name>
+		</spell>
+
+		<spell id="106">
+			<name>ph</name>
+		</spell>
+
+	<!-- Enspells -->
+		<spell id="100">
+			<name>enf</name>
+		</spell>
+
+		<spell id="101">
+			<name>enb</name>
+		</spell>
+
+		<spell id="102">
+			<name>ena</name>
+		</spell>
+
+		<spell id="103">
+			<name>ens</name>
+		</spell>
+
+		<spell id="104">
+			<name>ent</name>
+		</spell>
+
+		<spell id="105">
+			<name>enw</name>
+		</spell>
+
+	<!-- Sneak/Invis -->
+		<spell id="136">
+			<name>invis</name>
+		</spell>
+
+		<spell id="137">
+			<name>sn</name>
+		</spell>
+
+	<!-- Drain -->
+		<spell id="245">
+			<name>dr</name>
+		</spell>
+
+		<spell id="246">
+			<name>dr2</name>
+		</spell>
+
+		<spell id="247">
+			<name>as</name>
+		</spell>
+
+		<spell id="248">
+			<name>as2</name>
+		</spell>
+
+	<!-- Fires -->
+		<spell id="144">
+			<name>f</name>
+			<name>f1</name>
+		</spell>
+
+		<spell id="145">
+			<name>f2</name>
+		</spell>
+
+		<spell id="146">
+			<name>f3</name>
+		</spell>
+
+		<spell id="147">
+			<name>f4</name>
+		</spell>
+
+		<spell id="148">
+			<name>f5</name>
+		</spell>
+
+		<spell id="174">
+			<name>fga</name>
+		</spell>
+
+		<spell id="175">
+			<name>fga2</name>
+		</spell>
+
+		<spell id="176">
+			<name>fga3</name>
+		</spell>
+
+		<spell id="177">
+			<name>fga4</name>
+		</spell>
+
+	<!-- Blizzards -->
+		<spell id="149">
+			<name>b</name>
+			<name>b1</name>
+			<name>bliz</name>
+			<name>blizz</name>
+		</spell>
+
+		<spell id="150">
+			<name>b2</name>
+			<name>bliz2</name>
+			<name>blizz2</name>
+		</spell>
+
+		<spell id="151">
+			<name>b3</name>
+			<name>bliz3</name>
+			<name>blizz3</name>
+		</spell>
+
+		<spell id="152">
+			<name>b4</name>
+			<name>bliz4</name>
+			<name>blizz4</name>
+		</spell>
+
+		<spell id="153">
+			<name>b5</name>
+			<name>bliz5</name>
+			<name>blizz5</name>
+		</spell>
+
+		<spell id="179">
+			<name>bga</name>
+		</spell>
+
+		<spell id="180">
+			<name>bga2</name>
+		</spell>
+
+		<spell id="181">
+			<name>bga3</name>
+		</spell>
+
+		<spell id="182">
+			<name>bga4</name>
+		</spell>
+
+	<!-- Aeros -->
+		<spell id="154">
+			<name>a</name>
+			<name>a1</name>
+		</spell>
+
+		<spell id="155">
+			<name>a2</name>
+		</spell>
+
+		<spell id="156">
+			<name>a3</name>
+		</spell>
+
+		<spell id="157">
+			<name>a4</name>
+		</spell>
+
+		<spell id="158">
+			<name>a5</name>
+		</spell>
+
+		<spell id="184">
+			<name>aga</name>
+		</spell>
+
+		<spell id="185">
+			<name>aga2</name>
+		</spell>
+
+		<spell id="186">
+			<name>aga3</name>
+		</spell>
+
+		<spell id="187">
+			<name>aga4</name>
+		</spell>
+
+	<!-- Stones -->
+		<spell id="159">
+			<name>s</name>
+			<name>s1</name>
+		</spell>
+
+		<spell id="160">
+			<name>s2</name>
+		</spell>
+
+		<spell id="161">
+			<name>s3</name>
+		</spell>
+
+		<spell id="162">
+			<name>s4</name>
+		</spell>
+
+		<spell id="163">
+			<name>s5</name>
+		</spell>
+
+		<spell id="189">
+			<name>sga</name>
+		</spell>
+
+		<spell id="190">
+			<name>sga2</name>
+		</spell>
+
+		<spell id="191">
+			<name>sga3</name>
+		</spell>
+
+		<spell id="192">
+			<name>sga4</name>
+		</spell>
+
+	<!-- Thunders -->
+		<spell id="164">
+			<name>t</name>
+			<name>t1</name>
+		</spell>
+
+		<spell id="165">
+			<name>t2</name>
+		</spell>
+
+		<spell id="166">
+			<name>t3</name>
+		</spell>
+
+		<spell id="167">
+			<name>t4</name>
+		</spell>
+
+		<spell id="168">
+			<name>t5</name>
+		</spell>
+
+		<spell id="194">
+			<name>tga</name>
+		</spell>
+
+		<spell id="195">
+			<name>tga2</name>
+		</spell>
+
+		<spell id="196">
+			<name>tga3</name>
+		</spell>
+
+		<spell id="197">
+			<name>tga4</name>
+		</spell>
+
+	<!-- Waters -->
+		<spell id="169">
+			<name>w</name>
+			<name>w1</name>
+		</spell>
+
+		<spell id="170">
+			<name>w2</name>
+		</spell>
+
+		<spell id="171">
+			<name>w3</name>
+		</spell>
+
+		<spell id="172">
+			<name>w4</name>
+		</spell>
+
+		<spell id="173">
+			<name>w5</name>
+		</spell>
+
+		<spell id="199">
+			<name>wga</name>
+		</spell>
+
+		<spell id="200">
+			<name>wga2</name>
+		</spell>
+
+		<spell id="201">
+			<name>wga3</name>
+		</spell>
+
+		<spell id="202">
+			<name>wga4</name>
+		</spell>
+
+	<!-- Haste -->
+		<spell id="57">
+			<name>h</name>
+		</spell>
+
+	<!-- Cures -->
+		<spell id="1">
+			<name>c</name>
+			<name>c1</name>
+		</spell>
+
+		<spell id="2">
+			<name>c2</name>
+		</spell>
+
+		<spell id="3">
+			<name>c3</name>
+		</spell>
+
+		<spell id="4">
+			<name>c4</name>
+		</spell>
+
+		<spell id="5">
+			<name>c5</name>
+		</spell>
+
+	<!-- Protects -->
+		<spell id="43">
+			<name>pro</name>
+			<name>prot</name>
+		</spell>
+
+		<spell id="44">
+			<name>pro2</name>
+			<name>prot2</name>
+		</spell>
+
+		<spell id="45">
+			<name>pro3</name>
+			<name>prot3</name>
+		</spell>
+
+		<spell id="46">
+			<name>pro4</name>
+			<name>prot4</name>
+		</spell>
+
+		<spell id="48">
+			<name>sh</name>
+			<name>sh1</name>
+		</spell>
+
+		<spell id="49">
+			<name>sh2</name>
+		</spell>
+
+		<spell id="50">
+			<name>sh3</name>
+		</spell>
+
+		<spell id="51">
+			<name>sh4</name>
+		</spell>
+</shorthand>

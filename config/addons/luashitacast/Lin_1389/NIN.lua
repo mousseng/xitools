@@ -4,14 +4,18 @@ local handleGlamour = gFunc.LoadFile('common/glamour.lua')
 local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
 local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
 local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
+local handleMagic = gFunc.LoadFile('common/magic.lua')
+local handleSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
+local handleDaggerWs = gFunc.LoadFile('common/weaponskills/dagger.lua')
+local handleKatanaWs = gFunc.LoadFile('common/weaponskills/katana.lua')
 
 local profile = {
     Sets = {
         Base_Priority = {
-            Main = { "Shinobi-Gatana", "Wakizashi" },
-            Sub = { "Mercenary's Knife", "Shinobi-Gatana", "Wakizashi" },
+            Main = { "Centurion's Sword", "Shinobi-Gatana", "Wakizashi" },
+            Sub = { "Centurion's Sword", "Shinobi-Gatana", "Wakizashi" },
             -- Range = { "Platoon Disc" },
-            Ammo = { "Shuriken", "Pebble" },
+            Ammo = { "Pebble" },
             Head = { "Mrc. Hachimaki", "Ryl.Ftm. Bandana", "Dream Hat +1" },
             Body = { "Beetle Harness", "Brass Harness +1", "Dream Robe" },
             Hands = { "Savage Gauntlets", "Mrc. Tekko", "Ryl.Ftm. Gloves", "Dream Mittens +1" },
@@ -32,15 +36,15 @@ local profile = {
             -- Ammo = { },
             -- Head = { },
             -- Body = { },
-            -- Hands = { },
-            -- Legs = { },
+            Hands = { "Mrc. Tekko", },
+            Legs = { "Mrc. Sitabaki", },
             -- Feet = { },
             -- Neck = { },
             -- Waist = { },
             -- Ear1 = { },
             -- Ear2 = { },
-            Ring1 = { "Balance Ring" },
-            Ring2 = { "Balance Ring" },
+            Ring1 = { "Balance Ring", },
+            Ring2 = { "Balance Ring", },
             -- Back = { },
         },
         Str_Priority = {
@@ -51,7 +55,7 @@ local profile = {
             -- Hands = { },
             -- Legs = { },
             Feet = { "Savage Gaiters" },
-            -- Neck = { },
+            Neck = { "Spike Necklace", },
             -- Waist = { },
             -- Ear1 = { },
             -- Ear2 = { },
@@ -67,7 +71,7 @@ local profile = {
             -- Hands = { },
             -- Legs = { },
             -- Feet = { },
-            -- Neck = { },
+            Neck = { "Spike Necklace", },
             -- Waist = { },
             -- Ear1 = { },
             -- Ear2 = { },
@@ -176,14 +180,7 @@ end
 
 profile.HandleMidcast = function()
     local spell = gData.GetAction()
-    if spell.Name:startswith('Huton')
-    or spell.Name:startswith('Hyoton')
-    or spell.Name:startswith('Katon')
-    or spell.Name:startswith('Suiton')
-    or spell.Name:startswith('Raiton')
-    or spell.Name:startswith('Doton') then
-        gFunc.EquipSet('Int')
-    end
+    handleMagic(spell)
 end
 
 profile.HandlePreshot = function()
@@ -194,22 +191,9 @@ end
 
 profile.HandleWeaponskill = function()
     local weaponskill = gData.GetAction()
-    local strDexSkills = T{ 'Blade: Rin', 'Blade: Retsu', 'Blade: Jin', 'Blade: Ten', 'Blade: Ku' }
-    local strIntSkills = T{ 'Blade: Teki', 'Blade: To', 'Blade: Chi', 'Blade: Ei', }
-    local dexIntSkills = T{ 'Blade: Yu' }
-
-    if strDexSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Str')
-        gFunc.EquipSet('Dex')
-    elseif strIntSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Int')
-        gFunc.EquipSet('Str')
-    elseif dexIntSkills:contains(weaponskill.Name) then
-        gFunc.EquipSet('Int')
-        gFunc.EquipSet('Dex')
-    elseif weaponskill.Name == 'Blade: Shun' then
-        gFunc.EquipSet('Dex')
-    end
+    handleSwordWs(weaponskill.Name)
+    handleDaggerWs(weaponskill.Name)
+    handleKatanaWs(weaponskill.Name)
 end
 
 return profile
