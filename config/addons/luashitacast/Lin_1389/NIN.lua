@@ -11,25 +11,35 @@ local handleKatanaWs = gFunc.LoadFile('common/weaponskills/katana.lua')
 
 local profile = {
     Sets = {
+        -- situational base sets
         Base_Priority = {
-            Main = { "Centurion's Sword", "Shinobi-Gatana", "Wakizashi" },
-            Sub = { "Centurion's Sword", "Shinobi-Gatana", "Wakizashi" },
-            -- Range = { "Platoon Disc" },
+            Main = { "Kodachi +1" },
+            Sub = { "Fukuro" },
+            -- Range = {  },
             Ammo = { "Pebble" },
-            Head = { "Mrc. Hachimaki", "Ryl.Ftm. Bandana", "Dream Hat +1" },
-            Body = { "Beetle Harness", "Brass Harness +1", "Dream Robe" },
-            Hands = { "Savage Gauntlets", "Mrc. Tekko", "Ryl.Ftm. Gloves", "Dream Mittens +1" },
-            Legs = { "Savage Loincloth", "Mrc. Sitabaki", "Brass Subligar", "Dream Pants +1" },
-            Feet = { "Savage Gaiters", "Beetle Leggings", "Brass Leggings", "Dream Boots +1" },
-            Neck = { "Tiger Stole", "Wing Pendant" },
-            Waist = { "Warrior's Belt", "Leather Belt" },
+            Head = { "Brass Hairpin" },
+            Body = { "Nanban Kariginu" },
+            Hands = { "Windurstian Tekko" },
+            Legs = { "Republic Subligar" },
+            Feet = { "Fed. Kyahan" },
+            Neck = { "Tiger Stole" },
+            Waist = { "Warrior's Belt" },
             Ear1 = { "Beetle Earring +1" },
             Ear2 = { "Beetle Earring +1" },
             Ring1 = { "San d'Orian Ring" },
             Ring2 = { "Chariot Band" },
-            Back = { "Rabbit Mantle" },
+            -- Back = {  },
+        },
+        Glamour = {
+            -- Head = "remove",
+            -- Body = "Beetle Harness",
+            -- Hands = "remove",
+            -- Legs = "Fisherman's Hose",
+            -- Feet = "Dream Boots +1",
         },
         Rest_Priority = {
+        },
+        Movement_Priority = {
         },
         Tp_Priority = {
             -- Range = { },
@@ -47,6 +57,7 @@ local profile = {
             Ring2 = { "Balance Ring", },
             -- Back = { },
         },
+        -- stat bonus sets
         Str_Priority = {
             -- Range = { },
             -- Ammo = { },
@@ -79,21 +90,26 @@ local profile = {
             Ring2 = { "Balance Ring" },
             -- Back = { },
         },
+        Vit_Priority = {
+        },
+        Agi_Priority = {
+            Neck = { "Wing Pendant" }
+        },
         Int_Priority = {
             -- Range = { },
             Ammo = { "Morion Tathlum" },
-            Head = { { Name = "displaced", Level = 10 } },
-            Body = { "Ryl.Ftm. Tunic" },
-            -- Hands = { },
-            -- Legs = { },
-            -- Feet = { },
-            Neck = { "Black Neckerchief" },
-            -- Waist = { },
-            -- Ear1 = { },
+            -- Head = {  },
+            -- Body = {  },
+            -- Hands = {  },
+            -- Legs = {  },
+            -- Feet = {  },
+            -- Neck = {  },
+            -- Waist = {  },
+            -- Ear1 = {  },
             Ear2 = { "Cunning Earring" },
             Ring1 = { "Eremite's Ring" },
             Ring2 = { "Eremite's Ring" },
-            -- Back = { },
+            -- Back = {  },
         },
         Mnd_Priority = {
             -- Range = { },
@@ -111,12 +127,34 @@ local profile = {
             Ring2 = { "Saintly Ring" },
             -- Back = { },
         },
-        Glamour = {
-            Head = "remove",
-            Body = "Beetle Harness",
-            Hands = "remove",
-            Legs = "Fisherman's Hose",
-            Feet = "Dream Boots +1",
+        Chr_Priority = {
+        },
+        -- substat bonus sets
+        Acc_Priority = {
+        },
+        Att_Priority = {
+            Hands = { "Ryl.Ftm. Gloves" }
+        },
+        Eva_Priority = {
+        },
+        Hp_Priority = {
+        },
+        Mp_Priority = {
+        },
+        Interrupt_Priority = {
+        },
+        -- skill bonus sets
+        Healing_Priority = {
+        },
+        Elemental_Priority = {
+        },
+        Enhancing_Priority = {
+        },
+        Enfeebling_Priority = {
+        },
+        Divine_Priority = {
+        },
+        Dark_Priority = {
         },
     },
 }

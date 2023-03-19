@@ -1,13 +1,14 @@
 require 'common'
 local levelSync = gFunc.LoadFile('common/levelSync.lua')
+local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
+local doMagic = gFunc.LoadFile('common/magic.lua')
+local doSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
+local doDaggerWs = gFunc.LoadFile('common/weaponskills/dagger.lua')
 local handleCudgel = gFunc.LoadFile('common/cudgel.lua')
 local handleGlamour = gFunc.LoadFile('common/glamour.lua')
 local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
 local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
 local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
-local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
-local handleSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
-local handleDaggerWs = gFunc.LoadFile('common/weaponskills/dagger.lua')
 
 local profile = {
     Sets = {
@@ -29,99 +30,6 @@ local profile = {
             Ring2 = { "Chariot Band" },
             Back = { "Black Cape", "Cotton Cape" },
         },
-        Rest_Priority = {
-            Main = { "Pilgrim's Wand" },
-        },
-        Tp_Priority = {
-            -- Main = { },
-            -- Sub = { },
-            -- Range = { },
-            -- Ammo = { },
-            Head = { "Super Ribbon" },
-            Body = { "Brigandine" },
-            Hands = { "Warlock's Gloves", "Ryl.Ftm. Gloves" },
-            Legs = { "Cmb.Cst. Slacks" },
-            -- Feet = { },
-            -- Neck = { },
-            Waist = { "Tilt Belt" },
-            Ear1 = { "Beetle Earring +1" },
-            Ear2 = { "Beetle Earring +1" },
-            Ring1 = { "Balance Ring" },
-            Ring2 = { "Balance Ring" },
-            -- Back = { },
-        },
-        Str_Priority = {
-            -- Main = { },
-            -- Sub = { },
-            -- Range = { },
-            -- Ammo = { },
-            Head = { "Super Ribbon" },
-            Body = { "Savage Separates" },
-            -- Hands = { },
-            -- Legs = { },
-            Feet = { "Savage Gaiters" },
-            Neck = { "Spike Necklace" },
-            Waist = { "Ryl.Kgt. Belt" },
-            -- Ear1 = { },
-            -- Ear2 = { },
-            Ring1 = { "San d'Orian Ring" },
-            -- Ring2 = { },
-            -- Back = { },
-        },
-        Dex_Priority = {
-            -- Main = { },
-            -- Sub = { },
-            -- Range = { },
-            -- Ammo = { },
-            Head = { "Super Ribbon" },
-            Body = { "Brigandine" },
-            Hands = { "Warlock's Gloves" },
-            -- Legs = { },
-            -- Feet = { },
-            Neck = { "Spike Necklace" },
-            Waist = { "Ryl.Kgt. Belt" },
-            -- Ear1 = { },
-            -- Ear2 = { },
-            Ring1 = { "Balance Ring" },
-            Ring2 = { "Balance Ring" },
-            -- Back = { },
-        },
-        Int_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            -- Sub = { },
-            -- Range = { },
-            Ammo = { "Morion Tathlum" },
-            Head = { "Warlock's Chapeau", "Super Ribbon", { Name = "displaced", Level = 10 } },
-            Body = { "Ryl.Ftm. Tunic" },
-            Hands = { "Sly Gauntlets" },
-            -- Legs = { },
-            Feet = { "Warlock's Boots" },
-            Neck = { "Black Neckerchief" },
-            Waist = { "Ryl.Kgt. Belt", "Wizard's Belt" },
-            -- Ear1 = { },
-            Ear2 = { "Cunning Earring" },
-            Ring1 = { "Eremite's Ring" },
-            Ring2 = { "Eremite's Ring" },
-            Back = { "Black Cape" },
-        },
-        Mnd_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            -- Sub = { },
-            -- Range = { },
-            -- Ammo = { },
-            Head = { "Super Ribbon" },
-            -- Body = { },
-            Hands = { "Savage Gauntlets" },
-            Legs = { "Warlock's Tights", "Savage Loincloth" },
-            Feet = { "Warlock's Boots" },
-            Neck = { "Justice Badge" },
-            Waist = { "Ryl.Kgt. Belt", "Friar's Rope" },
-            -- Ear1 = { },
-            -- Ear2 = { },
-            Ring1 = { "Saintly Ring" },
-            Ring2 = { "Saintly Ring" },
-            Back = { "White Cape" },
-        },
         Glamour = {
             Head = "remove",
             Body = "Savage Separates",
@@ -129,7 +37,22 @@ local profile = {
             Legs = "Warlock's Tights",
             Feet = "Warlock's Boots",
         },
-        Movement = {
+        -- situational base sets
+        Rest_Priority = {
+            Main = { "Pilgrim's Wand" },
+        },
+        Tp_Priority = {
+            Head = { "Super Ribbon" },
+            Body = { "Brigandine" },
+            Hands = { "Warlock's Gloves", "Ryl.Ftm. Gloves" },
+            Legs = { "Cmb.Cst. Slacks" },
+            Waist = { "Tilt Belt" },
+            Ear1 = { "Beetle Earring +1" },
+            Ear2 = { "Beetle Earring +1" },
+            Ring1 = { "Balance Ring" },
+            Ring2 = { "Balance Ring" },
+        },
+        Movement_Priority = {
         },
         Solo = {
             Main = "Saber",
@@ -140,6 +63,95 @@ local profile = {
             Main = "Saber",
             Sub = "Ryl.Grd. Fleuret",
             Hands = "Warlock's Gloves",
+        },
+        -- stat bonus sets
+        Str_Priority = {
+            Head = { "Super Ribbon" },
+            Body = { "Savage Separates" },
+            Feet = { "Savage Gaiters" },
+            Neck = { "Spike Necklace" },
+            Waist = { "Ryl.Kgt. Belt" },
+            Ring1 = { "San d'Orian Ring" },
+        },
+        Dex_Priority = {
+            Head = { "Super Ribbon" },
+            Body = { "Brigandine" },
+            Hands = { "Warlock's Gloves" },
+            Neck = { "Spike Necklace" },
+            Waist = { "Ryl.Kgt. Belt" },
+            Ring1 = { "Balance Ring" },
+            Ring2 = { "Balance Ring" },
+        },
+        Vit_Priority = {
+        },
+        Agi_Priority = {
+        },
+        Int_Priority = {
+            Main = { "Fencing Degen", "Yew Wand +1" },
+            Ammo = { "Morion Tathlum" },
+            Head = { "Warlock's Chapeau", "Super Ribbon", { Name = "displaced", Level = 10 } },
+            Body = { { Name = "displaced", Level = 52 }, "Ryl.Ftm. Tunic" },
+            Hands = { "Sly Gauntlets" },
+            Legs = { "Magic Cuisses" },
+            Feet = { "Warlock's Boots" },
+            Neck = { "Black Neckerchief" },
+            Waist = { "Ryl.Kgt. Belt", "Wizard's Belt" },
+            Ear2 = { "Cunning Earring" },
+            Ring1 = { "Eremite's Ring" },
+            Ring2 = { "Eremite's Ring" },
+            Back = { "Black Cape" },
+        },
+        Mnd_Priority = {
+            Main = { "Fencing Degen", "Yew Wand +1" },
+            Head = { "Super Ribbon" },
+            Hands = { "Savage Gauntlets" },
+            Legs = { "Warlock's Tights", "Magic Cuisses", "Savage Loincloth" },
+            Feet = { "Warlock's Boots" },
+            Neck = { "Justice Badge" },
+            Waist = { "Ryl.Kgt. Belt", "Friar's Rope" },
+            Ring1 = { "Saintly Ring" },
+            Ring2 = { "Saintly Ring" },
+            Back = { "White Cape" },
+        },
+        Chr_Priority = {
+        },
+        -- substat bonus sets
+        Acc_Priority = {
+        },
+        Att_Priority = {
+        },
+        Eva_Priority = {
+        },
+        Hp_Priority = {
+        },
+        Mp_Priority = {
+        },
+        Interrupt_Priority = {
+        },
+        -- skill bonus sets
+        Healing_Priority = {
+            Legs = { "Warlock's Tights" },
+            Neck = { "Healing Torque" },
+        },
+        Elemental_Priority = {
+            Head = { "Warlock's Chapeau" },
+            Neck = { "Elemental Torque" },
+            Ear1 = { "Moldavite Earring" },
+        },
+        Enhancing_Priority = {
+            Legs = { "Warlock's Tights" },
+            Neck = { "Enhancing Torque" },
+        },
+        Enfeebling_Priority = {
+            Main = { "Fencing Degen" },
+            Body = { "Warlock's Tabard" },
+            Neck = { "Enfeebling Torque" },
+        },
+        Divine_Priority = {
+            Neck = { "Divine Torque" },
+        },
+        Dark_Priority = {
+            Neck = { "Dark Torque" },
         },
     },
 }
@@ -211,42 +223,12 @@ end
 
 profile.HandlePrecast = function()
     gFunc.Equip('Head', "Warlock's Chapeau")
+    conserveMp(profile.Sets.Base)
 end
 
 profile.HandleMidcast = function()
     local spell = gData.GetAction()
-
-    if spell.Type == 'White Magic' then
-        gFunc.EquipSet('Mnd')
-    elseif spell.Type == 'Black Magic' then
-        gFunc.EquipSet('Int')
-    end
-
-    if spell.Skill == 'Healing Magic' then
-        gFunc.Equip('Legs', "Warlock's Tights")
-        gFunc.Equip('Neck', "Healing Torque")
-    elseif spell.Skill == 'Elemental Magic' then
-        gFunc.Equip('Head', "Warlock's Chapeau")
-        gFunc.Equip('Neck', "Elemental Torque")
-        gFunc.Equip('Ear1', "Moldavite Earring")
-    elseif spell.Skill == 'Enhancing Magic' then
-        gFunc.Equip('Legs', "Warlock's Tights")
-        gFunc.Equip('Neck', "Enhancing Torque")
-    elseif spell.Skill == 'Enfeebling Magic' then
-        gFunc.Equip('Main', "Fencing Degen")
-        gFunc.Equip('Body', "Warlock's Tabard")
-        gFunc.Equip('Neck', "Enfeebling Torque")
-    elseif spell.Skill == 'Divine Magic' then
-        gFunc.Equip('Neck', "Divine Torque")
-    elseif spell.Skill == 'Dark Magic' then
-        gFunc.Equip('Neck', "Dark Torque")
-    end
-
-    if spell.Name == 'Sneak' then
-        gFunc.Equip('Feet', "Dream Boots +1")
-    elseif spell.Name == 'Invisible' then
-        gFunc.Equip('Hands', "Dream Mittens +1")
-    end
+    doMagic(spell)
 
     if gSettings.SoloMode then
         gFunc.Equip('Body', "Warlock's Tabard")
@@ -263,8 +245,8 @@ end
 
 profile.HandleWeaponskill = function()
     local weaponskill = gData.GetAction()
-    handleSwordWs(weaponskill.Name)
-    handleDaggerWs(weaponskill.Name)
+    doSwordWs(weaponskill.Name)
+    doDaggerWs(weaponskill.Name)
 end
 
 return profile

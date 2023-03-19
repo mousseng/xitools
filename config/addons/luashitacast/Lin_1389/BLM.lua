@@ -65,7 +65,13 @@ local profile = {
             Ring2 = { "Saintly Ring" },
             Back = { "White Cape" },
         },
-        Glamour = {}
+        Glamour = {
+            Head = "remove",
+            Body = "Seer's Tunic",
+            Hands = "Savage Gauntlets",
+            Legs = "Fisherman's Hose",
+            Feet = "Dream Boots +1",
+        }
     },
 }
 
