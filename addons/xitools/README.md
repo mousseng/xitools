@@ -4,6 +4,7 @@ a suite of UI replacement components.
 - `us` displays information about the party
 - `pet` displays information about your pet
 - `tgt` displays information about your target or subtarget
+- `inv` shows your inventories with some interaction enabled
 - `tracker` displays configurable timers for spells and abilities
 - `crafty` is a crafting skill tracker and recipe list
 - `fishe` is a fishing skill tracker and hook monitor
@@ -15,6 +16,7 @@ a suite of UI replacement components.
 `/xitools` (or `/xit`) will bring up the config menu
 `/xitools crafty` (or `/xit c`) will open the `crafty` window if it's enabled
 `/xitools fishe` (or `/xit f`) will open the `fishe` window if it's enabled
+`/xitools inv` (or `/xit i`) will open the `inv` window if it's enabled
 
 ## todo
 - [ ] `all`: hide ui when in cutscene

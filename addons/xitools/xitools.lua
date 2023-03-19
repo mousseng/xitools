@@ -1,6 +1,6 @@
 addon.name    = 'xitools'
 addon.author  = 'lin'
-addon.version = '0.11'
+addon.version = '0.12'
 addon.desc    = 'A humble UI toolkit'
 
 require('common')
