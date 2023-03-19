@@ -1,0 +1,62 @@
+/load addons
+/load minimap
+/load shorthand
+/load thirdparty
+/load stylist
+/load nameplate
+
+/addon load dynamic_entity_renamer
+/addon load allmaps
+/addon load cfhblock
+/addon load checker
+/addon load drawdistance
+/addon load enternity
+/addon load filterless
+/addon load fps
+/addon load instantah
+/addon load luashitacast
+/addon load macrofix
+/addon load recast
+/addon load stfu
+/addon load timestamp
+/addon load xicamera
+/addon load xitools
+/addon load skillchain
+/addon load minimap-helper
+/addon load points
+/addon load mobdb
+/addon load equipmon
+
+/bindblock
+/bind insert /ashita
+/bind ^v /paste
+/bind M /map
+/bind F1 /ta <bt>
+/bind F2 /targetnpc
+/bind F3 /ta <stnpc>
+/bind F4 /ta <stpt>
+/bind F5 /ta <stpc>
+/bind F11 /ambient
+/bind F12 /fps
+/bind ^F1 /input /ta <a10>
+/bind ^F2 /input /ta <a11>
+/bind ^F3 /input /ta <a12>
+/bind ^F4 /input /ta <a13>
+/bind ^F5 /input /ta <a14>
+/bind ^F6 /input /ta <a15>
+/bind !F1 /input /ta <a20>
+/bind !F2 /input /ta <a21>
+/bind !F3 /input /ta <a22>
+/bind !F4 /input /ta <a23>
+/bind !F5 /input /ta <a24>
+/bind !F6 /input /ta <a25>
+
+/wait 3
+
+/ambient 255 255 255
+/drawdistance setw 10
+/drawdistance setm 10
+/sl self on
+/sl target on
+/sl others on
+/fps 0
