@@ -17,6 +17,34 @@ local Threnodies = {
     [461] = 'dark',
 }
 
+local Statuses = {
+    dbTier1 = T{ 23, 33, 230, },
+    dbTier2 = T{ 24, 231, },
+    dbTier3 = T{ 25, 232, },
+    dia = T{ 23, 24, 25, 33, },
+    bio = T{ 230, 231, 232, },
+    paralyze = T{ 58, 80, 341, 342, 343, },
+    slow = T{ 56, 79, 344, 345, 346, },
+    gravity = T{ 216, },
+    blind = T{ 254, 276, 361, 347, 348, 349, },
+    flash = T{ 112, },
+    silence = T{ 59, 359, },
+    sleep = T{ 253, 259, 273, 274, },
+    bind = T{ 258, 362, },
+    stun = T{ 252, },
+    poison = T{ 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 350, 351, 352, },
+    threnody = T{ 454, 455, 456, 457, 458, 459, 460, 461 },
+    lullaby = T{ 376, 463, },
+    requiem = T{ 368, 369, 370, 371, 372, 373, },
+    elegy = T{ 421, 422 },
+    drown = 240,
+    shock = 239,
+    rasp = 238,
+    choke = 237,
+    frost = 236,
+    burn = 235,
+}
+
 -- The state we're operating on is the expiry time of the statuses
 local DefaultDebuffs = {
     -- standard fare
@@ -109,79 +137,79 @@ local function HandleAction(debuffs, action)
                 if message == 2 or message == 264 or message == 252 then
                     local expiry = 0
 
-                    if spell == 23 or spell == 33 or spell == 230 then
+                    if Statuses.dbTier1:contains(spell) then
                         expiry = now + 60
-                    elseif spell == 24 or spell == 231 then
+                    elseif Statuses.dbTier2:contains(spell) then
                         expiry = now + 120
-                    elseif spell == 25 or spell == 232 then
+                    elseif Statuses.dbTier3:contains(spell) then
                         expiry = now + 150
                     end
 
-                    if spell == 23 or spell == 24 or spell == 25 or spell == 33 then
+                    if Statuses.dia:contains(spell) then
                         debuffs[target.id].dia = expiry
                         debuffs[target.id].bio = 0
-                    elseif spell == 230 or spell == 231 or spell == 232 then
+                    elseif Statuses.bio:contains(spell) then
                         debuffs[target.id].dia = 0
                         debuffs[target.id].bio = expiry
                     end
                 -- Regular debuffs
                 elseif message == 236 or message == 277 or message == 268 or message == 271 then
-                    if spell == 58 or spell == 80 then -- para/para2
+                    if Statuses.paralyze:contains(spell) then
                         debuffs[target.id].para = now + 120
-                    elseif spell == 56 or spell == 79 then -- slow/slow2
+                    elseif Statuses.slow:contains(spell) then
                         debuffs[target.id].slow = now + 180
-                    elseif spell == 216 then -- gravity
+                    elseif Statuses.gravity:contains(spell) then
                         debuffs[target.id].grav = now + 120
-                    elseif spell == 254 or spell == 276 then -- blind/blind2
+                    elseif Statuses.blind:contains(spell) then
                         debuffs[target.id].blind = now + 180
-                    elseif spell == 112 then -- flash
+                    elseif Statuses.flash:contains(spell) then
                         debuffs[target.id].flash = now + 12
-                    elseif spell == 59 or spell == 359 then -- silence/ga
+                    elseif Statuses.silence:contains(spell) then
                         debuffs[target.id].silence = now + 120
-                    elseif spell == 253 or spell == 259 or spell == 273 or spell == 274 then -- sleep/2/ga/2
+                    elseif Statuses.sleep:contains(spell) then
                         debuffs[target.id].sleep = now + 90
-                    elseif spell == 258 or spell == 362 then -- bind
+                    elseif Statuses.bind:contains(spell) then
                         debuffs[target.id].bind = now + 60
-                    elseif spell == 252 then -- stun
+                    elseif Statuses.stun:contains(spell) then
                         debuffs[target.id].stun = now + 5
-                    elseif spell <= 229 and spell >= 220 then -- poison/2
+                    elseif Statuses.poison:contains(spell) then
                         debuffs[target.id].poison = now + 120
                     end
                 -- Elemental debuffs and bard songs
                 elseif message == 237 or message == 278 then
-                    if spell == 239 then -- shock
+                    if spell == Statuses.shock then -- shock
                         debuffs[target.id].shock = now + 120
-                    elseif spell == 238 then -- rasp
+                    elseif spell == Statuses.rasp then
                         debuffs[target.id].rasp = now + 120
-                    elseif spell == 237 then -- choke
+                    elseif spell == Statuses.choke then
                         debuffs[target.id].choke = now + 120
-                    elseif spell == 236 then -- frost
+                    elseif spell == Statuses.frost then
                         debuffs[target.id].frost = now + 120
-                    elseif spell == 235 then -- burn
+                    elseif spell == Statuses.burn then
                         debuffs[target.id].burn = now + 120
-                    elseif spell == 240 then -- drown
+                    elseif spell == Statuses.drown then
                         debuffs[target.id].drown = now + 120
-                    elseif spell == 376 or spell == 463 then -- horde/foe lullaby
+                    elseif Statuses.lullaby:contains(spell) then
                         -- base is 30, but merits and song+
                         debuffs[target.id].sleep = now + 60
                     -- foe requiems; estimating extended durations
-                    elseif spell == 368 then
+                    elseif spell == Statuses.requiem[1] then
                         debuffs[target.id].requiem = now + 100
-                    elseif spell == 369 then
+                    elseif spell == Statuses.requiem[2] then
                         debuffs[target.id].requiem = now + 150
-                    elseif spell == 370 then
+                    elseif spell == Statuses.requiem[3] then
                         debuffs[target.id].requiem = now + 200
-                    elseif spell == 371 then
+                    elseif spell == Statuses.requiem[4] then
                         debuffs[target.id].requiem = now + 250
-                    elseif spell == 372 then
+                    elseif spell == Statuses.requiem[5] then
                         debuffs[target.id].requiem = now + 300
-                    elseif spell == 373 then
+                    elseif spell == Statuses.requiem[6] then
                         debuffs[target.id].requiem = now + 350
-                    elseif spell == 421 then
+                    elseif spell == Statuses.elegy[1] then
                         debuffs[target.id].elegy = now + 150
-                    elseif spell == 422 then
+                    elseif spell == Statuses.elegy[2] then
                         debuffs[target.id].elegy = now + 250
-                    elseif spell >= 454 and spell <= 461 then -- threnodies
+                    elseif Statuses.threnody:contains(spell) then
                         debuffs[target.id].threnody = now + 120
                         debuffs[target.id].threnodyEle = Threnodies[spell]
                     end
