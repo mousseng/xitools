@@ -1,4 +1,4 @@
-addon.name      = 'clock'
+addon.name      = 'currentTime'
 addon.author    = 'badbeat'
 addon.version   = '1.0.0'
 addon.desc      = 'Addon to display real life time in the game.'
@@ -9,7 +9,7 @@ local Ffxi = require('lin.ffxi')
 local Imgui = require('lin.imgui')
 
 local Defaults = {
-    windowName ='Clock',
+    windowName ='Current Time',
     windowSize = { 75, 10 },
     windowPos = { 100, 100}
 }
