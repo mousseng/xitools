@@ -100,7 +100,14 @@
 			<name>hut3</name>
 		</spell>
 
+		<spell id="318">
+			<name>mo</name>
+			<name>mon</name>
+			<name>mono</name>
+		</spell>
+
 		<spell id="353">
+			<name>ton</name>
 			<name>tonko</name>
 		</spell>
 

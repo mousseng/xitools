@@ -13,8 +13,8 @@ local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
 local profile = {
     Sets = {
         Base_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            Sub = { "Parana Shield" },
+            Main = { "Dark Staff", "Fencing Degen", "Yew Wand +1" },
+            Sub = { { Level = 51, Name = "displaced" }, "Parana Shield" },
             -- Range = { },
             Ammo = { "Morion Tathlum" },
             Head = { "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
@@ -39,14 +39,15 @@ local profile = {
         },
         -- situational base sets
         Rest_Priority = {
-            Main = { "Pilgrim's Wand" },
+            Main = { "Dark Staff", "Pilgrim's Wand" },
         },
         Tp_Priority = {
-            Head = { "Super Ribbon" },
-            Body = { "Brigandine" },
+            Head = { "Ogre Mask", "Super Ribbon" },
+            Body = { "Tiger Jerkin", "Brigandine" },
             Hands = { "Warlock's Gloves", "Ryl.Ftm. Gloves" },
             Legs = { "Cmb.Cst. Slacks" },
             Waist = { "Tilt Belt" },
+            Neck = { "Tiger Stole" },
             Ear1 = { "Beetle Earring +1" },
             Ear2 = { "Beetle Earring +1" },
             Ring1 = { "Balance Ring" },
@@ -117,8 +118,15 @@ local profile = {
         },
         -- substat bonus sets
         Acc_Priority = {
+            Waist = { "Tilt Belt" },
         },
         Att_Priority = {
+            Head = { "Ogre Mask" },
+            Body = { "Tiger Jerkin" },
+            Hands = { "Ryl.Ftm. Gloves" },
+            Legs = { "Cmb.Cst. Slacks" },
+            Neck = { "Tiger Stole" },
+            Waist = { "Swordbelt" },
         },
         Eva_Priority = {
         },
@@ -151,6 +159,7 @@ local profile = {
             Neck = { "Divine Torque" },
         },
         Dark_Priority = {
+            Main = { "Dark Staff" },
             Neck = { "Dark Torque" },
         },
     },
