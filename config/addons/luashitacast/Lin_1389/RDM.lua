@@ -200,9 +200,15 @@ end
 
 profile.HandleDefault = function()
     local player = gData.GetPlayer()
+    local env = gData.GetEnvironment()
     levelSync(profile.Sets)
 
     gFunc.EquipSet('Base')
+
+    if env.Area:endswith("San d'Oria") then
+        gFunc.Equip('Body', "Kingdom Aketon")
+    end
+
     if player.Status == 'Resting' then
         gFunc.EquipSet('Rest')
     elseif player.Status == 'Engaged' then
@@ -211,8 +217,6 @@ profile.HandleDefault = function()
         if player.HPP <= 75 and player.TP <= 1000 then
             gFunc.Equip('Ring1', "Fencer's Ring")
         end
-    elseif player.IsMoving then
-        gFunc.EquipSet('Movement')
     end
 
     if gSettings.SoloMode then
