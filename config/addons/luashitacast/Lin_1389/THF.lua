@@ -1,6 +1,5 @@
 require 'common'
 local levelSync = gFunc.LoadFile('common/levelSync.lua')
-local handleGlamour = gFunc.LoadFile('common/glamour.lua')
 local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
 local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
 local handleSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
@@ -40,20 +39,6 @@ local profile = {
         },
         Movement = {
         },
-        Fish = {
-            Range = "Halcyon Rod",
-            Ammo = "Insect Ball",
-            Body = "Fsh. Tunica",
-            Hands = "Fsh. Gloves",
-            Legs = "Fisherman's Hose",
-            Feet = "Fisherman's Boots",
-        },
-        Helm = {
-            Body = "Field Tunica",
-            Hands = "Field Gloves",
-            Legs = "Field Hose",
-            Feet = "Field Boots",
-        },
     },
 }
 
@@ -62,7 +47,6 @@ profile.OnLoad = function()
     gSettings.FishMode = false
     gSettings.HelmMode = false
 
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /glam /lac fwd glam')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
     AshitaCore:GetChatManager():QueueCommand(1, '/macro book 5')
@@ -72,14 +56,12 @@ profile.OnUnload = function()
     handleFishMode('fish off')
     handleHelmMode('helm off')
 
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /glam')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm')
 end
 
 profile.HandleCommand = function(args)
     if #args == 0 then return end
-    handleGlamour(args)
     handleFishMode(args)
     handleHelmMode(args)
 end

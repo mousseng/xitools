@@ -5,7 +5,6 @@ local doMagic = gFunc.LoadFile('common/magic.lua')
 local doSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
 local doDaggerWs = gFunc.LoadFile('common/weaponskills/dagger.lua')
 local handleCudgel = gFunc.LoadFile('common/cudgel.lua')
-local handleGlamour = gFunc.LoadFile('common/glamour.lua')
 local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
 local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
 local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
@@ -18,10 +17,10 @@ local profile = {
             -- Range = { },
             Ammo = { "Morion Tathlum" },
             Head = { "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
-            Body = { "Warlock's Tabard", "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
+            Body = { "Duelist's Tabard", "Warlock's Tabard", "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
             Hands = { "Savage Gauntlets", "Dream Mittens +1" },
             Legs = { "Savage Loincloth", "Dream Pants +1" },
-            Feet = { "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
+            Feet = { "Duelist's Boots", "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
             Neck = { "Tiger Stole" },
             Waist = { "Friar's Rope" },
             Ear1 = { "Moldavite Earring" },
@@ -29,13 +28,6 @@ local profile = {
             Ring1 = { "San d'Orian Ring" },
             Ring2 = { "Chariot Band" },
             Back = { "Black Cape", "Cotton Cape" },
-        },
-        Glamour = {
-            Head = "remove",
-            Body = "Savage Separates",
-            Hands = "Savage Gauntlets",
-            Legs = "Warlock's Tights",
-            Feet = "Warlock's Boots",
         },
         -- situational base sets
         Rest_Priority = {
@@ -56,12 +48,12 @@ local profile = {
         Movement_Priority = {
         },
         Solo = {
-            Main = "Saber",
+            Main = "Martial Anelace",
             Sub = "Parana Shield",
             Hands = "Warlock's Gloves",
         },
         SoloNin = {
-            Main = "Saber",
+            Main = "Martial Anelace",
             Sub = "Ryl.Grd. Fleuret",
             Hands = "Warlock's Gloves",
         },
@@ -77,6 +69,7 @@ local profile = {
         Dex_Priority = {
             Head = { "Super Ribbon" },
             Body = { "Brigandine" },
+            Legs = { "Duelist's Tights"},
             Hands = { "Warlock's Gloves" },
             Neck = { "Spike Necklace" },
             Waist = { "Ryl.Kgt. Belt" },
@@ -107,7 +100,7 @@ local profile = {
             Head = { "Super Ribbon" },
             Hands = { "Savage Gauntlets" },
             Legs = { "Warlock's Tights", "Magic Cuisses", "Savage Loincloth" },
-            Feet = { "Warlock's Boots" },
+            Feet = { "Duelist's Boots", "Warlock's Boots" },
             Neck = { "Justice Badge" },
             Waist = { "Ryl.Kgt. Belt", "Friar's Rope" },
             Ring1 = { "Saintly Ring" },
@@ -134,15 +127,21 @@ local profile = {
         },
         Mp_Priority = {
         },
+        Mab_Priority = {
+            Ear1 = { "Moldavite Earring", },
+            Feet = { "Duelist's Boots", },
+        },
         Interrupt_Priority = {
         },
         -- skill bonus sets
         Healing_Priority = {
+            Body = { "Duelist's Tabard" },
             Legs = { "Warlock's Tights" },
             Neck = { "Healing Torque" },
         },
         Elemental_Priority = {
             Head = { "Warlock's Chapeau" },
+            Legs = { "Duelist's Tights"},
             Neck = { "Elemental Torque" },
             Ear1 = { "Moldavite Earring" },
         },
@@ -171,7 +170,6 @@ profile.OnLoad = function()
     gSettings.FishMode = false
     gSettings.HelmMode = false
 
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /glam /lac fwd glam')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
@@ -183,7 +181,6 @@ profile.OnUnload = function()
     handleFishMode('fish off')
     handleHelmMode('helm off')
 
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /glam')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /solo')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe')
     AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm')
@@ -191,7 +188,6 @@ end
 
 profile.HandleCommand = function(args)
     if #args == 0 then return end
-    handleGlamour(args)
     handleSoloMode(args)
     handleFishMode(args)
     handleHelmMode(args)
@@ -236,6 +232,7 @@ end
 
 profile.HandlePrecast = function()
     gFunc.Equip('Head', "Warlock's Chapeau")
+    gFunc.Equip('Body', "Duelist's Tabard")
     conserveMp(profile.Sets.Base)
 end
 
