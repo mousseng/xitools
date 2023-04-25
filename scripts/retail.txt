@@ -5,11 +5,9 @@
 /load stylist
 /load nameplate
 
-/addon load dynamic_entity_renamer
 /addon load allmaps
 /addon load cfhblock
 /addon load checker
-/addon load drawdistance
 /addon load enternity
 /addon load filterless
 /addon load fps
@@ -21,11 +19,12 @@
 /addon load timestamp
 /addon load xicamera
 /addon load xitools
-/addon load skillchain
 /addon load minimap-helper
 /addon load points
 /addon load mobdb
 /addon load equipmon
+/addon load instantchat
+/addon load simplelog
 
 /bindblock
 /bind insert /ashita
@@ -54,9 +53,7 @@
 /wait 3
 
 /ambient 255 255 255
-/drawdistance setw 10
-/drawdistance setm 10
-/drawdistance sete 10
+/cam d 7
 /cam b 15
 /sl self on
 /sl target on
