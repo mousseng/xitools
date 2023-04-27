@@ -4,6 +4,7 @@
 /load thirdparty
 /load stylist
 /load nameplate
+/load trenderer
 
 /addon load dynamic_entity_renamer
 /addon load allmaps
@@ -25,6 +26,7 @@
 /addon load points
 /addon load mobdb
 /addon load equipmon
+/addon load thotbar
 
 /bindblock
 /bind insert /ashita
