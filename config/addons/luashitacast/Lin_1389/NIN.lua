@@ -12,8 +12,6 @@ local profile = {
     Sets = {
         -- situational base sets
         Base_Priority = {
-            Main = { "Kodachi +1" },
-            Sub = { "Fukuro" },
             -- Range = {  },
             Ammo = { "Pebble" },
             Head = { "Brass Hairpin" },
@@ -22,7 +20,7 @@ local profile = {
             Legs = { "Republic Subligar" },
             Feet = { "Fed. Kyahan" },
             Neck = { "Tiger Stole" },
-            Waist = { "Warrior's Belt" },
+            Waist = { "Warlock's Belt" },
             Ear1 = { "Beetle Earring +1" },
             Ear2 = { "Beetle Earring +1" },
             Ring1 = { "San d'Orian Ring" },
