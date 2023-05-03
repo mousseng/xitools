@@ -177,8 +177,14 @@ local function DrawRecipes(skills)
     end
 end
 
-local function DrawHistory(history)
+local function DrawHistory(options)
     if imgui.CollapsingHeader('Craft History') then
+        if imgui.Button('Clear History') then
+            options.history = T{}
+        end
+
+        local history = options.history
+
         if imgui.BeginTable('xitool.crafty.history', 3, ImGuiTableFlags_ScrollY, { textBaseWidth * 60, 400 * Scale }) then
             local res = AshitaCore:GetResourceManager()
             imgui.TableSetupScrollFreeze(0, 1)
@@ -361,7 +367,7 @@ local crafty = {
             imgui.SetWindowFontScale(Scale)
             DrawSkills(options.skills)
             DrawRecipes(options.skills)
-            DrawHistory(options.history)
+            DrawHistory(options)
         end)
     end,
 }
