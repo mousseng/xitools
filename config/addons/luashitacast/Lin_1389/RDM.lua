@@ -48,14 +48,12 @@ local profile = {
         Movement_Priority = {
         },
         Solo = {
-            Main = "Martial Anelace",
+            Main = "Joyeuse",
             Sub = "Parana Shield",
             Hands = "Warlock's Gloves",
         },
         SoloNin = {
-            Main = "Martial Anelace",
             Sub = "Ryl.Grd. Fleuret",
-            Hands = "Warlock's Gloves",
         },
         -- stat bonus sets
         Str_Priority = {

@@ -7,11 +7,12 @@ local function ToggleSoloMode(shouldEnable)
 
     if shouldEnable then
         print(chat.header(header):append(chat.message('enabling solo mode')))
+
+        gFunc.ForceEquipSet('Solo')
         if player.SubJob == 'NIN' then
             gFunc.ForceEquipSet('SoloNin')
-        else
-            gFunc.ForceEquipSet('Solo')
         end
+
         gFunc.Disable('Main')
         gFunc.Disable('Sub')
         gFunc.Disable('Range')
