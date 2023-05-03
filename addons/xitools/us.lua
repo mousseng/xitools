@@ -304,6 +304,17 @@ local function DrawPartyMember(player)
     end
 end
 
+---@param player PartyMember
+local function DrawCompactPartyMember(player)
+    if player.isInZone then
+        imgui.Text(player.name:slice(0, 3))
+        imgui.SameLine()
+        DrawHp(player)
+    else
+        imgui.TextDisabled(player.name:slice(0, 3))
+    end
+end
+
 local function DrawAlliance(alliance, gOptions)
     ui.DrawUiWindow(alliance, gOptions, function()
         imgui.SetWindowFontScale(Scale)
@@ -311,7 +322,11 @@ local function DrawAlliance(alliance, gOptions)
             local person = getMember()
 
             if person.isActive and person.name ~= '' then
-                DrawPartyMember(person)
+                if alliance.isCompact[1] then
+                    DrawCompactPartyMember(person)
+                else
+                    DrawPartyMember(person)
+                end
             end
         end
     end)
@@ -353,22 +368,31 @@ local us = {
         hideWhenSolo = T{ false },
         showCastbar = T{ true },
         alliance1 = T{
+            isCompact = T{ false },
             isVisible = T{ true },
             name = 'xitools.us.1',
+            fullSize = T{ 276, -1 },
+            compactSize = T{ -1, -1 },
             size = T{ 276, -1 },
             pos = T{ 392, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
         alliance2 = T{
+            isCompact = T{ false },
             isVisible = T{ true },
             name = 'xitools.us.2',
+            fullSize = T{ 276, -1 },
+            compactSize = T{ -1, -1 },
             size = T{ 276, -1 },
             pos = T{ 107, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
         alliance3 = T{
+            isCompact = T{ false },
             isVisible = T{ true },
             name = 'xitools.us.3',
+            fullSize = T{ 276, -1 },
+            compactSize = T{ -1, -1 },
             size = T{ 276, -1 },
             pos = T{ 000, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
@@ -381,6 +405,29 @@ local us = {
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Hide when solo', options.hideWhenSolo)
             imgui.Checkbox('Display cast bar', options.showCastbar)
+
+            if imgui.Checkbox('Compact alliance 1', options.alliance1.isCompact) then
+                if options.alliance1.isCompact[1] then
+                    options.alliance1.size = options.alliance1.compactSize
+                else
+                    options.alliance1.size = options.alliance1.fullSize
+                end
+            end
+            if imgui.Checkbox('Compact alliance 2', options.alliance2.isCompact) then
+                if options.alliance2.isCompact[1] then
+                    options.alliance2.size = options.alliance2.compactSize
+                else
+                    options.alliance2.size = options.alliance2.fullSize
+                end
+            end
+            if imgui.Checkbox('Compact alliance 3', options.alliance3.isCompact) then
+                if options.alliance3.isCompact[1] then
+                    options.alliance3.size = options.alliance3.compactSize
+                else
+                    options.alliance3.size = options.alliance3.fullSize
+                end
+            end
+
             if imgui.InputInt2('Alliance 1', options.alliance1.pos) then
                 imgui.SetWindowPos(options.alliance1.name, options.alliance1.pos)
             end
@@ -390,6 +437,7 @@ local us = {
             if imgui.InputInt2('Alliance 3', options.alliance3.pos) then
                 imgui.SetWindowPos(options.alliance3.name, options.alliance3.pos)
             end
+
             imgui.EndTabItem()
         end
     end,
