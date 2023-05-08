@@ -6,6 +6,7 @@
 /load nameplate
 /load trenderer
 
+/addon load logs
 /addon load dynamic_entity_renamer
 /addon load allmaps
 /addon load cfhblock
