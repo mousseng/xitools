@@ -60,6 +60,29 @@ local inboundZoneIn = {
     end
 }
 
+local inboundPcUpdate = {
+    id = 0x00D,
+    name = 'PC Update',
+    ---@param packet userdata
+    parse = function(packet)
+        return {
+            player          = ashita.bits.unpack_be(packet,  32, 32),
+            playerIndex     = ashita.bits.unpack_be(packet,  64, 16),
+            updatedPosition = ashita.bits.unpack_be(packet,  80,  1) == 1,
+            updatedStatus   = ashita.bits.unpack_be(packet,  81,  1) == 1,
+            updatedVitals   = ashita.bits.unpack_be(packet,  82,  1) == 1,
+            updatedName     = ashita.bits.unpack_be(packet,  83,  1) == 1,
+            updatedModel    = ashita.bits.unpack_be(packet,  84,  1) == 1,
+            isDespawned     = ashita.bits.unpack_be(packet,  85,  1) == 1,
+            heading         = ashita.bits.unpack_be(packet,  88,  8),
+            -- TODO: finish
+            x               = ashita.bits.unpack_be(packet,  96, 32), -- float
+            y               = ashita.bits.unpack_be(packet, 128, 32), -- float
+            z               = ashita.bits.unpack_be(packet, 160, 32), -- float
+        }
+    end
+}
+
 local inboundChatMessage = {
     id = 0x017,
     name = 'Chat Message',
@@ -506,6 +529,7 @@ local packets = {
     inbound = {
         sorted = {
             inboundBasic,
+            inboundPcUpdate,
             inboundSpecial,
             inboundAction,
             inboundDeath,
@@ -521,6 +545,7 @@ local packets = {
             inboundCaughtFish,
         },
         zoneIn = inboundZoneIn,
+        pcUpdate = inboundPcUpdate,
         chatMessage = inboundChatMessage,
         fishCatch = inboundCaughtFish,
         action = inboundAction,
