@@ -399,10 +399,29 @@ local tgt = {
         isEnabled = T{ false },
         isVisible = T{ true },
         showStatus = T{ false },
-        name = 'xitools.tgt',
-        size = T{ 276, -1 },
-        pos = T{ 100, 100 },
-        flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        showSub = T{ false },
+        showTot = T{ false },
+        mainWindow = T{
+            isVisible = T{ true },
+            name = 'xitools.tgt.main',
+            size = T{ 276, -1 },
+            pos = T{ 100, 100 },
+            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        },
+        subWindow = T{
+            isVisible = T{ true },
+            name = 'xitools.tgt.sub',
+            size = T{ 276, -1 },
+            pos = T{ 100, 200 },
+            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        },
+        totWindow = T{
+            isVisible = T{ true },
+            name = 'xitools.tgt.tot',
+            size = T{ 276, -1 },
+            pos = T{ 386, 100 },
+            flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        },
     },
     HandlePacket = function(e, options)
         -- don't track anything if we're not displaying it
@@ -422,24 +441,63 @@ local tgt = {
         if imgui.BeginTabItem('tgt') then
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Show debuffs', options.showStatus)
-            if imgui.InputInt2('Position', options.pos) then
-                imgui.SetWindowPos(options.name, options.pos)
+            imgui.Checkbox('Show sub-target', options.showSub)
+            imgui.Checkbox('Show target of target', options.showTot)
+            if imgui.InputInt2('Target position', options.mainWindow.pos) then
+                imgui.SetWindowPos(options.mainWindow.name, options.mainWindow.pos)
+            end
+            if imgui.InputInt2('Sub-target position', options.subWindow.pos) then
+                imgui.SetWindowPos(options.subWindow.name, options.subWindow.pos)
+            end
+            if imgui.InputInt2('Target of target position', options.totWindow.pos) then
+                imgui.SetWindowPos(options.totWindow.name, options.totWindow.pos)
             end
             imgui.EndTabItem()
         end
     end,
     DrawMain = function(options, gOptions)
-        -- don't bother drawing if we have no target
         local targetId = AshitaCore:GetMemoryManager():GetTarget():GetTargetIndex(0)
-        if targetId == 0 then return end
+        local subTargetId = AshitaCore:GetMemoryManager():GetTarget():GetTargetIndex(1)
+        local totId = 0
+
+        -- the target struct appears to be a stack, so when we have two targets
+        -- that means the subtarget is actually in [0] and main moves to [1]
+        if targetId ~= 0 and subTargetId ~= 0 then
+            targetId, subTargetId = subTargetId, targetId
+        end
+
+        -- TODO: if no subtarget, check for stpt/stal
 
         Scale = gOptions.uiScale[1]
 
-        local entity = GetEntity(targetId)
-        ui.DrawUiWindow(options, gOptions, function()
-            imgui.SetWindowFontScale(Scale)
-            DrawTgt(entity, options)
-        end)
+        if targetId ~= 0 then
+            ui.DrawUiWindow(options.mainWindow, gOptions, function()
+                imgui.SetWindowFontScale(Scale)
+
+                local entity = GetEntity(targetId)
+                DrawTgt(entity, options)
+                totId = entity.TargetedIndex or 0
+            end)
+        end
+
+        if options.showSub[1] and subTargetId ~= 0 then
+            ui.DrawUiWindow(options.subWindow, gOptions, function()
+                imgui.SetWindowFontScale(Scale)
+
+                local entity = GetEntity(subTargetId)
+                DrawTgt(entity, options)
+            end)
+        end
+
+        if options.showTot[1] and totId ~= 0 then
+            ui.DrawUiWindow(options.totWindow, gOptions, function()
+                imgui.SetWindowFontScale(Scale)
+
+                -- TODO: compact tot display
+                local entity = GetEntity(totId)
+                DrawTgt(entity, options)
+            end)
+        end
     end,
 }
 
