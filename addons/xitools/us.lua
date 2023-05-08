@@ -210,7 +210,7 @@ local function DrawName(player, showDist)
         imgui.SameLine()
         imgui.SetCursorPosX((player.windowSize[1] * Scale) - (80 + 10) * Scale)
         ui.DrawBar2(castbar:GetPercent() * 100, 100, ui.Scale({ 80, 8 }, Scale), '')
-    elseif showDist then
+    elseif showDist and player.entity then
         local dist = string.format('%.1fm', player.entity.Distance)
         local width = imgui.CalcTextSize(dist) + ui.Styles.WindowPadding[1] * Scale
 
