@@ -36,7 +36,7 @@ return {
     [ 34] = { name = 'Red Lotus Blade', attr = { 'Liquefaction', 'Detonation' } },
     [ 35] = { name = 'Flat Blade', attr = { 'Impaction' } },
     [ 36] = { name = 'Shining Blade', attr = { 'Scission' } },
-    [ 37] = { name = 'Seraph Blade', attr = { 'Scission', 'Transfixion' } },
+    [ 37] = { name = 'Seraph Blade', attr = { 'Scission', 'Transfixion' } },  -- gained transfixion
     [ 38] = { name = 'Circle Blade', attr = { 'Reverberation', 'Impaction' } },
     [ 39] = { name = 'Spirits Within', attr = {} },
     [ 40] = { name = 'Vorpal Blade', attr = { 'Scission', 'Impaction' } },
@@ -60,15 +60,15 @@ return {
     [ 58] = { name = 'Herculean Slash', attr = { 'Induration', 'Impaction', 'Detonation' } },
     [ 59] = { name = 'Torcleaver', attr = { 'Light', 'Distortion' } },
     [ 60] = { name = 'Resolution', attr = { 'Fragmentation', 'Scission' } },
-    [ 64] = { name = 'Raging Axe', attr = { 'Detonation' } },
+    [ 64] = { name = 'Raging Axe', attr = { 'Detonation' } }, -- lost impaction
     [ 65] = { name = 'Smash Axe', attr = { 'Induration', 'Reverberation' } },
     [ 66] = { name = 'Gale Axe', attr = { 'Detonation' } },
-    [ 67] = { name = 'Avalanche Axe', attr = { 'Induration' } },
-    [ 68] = { name = 'Spinning Axe', attr = { 'Liquefaction', 'Scission' } },
+    [ 67] = { name = 'Avalanche Axe', attr = { 'Induration' } }, -- lost both for induration
+    [ 68] = { name = 'Spinning Axe', attr = { 'Liquefaction', 'Scission' } }, -- lost impaction
     [ 69] = { name = 'Rampage', attr = { 'Scission' } },
     [ 70] = { name = 'Calamity', attr = { 'Scission', 'Impaction' } },
     [ 71] = { name = 'Mistral Axe', attr = { 'Fusion' } },
-    [ 72] = { name = 'Decimation', attr = { 'Fusion', 'Detonation' } },
+    [ 72] = { name = 'Decimation', attr = { 'Fusion', 'Detonation' } },  -- reverbation to detonation
     [ 73] = { name = 'Onslaught', attr = { 'Darkness', 'Gravitation' } },
     [ 74] = { name = 'Primal Rend', attr = { 'Gravitation', 'Reverberation' } },
     [ 75] = { name = 'Bora Axe', attr = { 'Scission', 'Detonation' } },
@@ -89,14 +89,14 @@ return {
     [ 92] = { name = 'Ukko\'s Fury', attr = { 'Light', 'Fragmentation' } },
     [ 93] = { name = 'Upheaval', attr = { 'Fusion', 'Compression' } },
     [ 96] = { name = 'Slice', attr = { 'Scission' } },
-    [ 97] = { name = 'Dark Harvest', attr = { 'Compression' } },
+    [ 97] = { name = 'Dark Harvest', attr = { 'Compression' } }, -- reverberation to compresison
     [ 98] = { name = 'Shadow of Death', attr = { 'Induration', 'Reverberation' } },
     [ 99] = { name = 'Nightmare Scythe', attr = { 'Compression', 'Scission' } },
     [100] = { name = 'Spinning Scythe', attr = { 'Reverberation', 'Scission' } },
     [101] = { name = 'Vorpal Scythe', attr = { 'Transfixion', 'Scission' } },
     [102] = { name = 'Guillotine', attr = { 'Induration' } },
     [103] = { name = 'Cross Reaper', attr = { 'Distortion' } },
-    [104] = { name = 'Spiral Hell', attr = { 'Gravitation', 'Scission' } },
+    [104] = { name = 'Spiral Hell', attr = { 'Gravitation', 'Scission' } }, --may have been changed distortion to gravitaiton, dunno not on wiki
     [105] = { name = 'Catastrophe', attr = { 'Darkness', 'Gravitation' } },
     [106] = { name = 'Insurgency', attr = { 'Fusion', 'Compression' } },
     [107] = { name = 'Infernal Scythe', attr = { 'Compression', 'Reverberation' } },
@@ -108,7 +108,7 @@ return {
     [115] = { name = 'Leg Sweep', attr = { 'Impaction' } },
     [116] = { name = 'Penta-Thrust', attr = { 'Compression' } },
     [117] = { name = 'Vorpal Thrust', attr = { 'Reverberation', 'Transfixion' } },
-    [118] = { name = 'Skewer', attr = { 'Impaction' } },
+    [118] = { name = 'Skewer', attr = { 'Impaction' } }, -- lost Transfixion
     [119] = { name = 'Wheeling Thrust', attr = { 'Fusion' } },
     [120] = { name = 'Impulse Drive', attr = { 'Gravitation', 'Induration' } },
     [121] = { name = 'Geirskogul', attr = { 'Light', 'Distortion' } },
@@ -144,8 +144,8 @@ return {
     [155] = { name = 'Tachi: Ageha', attr = { 'Compression', 'Scission' } },
     [156] = { name = 'Tachi: Fudo', attr = { 'Light', 'Distortion' } },
     [157] = { name = 'Tachi: Shoha', attr = { 'Fragmentation', 'Compression' } },
-    [160] = { name = 'Shining Strike', attr = { 'Transfixion' } },
-    [161] = { name = 'Seraph Strike', attr = { 'Scission' } },
+    [160] = { name = 'Shining Strike', attr = { 'Transfixion' } },  -- impaction to transfixion
+    [161] = { name = 'Seraph Strike', attr = { 'Scission' } }, -- impaction to scission
     [162] = { name = 'Brainshaker', attr = { 'Reverberation' } },
     [163] = { name = 'Starlight', attr = {} },
     [164] = { name = 'Moonlight', attr = {} },
@@ -162,8 +162,8 @@ return {
     [176] = { name = 'Heavy Swing', attr = { 'Impaction' } },
     [177] = { name = 'Rock Crusher', attr = { 'Impaction' } },
     [178] = { name = 'Earth Crusher', attr = { 'Detonation', 'Impaction' } },
-    [179] = { name = 'Starburst', attr = { 'Compression', 'Transfixion' } },
-    [180] = { name = 'Sunburst', attr = { 'Transfixion', 'Reverberation' } },
+    [179] = { name = 'Starburst', attr = { 'Compression', 'Transfixion' } }, -- reverberation to transfixion
+    [180] = { name = 'Sunburst', attr = { 'Transfixion', 'Reverberation' } }, -- compresison to transfixion
     [181] = { name = 'Shell Crusher', attr = { 'Detonation' } },
     [182] = { name = 'Full Swing', attr = { 'Liquefaction', 'Impaction' } },
     [183] = { name = 'Spirit Taker', attr = {} },
@@ -176,7 +176,7 @@ return {
     [190] = { name = 'Myrkr', attr = {} },
     [191] = { name = 'Shattersoul', attr = { 'Gravitation', 'Induration' } },
     [192] = { name = 'Flaming Arrow', attr = { 'Liquefaction', 'Transfixion' } },
-    [193] = { name = 'Piercing Arrow', attr = { 'Induration', 'Transfixion' } },
+    [193] = { name = 'Piercing Arrow', attr = { 'Induration', 'Transfixion' } }, -- Reveberation to induration
     [194] = { name = 'Dulling Arrow', attr = { 'Liquefaction', 'Transfixion' } },
     [196] = { name = 'Sidewinder', attr = { 'Reverberation', 'Transfixion', 'Detonation' } },
     [197] = { name = 'Blast Arrow', attr = { 'Induration', 'Transfixion' } },
