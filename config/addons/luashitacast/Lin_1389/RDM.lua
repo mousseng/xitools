@@ -16,7 +16,7 @@ local profile = {
             Sub = { { Level = 51, Name = "displaced" }, "Parana Shield" },
             -- Range = { },
             Ammo = { "Morion Tathlum" },
-            Head = { "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
+            Head = { "Duelist's Chapeau", "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
             Body = { "Duelist's Tabard", "Warlock's Tabard", "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
             Hands = { "Savage Gauntlets", "Dream Mittens +1" },
             Legs = { "Savage Loincloth", "Dream Pants +1" },
@@ -24,7 +24,7 @@ local profile = {
             Neck = { "Tiger Stole" },
             Waist = { "Friar's Rope" },
             Ear1 = { "Moldavite Earring" },
-            Ear2 = { "Cunning Earring" },
+            Ear2 = { "Abyssal Earring", "Cunning Earring" },
             Ring1 = { "San d'Orian Ring" },
             Ring2 = { "Chariot Band" },
             Back = { "Black Cape", "Cotton Cape" },
@@ -35,7 +35,7 @@ local profile = {
         },
         Tp_Priority = {
             Head = { "Ogre Mask", "Super Ribbon" },
-            Body = { "Tiger Jerkin", "Brigandine" },
+            Body = { "Assault Jerkin", "Brigandine" },
             Hands = { "Warlock's Gloves", "Ryl.Ftm. Gloves" },
             Legs = { "Cmb.Cst. Slacks" },
             Waist = { "Tilt Belt" },
@@ -44,6 +44,7 @@ local profile = {
             Ear2 = { "Beetle Earring +1" },
             Ring1 = { "Balance Ring" },
             Ring2 = { "Balance Ring" },
+            Back = { "Psilos Mantle" },
         },
         Movement_Priority = {
         },
@@ -53,7 +54,7 @@ local profile = {
             Hands = "Warlock's Gloves",
         },
         SoloNin = {
-            Sub = "Ryl.Grd. Fleuret",
+            Sub = "Hornetneedle",
         },
         -- stat bonus sets
         Str_Priority = {
@@ -88,7 +89,7 @@ local profile = {
             Feet = { "Warlock's Boots" },
             Neck = { "Black Neckerchief" },
             Waist = { "Ryl.Kgt. Belt", "Wizard's Belt" },
-            Ear2 = { "Cunning Earring" },
+            Ear2 = { "Abyssal Earring", "Cunning Earring" },
             Ring1 = { "Eremite's Ring" },
             Ring2 = { "Eremite's Ring" },
             Back = { "Black Cape" },
@@ -149,6 +150,7 @@ local profile = {
         },
         Enfeebling_Priority = {
             Main = { "Fencing Degen" },
+            Head = { "Duelist's Chapeau" },
             Body = { "Warlock's Tabard" },
             Neck = { "Enfeebling Torque" },
         },
@@ -158,6 +160,7 @@ local profile = {
         Dark_Priority = {
             Main = { "Dark Staff" },
             Neck = { "Dark Torque" },
+            Ear2 = { "Abyssal Earring" },
         },
     },
 }
