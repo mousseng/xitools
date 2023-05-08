@@ -1,4 +1,5 @@
 ---@enum Weaponskill
+--please note that this weaponskills.lua has modifications for usage on horizon private server with it's property changes, changes have been commented
 return {
     [  1] = { name = 'Combo', attr = { 'Impaction' } },
     [  2] = { name = 'Shoulder Tackle', attr = { 'Reverberation', 'Impaction' } },
