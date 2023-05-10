@@ -490,13 +490,18 @@ local tgt = {
         end
 
         if options.showTot[1] and totId ~= 0 then
-            ui.DrawUiWindow(options.totWindow, gOptions, function()
-                imgui.SetWindowFontScale(Scale)
+            -- it's possible for your target to be targeting something that your
+            -- client does not know about (even if it has an id for it). ensure
+            -- that we actually have all the info before trying to draw anything
+            local entity = GetEntity(totId)
+            if entity then
+                ui.DrawUiWindow(options.totWindow, gOptions, function()
+                    imgui.SetWindowFontScale(Scale)
 
-                -- TODO: compact tot display
-                local entity = GetEntity(totId)
-                DrawTgt(entity, options)
-            end)
+                    -- TODO: compact tot display
+                    DrawTgt(entity, options)
+                end)
+            end
         end
     end,
 }
