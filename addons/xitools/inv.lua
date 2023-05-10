@@ -3,6 +3,7 @@ local bit = require('bit')
 local ffi = require('ffi')
 local d3d8 = require('d3d8')
 local debounce = require('utils.debounce')
+local packets = require('utils.packets')
 local imgui = require('imgui')
 local ui = require('ui')
 
@@ -179,10 +180,7 @@ local function SortInventory(lhs, rhs)
     return lhs.sortId < rhs.sortId
 end
 
-local function UpdateInventory(bagId)
-    local inv = AshitaCore:GetMemoryManager():GetInventory()
-    local res = AshitaCore:GetResourceManager()
-
+local function UpdateInventory(inv, res, bagId)
     local inventory = T{ }
     local itemCount = inv:GetContainerCountMax(bagId)
 
@@ -236,29 +234,29 @@ local function UpdateInventory(bagId)
 end
 
 local function UpdateInventories()
-    local gil = AshitaCore
-        :GetMemoryManager()
-        :GetInventory()
-        :GetContainerItem(0, 0)
-        .Count
+    local inv = AshitaCore:GetMemoryManager():GetInventory()
+    local res = AshitaCore:GetResourceManager()
+    local gil = inv:GetContainerItem(0, 0)
+    local invSize = inv:GetContainerCountMax(0)
+    if gil == nil or invSize == 0 then return end
 
-    inventories.gil = FormatGil(gil)
+    inventories.gil = FormatGil(gil.Count)
 
-    inventories.bag = UpdateInventory(0)
+    inventories.bag = UpdateInventory(inv, res, 0)
         :sort(SortInventory)
 
-    inventories.wardrobe = UpdateInventory(8)
-        :extend(UpdateInventory(10))
-        :extend(UpdateInventory(11))
-        :extend(UpdateInventory(12))
-        :extend(UpdateInventory(13))
-        :extend(UpdateInventory(14))
-        :extend(UpdateInventory(15))
-        :extend(UpdateInventory(16))
+    inventories.wardrobe = UpdateInventory(inv, res, 8)
+        :extend(UpdateInventory(inv, res, 10))
+        :extend(UpdateInventory(inv, res, 11))
+        :extend(UpdateInventory(inv, res, 12))
+        :extend(UpdateInventory(inv, res, 13))
+        :extend(UpdateInventory(inv, res, 14))
+        :extend(UpdateInventory(inv, res, 15))
+        :extend(UpdateInventory(inv, res, 16))
         :sort(SortInventory)
 
-    inventories.house = UpdateInventory(1)
-        :extend(UpdateInventory(2))
+    inventories.house = UpdateInventory(inv, res, 1)
+        :extend(UpdateInventory(inv, res, 2))
         :sort(SortInventory)
 end
 
@@ -426,8 +424,11 @@ local inv = {
         end
     end,
     HandlePacket = function(e, options)
-        if e.id >= 0x01C and e.id <= 0x020 then
-            debounce(UpdateInventories)
+        if e.id == 0x01D then
+            local packet = packets.inbound.inventoryFinish.parse(e.data)
+            if packet.flag == 1 then
+                debounce(UpdateInventories)
+            end
         end
     end,
     DrawConfig = function(options)

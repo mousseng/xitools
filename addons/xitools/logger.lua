@@ -40,6 +40,14 @@ local function WritePcUpdate(pcUpdate)
     Dump('in 0x00D', output)
 end
 
+local function WriteInventoryFinish(invFinish)
+    local output =
+        string.format('flag: %s\n', invFinish.flag) ..
+        string.format('container: %i\n', invFinish.container)
+
+    Dump('in 0x01D', output)
+end
+
 local function WriteAction(action)
     local output =
         'actor_id: '     .. string.format('%i',   action.actor_id) .. ' (' .. ffxi.GetEntityNameByServerId(action.actor_id) .. ')\n' ..
@@ -232,6 +240,8 @@ end
 local function DispatchPacketIn(e)
     if e.id == 0x00D then
         WritePcUpdate(packets.inbound.pcUpdate.parse(e.data_modified_raw))
+    elseif e.id == 0x01D then
+        WriteInventoryFinish(packets.inbound.inventoryFinish.parse(e.data))
     elseif e.id == 0x028 then
         local packet = packets.inbound.action.parse(e.data_modified_raw)
         if packet.category == 0 or packet.category == 1 then return false end
@@ -260,6 +270,7 @@ local logger = {
         loggedPackets = T{
             inbound = T{
                 [0x00D] = { true },
+                [0x01D] = { true },
                 [0x028] = { true },
                 [0x029] = { true },
                 [0x02A] = { true },

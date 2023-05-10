@@ -100,6 +100,18 @@ local inboundChatMessage = {
     end
 }
 
+local inboundInventoryFinish = {
+    id = 0x01D,
+    name = 'Inventory Finish',
+    ---@param packet string
+    parse = function(packet)
+        return {
+            flag = struct.unpack('i1', packet, 0x04 + 1),
+            container = struct.unpack('i1', packet, 0x05 + 1),
+        }
+    end
+}
+
 local inboundCaughtFish = {
     id = 0x027,
     name = 'Fish Catch',
@@ -541,12 +553,14 @@ local packets = {
             inboundSynthAnimation,
             inboundSynthResultPlayer,
             inboundSynthResultOther,
+            inboundInventoryFinish,
             inboundFishBiteInfo,
             inboundCaughtFish,
         },
         zoneIn = inboundZoneIn,
         pcUpdate = inboundPcUpdate,
         chatMessage = inboundChatMessage,
+        inventoryFinish = inboundInventoryFinish,
         fishCatch = inboundCaughtFish,
         action = inboundAction,
         basic = inboundBasic,
