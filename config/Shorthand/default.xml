@@ -210,6 +210,10 @@
 			<name>as2</name>
 		</spell>
 
+		<spell id="252">
+			<name>st</name>
+		</spell>
+
 	<!-- Fires -->
 		<spell id="144">
 			<name>f</name>

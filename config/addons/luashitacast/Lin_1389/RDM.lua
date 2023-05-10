@@ -127,6 +127,7 @@ local profile = {
         Mp_Priority = {
         },
         Mab_Priority = {
+            -- Neck = { "Uggalepih Pendant", },
             Ear1 = { "Moldavite Earring", },
             Feet = { "Duelist's Boots", },
         },
