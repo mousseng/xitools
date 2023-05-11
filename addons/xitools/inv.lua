@@ -429,6 +429,8 @@ local inv = {
             if packet.flag == 1 then
                 debounce(UpdateInventories)
             end
+        elseif e.id == 0x01E then
+            debounce(UpdateInventories)
         end
     end,
     DrawConfig = function(options)
