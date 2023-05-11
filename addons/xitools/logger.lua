@@ -1,6 +1,7 @@
 local ffxi = require('utils.ffxi')
 local imgui = require('imgui')
 local packets = require('utils.packets')
+local inspect  = require('utils.inspect')
 
 local function Dump(id, str)
     local date = os.date('*t')
@@ -23,6 +24,10 @@ local function Dump(id, str)
         log_file:write(header .. str .. footer)
         log_file:close()
     end
+end
+
+local function WritePacket(type, id, packet)
+    Dump(string.format('%s 0x%03x', type, id), inspect(packet))
 end
 
 local function WritePcUpdate(pcUpdate)
@@ -240,8 +245,16 @@ end
 local function DispatchPacketIn(e)
     if e.id == 0x00D then
         WritePcUpdate(packets.inbound.pcUpdate.parse(e.data_modified_raw))
+    elseif e.id == 0x01C then
+        WritePacket('in', e.id, packets.inbound.inventorySize.parse(e.data))
     elseif e.id == 0x01D then
         WriteInventoryFinish(packets.inbound.inventoryFinish.parse(e.data))
+    elseif e.id == 0x01E then
+        WritePacket('in', e.id, packets.inbound.inventoryModify.parse(e.data))
+    elseif e.id == 0x01F then
+        WritePacket('in', e.id, packets.inbound.inventoryAssign.parse(e.data))
+    elseif e.id == 0x020 then
+        WritePacket('in', e.id, packets.inbound.inventoryItem.parse(e.data))
     elseif e.id == 0x028 then
         local packet = packets.inbound.action.parse(e.data_modified_raw)
         if packet.category == 0 or packet.category == 1 then return false end
@@ -270,7 +283,11 @@ local logger = {
         loggedPackets = T{
             inbound = T{
                 [0x00D] = { true },
+                [0x01C] = { true },
                 [0x01D] = { true },
+                [0x01E] = { true },
+                [0x01F] = { true },
+                [0x020] = { true },
                 [0x028] = { true },
                 [0x029] = { true },
                 [0x02A] = { true },
