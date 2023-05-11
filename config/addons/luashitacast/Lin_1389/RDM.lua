@@ -207,7 +207,7 @@ profile.HandleDefault = function()
         gFunc.Equip('Body', "Kingdom Aketon")
     end
 
-    if player.Status == 'Resting' and player.MPP > 99 then
+    if player.Status == 'Resting' and player.MPP < 99 then
         gFunc.EquipSet('Rest')
     elseif player.Status == 'Engaged' then
         gFunc.EquipSet('Tp')
