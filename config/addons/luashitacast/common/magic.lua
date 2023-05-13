@@ -22,6 +22,7 @@ local spells = {
 
 local staves = {
     Dark = "Dark Staff",
+    Ice = "Ice Staff",
 }
 
 local function between(val, min, max)

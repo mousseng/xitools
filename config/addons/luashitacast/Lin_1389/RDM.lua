@@ -10,6 +10,7 @@ local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
 local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
 
 local profile = {
+    UseHmp = true,
     Sets = {
         Base_Priority = {
             Main = { "Dark Staff", "Fencing Degen", "Yew Wand +1" },
@@ -32,6 +33,7 @@ local profile = {
         -- situational base sets
         Rest_Priority = {
             Main = { "Dark Staff", "Pilgrim's Wand" },
+            Waist = { "Duelist's Belt" },
         },
         Tp_Priority = {
             Head = { "Ogre Mask", "Super Ribbon" },
@@ -88,7 +90,7 @@ local profile = {
             Legs = { "Magic Cuisses" },
             Feet = { "Warlock's Boots" },
             Neck = { "Black Neckerchief" },
-            Waist = { "Ryl.Kgt. Belt", "Wizard's Belt" },
+            Waist = { "Duelist's Belt", "Ryl.Kgt. Belt", "Wizard's Belt" },
             Ear2 = { "Abyssal Earring", "Cunning Earring" },
             Ring1 = { "Eremite's Ring" },
             Ring2 = { "Eremite's Ring" },
@@ -101,7 +103,7 @@ local profile = {
             Legs = { "Warlock's Tights", "Magic Cuisses", "Savage Loincloth" },
             Feet = { "Duelist's Boots", "Warlock's Boots" },
             Neck = { "Justice Badge" },
-            Waist = { "Ryl.Kgt. Belt", "Friar's Rope" },
+            Waist = { "Duelist's Belt", "Ryl.Kgt. Belt", "Friar's Rope" },
             Ring1 = { "Saintly Ring" },
             Ring2 = { "Saintly Ring" },
             Back = { "White Cape" },
@@ -207,9 +209,19 @@ profile.HandleDefault = function()
         gFunc.Equip('Body', "Kingdom Aketon")
     end
 
-    if player.Status == 'Resting' and player.MPP < 99 then
-        gFunc.EquipSet('Rest')
-    elseif player.Status == 'Engaged' then
+    if player.Status == 'Resting' then
+        if profile.UseHmp and player.MPP >= 99 then
+            profile.UseHmp = false
+        end
+
+        if profile.UseHmp then
+            gFunc.EquipSet('Rest')
+        end
+    elseif profile.UseHmp then
+        profile.UseHmp = true
+    end
+
+    if player.Status == 'Engaged' then
         gFunc.EquipSet('Tp')
 
         if player.HPP <= 75 and player.TP <= 1000 then
