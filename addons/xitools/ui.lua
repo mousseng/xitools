@@ -130,15 +130,14 @@ function ui.DrawUiWindow(config, gConfig, drawStuff)
     imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
-    imgui.PushStyleColor(ImGuiCol_WindowBg, ui.Colors.FfxiGreyBg)
-    imgui.PushStyleColor(ImGuiCol_Border, ui.Colors.FfxiGreyBorder)
-    imgui.PushStyleColor(ImGuiCol_BorderShadow, ui.Colors.BorderShadow)
+    imgui.PushStyleColor(ImGuiCol_WindowBg, gConfig.backgroundColor)
+    imgui.PushStyleColor(ImGuiCol_Border, gConfig.borderColor)
     imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Scale(ui.Styles.ItemSpacing, gConfig.uiScale[1]))
     imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, ui.Scale(ui.Styles.WindowPadding, gConfig.uiScale[1]))
 
     if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
-        imgui.PopStyleColor(3)
-        imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.White)
+        imgui.PopStyleColor(2)
+        imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
         imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
 
         drawStuff()
@@ -151,7 +150,7 @@ function ui.DrawUiWindow(config, gConfig, drawStuff)
         imgui.PopStyleColor()
         imgui.End()
     else
-        imgui.PopStyleColor(3)
+        imgui.PopStyleColor(2)
     end
     imgui.PopStyleVar(2)
 end
