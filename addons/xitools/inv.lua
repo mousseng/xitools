@@ -196,14 +196,17 @@ local function UpdateInventory(inv, res, bagId)
             local coolItem = {
                 id = invItem.Id,
                 sortId = itemObj.ResourceId,
+                slotId = invItem.Index,
                 uniqueId = ('%i.%i.%s'):format(bagId, invItem.Index, itemObj.Name[1]),
                 type = itemObj.Type,
                 flags = itemObj.Flags,
                 isUsable = bit.band(1, bit.rshift(itemObj.Flags, 10)) == 1,
+                isLocked = bit.band(1, invItem.Flags) == 1 or bagId > 0,
                 isEquippable = itemObj.Type == 4 or itemObj.Type == 5,
                 name = ('%s [%i]'):format(itemObj.LogNameSingular[1], invItem.Id),
                 shortName = itemObj.Name[1],
-                longName = itemObj.LogNameSingular[1],
+                longNameS = itemObj.LogNameSingular[1],
+                longNameP = itemObj.LogNamePlural[1],
                 desc = itemObj.Description[1],
                 stack = nil,
                 stackCur = invItem.Count,
@@ -286,6 +289,25 @@ local function TryToEquip(item)
     end
 end
 
+local function TryToDrop(item)
+    if imgui.BeginMenu('Drop') then
+        local itemName = item.longNameS
+        if item.stackCur > 1 then
+            itemName = item.longNameP
+        end
+
+        -- TODO: add quantity picker
+
+        local title = ('Drop %i %s'):format(item.stackCur, itemName)
+        if imgui.MenuItem(title) then
+            AshitaCore:GetPacketManager():AddOutgoingPacket(
+                packets.outbound.inventoryDrop:make(item.stackCur, 0, item.slotId))
+        end
+
+        imgui.EndMenu()
+    end
+end
+
 local function AddStackSize(posX, posY, count)
     local mainColor = imgui.GetColorU32({ 1, 1, 1, 1 })
     local shadowColor = imgui.GetColorU32({ 0, 0, 0, 1 })
@@ -324,7 +346,7 @@ end
 
 local function AddContextMenu(item)
     local menuOpened = false
-    if (item.isUsable or item.isEquippable) and imgui.BeginPopupContextItem(item.uniqueId) then
+    if (item.isUsable or item.isEquippable or not item.isLocked) and imgui.BeginPopupContextItem(item.uniqueId) then
         menuOpened = true
 
         if item.isUsable then
@@ -333,6 +355,10 @@ local function AddContextMenu(item)
 
         if item.isEquippable then
             TryToEquip(item)
+        end
+
+        if not item.isLocked then
+            TryToDrop(item)
         end
 
         if imgui.Selectable('Cancel') then

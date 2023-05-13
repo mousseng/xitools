@@ -45,6 +45,15 @@ local outboundFishingAction = {
     },
 }
 
+local outboundInventoryDrop = {
+    id = 0x028,
+    name = 'Inventory Drop',
+    parse = nil,
+    make = function(this, quantity, container, slot)
+        return this.id, struct.pack('bbbbibb', 0x00, 0x00, 0x00, 0x00, quantity, container, slot):totable()
+    end,
+}
+
 local outboundTreasureLot = {
     id = 0x041,
     name = 'Treasure Lot',
@@ -616,6 +625,7 @@ local packets = {
         },
         startSynth = outboundStartSynth,
         fishingAction = outboundFishingAction,
+        inventoryDrop = outboundInventoryDrop,
         treasureLot = outboundTreasureLot,
         treasurePass = outboundTreasurePass,
     },
