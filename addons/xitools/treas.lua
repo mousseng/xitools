@@ -9,7 +9,7 @@ local Scale = 1.0
 
 local gold = { 1.0, 215/255, 0.0, 1.0 }
 
-local function GetTreasure()
+local function GetTreasure(options)
     local res = AshitaCore:GetResourceManager()
     local inv = AshitaCore:GetMemoryManager():GetInventory()
     local player = AshitaCore:GetMemoryManager():GetParty():GetMemberName(0)
@@ -23,7 +23,6 @@ local function GetTreasure()
                 id = itemInfo.Id,
                 slot = i,
                 name = itemInfo.Name[1],
-                nameShort = itemInfo.LogNameSingular[1],
                 winner = {
                     exists = treasureItem.WinningLot > 0,
                     name = treasureItem.WinningEntityName,
@@ -35,6 +34,14 @@ local function GetTreasure()
                     hasRolled = treasureItem.Lot > 0 and treasureItem.Lot < 1000,
                     hasPassed = treasureItem.Lot > 1000,
                 },
+            }
+        elseif options.showAllSlots[1] then
+            treasurePool:append{
+                id = 0,
+                slot = i,
+                name = '',
+                winner = { exists = false },
+                current = { name = player, hasRolled = false, hasPassed = true },
             }
         end
     end
@@ -48,7 +55,6 @@ end
 --             id = 1,
 --             slot = 1,
 --             name = 'Cool Item 1',
---             nameShort = 'cool item 1',
 --             winner = { exists = true, name = 'Winner Dude', lot = '673' },
 --             current = { name = 'Lin', hasRolled = true, hasPassed = false, lot = '555', },
 --         },
@@ -56,7 +62,6 @@ end
 --             id = 2,
 --             slot = 2,
 --             name = 'Cool Item 2',
---             nameShort = 'cool item 2',
 --             winner = { exists = true, name = 'Lin', lot = '999' },
 --             current = { name = 'Lin', hasRolled = true, hasPassed = false, lot = '999', },
 --         },
@@ -64,7 +69,6 @@ end
 --             id = 3,
 --             slot = 3,
 --             name = 'Cool Item 3',
---             nameShort = 'cool item 3',
 --             winner = { exists = true, name = 'Winner Dude', lot = '888' },
 --             current = { name = 'Lin', hasRolled = false, hasPassed = true, lot = '65535', },
 --         },
@@ -72,7 +76,6 @@ end
 --             id = 4,
 --             slot = 4,
 --             name = 'Cool Item 4',
---             nameShort = 'cool item 4',
 --             winner = { exists = false, name = 'Winner Dude', lot = '888' },
 --             current = { name = 'Lin', hasRolled = false, hasPassed = false, lot = '65535', },
 --         },
@@ -143,6 +146,7 @@ local treas = {
     DefaultSettings = T{
         isEnabled = T{ false },
         isVisible = T{ true },
+        showAllSlots = T{ false },
         name = 'xitools.treas',
         size = T{ -1, -1 },
         pos = T{ 100, 100 },
@@ -152,6 +156,7 @@ local treas = {
         if imgui.BeginTabItem('treas') then
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Visible', options.isVisible)
+            imgui.Checkbox('Show empty slots', options.showAllSlots)
 
             if imgui.InputInt2('Position', options.pos) then
                 imgui.SetWindowPos(options.name, options.pos)
@@ -162,7 +167,7 @@ local treas = {
     end,
     DrawMain = function(options, gOptions)
         Scale = gOptions.uiScale[1]
-        local treasurePool = GetTreasure()
+        local treasurePool = GetTreasure(options)
         -- local treasurePool = GetDummyTreasure()
         if #treasurePool > 0 then
             ui.DrawNormalWindow(options, gOptions, function()
