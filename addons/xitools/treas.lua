@@ -139,6 +139,7 @@ end
 ---@type xitool
 local treas = {
     Name = 'treas',
+    Aliases = T{ 't' },
     DefaultSettings = T{
         isEnabled = T{ false },
         isVisible = T{ true },
