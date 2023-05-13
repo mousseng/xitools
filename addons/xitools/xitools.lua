@@ -25,6 +25,7 @@ local me = require('me')
 local us = require('us')
 local tgt = require('tgt')
 local pet = require('pet')
+local treas = require('treas')
 local inv = require('inv')
 local tracker = require('tracker')
 local crafty = require('crafty')
@@ -36,6 +37,7 @@ local tools = {
     us,
     tgt,
     pet,
+    treas,
     inv,
     tracker,
     crafty,
@@ -66,6 +68,7 @@ local defaultOptions = T{
         us = us.DefaultSettings,
         tgt = tgt.DefaultSettings,
         pet = pet.DefaultSettings,
+        treas = treas.DefaultSettings,
         inv = inv.DefaultSettings,
         tracker = tracker.DefaultSettings,
         crafty = crafty.DefaultSettings,

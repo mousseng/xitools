@@ -45,6 +45,24 @@ local outboundFishingAction = {
     },
 }
 
+local outboundTreasureLot = {
+    id = 0x041,
+    name = 'Treasure Lot',
+    parse = nil,
+    make = function(this, slot)
+        return this.id, { 0x00, 0x00, 0x00, 0x00, slot }
+    end,
+}
+
+local outboundTreasurePass = {
+    id = 0x042,
+    name = 'Treasure Pass',
+    parse = nil,
+    make = function(this, slot)
+        return this.id, { 0x00, 0x00, 0x00, 0x00, slot }
+    end,
+}
+
 local inboundZoneIn = {
     id = 0x00A,
     name = 'Zone In',
@@ -598,6 +616,8 @@ local packets = {
         },
         startSynth = outboundStartSynth,
         fishingAction = outboundFishingAction,
+        treasureLot = outboundTreasureLot,
+        treasurePass = outboundTreasurePass,
     },
     inbound = {
         sorted = {
