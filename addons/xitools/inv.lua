@@ -438,6 +438,13 @@ local inv = {
             if imgui.Checkbox('Enabled', options.isEnabled) and options.isEnabled[1] then
                 UpdateInventories()
             end
+
+            imgui.Checkbox('Visible', options.isVisible)
+
+            if imgui.InputInt2('Position', options.pos) then
+                imgui.SetWindowPos(options.name, options.pos)
+            end
+
             imgui.EndTabItem()
         end
     end,
@@ -446,7 +453,6 @@ local inv = {
         ui.DrawUiWindow(options, gOptions, function()
             imgui.SetWindowFontScale(Scale)
             DrawInventory()
-            imgui.End()
         end)
     end,
 }
