@@ -13,11 +13,11 @@ local function HandleWs(wsName)
     elseif mndSkills:contains(wsName) then
         gFunc.EquipSet('Mnd')
     elseif strMndSkills:contains(wsName) then
-        gFunc.EquipSet('Str')
         gFunc.EquipSet('Mnd')
-    elseif strIntSkills:contains(wsName) then
         gFunc.EquipSet('Str')
+    elseif strIntSkills:contains(wsName) then
         gFunc.EquipSet('Int')
+        gFunc.EquipSet('Str')
     elseif hpSkills:contains(wsName) then
     end
 end

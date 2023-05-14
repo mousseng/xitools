@@ -28,6 +28,7 @@
 /addon load mobdb
 /addon load equipmon
 /addon load thotbar
+/addon load targetlines
 
 /bindblock
 /bind insert /ashita
