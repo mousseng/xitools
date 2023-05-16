@@ -28,6 +28,7 @@ local pet = require('pet')
 local treas = require('treas')
 local inv = require('inv')
 local tracker = require('tracker')
+local cast = require('cast')
 local crafty = require('crafty')
 local fishe = require('fishe')
 local logger = require('logger')
@@ -39,6 +40,7 @@ local uiWindows = {
     pet,
     inv,
     tracker,
+    cast,
 }
 
 local normalWindows = {
@@ -79,6 +81,7 @@ local defaultOptions = T{
         treas = treas.DefaultSettings,
         inv = inv.DefaultSettings,
         tracker = tracker.DefaultSettings,
+        cast = cast.DefaultSettings,
         crafty = crafty.DefaultSettings,
         fishe = fishe.DefaultSettings,
         logger = logger.DefaultSettings,

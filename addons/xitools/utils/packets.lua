@@ -228,13 +228,12 @@ local inboundAction = {
         -- out what each target and action field are used for.
         ---@type ActionPacket
         local action = {
-            -- Windower code leads me to believe param and recast might be at
-            -- different indices - 102 and 134, respectively. Confusing.
             actor_id     = ashita.bits.unpack_be(packet,  40, 32),
             target_count = ashita.bits.unpack_be(packet,  72,  8),
             category     = ashita.bits.unpack_be(packet,  82,  4),
-            param        = ashita.bits.unpack_be(packet,  86, 10),
-            recast       = ashita.bits.unpack_be(packet, 118, 10),
+            param        = ashita.bits.unpack_be(packet,  86, 16),
+            param2       = ashita.bits.unpack_be(packet, 102, 16),
+            recast       = ashita.bits.unpack_be(packet, 118, 16),
             unknown      = 0,
             targets      = {}
         }
@@ -306,7 +305,27 @@ local inboundAction = {
         end
 
         return action
-    end
+    end,
+    actionTypes = {
+        None = 0,
+        Attack = 1,
+        RangedFinish = 2,
+        WeaponskillFinish = 3,
+        SpellFinish = 4,
+        ItemFinish = 5,
+        AbilityFinish = 6,
+        WeaponskillStart = 7,
+        SpellStart = 8,
+        ItemStart = 9,
+        AbilityStart = 10,
+        MobSkillFinish = 11,
+        RangedStart = 12,
+        PetAbilityFinish = 13,
+        Dance = 14,
+        RunWardEffusion = 15,
+        Quarry = 16,
+        Sprint = 17,
+    }
 }
 
 local inboundBasic = {

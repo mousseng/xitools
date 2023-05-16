@@ -155,4 +155,35 @@ function ui.DrawUiWindow(config, gConfig, drawStuff)
     imgui.PopStyleVar(2)
 end
 
+---@param config table
+---@param drawStuff function
+function ui.DrawInvisWindow(config, gConfig, drawStuff)
+    imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
+    imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
+
+    imgui.PushStyleColor(ImGuiCol_WindowBg, { 0, 0, 0, 0 })
+    imgui.PushStyleColor(ImGuiCol_Border, { 0, 0, 0, 0 })
+    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 1 })
+    imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, { 1, 1 })
+
+    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
+        imgui.PopStyleColor(2)
+        imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
+        imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
+
+        drawStuff()
+
+        local x, y = imgui.GetWindowPos()
+        config.pos[1] = x
+        config.pos[2] = y
+
+        imgui.PopStyleVar()
+        imgui.PopStyleColor()
+        imgui.End()
+    else
+        imgui.PopStyleColor(2)
+    end
+    imgui.PopStyleVar(2)
+end
+
 return ui

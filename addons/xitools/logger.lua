@@ -59,6 +59,7 @@ local function WriteAction(action)
         'target_count: ' .. string.format('%i',   action.target_count) .. '\n' ..
         'category: '     .. string.format('0x%x', action.category)     .. '\n' ..
         'param: '        .. string.format('0x%x', action.param)        .. '\n' ..
+        'param2: '       .. string.format('0x%x', action.param2)       .. '\n' ..
         'recast: '       .. string.format('%i',   action.recast)       .. '\n' ..
         'unknown: '      .. string.format('%i',   action.unknown)      .. '\n' ..
         'targets:\n'
