@@ -55,6 +55,7 @@ local profile = {
         },
         Int_Priority = {
             Ammo = { "Morion Tathlum" },
+            Ear1 = { "Abyssal Earring" },
             Ear2 = { "Cunning Earring" },
             Ring1 = { "Eremite's Ring" },
             Ring2 = { "Eremite's Ring" },
@@ -81,6 +82,9 @@ local profile = {
         Hp_Priority = {
         },
         Mp_Priority = {
+        },
+        Mab_Priority = {
+            Ear1 = { "Moldavite Earring" },
         },
         Interrupt_Priority = {
         },

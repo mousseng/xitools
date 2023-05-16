@@ -69,6 +69,7 @@ local function HandleSpell(spell)
 
     if spell.Skill == 'Healing Magic' then
         gFunc.EquipSet('Healing')
+        gFunc.EquipSet('Mnd')
     elseif spell.Skill == 'Elemental Magic' then
         gFunc.EquipSet('Elemental')
     elseif spell.Skill == 'Enhancing Magic' then
