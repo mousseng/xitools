@@ -458,11 +458,11 @@ local tgt = {
     DrawMain = function(options, gOptions)
         local tgt = AshitaCore:GetMemoryManager():GetTarget()
         local targetId = tgt:GetTargetIndex(0)
+        local targetActive = tgt:GetActive(0) == 1
         local subTargetId = tgt:GetTargetIndex(1)
+        local subTargetActive = tgt:GetIsSubTargetActive() == 1
         local totId = 0
 
-        local targetActive = tgt:GetActive(0) == 1
-        local subTargetActive = tgt:GetIsSubTargetActive() == 1
 
         -- the target struct appears to be a stack, so when we have two targets
         -- that means the subtarget is actually in [0] and main moves to [1]
@@ -474,7 +474,7 @@ local tgt = {
 
         Scale = gOptions.uiScale[1]
 
-        if targetActive then
+        if targetActive and targetId ~= 0 then
             ui.DrawUiWindow(options.mainWindow, gOptions, function()
                 imgui.SetWindowFontScale(Scale)
 
@@ -484,7 +484,7 @@ local tgt = {
             end)
         end
 
-        if options.showSub[1] and subTargetActive then
+        if options.showSub[1] and subTargetActive and subTargetId ~= 0 then
             ui.DrawUiWindow(options.subWindow, gOptions, function()
                 imgui.SetWindowFontScale(Scale)
 
