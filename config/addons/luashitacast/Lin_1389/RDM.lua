@@ -22,7 +22,7 @@ local profile = {
             Hands = { "Savage Gauntlets", "Dream Mittens +1" },
             Legs = { "Crimson Cuisses", "Savage Loincloth", "Dream Pants +1" },
             Feet = { "Duelist's Boots", "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
-            Neck = { "Tiger Stole" },
+            Neck = { "Uggalepih Pendant", "Tiger Stole" },
             Waist = { "Friar's Rope" },
             Ear1 = { "Moldavite Earring" },
             Ear2 = { "Abyssal Earring", "Cunning Earring" },
@@ -139,7 +139,7 @@ local profile = {
         Mp_Priority = {
         },
         Mab_Priority = {
-            -- Neck = { "Uggalepih Pendant", },
+            Neck = { "Uggalepih Pendant", },
             Ear1 = { "Moldavite Earring", },
             Feet = { "Duelist's Boots", },
         },
