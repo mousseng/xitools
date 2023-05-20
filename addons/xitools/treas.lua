@@ -48,6 +48,7 @@ local function GetTreasure(options)
                 id = 0,
                 slot = i,
                 name = '',
+                time = '',
                 winner = { exists = false },
                 current = { name = player, hasRolled = false, hasPassed = true },
             }
@@ -55,6 +56,23 @@ local function GetTreasure(options)
     end
 
     return treasurePool
+end
+
+local function Roll(treasure)
+    if treasure.current.hasRolled
+    or treasure.current.hasPassed then
+        return
+    end
+
+    AshitaCore:GetPacketManager():AddOutgoingPacket(packets.outbound.treasureLot:make(treasure.slot))
+end
+
+local function Pass(treasure)
+    if treasure.current.hasPassed then
+        return
+    end
+
+    AshitaCore:GetPacketManager():AddOutgoingPacket(packets.outbound.treasurePass:make(treasure.slot))
 end
 
 -- local function GetDummyTreasure()
@@ -96,6 +114,19 @@ end
 -- end
 
 local function DrawTreasure(treasurePool)
+    if imgui.Button('Roll All') then
+        for _, treasure in pairs(treasurePool) do
+            Roll(treasure)
+        end
+    end
+
+    imgui.SameLine()
+    if imgui.Button('Pass All') then
+        for _, treasure in pairs(treasurePool) do
+            Pass(treasure)
+        end
+    end
+
     if imgui.BeginTable('xitools.treas.pool', 6, ImGuiTableFlags_SizingFixedFit) then
         imgui.TableSetupScrollFreeze(0, 1)
         imgui.TableSetupColumn('Treasure', ImGuiTableColumnFlags_NoHide, TextBaseWidth * 17)
@@ -137,7 +168,7 @@ local function DrawTreasure(treasurePool)
             if not treasure.current.hasRolled
             and not treasure.current.hasPassed then
                 if imgui.Button(('Roll##%i'):format(i)) then
-                    AshitaCore:GetPacketManager():AddOutgoingPacket(packets.outbound.treasureLot:make(treasure.slot))
+                    Roll(treasure)
                 end
             elseif treasure.current.hasRolled then
                 Write(treasure.current.lot)
@@ -148,7 +179,7 @@ local function DrawTreasure(treasurePool)
             imgui.TableNextColumn()
             if imgui.Button(('Pass##%i'):format(i))
             and not treasure.current.hasPassed then
-                AshitaCore:GetPacketManager():AddOutgoingPacket(packets.outbound.treasurePass:make(treasure.slot))
+                Pass(treasure)
             end
         end
 
