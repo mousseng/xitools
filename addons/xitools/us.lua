@@ -24,11 +24,11 @@ local Alliances = { }
 -- bit 6: ?
 -- bit 7: level sync target
 
----@param filePath string
-local function CreateTexture(filePath)
-    -- Courtesy of Thorny's mobDb
+---@param icon userdata
+local function CreateTexture(icon)
+    -- Courtesy of Thorny's partybuffs
     local dx_texture_ptr = ffi.new('IDirect3DTexture8*[1]')
-    if (ffi.C.D3DXCreateTextureFromFileA(d3d8_device, filePath, dx_texture_ptr) == ffi.C.S_OK) then
+    if ffi.C.D3DXCreateTextureFromFileInMemoryEx(d3d8_device, icon.Bitmap, icon.ImageSize, 0xFFFFFFFF, 0xFFFFFFFF, 1, 0, ffi.C.D3DFMT_A8R8G8B8, ffi.C.D3DPOOL_MANAGED, ffi.C.D3DX_DEFAULT, ffi.C.D3DX_DEFAULT, 0xFF000000, nil, nil, dx_texture_ptr) == ffi.C.S_OK then
         return d3d8.gc_safe_release(ffi.cast('IDirect3DTexture8*', dx_texture_ptr[0]))
     else
         return nil
@@ -287,7 +287,8 @@ local function DrawBuffs(player)
         local buffId = player.statusIds[i]
         if buffId ~= nil and buffId >= 0 then
             if Textures[buffId] == nil then
-                Textures[buffId] = CreateTexture(addon.path .. "icons\\" .. buffId .. ".png")
+                local icon = AshitaCore:GetResourceManager():GetStatusIconById(buffId)
+                Textures[buffId] = CreateTexture(icon)
             end
 
             if i ~= 1 and i ~= 32 then
