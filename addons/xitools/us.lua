@@ -287,7 +287,7 @@ local function DrawBuffs(player)
         local buffId = player.statusIds[i]
         if buffId ~= nil and buffId >= 0 then
             if Textures[buffId] == nil then
-                local icon = AshitaCore:GetResourceManager():GetStatusIconById(buffId)
+                local icon = AshitaCore:GetResourceManager():GetStatusIconByIndex(buffId)
                 Textures[buffId] = CreateTexture(icon)
             end
 
