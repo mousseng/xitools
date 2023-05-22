@@ -398,11 +398,12 @@ local tgt = {
     DefaultSettings = T{
         isEnabled = T{ false },
         isVisible = T{ true },
-        showStatus = T{ false },
+        showMain = T{ true },
         showSub = T{ false },
         showTot = T{ false },
         mainWindow = T{
             isVisible = T{ true },
+            showStatus = T{ false },
             name = 'xitools.tgt.main',
             size = T{ 276, -1 },
             pos = T{ 100, 100 },
@@ -410,6 +411,7 @@ local tgt = {
         },
         subWindow = T{
             isVisible = T{ true },
+            showStatus = T{ false },
             name = 'xitools.tgt.sub',
             size = T{ 276, -1 },
             pos = T{ 100, 200 },
@@ -417,6 +419,7 @@ local tgt = {
         },
         totWindow = T{
             isVisible = T{ true },
+            showStatus = T{ false },
             name = 'xitools.tgt.tot',
             size = T{ 276, -1 },
             pos = T{ 386, 100 },
@@ -440,9 +443,19 @@ local tgt = {
     DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('tgt') then
             imgui.Checkbox('Enabled', options.isEnabled)
-            imgui.Checkbox('Show debuffs', options.showStatus)
+
+            imgui.Checkbox('Show main target', options.showMain)
+            imgui.SameLine()
+            imgui.Checkbox('Show debuffs##mt', options.mainWindow.showStatus)
+
             imgui.Checkbox('Show sub-target', options.showSub)
+            imgui.SameLine()
+            imgui.Checkbox('Show debuffs##st', options.subWindow.showStatus)
+
             imgui.Checkbox('Show target of target', options.showTot)
+            imgui.SameLine()
+            imgui.Checkbox('Show debuffs##tot', options.totWindow.showStatus)
+
             if imgui.InputInt2('Target position', options.mainWindow.pos) then
                 imgui.SetWindowPos(options.mainWindow.name, options.mainWindow.pos)
             end
@@ -474,12 +487,12 @@ local tgt = {
 
         Scale = gOptions.uiScale[1]
 
-        if targetActive and targetId ~= 0 then
+        if options.showMain[1] and targetActive and targetId ~= 0 then
             ui.DrawUiWindow(options.mainWindow, gOptions, function()
                 imgui.SetWindowFontScale(Scale)
 
                 local entity = GetEntity(targetId)
-                DrawTgt(entity, options)
+                DrawTgt(entity, options.mainWindow)
                 totId = entity.TargetedIndex or 0
             end)
         end
@@ -489,7 +502,7 @@ local tgt = {
                 imgui.SetWindowFontScale(Scale)
 
                 local entity = GetEntity(subTargetId)
-                DrawTgt(entity, options)
+                DrawTgt(entity, options.subWindow)
             end)
         end
 
@@ -503,7 +516,7 @@ local tgt = {
                     imgui.SetWindowFontScale(Scale)
 
                     -- TODO: compact tot display
-                    DrawTgt(entity, options)
+                    DrawTgt(entity, options.totWindow)
                 end)
             end
         end
