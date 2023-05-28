@@ -54,6 +54,8 @@
 /bind !F5 /input /ta <a24>
 /bind !F6 /input /ta <a25>
 
+/alias add /glam /lockstyleset
+
 /wait 3
 
 /ambient 255 255 255

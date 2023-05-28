@@ -4,6 +4,7 @@
 /load thirdparty
 /load stylist
 /load nameplate
+/load trenderer
 
 /addon load allmaps
 /addon load cfhblock
@@ -25,6 +26,7 @@
 /addon load equipmon
 /addon load instantchat
 /addon load simplelog
+/addon load thotbar
 
 /bindblock
 /bind insert /ashita
