@@ -26,7 +26,7 @@ local profile = {
             Waist = { "Friar's Rope" },
             Ear1 = { "Moldavite Earring" },
             Ear2 = { "Abyssal Earring", "Cunning Earring" },
-            Ring1 = { "San d'Orian Ring" },
+            Ring1 = { "Zoredonite Ring", "San d'Orian Ring" },
             Ring2 = { "Chariot Band" },
             Back = { "Black Cape", "Cotton Cape" },
         },

@@ -1,179 +1,155 @@
-require 'common'
-local levelSync = gFunc.LoadFile('common/levelSync.lua')
-local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
-local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
-local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
-local handleMagic = gFunc.LoadFile('common/magic.lua')
-local handleSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
-local handleDaggerWs = gFunc.LoadFile('common/weaponskills/dagger.lua')
-local handleKatanaWs = gFunc.LoadFile('common/weaponskills/katana.lua')
+require('common')
+local status = gFunc.LoadFile('common/status.lua')
+local EquipSlots = gData.Constants.EquipSlots
 
-local profile = {
-    Sets = {
-        -- situational base sets
-        Base_Priority = {
-            -- Range = {  },
-            Ammo = { "Pebble" },
-            Head = { "Brass Hairpin" },
-            Body = { "Nanban Kariginu" },
-            Hands = { "Windurstian Tekko" },
-            Legs = { "Republic Subligar" },
-            Feet = { "Fed. Kyahan" },
-            Neck = { "Spike Necklace" },
-            Waist = { "Warlock's Belt" },
-            Ear1 = { "Beetle Earring +1" },
-            Ear2 = { "Beetle Earring +1" },
-            Ring1 = { "San d'Orian Ring" },
-            Ring2 = { "Chariot Band" },
-            -- Back = {  },
-        },
-        Rest_Priority = {
-        },
-        Movement_Priority = {
-        },
-        Tp_Priority = {
-            Ring1 = { "Balance Ring", },
-            Ring2 = { "Balance Ring", },
-        },
-        -- stat bonus sets
-        Str_Priority = {
-            Body = { "Savage Separates" },
-            Feet = { "Savage Gaiters" },
-            Neck = { "Spike Necklace", },
-            Ring1 = { "Courage Ring" },
-            Ring2 = { "Courage Ring" },
-        },
-        Dex_Priority = {
-            Neck = { "Spike Necklace", },
-            Ring1 = { "Balance Ring" },
-            Ring2 = { "Balance Ring" },
-        },
-        Vit_Priority = {
-        },
-        Agi_Priority = {
-            Neck = { "Wing Pendant" },
-        },
-        Int_Priority = {
-            Ammo = { "Morion Tathlum" },
-            Ear1 = { "Abyssal Earring" },
-            Ear2 = { "Cunning Earring" },
-            Ring1 = { "Eremite's Ring" },
-            Ring2 = { "Eremite's Ring" },
-        },
-        Mnd_Priority = {
-            Hands = { "Savage Gauntlets" },
-            Legs = { "Savage Loincloth" },
-            Neck = { "Justice Badge" },
-            Waist = { "Friar's Rope" },
-            Ring1 = { "Saintly Ring" },
-            Ring2 = { "Saintly Ring" },
-        },
-        Chr_Priority = {
-        },
-        -- substat bonus sets
-        Acc_Priority = {
-        },
-        Att_Priority = {
-            Neck = { "Tiger Stole" },
-            Hands = { "Ryl.Ftm. Gloves" },
-        },
-        Eva_Priority = {
-        },
-        Hp_Priority = {
-        },
-        Mp_Priority = {
-        },
-        Mab_Priority = {
-            Ear1 = { "Moldavite Earring" },
-        },
-        Interrupt_Priority = {
-        },
-        -- skill bonus sets
-        Healing_Priority = {
-        },
-        Elemental_Priority = {
-        },
-        Enhancing_Priority = {
-        },
-        Enfeebling_Priority = {
-        },
-        Divine_Priority = {
-        },
-        Dark_Priority = {
-        },
+local sets = {
+    Idle = {
+        Main = "Zushio",
+        Sub = "Anju",
+        Range = "displaced",
+        Ammo = "Pebble",
+
+        Head = "Erd. Headband",
+        Neck = "Ryl.Sqr. Collar",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Nanban Kariginu",
+        Hands = "Windurstian Tekko",
+        Ring1 = "San d'Orian Ring",
+        Ring2 = "Chariot Band",
+
+        Back = "High Brth. Mantle",
+        Waist = "Friar's Rope",
+        Legs = "Republic Subligar",
+        Feet = "Fed. Kyahan",
+    },
+    Auto = {
+        Range = "displaced",
+        Ammo = "Pebble",
+
+        Head = "Erd. Headband",
+        Neck = "Spike Necklace",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
+
+        Body = "Nanban Kariginu",
+        Hands = "Windurstian Tekko",
+        Ring1 = "Balance Ring",
+        Ring2 = "Balance Ring",
+
+        Back = "High Brth. Mantle",
+        Waist = "Tilt Belt",
+        Legs = "Republic Subligar",
+        Feet = "Fed. Kyahan",
+    },
+    Throw = {
+        Ring1 = "Horn Ring",
+        Ring2 = "Horn Ring",
+    },
+    Stealth = {
+        Hands = "Dream Mittens +1",
+        Back = "Skulker's Cape",
+        Waist = "Swift Belt",
+        Feet = "Dream Boots +1",
+    },
+    Shadows = {
+        Range = "displaced",
+        Ammo = "Pebble",
+
+        Head = "Erd. Headband",
+        Neck = "Ryl.Sqr. Collar",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Nanban Kariginu",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
+
+        Back = "High Brth. Mantle",
+        Waist = "Friar's Rope",
+        Legs = "Republic Subligar",
+        Feet = "Fed. Kyahan",
+    },
+    Ninjutsu = {
+        Range = "displaced",
+        Ammo = "Morion Tathlum",
+
+        Head = "Erd. Headband",
+        Neck = "Ryl.Sqr. Collar",
+        Ear1 = "Cunning Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Nanban Kariginu",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
+
+        Back = "High Brth. Mantle",
+        Waist = "Wizard's Belt",
+        Legs = "Republic Subligar",
+        Feet = "Fed. Kyahan",
     },
 }
 
-profile.OnLoad = function()
-    gSettings.AllowAddSet = true
-    gSettings.SoloMode = false
-    gSettings.FishMode = false
-    gSettings.HelmMode = false
-
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
-    AshitaCore:GetChatManager():QueueCommand(1, '/macro book 4')
-end
-
-profile.OnUnload = function()
-    handleSoloMode('solo off')
-    handleFishMode('fish off')
-    handleHelmMode('helm off')
-
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /solo')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm')
-end
-
-profile.HandleCommand = function(args)
-    if #args == 0 then return end
-    handleSoloMode(args)
-    handleFishMode(args)
-    handleHelmMode(args)
-end
-
-profile.HandleDefault = function()
+local function handleDefault()
     local player = gData.GetPlayer()
-    levelSync(profile.Sets)
+    local env = gData.GetEnvironment()
 
-    gFunc.EquipSet('Base')
-    if player.Status == 'Resting' then
-        gFunc.EquipSet('Rest')
-    elseif player.Status == 'Engaged' then
-        gFunc.EquipSet('Tp')
+    gFunc.EquipSet(sets.Idle)
+
+    if status.IsAttacking(player) and status.HasStatus('Copy Image') then
+        gFunc.EquipSet(sets.Auto)
+    elseif status.IsAttacking(player) then
+        gFunc.EquipSet(sets.Shadows)
+    end
+
+    if status.IsInSandoria(env) then
+        gFunc.Equip(EquipSlots.Body, "Kingdom Aketon")
+    elseif status.IsInBastok(env) then
+        gFunc.Equip(EquipSlots.Body, "Republic Aketon")
+    elseif status.IsInWindurst(env) then
+        gFunc.Equip(EquipSlots.Body, "Federation Aketon")
     end
 end
 
-profile.HandleAbility = function()
+local function handleMidshot()
+    gFunc.EquipSet(sets.Throw)
 end
 
-profile.HandleItem = function()
-    local item = gData.GetAction()
-    if item.Name == 'Orange Juice' then
-        gFunc.Equip('Legs', "Dream Pants +1")
-    end
-end
-
-profile.HandlePrecast = function()
-end
-
-profile.HandleMidcast = function()
+local function handleMidcast()
     local spell = gData.GetAction()
-    handleMagic(spell)
+
+    if status.IsStealth(spell) then
+        gFunc.EquipSet(sets.Stealth)
+    elseif status.IsShadows(spell) or status.IsDrain(spell) then
+        gFunc.EquipSet(sets.Shadows)
+    elseif status.IsNuke(spell) or status.IsPotencyNinjutsu(spell) or status.IsAccuracyNinjutsu(spell) then
+        gFunc.EquipSet(sets.Ninjutsu)
+    end
 end
 
-profile.HandlePreshot = function()
+local function handleWeaponskill()
+    local weaponskill = gData.GetAction().Name
+
+    if weaponskill == 'Blade: Teki'
+    or weaponskill == 'Blade: To' then
+        gFunc.EquipSet(sets.Ninjutsu)
+    end
 end
 
-profile.HandleMidshot = function()
-end
-
-profile.HandleWeaponskill = function()
-    local weaponskill = gData.GetAction()
-    handleSwordWs(weaponskill.Name)
-    handleDaggerWs(weaponskill.Name)
-    handleKatanaWs(weaponskill.Name)
-end
-
-return profile
+return {
+    Sets = sets,
+    OnLoad = nil,
+    OnUnload = nil,
+    HandleCommand = nil,
+    HandleDefault = handleDefault,
+    HandleAbility = nil,
+    HandleItem = nil,
+    HandlePrecast = nil,
+    HandlePreshot = nil,
+    HandleMidcast = handleMidcast,
+    HandleMidshot = handleMidshot,
+    HandleWeaponskill = handleWeaponskill,
+}
