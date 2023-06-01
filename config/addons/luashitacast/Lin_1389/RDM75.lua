@@ -20,7 +20,7 @@ local sets = {
         Ring1 = "Zoredonite Ring",  -- MP+20
         Ring2 = "Chariot Band",     -- EXP Ring
 
-        Back = "Psilos Mantle",     -- DEF+6
+        Back = "Hexerei Cape",      -- MP+8, DT-3, DEF+5
         Waist = "Ryl.Kgt. Belt",    -- DEF+5, AGI+2
         Legs = "Crimson Cuisses",   -- Move, MP+25, DEF+43
         Feet = "Duelist's Boots",   -- MP+15, DEF+15, Eva+5
@@ -42,7 +42,7 @@ local sets = {
         Ring1 = "Zoredonite Ring",  -- MP+20
         Ring2 = "Chariot Band",     -- EXP Ring
 
-        Back = "Psilos Mantle",     -- DEF+6
+        Back = "Hexerei Cape",      -- MP+8, DT-3, DEF+5
         Waist = "Swift Belt",       -- Haste+4
         Legs = "Crimson Cuisses",   -- MP+25
         Feet = "Duelist's Boots",   -- MP+15, Eva+5
@@ -101,7 +101,7 @@ local sets = {
         Ring2 = "Balance Ring",     -- DEX+2
 
         Back = "Psilos Mantle",     -- Att+12, Acc+1
-        Waist = "Tilt Belt",        -- Acc+5
+        Waist = "Life Belt",        -- Acc+10
         Legs = "Duelist's Tights",  -- DEX+5
         Feet = "Wise Pigaches",     -- Acc+2
     },
@@ -118,7 +118,7 @@ local sets = {
         Ring2 = "Courage Ring",     -- STR+2
 
         Back = "Psilos Mantle",     -- Att+12, Acc+1
-        Waist = "Tilt Belt",        -- Acc+5
+        Waist = "Life Belt",        -- Acc+10
         Legs = "Duelist's Tights",  -- DEX+5
         Feet = "Ogre Ledelsens",    -- Att+10
     },
@@ -139,7 +139,7 @@ local sets = {
         Ring1 = "Zoredonite Ring",  -- MP+20
         Ring2 = "Chariot Band",
 
-        Back = "Psilos Mantle",
+        Back = "Rainbow Cape",      -- MP+9
         Waist = "Friar's Rope",     -- MP+5
         Legs = "Savage Loincloth",  -- MP+32
         Feet = "Duelist's Boots",   -- MP+15
@@ -157,7 +157,7 @@ local sets = {
         Ring1 = "Jelly Ring",       -- PDT-5
         -- Ring2 = "Sattva Ring",      -- DT-5
 
-        -- Back = "Hexerei Cape",      -- DT-3
+        Back = "Hexerei Cape",      -- DT-3
         -- Waist = "",
         -- Legs = "Dst. Subligar +1",  -- PDT-3
         -- Feet = "Dst. Leggings +1",  -- PDT-2
@@ -173,7 +173,7 @@ local sets = {
         -- Ring1 = "Merman's Ring",    -- MDT-4
         -- Ring2 = "Sattva Ring",      -- DT-5
 
-        -- Back = "Hexerei Cape",      -- DT-3
+        Back = "Hexerei Cape",      -- DT-3
         -- Waist = "Duelist's Belt",
         Legs = "Crimson Cuisses",   -- Fire, Thunder, Water, Dark +20
         -- Feet = "Crimson Greaves",  -- Ice, Wind, Earth, Light +20
@@ -189,7 +189,7 @@ local sets = {
         -- Ring1 = "",
         -- Ring2 = "Sattva Ring",      -- DT-5
 
-        -- Back = "Hexerei Cape",      -- DT-3
+        Back = "Hexerei Cape",      -- DT-3
         -- Waist = ""
         -- Legs = "",
         -- Feet = "",
@@ -221,7 +221,7 @@ local sets = {
         Ring1 = "Eremite's Ring",   -- INT+2
         Ring2 = "Eremite's Ring",   -- INT+2
 
-        Back = "Black Cape",        -- INT+2
+        Back = "Rainbow Cape",      -- INT+3
         Waist = "Duelist's Belt",   -- INT+4
         Legs = "Errant Slops",      -- INT+7, Enm-3
         Feet = "Wise Pigaches",     -- INT+4, Enm-1
@@ -243,7 +243,7 @@ local sets = {
         Ring1 = "Saintly Ring",     -- MND+2
         Ring2 = "Saintly Ring",     -- MND+2
 
-        Back = "White Cape",        -- MND+2
+        Back = "Rainbow Cape",      -- MND+3
         Waist = "Duelist's Belt",   -- MND+4
         Legs = "Errant Slops",      -- MND+7, Enm-3
         Feet = "Duelist's Boots",   -- MND+4
@@ -265,7 +265,7 @@ local sets = {
         Ring1 = "Zoredonite Ring",
         Ring2 = "Chariot Band",
 
-        Back = "Psilos Mantle",
+        Back = "Hexerei Cape",      -- DT-3
         Waist = "Swift Belt",       -- Haste+4
         Legs = "Cmb.Cst. Slacks",   -- Eva+5
         Feet = "Duelist's Boots",   -- Eva+5
@@ -293,7 +293,7 @@ local sets = {
         Ring1 = "Saintly Ring",     -- MND+2
         Ring2 = "Saintly Ring",     -- MND+2
 
-        Back = "White Cape",        -- MND+2
+        Back = "Rainbow Cape",      -- MND+3
         Waist = "Duelist's Belt",   -- MND+4
         Legs = "Errant Slops",      -- MND+7
         Feet = "Duelist's Boots",   -- MND+4
@@ -304,53 +304,25 @@ local sets = {
         Legs = "Warlock's Tights",  -- Enhancing+15
     },
     Cure = {
-        -- preferred stats: Cure%, Enm+, MND
-    },
-    Cure2 = {
-        -- preferred stats: HP+100, Cure%, Enm+, MND
-    },
-    Cure3 = {
-        -- preferred stats: HP+200, Cure%, Enm+, MND
+        -- preferred stats: Cure%, Enm+, MND, HP
         Main = "Yew Wand +1",       -- MND+4
         Sub = "Yew Wand +1",        -- MND+4
         Range = "displaced",
-        Ammo = "Hedgehog Bomb",
+        Ammo = "Morion Tathlum",
 
         Head = "Duelist's Chapeau",
-        Neck = "Justice Badge",     -- MND+3
+        Neck = "Harmonia's Torque", -- Enm+3
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Errant Hpl.",
+        Body = "Savage Separates",  -- HP+32
         Hands = "Savage Gauntlets", -- MND+2, VIT+4
         Ring1 = "Saintly Ring",     -- MND+2
         Ring2 = "Bomb Queen Ring",  -- HP+75
 
         Back = "White Cape",        -- MND+2
         Waist = "Duelist's Belt",   -- MND+4
-        Legs = "Errant Slops",
-        Feet = "Duelist's Boots",   -- MND+4
-    },
-    Cure4 = {
-        -- preferred stats: HP+400, Cure%, Enm+, MND
-        Main = "Yew Wand +1",       -- MND+4
-        Sub = "Yew Wand +1",        -- MND+4
-        Range = "displaced",
-        Ammo = "Hedgehog Bomb",
-
-        Head = "Duelist's Chapeau",
-        Neck = "Justice Badge",     -- MND+3
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
-
-        Body = "Errant Hpl.",
-        Hands = "Savage Gauntlets", -- MND+2, VIT+4
-        Ring1 = "Saintly Ring",     -- MND+2
-        Ring2 = "Bomb Queen Ring",  -- HP+75
-
-        Back = "White Cape",        -- MND+2
-        Waist = "Duelist's Belt",   -- MND+4
-        Legs = "Errant Slops",
+        Legs = "Crimson Cuisses",   -- HP+25
         Feet = "Duelist's Boots",   -- MND+4
     },
     Heal = {
@@ -370,7 +342,7 @@ local sets = {
         Ring1 = "Saintly Ring",     -- MND+2
         Ring2 = "Saintly Ring",     -- MND+2
 
-        Back = "White Cape",        -- MND+2
+        Back = "Rainbow Cape",      -- MND+3
         Waist = "Duelist's Belt",   -- MND+4
         Legs = "Errant Slops",      -- MND+7, Enm-3
         Feet = "Duelist's Boots",   -- MND+4
@@ -392,7 +364,7 @@ local sets = {
         Ring1 = "Eremite's Ring",   -- INT+2
         Ring2 = "Eremite's Ring",   -- INT+2
 
-        Back = "Black Cape",        -- INT+2
+        Back = "Rainbow Cape",      -- INT+3
         Waist = "Duelist's Belt",   -- INT+4
         Legs = "Duelist's Tights",  -- Ele+10
         Feet = "Duelist's Boots",   -- MAB+4
@@ -414,7 +386,7 @@ local sets = {
         Ring1 = "Eremite's Ring",   -- INT+2
         Ring2 = "Eremite's Ring",   -- INT+2
 
-        Back = "Black Cape",        -- INT+2
+        Back = "Rainbow Cape",      -- INT+3, MP+9
         Waist = "Swift Belt",       -- Haste+4
         Legs = "Errant Slops",      -- INT+7, Enm-3
         Feet = "Wise Pigaches",     -- INT+4, Enm-1
@@ -443,6 +415,24 @@ local function equipStaff(spell)
 end
 
 local function equipCureCheat(spell)
+    local hpNeeded = 0
+    if spell.Name == 'Cure IV' then
+        hpNeeded = 400
+    elseif spell.Name == 'Cure III' then
+        hpNeeded = 200
+    elseif spell.Name == 'Cure II' then
+        hpNeeded = 100
+    end
+
+    local player = gData.GetPlayer()
+    local hpMissing = player.MaxHP - player.HP
+
+    hpNeeded = hpNeeded - hpMissing
+    if hpNeeded <= 0 then
+        return
+    end
+
+    -- TODO: equip HP- pieces to exceed hpNeeded
 end
 
 local function handleCommand(args)
@@ -525,6 +515,13 @@ local function handleItem()
 end
 
 local function handlePrecast()
+    local spell = gData.GetAction()
+    local target = gData.GetTarget()
+
+    if settings.Tank and target.Name == 'Lin' then
+        equipCureCheat(spell)
+    end
+
     gFunc.EquipSet(sets.FastCast)
 end
 
@@ -536,7 +533,7 @@ local function handleMidcast()
         gFunc.EquipSet(sets.Stealth)
     elseif status.IsHeal(spell) then
         if settings.Tank and target.Name == 'Lin' then
-            equipCureCheat(spell)
+            gFunc.EquipSet(sets.Cure)
         else
             gFunc.EquipSet(sets.Heal)
         end

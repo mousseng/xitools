@@ -39,7 +39,7 @@ local sets = {
         Ring2 = "Balance Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Tilt Belt",
+        Waist = "Life Belt",
         Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },

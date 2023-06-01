@@ -54,6 +54,7 @@
 /bind !F5 /input /ta <a24>
 /bind !F6 /input /ta <a25>
 
+/alias add /solo /lac fwd solo
 /alias add /glam /lockstyleset
 
 /wait 3
@@ -61,7 +62,4 @@
 /ambient 255 255 255
 /cam d 7
 /cam b 15
-/sl self on
-/sl target on
-/sl others on
 /fps 0
