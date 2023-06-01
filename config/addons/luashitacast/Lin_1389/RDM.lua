@@ -402,15 +402,42 @@ local settings = {
     Rested  = false,
     TpSet   = sets.AutoBal,
     Staves = {
+        Light = nil,
         Dark = "Dark Staff",
+        Fire = nil,
         Ice = "Ice Staff",
+        Water = nil,
+        Thunder = nil,
+        Earth = nil,
+        Wind = nil,
+    },
+    Obi = {
+        Light = nil,
+        Dark = nil,
+        Fire = nil,
+        Ice = nil,
+        Water = nil,
+        Thunder = nil,
+        Earth = nil,
+        Wind = nil,
     },
 }
 
+local equipSlot = gFunc.Equip
+local equipSet = gFunc.EquipSet
+
 local function equipStaff(spell)
     if settings.Staves[spell.Element] then
-        gFunc.Equip(EquipSlots.Main, settings.Staves[spell.Element])
-        gFunc.Equip(EquipSlots.Sub, 'displaced')
+        equipSlot(EquipSlots.Main, settings.Staves[spell.Element])
+        equipSlot(EquipSlots.Sub, 'displaced')
+    end
+end
+
+local function equipObi(spell)
+    local env = gData.GetEnvironment()
+    if settings.Obi[spell.Element]
+    and (env.WeatherElement == spell.Element or env.DayElement == spell.Element) then
+        equipSlot(EquipSlots.Waist, settings.Obi[spell.Element])
     end
 end
 
@@ -472,30 +499,30 @@ local function handleDefault()
     local player = gData.GetPlayer()
     local env = gData.GetEnvironment()
 
-    gFunc.EquipSet(sets.Idle)
+    equipSet(sets.Idle)
 
     if settings.Pdt then
-        gFunc.EquipSet(sets.Pdt)
+        equipSet(sets.Pdt)
     elseif settings.Mdt then
-        gFunc.EquipSet(sets.Mdt)
+        equipSet(sets.Mdt)
     elseif status.IsAttacking(player) then
-        gFunc.EquipSet(settings.TpSet)
+        equipSet(settings.TpSet)
 
         if player.HPP <= 75 and player.TP < 1000 and status.HasStatus('en%a+') then
-            gFunc.Equip(EquipSlots.Ring2, "Fencer's Ring")
+            equipSlot(EquipSlots.Ring2, "Fencer's Ring")
         end
     end
 
     if status.IsInSandoria(env) then
-        gFunc.Equip(EquipSlots.Body, "Kingdom Aketon")
+        equipSlot(EquipSlots.Body, "Kingdom Aketon")
     elseif status.IsInBastok(env) then
-        gFunc.Equip(EquipSlots.Body, "Republic Aketon")
+        equipSlot(EquipSlots.Body, "Republic Aketon")
     elseif status.IsInWindurst(env) then
-        gFunc.Equip(EquipSlots.Body, "Federation Aketon")
+        equipSlot(EquipSlots.Body, "Federation Aketon")
     end
 
     if status.IsResting(player, settings) then
-        gFunc.EquipSet('Rest')
+        equipSet('Rest')
     end
 end
 
@@ -510,7 +537,7 @@ end
 local function handleItem()
     local item = gData.GetAction()
     if item.Name == 'Orange Juice' then
-        gFunc.Equip(EquipSlots.Legs, "Dream Pants +1")
+        equipSlot(EquipSlots.Legs, "Dream Pants +1")
     end
 end
 
@@ -522,7 +549,7 @@ local function handlePrecast()
         equipCureCheat(spell)
     end
 
-    gFunc.EquipSet(sets.FastCast)
+    equipSet(sets.FastCast)
 end
 
 local function handleMidcast()
@@ -530,50 +557,58 @@ local function handleMidcast()
     local target = gData.GetTarget()
 
     if status.IsStealth(spell) then
-        gFunc.EquipSet(sets.Stealth)
+        equipSet(sets.Stealth)
     elseif status.IsHeal(spell) then
         if settings.Tank and target.Name == 'Lin' then
-            gFunc.EquipSet(sets.Cure)
+            equipSet(sets.Cure)
+            equipObi(spell)
         else
-            gFunc.EquipSet(sets.Heal)
+            equipSet(sets.Heal)
+            equipObi(spell)
         end
     elseif status.IsDrain(spell) then
-        gFunc.EquipSet(sets.Drain)
+        equipSet(sets.Drain)
+        equipObi(spell)
     elseif status.IsStoneskin(spell) then
-        gFunc.EquipSet(sets.Stoneskin)
+        equipSet(sets.Stoneskin)
     elseif status.IsEnhancement(spell) then
-        gFunc.EquipSet(sets.Enhancing)
+        equipSet(sets.Enhancing)
     elseif status.IsShadows(spell) then
-        gFunc.EquipSet(sets.Shadows)
+        equipSet(sets.Shadows)
     elseif status.IsNuke(spell) then
-        gFunc.EquipSet(sets.Nuke)
+        equipSet(sets.Nuke)
         equipStaff(spell)
+        equipObi(spell)
     elseif status.IsEnfeebMnd(spell) then
-        gFunc.EquipSet(sets.EnfeebMnd)
+        equipSet(sets.EnfeebMnd)
         equipStaff(spell)
+        equipObi(spell)
     elseif status.IsEnfeebInt(spell) then
-        gFunc.EquipSet(sets.EnfeebInt)
+        equipSet(sets.EnfeebInt)
         equipStaff(spell)
+        equipObi(spell)
     elseif status.IsPotencyNinjutsu(spell) then
-        gFunc.EquipSet(sets.NinjutsuPot)
+        equipSet(sets.NinjutsuPot)
         equipStaff(spell)
+        equipObi(spell)
     elseif status.IsAccuracyNinjutsu(spell) then
-        gFunc.EquipSet(sets.NinjutsuAcc)
+        equipSet(sets.NinjutsuAcc)
         equipStaff(spell)
+        equipObi(spell)
     else
         if settings.Pdt then
-            gFunc.EquipSet(sets.Pdt)
+            equipSet(sets.Pdt)
         elseif settings.Mdt then
-            gFunc.EquipSet(sets.Mdt)
+            equipSet(sets.Mdt)
         else
-            gFunc.EquipSet(sets.Cast)
+            equipSet(sets.Cast)
         end
     end
 end
 
 local function handleWeaponskill()
     local weaponskill = gData.GetAction()
-    gFunc.EquipSet(sets.Weaponskill)
+    equipSet(sets.Weaponskill)
 end
 
 return {
