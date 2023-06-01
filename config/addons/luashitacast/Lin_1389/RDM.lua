@@ -1,5 +1,6 @@
 require('common')
 local status = gFunc.LoadFile('common/status.lua')
+local noop = function() end
 local EquipSlots = gData.Constants.EquipSlots
 
 local sets = {
@@ -613,15 +614,15 @@ end
 
 return {
     Sets = sets,
-    OnLoad = nil,
-    OnUnload = nil,
+    OnLoad = noop,
+    OnUnload = noop,
     HandleCommand = handleCommand,
     HandleDefault = handleDefault,
     HandleAbility = handleAbility,
     HandleItem = handleItem,
     HandlePrecast = handlePrecast,
     HandleMidcast = handleMidcast,
-    HandlePreshot = nil,
-    HandleMidshot = nil,
+    HandlePreshot = noop,
+    HandleMidshot = noop,
     HandleWeaponskill = handleWeaponskill,
 }
