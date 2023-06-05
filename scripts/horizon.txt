@@ -29,6 +29,7 @@
 /addon load equipmon
 /addon load thotbar
 /addon load targetlines
+/addon load nolock
 
 /bindblock
 /bind insert /ashita
@@ -55,6 +56,7 @@
 /bind !F6 /input /ta <a25>
 
 /alias add /solo /lac fwd solo
+/alias add /tank /lac fwd tank
 /alias add /glam /lockstyleset
 
 /wait 3
