@@ -1,15 +1,13 @@
 require('common')
 local Status = gFunc.LoadFile('common/status.lua')
-local Staves = gFunc.LoadFile('common/staves.lua')
-local Obi = gFunc.LoadFile('common/obi.lua')
 local Const = gFunc.LoadFile('common/const.lua')
 local EquipSlots = gFunc.LoadFile('common/equipSlots.lua')
 local noop = function() end
 
 local sets = {
     Idle = {
-        Main = Staves.Earth,
-        Sub = Const.Displaced,
+        Main = "Zushio",
+        Sub = "Anju",
         Range = Const.Displaced,
         Ammo = "Dart",
 
@@ -20,7 +18,7 @@ local sets = {
 
         Body = "Brigandine",
         Hands = "Windurstian Tekko",
-        Ring1 = "San d'Orian Ring",
+        Ring1 = "Sattva Ring",
         Ring2 = "Chariot Band",
 
         Back = "High Brth. Mantle",
@@ -29,8 +27,6 @@ local sets = {
         Feet = "Fed. Kyahan",
     },
     Auto = {
-        Main = "Zushio",
-        Sub = "Anju",
         Range = Const.Displaced,
         Ammo = "Dart",
 
@@ -82,8 +78,6 @@ local sets = {
         Feet = "Dream Boots +1",
     },
     Shadows = {
-        Main = "Parrying Knife",
-        Sub = "Parrying Knife",
         Range = Const.Displaced,
         Ammo = "Dart",
 
@@ -103,8 +97,6 @@ local sets = {
         Feet = "Fed. Kyahan",
     },
     Ninjutsu = {
-        Main = "Parrying Knife",
-        Sub = "Parrying Knife",
         Range = Const.Displaced,
         Ammo = "Morion Tathlum",
 
@@ -155,16 +147,10 @@ local function handleMidcast()
 
     if Status.IsStealth(spell) then
         gFunc.EquipSet(sets.Stealth)
-    elseif Status.IsShadows(spell) then
+    elseif Status.IsShadows(spell) or Status.IsDrain(spell) then
         gFunc.EquipSet(sets.Shadows)
-    elseif Status.IsDrain(spell) then
-        gFunc.EquipSet(sets.Shadows)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
     elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) or Status.IsAccuracyNinjutsu(spell) then
         gFunc.EquipSet(sets.Ninjutsu)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
     end
 end
 

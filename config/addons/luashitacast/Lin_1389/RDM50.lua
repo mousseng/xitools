@@ -18,7 +18,7 @@ local sets = {
         Body = "Brigandine",        -- DEF+32
         Hands = "Savage Gauntlets", -- MP+16, DEF+6
         Ring1 = "San d'Orian Ring", -- DEF+1
-        Ring2 = "Chariot Band",     -- EXP Ring
+        Ring2 = "Sattva Ring",      -- DT-5
 
         Back = "High Brth. Mantle", -- DEF+5
         Waist = "Friar's Rope",     -- MP+5, DEF+2
