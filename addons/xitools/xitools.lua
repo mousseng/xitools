@@ -58,6 +58,7 @@ local defaultOptions = T{
         hideUnderMap = T{ true },
         hideUnderChat = T{ true },
         hideWhileLoading = T{ true },
+        isClickThru = T{ false },
         textColor = T{ 1.00, 1.00, 1.00, 1.0 },
         backgroundColor = T{ 0.08, 0.08, 0.08, 0.8 },
         borderColor = T{ 0.69, 0.68, 0.78, 1.0 },
@@ -110,6 +111,7 @@ local function DrawConfig()
 
         imgui.Text('UI settings')
         imgui.Separator()
+        imgui.Checkbox('Clickthrough', options.globals.isClickThru)
         imgui.ColorEdit4("Text Color", options.globals.textColor)
         imgui.ColorEdit4("Background Color", options.globals.backgroundColor)
         imgui.ColorEdit4("Border Color", options.globals.borderColor)
