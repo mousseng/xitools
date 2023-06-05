@@ -146,6 +146,25 @@ local function CreateTexture(bitmap, size)
     end
 end
 
+local function EscapeString(str)
+    -- shamelessly stolen from Shinzaku's GearFinder
+    if str then
+        return str:
+            replace('\x81\x60', '~'):
+            replace('\xEF\x1F', 'Fire Res'):
+            replace('\xEF\x20', 'Ice Res'):
+            replace('\xEF\x21', 'Wind Res'):
+            replace('\xEF\x22', 'Earth Res'):
+            replace('\xEF\x23', 'Ltng Res'):
+            replace('\xEF\x24', 'Water Res'):
+            replace('\xEF\x25', 'Light Res'):
+            replace('\xEF\x26', 'Dark Res'):
+            replace('\x25',     '%%')
+    end
+
+    return ''
+end
+
 local function GetJobs(bitfield)
     if bitfield == 8388606 then
         return T{ 'All jobs' }
@@ -207,7 +226,7 @@ local function UpdateInventory(inv, res, bagId)
                 shortName = itemObj.Name[1],
                 longNameS = itemObj.LogNameSingular[1],
                 longNameP = itemObj.LogNamePlural[1],
-                desc = itemObj.Description[1],
+                desc = EscapeString(itemObj.Description[1]),
                 stack = nil,
                 stackCur = invItem.Count,
                 stackMax = itemObj.StackSize,
