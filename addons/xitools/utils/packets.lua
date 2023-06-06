@@ -419,6 +419,30 @@ local inboundNpcMessage = {
     end
 }
 
+local inboundKeyItems = {
+    id = 0x055,
+    name = 'Key Items',
+    ---@param packet userdata
+    parse = function(packet)
+        local keyItems = {
+            heldList = {},
+            seenList = {},
+            type = ashita.bits.unpack_be(packet, 0x84, 8)
+        }
+
+        local idBase = keyItems.type * 512
+        local heldBit = 0x04 * 8 - 1
+        local seenBit = 0x44 * 8 - 1
+
+        for i = 1, 512 do
+            keyItems.heldList[idBase + i] = ashita.bits.unpack_be(packet, heldBit + i, 1) == 1
+            keyItems.seenList[idBase + i] = ashita.bits.unpack_be(packet, seenBit + i, 1) == 1
+        end
+
+        return keyItems
+    end
+}
+
 local inboundCharStats = {
     id = 0x061,
     name = 'Character Stats',
@@ -658,6 +682,7 @@ local packets = {
             inboundChatMessage,
             inboundNpcMessage,
             inboundZoneIn,
+            inboundKeyItems,
             inboundCharStats,
             inboundCharSkills,
             inboundSynthAnimation,
@@ -686,6 +711,7 @@ local packets = {
         death = inboundDeath,
         synthAnimation = inboundSynthAnimation,
         npcMessage = inboundNpcMessage,
+        keyItems = inboundKeyItems,
         charStats = inboundCharStats,
         charSkills = inboundCharSkills,
         menuMerit = inboundMenuMerit,

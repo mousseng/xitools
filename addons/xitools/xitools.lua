@@ -31,6 +31,7 @@ local tracker = require('tracker')
 local cast = require('cast')
 local crafty = require('crafty')
 local fishe = require('fishe')
+local week = require('week')
 local logger = require('logger')
 
 local uiWindows = {
@@ -47,6 +48,7 @@ local normalWindows = {
     treas,
     crafty,
     fishe,
+    week,
     logger,
 }
 
@@ -85,6 +87,7 @@ local defaultOptions = T{
         cast = cast.DefaultSettings,
         crafty = crafty.DefaultSettings,
         fishe = fishe.DefaultSettings,
+        week = week.DefaultSettings,
         logger = logger.DefaultSettings,
     },
 }
