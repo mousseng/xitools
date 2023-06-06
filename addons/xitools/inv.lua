@@ -451,12 +451,12 @@ local inv = {
     Name = 'inv',
     Aliases = T{ 'i' },
     DefaultSettings = T{
-        name = 'xitools.inventory',
+        name = 'xitools.inv',
         isEnabled = T{ false },
         isVisible = T{ true },
         size = T{ 0, 0 },
         pos = T{ 256, 256 },
-        flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        flags = bit.bor(ImGuiWindowFlags_NoResize),
     },
     Load = function()
         if GetPlayerEntity() ~= nil then
@@ -495,7 +495,7 @@ local inv = {
     end,
     DrawMain = function(options, gOptions)
         Scale = gOptions.uiScale[1]
-        ui.DrawUiWindow(options, gOptions, function()
+        ui.DrawNormalWindow(options, gOptions, function()
             imgui.SetWindowFontScale(Scale)
             DrawInventory()
         end)

@@ -38,12 +38,12 @@ local uiWindows = {
     us,
     tgt,
     pet,
-    inv,
     tracker,
     cast,
 }
 
 local normalWindows = {
+    inv,
     treas,
     crafty,
     fishe,
