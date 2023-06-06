@@ -172,7 +172,12 @@ function ui.DrawInvisWindow(config, gConfig, drawStuff)
     imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 1 })
     imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, { 1, 1 })
 
-    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
+    local flags = config.flags
+    if gConfig.isClickThru[1] then
+        flags = bit.bor(flags, ImGuiWindowFlags_NoInputs)
+    end
+
+    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, flags) then
         imgui.PopStyleColor(2)
         imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
         imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
