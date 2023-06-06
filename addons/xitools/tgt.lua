@@ -428,7 +428,12 @@ local tgt = {
     },
     HandlePacket = function(e, options)
         -- don't track anything if we're not displaying it
-        if not options.showStatus[1] then return end
+        local showStatus =
+            options.mainWindow.showStatus[1] or
+            options.subWindow.showStatus[1] or
+            options.totWindow.showStatus[1]
+
+        if not showStatus then return end
 
         -- clear state on zone changes
         -- TODO: clear mob state on death
