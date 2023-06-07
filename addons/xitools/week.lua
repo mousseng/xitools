@@ -3,7 +3,6 @@ local bit = require('bit')
 local imgui = require('imgui')
 local ui = require('ui')
 local packets = require('utils.packets')
-local inspect = require('utils.inspect')
 
 local Scale = 1.0
 
@@ -102,6 +101,7 @@ local function DrawWeek(timers)
     local now = os.time()
     local player = AshitaCore:GetMemoryManager():GetPlayer()
 
+    -- TODO: save this state somewhere instead of querying every frame
     for _, enm in ipairs(Weeklies) do
         imgui.Text(string.format('%s [Lv%s]', enm.Name, enm.Level))
 
@@ -125,6 +125,7 @@ end
 ---@type xitool
 local week = {
     Name = 'week',
+    Aliases = T{ 'w', 'e', 'enm', },
     DefaultSettings = T{
         isEnabled = T{ false },
         isVisible = T{ true },
