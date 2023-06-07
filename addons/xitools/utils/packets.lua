@@ -431,10 +431,10 @@ local inboundKeyItems = {
         }
 
         local idBase = keyItems.type * 512
-        local heldBit = 0x04 * 8 - 1
-        local seenBit = 0x44 * 8 - 1
+        local heldBit = 0x04 * 8
+        local seenBit = 0x44 * 8
 
-        for i = 1, 512 do
+        for i = 0, 511 do
             keyItems.heldList[idBase + i] = ashita.bits.unpack_be(packet, heldBit + i, 1) == 1
             keyItems.seenList[idBase + i] = ashita.bits.unpack_be(packet, seenBit + i, 1) == 1
         end
