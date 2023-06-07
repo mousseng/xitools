@@ -427,7 +427,7 @@ local inboundKeyItems = {
         local keyItems = {
             heldList = {},
             seenList = {},
-            type = ashita.bits.unpack_be(packet, 0x84, 8)
+            type = ashita.bits.unpack_be(packet, 0x84 * 8, 8)
         }
 
         local idBase = keyItems.type * 512

@@ -16,6 +16,7 @@ local Colors = {
 }
 
 local KeyItems = {
+    ChocoboLicense      = { Id = 138, Name = "Chocobo License" },
     CenserOfAbandonment = { Id = 670, Name = "Censer of Abandonment" },
     CenserOfAntipathy   = { Id = 671, Name = "Censer of Antipathy" },
     CenserOfAnimus      = { Id = 672, Name = "Censer of Animus" },
@@ -138,6 +139,15 @@ local week = {
             local now = os.time()
             local player = AshitaCore:GetMemoryManager():GetPlayer()
             local keyItems = packets.inbound.keyItems.parse(e.data_raw)
+
+            -- we get a key item update on every zone change, and the client
+            -- will have already dumped its knowledge of held key items. to
+            -- ensure we're not getting false positives from this scenario,
+            -- we check for posession of something an ENMer will surely have:
+            -- a chocobo license.
+            if not player:HasKeyItem(KeyItems.ChocoboLicense.Id) then
+                return
+            end
 
             for _, weekly in pairs(Weeklies) do
                 if not player:HasKeyItem(weekly.KeyItem.Id)
