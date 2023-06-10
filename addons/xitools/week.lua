@@ -6,6 +6,8 @@ local packets = require('utils.packets')
 
 local Scale = 1.0
 
+local IsListening = { false }
+
 local Colors = {
     KeyMissing    = { 0.80, 0.22, 0.00, 1.0 },
     KeyObtained   = { 0.60, 0.80, 0.20, 1.0 },
@@ -101,6 +103,18 @@ local function DrawWeek(timers)
     local now = os.time()
     local player = AshitaCore:GetMemoryManager():GetPlayer()
 
+    if IsListening[1] then
+        imgui.PushStyleColor(ImGuiCol_Text, Colors.KeyObtained)
+        imgui.Checkbox('Listening for key item updates', IsListening)
+        imgui.PopStyleColor()
+    else
+        imgui.PushStyleColor(ImGuiCol_Text, Colors.KeyMissing)
+        imgui.Checkbox('Ignoring key item updates', IsListening)
+        imgui.PopStyleColor()
+    end
+
+    imgui.Separator()
+
     -- TODO: save this state somewhere instead of querying every frame
     for _, enm in ipairs(Weeklies) do
         imgui.Text(string.format('%s [Lv%s]', enm.Name, enm.Level))
@@ -135,20 +149,27 @@ local week = {
         flags = bit.bor(ImGuiWindowFlags_NoResize),
         timers = T{ },
     },
+    HandleCommand = function(args, options)
+        if #args == 0 then
+            options.isVisible[1] = not options.isVisible[1]
+        end
+    end,
     HandlePacket = function(e, options)
-        if e.id == packets.inbound.keyItems.id then
+        -- we get a key item update on every zone change, and the client
+        -- will have already dumped its knowledge of held key items. to
+        -- ensure we're not getting false positives from this scenario,
+        -- we stop listening for key item updates until we receive the "stop
+        -- downloading" packet, by which time we're sure to have all of our
+        -- basic syncing out of the way.
+
+        if e.id == 0x0A or e.id == 0x0B then
+            IsListening[1] = false
+        elseif e.id == 0x41 then
+            IsListening[1] = true
+        elseif IsListening[1] and e.id == packets.inbound.keyItems.id then
             local now = os.time()
             local player = AshitaCore:GetMemoryManager():GetPlayer()
             local keyItems = packets.inbound.keyItems.parse(e.data_raw)
-
-            -- we get a key item update on every zone change, and the client
-            -- will have already dumped its knowledge of held key items. to
-            -- ensure we're not getting false positives from this scenario,
-            -- we check for posession of something an ENMer will surely have:
-            -- a chocobo license.
-            if not player:HasKeyItem(KeyItems.ChocoboLicense.Id) then
-                return
-            end
 
             for _, weekly in pairs(Weeklies) do
                 if not player:HasKeyItem(weekly.KeyItem.Id)
