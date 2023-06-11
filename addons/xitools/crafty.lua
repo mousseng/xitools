@@ -14,6 +14,25 @@ local imguiLeafNode = bit.bor(ImGuiTreeNodeFlags_Leaf, ImGuiTreeNodeFlags_NoTree
 local textBaseWidth = imgui.CalcTextSize('A')
 local inProgSynth = nil
 
+local crystalMap = {
+    [4238] = 4096,
+    [4239] = 4097,
+    [4240] = 4098,
+    [4241] = 4099,
+    [4242] = 4100,
+    [4243] = 4101,
+    [4244] = 4102,
+    [4245] = 4103,
+    [6506] = 4096,
+    [6507] = 4097,
+    [6508] = 4098,
+    [6509] = 4099,
+    [6510] = 4100,
+    [6511] = 4101,
+    [6512] = 4102,
+    [6513] = 4103,
+}
+
 local skillsMap = {
     [1] = 'Woodworking',
     [2] = 'Smithing',
@@ -267,7 +286,7 @@ local crafty = {
         -- useful item name.
         if e.id == 0x096 and inProgSynth == nil then
             local startSynth = packets.outbound.startSynth.parse(e.data)
-            local crystal = startSynth.crystal
+            local crystal = crystalMap[startSynth.crystal]
             local sortedIngredients = T{}
             for i=0,startSynth.ingredientCount-1 do
                 if startSynth.ingredient[i] ~= 0 then
