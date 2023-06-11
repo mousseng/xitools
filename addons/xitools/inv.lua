@@ -455,6 +455,7 @@ local inv = {
         isEnabled = T{ false },
         isVisible = T{ true },
         size = T{ 0, 0 },
+        maxHeight = T{ 432 },
         pos = T{ 256, 256 },
         flags = bit.bor(ImGuiWindowFlags_NoResize),
     },
@@ -485,6 +486,7 @@ local inv = {
             end
 
             imgui.Checkbox('Visible', options.isVisible)
+            imgui.InputInt('Max Height', options.maxHeight)
 
             if imgui.InputInt2('Position', options.pos) then
                 imgui.SetWindowPos(options.name, options.pos)
@@ -495,6 +497,7 @@ local inv = {
     end,
     DrawMain = function(options, gOptions)
         Scale = gOptions.uiScale[1]
+        imgui.SetNextWindowSizeConstraints({ -1, 0 }, { -1, options.maxHeight[1] })
         ui.DrawNormalWindow(options, gOptions, function()
             imgui.SetWindowFontScale(Scale)
             DrawInventory()
