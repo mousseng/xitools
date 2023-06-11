@@ -1,71 +1,67 @@
 require('common')
 local Status = gFunc.LoadFile('common/status.lua')
-local Staves = gFunc.LoadFile('common/staves.lua')
-local Obi = gFunc.LoadFile('common/obi.lua')
 local Const = gFunc.LoadFile('common/const.lua')
 local EquipSlots = gFunc.LoadFile('common/equipSlots.lua')
 local noop = function() end
 
 local sets = {
     Idle = {
-        Main = Staves.Earth,
-        Sub = Const.Displaced,
+        Main = "Zushio",
+        Sub = "Anju",
         Range = Const.Displaced,
-        Ammo = "Dart",
+        Ammo = "Pebble",
 
         Head = "Erd. Headband",
         Neck = "Ryl.Sqr. Collar",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Windurstian Tekko",
-        Ring1 = "San d'Orian Ring",
+        Ring1 = "Sattva Ring",
         Ring2 = "Chariot Band",
 
         Back = "High Brth. Mantle",
-        Waist = "Ryl.Kgt. Belt",
-        Legs = "Nokizaru Hakama",
+        Waist = "Tilt Belt",
+        Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
     Auto = {
-        Main = "Zushio",
-        Sub = "Anju",
         Range = Const.Displaced,
-        Ammo = "Dart",
+        Ammo = "Pebble",
 
         Head = "Erd. Headband",
         Neck = "Spike Necklace",
         Ear1 = "Beetle Earring +1",
         Ear2 = "Beetle Earring +1",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Windurstian Tekko",
         Ring1 = "Balance Ring",
         Ring2 = "Woodsman Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Swift Belt",
+        Waist = "Warlock's Belt",
         Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
     Naked = {
         Range = Const.Displaced,
-        Ammo = "Dart",
+        Ammo = "Pebble",
 
         Head = "Erd. Headband",
         Neck = "Ryl.Sqr. Collar",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Windurstian Tekko",
         Ring1 = "Sattva Ring",
         Ring2 = "Woodsman Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Swift Belt",
-        Legs = "Nokizaru Hakama",
+        Waist = "Tilt Belt",
+        Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
     Throw = {
@@ -73,7 +69,7 @@ local sets = {
         Ear2 = "Drone Earring",
         Ring1 = "Horn Ring",
         Ring2 = "Woodsman Ring",
-        Legs = "Nokizaru Hakama",
+        Legs = "Republic Subligar",
     },
     Stealth = {
         Hands = "Dream Mittens +1",
@@ -82,45 +78,41 @@ local sets = {
         Feet = "Dream Boots +1",
     },
     Shadows = {
-        Main = "Parrying Knife",
-        Sub = "Parrying Knife",
         Range = Const.Displaced,
-        Ammo = "Dart",
+        Ammo = "Pebble",
 
         Head = "Erd. Headband",
         Neck = "Ryl.Sqr. Collar",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Savage Gauntlets",
         Ring1 = "Reflex Ring",
         Ring2 = "Peridot Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Swift Belt",
-        Legs = "Nokizaru Hakama",
+        Waist = "Friar's Rope",
+        Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
     Ninjutsu = {
-        Main = "Parrying Knife",
-        Sub = "Parrying Knife",
         Range = Const.Displaced,
         Ammo = "Morion Tathlum",
 
         Head = "Erd. Headband",
         Neck = "Ryl.Sqr. Collar",
         Ear1 = "Morion Earring",
-        Ear2 = "Moldavite Earring",
+        Ear2 = "Cunning Earring",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Savage Gauntlets",
         Ring1 = "Eremite's Ring",
         Ring2 = "Eremite's Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Swift Belt",
-        Legs = "Nokizaru Hakama",
+        Waist = "Tilt Belt",
+        Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
 }
@@ -155,16 +147,10 @@ local function handleMidcast()
 
     if Status.IsStealth(spell) then
         gFunc.EquipSet(sets.Stealth)
-    elseif Status.IsShadows(spell) then
+    elseif Status.IsShadows(spell) or Status.IsDrain(spell) then
         gFunc.EquipSet(sets.Shadows)
-    elseif Status.IsDrain(spell) then
-        gFunc.EquipSet(sets.Shadows)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
     elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) or Status.IsAccuracyNinjutsu(spell) then
         gFunc.EquipSet(sets.Ninjutsu)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
     end
 end
 

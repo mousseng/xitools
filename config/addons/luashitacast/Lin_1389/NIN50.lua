@@ -9,7 +9,7 @@ local sets = {
         Main = "Zushio",
         Sub = "Anju",
         Range = Const.Displaced,
-        Ammo = "Dart",
+        Ammo = "Pebble",
 
         Head = "Erd. Headband",
         Neck = "Ryl.Sqr. Collar",
@@ -28,7 +28,7 @@ local sets = {
     },
     Auto = {
         Range = Const.Displaced,
-        Ammo = "Dart",
+        Ammo = "Pebble",
 
         Head = "Erd. Headband",
         Neck = "Spike Necklace",
@@ -47,7 +47,7 @@ local sets = {
     },
     Naked = {
         Range = Const.Displaced,
-        Ammo = "Dart",
+        Ammo = "Pebble",
 
         Head = "Erd. Headband",
         Neck = "Ryl.Sqr. Collar",
@@ -79,7 +79,7 @@ local sets = {
     },
     Shadows = {
         Range = Const.Displaced,
-        Ammo = "Dart",
+        Ammo = "Pebble",
 
         Head = "Erd. Headband",
         Neck = "Ryl.Sqr. Collar",
@@ -102,7 +102,7 @@ local sets = {
 
         Head = "Erd. Headband",
         Neck = "Ryl.Sqr. Collar",
-        Ear1 = "Cunning Earring",
+        Ear1 = "Morion Earring",
         Ear2 = "Moldavite Earring",
 
         Body = "Brigandine",

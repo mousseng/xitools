@@ -135,7 +135,7 @@ local sets = {
 
         Head = "Gold Hairpin",         -- MP+30
         Neck = "Uggalepih Pendant",    -- MP+20
-        Ear1 = "Drone Earring",
+        Ear1 = "Morion Earring",       -- MP+4
         Ear2 = "Drone Earring",
 
         Body = "Duelist's Tabard",     -- MP+24
@@ -217,7 +217,7 @@ local sets = {
 
         Head = "Duelist's Chapeau",    -- Enfeeb+15
         Neck = "Uggalepih Pendant",
-        Ear1 = "Cunning Earring",      -- INT+1
+        Ear1 = "Morion Earring",       -- INT+1
         Ear2 = "Abyssal Earring",      -- INT+2
 
         Body = "Warlock's Tabard",     -- Enfeeb+15
@@ -382,7 +382,7 @@ local sets = {
 
         Head = "Warlock's Chapeau",    -- INT+3
         Neck = "Uggalepih Pendant",    -- MP+20
-        Ear1 = "Cunning Earring",      -- INT+1
+        Ear1 = "Morion Earring",       -- INT+1
         Ear2 = "Abyssal Earring",      -- Dark+5, INT+2
 
         Body = "Errant Hpl.",          -- INT+10, Enm-3

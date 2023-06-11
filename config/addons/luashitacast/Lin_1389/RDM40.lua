@@ -81,7 +81,7 @@ local sets = {
 
         Head = "Brass Hairpin",     -- MP+10
         Neck = nil,
-        Ear1 = nil,
+        Ear1 = "Morion Earring",    -- MP+4
         Ear2 = nil,
 
         Body = nil,
@@ -109,7 +109,7 @@ local sets = {
         Head = "displaced",
         Neck = "Black Neckerchief", -- INT+1
         Ear1 = "Cunning Earring",   -- INT+1
-        Ear2 = nil,
+        Ear2 = "Morion Earring",    -- INT+1
 
         Body = "Ryl.Ftm. Tunic",    -- INT+1
         Hands = nil,
@@ -225,7 +225,7 @@ local sets = {
         Head = "displaced",
         Neck = "Black Neckerchief", -- INT+1
         Ear1 = "Cunning Earring",   -- INT+1
-        Ear2 = nil,
+        Ear2 = "Morion Earring",    -- INT+1
 
         Body = "Ryl.Ftm. Tunic",    -- INT+1
         Hands = nil,
@@ -247,7 +247,7 @@ local sets = {
         Head = "displaced",
         Neck = "Black Neckerchief", -- INT+1
         Ear1 = "Cunning Earring",   -- INT+1
-        Ear2 = nil,
+        Ear2 = "Morion Earring",    -- INT+1
 
         Body = "Ryl.Ftm. Tunic",    -- INT+1
         Hands = nil,

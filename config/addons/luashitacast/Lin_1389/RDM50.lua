@@ -38,7 +38,7 @@ local sets = {
 
         Head = "Gold Hairpin",      -- MP+30
         Neck = "Black Neckerchief",
-        Ear1 = "Drone Earring",
+        Ear1 = "Morion Earring",    -- MP+4
         Ear2 = "Drone Earring",
 
         Body = "Brigandine",
@@ -89,9 +89,9 @@ local sets = {
         Head = "Erd. Headband",     -- INT+1
         Neck = "Black Neckerchief", -- INT+1
         Ear1 = "Cunning Earring",   -- INT+1
-        -- Ear2 = "Abyssal Earring",   -- INT+2
+        Ear2 = "Morion Earring",    -- INT+1
 
-        -- Body = "Warlock's Tabard",  -- Enfeeb+15
+        -- Body = "",
         Hands = "Sly Gauntlets",    -- INT+3
         Ring1 = "Eremite's Ring",   -- INT+2
         Ring2 = "Eremite's Ring",   -- INT+2
@@ -99,7 +99,7 @@ local sets = {
         Back = "Black Cape",        -- INT+2
         Waist = "Ryl.Kgt. Belt",    -- INT+2
         Legs = "Magic Cuisses",     -- INT+3
-        -- Feet = "Wise Pigaches",     -- INT+4, Enm-1
+        -- Feet = "",
     },
     EnfeebMnd = {
         -- preferred stats: Enfeeb, MND, Enm-
@@ -132,10 +132,10 @@ local sets = {
 
         Head = "Erd. Headband",
         Neck = "Justice Badge",     -- MND+3
-        -- Ear1 = "Cunning Earring",
-        -- Ear2 = "Abyssal Earring",
+        -- Ear1 = "",
+        -- Ear2 = "",
 
-        -- Body = "Warlock's Tabard",
+        -- Body = "",
         Hands = "Savage Gauntlets", -- MND+2
         Ring1 = "Saintly Ring",     -- MND+2
         Ring2 = "Saintly Ring",     -- MND+2
@@ -143,7 +143,7 @@ local sets = {
         Back = "White Cape",        -- MND+2
         Waist = "Ryl.Kgt. Belt",    -- MND+2
         Legs = "Magic Cuisses",     -- MND+3
-        -- Feet = "Wise Pigaches",     -- MND+4, Enm-1
+        -- Feet = "",
     },
     MaxINT = {
         -- preferred stats: MAB, INT, Ele, Enm-
@@ -155,9 +155,9 @@ local sets = {
         Head = "Erd. Headband",     -- INT+1
         Neck = "Black Neckerchief", -- INT+1
         Ear1 = "Cunning Earring",   -- INT+1
-        -- Ear2 = "Abyssal Earring",   -- INT+2
+        Ear2 = "Morion Earring",    -- INT+1
 
-        -- Body = "Warlock's Tabard",  -- Enfeeb+15
+        -- Body = "",
         Hands = "Sly Gauntlets",    -- INT+3
         Ring1 = "Eremite's Ring",   -- INT+2
         Ring2 = "Eremite's Ring",   -- INT+2
@@ -165,7 +165,7 @@ local sets = {
         Back = "Black Cape",        -- INT+2
         Waist = "Ryl.Kgt. Belt",    -- INT+2
         Legs = "Magic Cuisses",     -- INT+3
-        -- Feet = "Wise Pigaches",     -- INT+4, Enm-1
+        -- Feet = "",
     },
 }
 
