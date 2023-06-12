@@ -1,16 +1,16 @@
 require('common')
-local Status = gFunc.LoadFile('common/status.lua')
-local Staves = gFunc.LoadFile('common/staves.lua')
-local Obi = gFunc.LoadFile('common/obi.lua')
-local Const = gFunc.LoadFile('common/const.lua')
-local EquipSlots = gFunc.LoadFile('common/equipSlots.lua')
 local noop = function() end
 
+---@module 'common.equip'
+local Equip = gFunc.LoadFile('common/equip.lua')
+---@module 'common.status'
+local Status = gFunc.LoadFile('common/status.lua')
+
 local sets = {
-    Idle = {
-        Main = Staves.Earth,
-        Sub = Const.Displaced,
-        Range = Const.Displaced,
+    Idle = Equip.NewSet {
+        Main = Equip.Staves.Earth,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Dart",
 
         Head = "Erd. Headband",
@@ -18,7 +18,7 @@ local sets = {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Brigandine",
+        Body = "Brigandine", -- Ninja Chainmail
         Hands = "Windurstian Tekko",
         Ring1 = "San d'Orian Ring",
         Ring2 = "Chariot Band",
@@ -26,12 +26,17 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Ryl.Kgt. Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
+        Feet = "Ninja Kyahan",
+
+        AtNight = {
+            Legs = "Ninja Hakama",
+            Feet = "Ninja Kyahan",
+        },
     },
-    Auto = {
+    Auto = Equip.NewSet {
         Main = "Zushio",
         Sub = "Anju",
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Dart",
 
         Head = "Erd. Headband",
@@ -39,7 +44,7 @@ local sets = {
         Ear1 = "Beetle Earring +1",
         Ear2 = "Beetle Earring +1",
 
-        Body = "Brigandine",
+        Body = "Brigandine", -- Ninja Chainmail
         Hands = "Windurstian Tekko",
         Ring1 = "Balance Ring",
         Ring2 = "Woodsman Ring",
@@ -49,8 +54,8 @@ local sets = {
         Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
-    Naked = {
-        Range = Const.Displaced,
+    Naked = Equip.NewSet {
+        Range = Equip.Special.Displaced,
         Ammo = "Dart",
 
         Head = "Erd. Headband",
@@ -58,7 +63,7 @@ local sets = {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Brigandine",
+        Body = "Brigandine", -- Ninja Chainmail
         Hands = "Windurstian Tekko",
         Ring1 = "Sattva Ring",
         Ring2 = "Woodsman Ring",
@@ -67,24 +72,26 @@ local sets = {
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
         Feet = "Fed. Kyahan",
+
+        AtNight = {
+            Legs = "Ninja Hakama",
+        },
     },
-    Throw = {
+    Throw = Equip.NewSet {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
+
+        Hands = "Ninja Tekko",
         Ring1 = "Horn Ring",
         Ring2 = "Woodsman Ring",
-        Legs = "Nokizaru Hakama",
+
+        Legs = "Ninja Hakama",
+        Feet = "Fed. Kyahan",
     },
-    Stealth = {
-        Hands = "Dream Mittens +1",
-        Back = "Skulker's Cape",
-        Waist = "Swift Belt",
-        Feet = "Dream Boots +1",
-    },
-    Shadows = {
+    Shadows = Equip.NewSet {
         Main = "Parrying Knife",
         Sub = "Parrying Knife",
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Dart",
 
         Head = "Erd. Headband",
@@ -92,7 +99,7 @@ local sets = {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Brigandine",
+        Body = "Brigandine", -- Ninja Chainmail
         Hands = "Savage Gauntlets",
         Ring1 = "Reflex Ring",
         Ring2 = "Peridot Ring",
@@ -100,15 +107,19 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
+        Feet = "Ninja Kyahan",
+
+        AtNight = {
+            Legs = "Ninja Hakama",
+        },
     },
-    Ninjutsu = {
+    Ninjutsu = Equip.NewSet {
         Main = "Parrying Knife",
         Sub = "Parrying Knife",
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
-        Head = "Erd. Headband",
+        Head = "Erd. Headband", -- Ninja Hatsuburi
         Neck = "Ryl.Sqr. Collar",
         Ear1 = "Morion Earring",
         Ear2 = "Moldavite Earring",
@@ -121,7 +132,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
+        Feet = "Ninja Kyahan",
     },
 }
 
@@ -129,42 +140,40 @@ local function handleDefault()
     local player = gData.GetPlayer()
     local env = gData.GetEnvironment()
 
-    gFunc.EquipSet(sets.Idle)
+    Equip.Set(sets.Idle)
 
     if Status.IsAttacking(player) and Status.HasStatus('Copy Image') then
-        gFunc.EquipSet(sets.Auto)
+        Equip.Set(sets.Auto)
     elseif Status.IsAttacking(player) then
-        gFunc.EquipSet(sets.Naked)
+        Equip.Set(sets.Naked)
     end
 
     if Status.IsInSandoria(env) then
-        gFunc.Equip(EquipSlots.Body, "Kingdom Aketon")
+        Equip.Body("Kingdom Aketon")
     elseif Status.IsInBastok(env) then
-        gFunc.Equip(EquipSlots.Body, "Republic Aketon")
+        Equip.Body("Republic Aketon")
     elseif Status.IsInWindurst(env) then
-        gFunc.Equip(EquipSlots.Body, "Federation Aketon")
+        Equip.Body("Federation Aketon")
     end
 end
 
 local function handleMidshot()
-    gFunc.EquipSet(sets.Throw)
+    Equip.Set(sets.Throw)
 end
 
 local function handleMidcast()
     local spell = gData.GetAction()
 
     if Status.IsStealth(spell) then
-        gFunc.EquipSet(sets.Stealth)
+        Equip.Set(sets.Stealth)
     elseif Status.IsShadows(spell) then
-        gFunc.EquipSet(sets.Shadows)
+        Equip.Set(sets.Shadows)
     elseif Status.IsDrain(spell) then
-        gFunc.EquipSet(sets.Shadows)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
+        Equip.Set(sets.Shadows)
+        Equip.Staff(spell)
     elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) or Status.IsAccuracyNinjutsu(spell) then
-        gFunc.EquipSet(sets.Ninjutsu)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
+        Equip.Set(sets.Ninjutsu)
+        Equip.Staff(spell)
     end
 end
 
@@ -173,7 +182,7 @@ local function handleWeaponskill()
 
     if weaponskill == 'Blade: Teki'
     or weaponskill == 'Blade: To' then
-        gFunc.EquipSet(sets.Ninjutsu)
+        Equip.Set(sets.Ninjutsu)
     end
 end
 
@@ -184,7 +193,7 @@ return {
     HandleCommand = noop,
     HandleDefault = handleDefault,
     HandleAbility = noop,
-    HandleItem = noop,
+    HandleItem = gFunc.LoadFile('common/items.lua'),
     HandlePrecast = noop,
     HandlePreshot = noop,
     HandleMidcast = handleMidcast,

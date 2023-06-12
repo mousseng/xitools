@@ -1,3 +1,11 @@
+---@return boolean
+local function IsNight()
+    local time = gData.GetTimestamp()
+    return time.hour >= 18 or time.hour < 6
+end
+
+---@param env table
+---@return boolean
 local function IsInSandoria(env)
     return env.Area == "Northern San d'Oria"
         or env.Area == "Southern San d'Oria"
@@ -5,6 +13,8 @@ local function IsInSandoria(env)
         or env.Area == "Chateau d'Oraguille"
 end
 
+---@param env table
+---@return boolean
 local function IsInBastok(env)
     return env.Area == "Bastok Markets"
         or env.Area == "Bastok Mines"
@@ -12,6 +22,8 @@ local function IsInBastok(env)
         or env.Area == "Port Bastok"
 end
 
+---@param env table
+---@return boolean
 local function IsInWindurst(env)
     return env.Area == "Windurst Woods"
         or env.Area == "Windurst Waters"
@@ -20,22 +32,29 @@ local function IsInWindurst(env)
         or env.Area == "Heavens Tower"
 end
 
+---@param player table
+---@return boolean
 local function IsAttacking(player)
     return player.Status == 'Engaged'
 end
 
+---@param player   table
+---@param settings table
+---@return boolean
 local function IsResting(player, settings)
     local isResting = player.Status == 'Resting'
 
-    if isResting and not settings.Rested and player.MPP >= 99 then
-        settings.Rested = true
-    elseif not isResting and settings.Rested then
-        settings.Rested = false
+    if isResting and not settings.IsRested and player.MPP >= 99 then
+        settings.IsRested = true
+    elseif not isResting and settings.IsRested then
+        settings.IsRested = false
     end
 
-    return isResting and not settings.Rested
+    return isResting and not settings.IsRested
 end
 
+---@param status string
+---@return boolean
 local function HasStatus(status)
     local buffs = AshitaCore:GetMemoryManager():GetPlayer():GetBuffs()
 
@@ -104,6 +123,8 @@ local spells = {
     TonkoNi = 354,
 }
 
+---@param spell table
+---@return boolean
 local function IsStealth(spell)
     return spell.Id == spells.Sneak
         or spell.Id == spells.Invisible
@@ -112,6 +133,8 @@ local function IsStealth(spell)
         or spell.Id == spells.MonomiIchi
 end
 
+---@param spell table
+---@return boolean
 local function IsDrain(spell)
     return spell.Id == spells.Drain
         or spell.Id == spells.Aspir
@@ -119,16 +142,22 @@ local function IsDrain(spell)
         or spell.Id == spells.AspirII
 end
 
+---@param spell table
+---@return boolean
 local function IsNuke(spell)
     return (spell.Id >= spells.Fire and spell.Id <= spells.FloodII)
         or (spell.Id >= spells.Burn and spell.Id <= spells.Drown)
 end
 
+---@param spell table
+---@return boolean
 local function IsHeal(spell)
     return spell.Id >= spells.CureI
         and spell.Id <= spells.CuragaV
 end
 
+---@param spell table
+---@return boolean
 local function IsEnfeebMnd(spell)
     return spell.Id == spells.Paralyze
         or spell.Id == spells.ParalyzeII
@@ -137,6 +166,8 @@ local function IsEnfeebMnd(spell)
         or spell.Id == spells.Silence
 end
 
+---@param spell table
+---@return boolean
 local function IsEnfeebInt(spell)
     return spell.Id == spells.Gravity
         or spell.Id == spells.GravityII
@@ -146,6 +177,8 @@ local function IsEnfeebInt(spell)
         or (spell.Id >= spells.Poison and spell.Id <= spells.PoisongaV)
 end
 
+---@param spell table
+---@return boolean
 local function IsShadows(spell)
     return spell.Id == spells.Blink
         or spell.Id == spells.UtsusemiIchi
@@ -153,18 +186,26 @@ local function IsShadows(spell)
         or spell.Id == spells.UtsusemiSan
 end
 
+---@param spell table
+---@return boolean
 local function IsPotencyNinjutsu(spell)
     return spell.Id >= spells.KatonIchi and spell.Id <= spells.SuitonSan
 end
 
+---@param spell table
+---@return boolean
 local function IsAccuracyNinjutsu(spell)
     return spell.Id >= spells.JubakuIchi and spell.Id <= spells.DokumoriSan
 end
 
+---@param spell table
+---@return boolean
 local function IsStoneskin(spell)
     return spell.Id == spells.Stoneskin
 end
 
+---@param spell table
+---@return boolean
 local function IsEnhancement(spell)
     return (spell.Id >= spells.Barfire and spell.Id <= spells.Barwatera)
         or (spell.Id >= spells.Enfire and spell.Id <= spells.Enwater)
@@ -176,6 +217,7 @@ end
 return {
     -- player stuff
     HasStatus = HasStatus,
+    IsNight = IsNight,
     IsAttacking = IsAttacking,
     IsResting = IsResting,
     IsInBastok = IsInBastok,

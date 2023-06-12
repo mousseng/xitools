@@ -1,14 +1,16 @@
 require('common')
-local Status = gFunc.LoadFile('common/status.lua')
-local Const = gFunc.LoadFile('common/const.lua')
-local EquipSlots = gFunc.LoadFile('common/equipSlots.lua')
 local noop = function() end
+
+---@module 'common.equip'
+local Equip = gFunc.LoadFile('common/equip.lua')
+---@module 'common.status'
+local Status = gFunc.LoadFile('common/status.lua')
 
 local sets = {
     Idle = {
         Main = "Zushio",
         Sub = "Anju",
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
         Head = "Erd. Headband",
@@ -27,7 +29,7 @@ local sets = {
         Feet = "Fed. Kyahan",
     },
     Auto = {
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
         Head = "Erd. Headband",
@@ -46,7 +48,7 @@ local sets = {
         Feet = "Fed. Kyahan",
     },
     Naked = {
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
         Head = "Erd. Headband",
@@ -78,7 +80,7 @@ local sets = {
         Feet = "Dream Boots +1",
     },
     Shadows = {
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
         Head = "Erd. Headband",
@@ -97,7 +99,7 @@ local sets = {
         Feet = "Fed. Kyahan",
     },
     Ninjutsu = {
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
         Head = "Erd. Headband",
@@ -121,36 +123,36 @@ local function handleDefault()
     local player = gData.GetPlayer()
     local env = gData.GetEnvironment()
 
-    gFunc.EquipSet(sets.Idle)
+    Equip.Set(sets.Idle)
 
     if Status.IsAttacking(player) and Status.HasStatus('Copy Image') then
-        gFunc.EquipSet(sets.Auto)
+        Equip.Set(sets.Auto)
     elseif Status.IsAttacking(player) then
-        gFunc.EquipSet(sets.Naked)
+        Equip.Set(sets.Naked)
     end
 
     if Status.IsInSandoria(env) then
-        gFunc.Equip(EquipSlots.Body, "Kingdom Aketon")
+        Equip.Body("Kingdom Aketon")
     elseif Status.IsInBastok(env) then
-        gFunc.Equip(EquipSlots.Body, "Republic Aketon")
+        Equip.Body("Republic Aketon")
     elseif Status.IsInWindurst(env) then
-        gFunc.Equip(EquipSlots.Body, "Federation Aketon")
+        Equip.Body("Federation Aketon")
     end
 end
 
 local function handleMidshot()
-    gFunc.EquipSet(sets.Throw)
+    Equip.Set(sets.Throw)
 end
 
 local function handleMidcast()
     local spell = gData.GetAction()
 
     if Status.IsStealth(spell) then
-        gFunc.EquipSet(sets.Stealth)
+        Equip.Set(sets.Stealth)
     elseif Status.IsShadows(spell) or Status.IsDrain(spell) then
-        gFunc.EquipSet(sets.Shadows)
+        Equip.Set(sets.Shadows)
     elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) or Status.IsAccuracyNinjutsu(spell) then
-        gFunc.EquipSet(sets.Ninjutsu)
+        Equip.Set(sets.Ninjutsu)
     end
 end
 
@@ -159,7 +161,7 @@ local function handleWeaponskill()
 
     if weaponskill == 'Blade: Teki'
     or weaponskill == 'Blade: To' then
-        gFunc.EquipSet(sets.Ninjutsu)
+        Equip.Set(sets.Ninjutsu)
     end
 end
 
@@ -170,7 +172,7 @@ return {
     HandleCommand = noop,
     HandleDefault = handleDefault,
     HandleAbility = noop,
-    HandleItem = noop,
+    HandleItem = gFunc.LoadFile('common/items.lua'),
     HandlePrecast = noop,
     HandlePreshot = noop,
     HandleMidcast = handleMidcast,

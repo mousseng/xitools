@@ -1,17 +1,17 @@
 require('common')
-local Status = gFunc.LoadFile('common/status.lua')
-local Staves = gFunc.LoadFile('common/staves.lua')
-local Obi = gFunc.LoadFile('common/obi.lua')
-local Const = gFunc.LoadFile('common/const.lua')
-local EquipSlots = gFunc.LoadFile('common/equipSlots.lua')
 local noop = function() end
 
+---@module 'common.equip'
+local Equip = gFunc.LoadFile('common/equip.lua')
+---@module 'common.status'
+local Status = gFunc.LoadFile('common/status.lua')
+
 local sets = {
-    Idle = {
+    Idle = Equip.NewSet {
         -- preferred stats: MP, DEF, EVA
-        Main = Staves.Earth,
-        Sub = Const.Displaced,
-        Range = Const.Displaced,
+        Main = Equip.Staves.Earth,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",        -- MP+30
 
         Head = "Duelist's Chapeau",    -- Refresh, MP+14, DEF+24
@@ -29,11 +29,11 @@ local sets = {
         Legs = "Crimson Cuisses",      -- Move, MP+25, DEF+43
         Feet = "Duelist's Boots",      -- MP+15, DEF+15, Eva+5
     },
-    Cast = {
+    Cast = Equip.NewSet {
         -- preferred stats: Haste, MP, EVA
-        Main = Staves.Earth,
-        Sub = Const.Displaced,
-        Range = Const.Displaced,
+        Main = Equip.Staves.Earth,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",        -- MP+30
 
         Head = "Duelist's Chapeau",    -- Refresh, MP+14
@@ -51,17 +51,17 @@ local sets = {
         Legs = "Crimson Cuisses",      -- MP+25
         Feet = "Duelist's Boots",      -- MP+15, Eva+5
     },
-    Rest = {
+    Rest = Equip.NewSet {
         -- preferred stats: hMP
-        Main = Staves.Dark,   -- hMP+10
+        Main = Equip.Staves.Dark,      -- hMP+10
         Body = "Errant Hpl.",          -- hMP+5
         Waist = "Duelist's Belt",      -- hMP+4
     },
-    Solo = {
+    Solo = Equip.NewSet {
         Main = "Martial Anelace",
         Sub = "Joyeuse",
     },
-    AutoBal = {
+    Auto = Equip.NewSet {
         Head = "Ogre Mask",            -- Att+10
         Neck = "Spike Necklace",       -- STR+3, DEX+3
         Ear1 = "Beetle Earring +1",    -- Att+3
@@ -69,7 +69,7 @@ local sets = {
 
         Body = "Assault Jerkin",       -- Att+16
         Hands = "Warlock's Gloves",    -- DEX+4
-        Ring1 = "Balance Ring",        -- DEX+2
+        Ring1 = "Woodsman Ring",       -- Acc+5
         Ring2 = "Balance Ring",        -- DEX+2
 
         Back = "Psilos Mantle",        -- Att+12, Acc+1
@@ -77,39 +77,7 @@ local sets = {
         Legs = "Duelist's Tights",     -- DEX+5
         Feet = "Ogre Ledelsens",       -- Att+10
     },
-    AutoDmg = {
-        Head = "Ogre Mask",            -- Att+10
-        Neck = "Spike Necklace",       -- STR+3, DEX+3
-        Ear1 = "Beetle Earring +1",    -- Att+3
-        Ear2 = "Beetle Earring +1",    -- Att+3
-
-        Body = "Assault Jerkin",       -- Att+16
-        Hands = "Ogre Gloves",         -- STR+6
-        Ring1 = "Courage Ring",        -- STR+2
-        Ring2 = "Courage Ring",        -- STR+2
-
-        Back = "Psilos Mantle",        -- Att+12, Acc+1
-        Waist = "Swordbelt",           -- Att+10
-        Legs = "Cmb.Cst. Slacks",      -- Att+5
-        Feet = "Ogre Ledelsens",       -- Att+10
-    },
-    AutoAcc = {
-        Head = "Ogre Mask",            -- Att+10
-        Neck = "Spike Necklace",       -- STR+3, DEX+3
-        Ear1 = "Beetle Earring +1",    -- Att+3
-        Ear2 = "Beetle Earring +1",    -- Att+3
-
-        Body = "Assault Jerkin",       -- Att+16
-        Hands = "Warlock's Gloves",    -- DEX+4
-        Ring1 = "Balance Ring",        -- DEX+2
-        Ring2 = "Balance Ring",        -- DEX+2
-
-        Back = "Psilos Mantle",        -- Att+12, Acc+1
-        Waist = "Life Belt",           -- Acc+10
-        Legs = "Duelist's Tights",     -- DEX+5
-        Feet = "Wise Pigaches",        -- Acc+2
-    },
-    Weaponskill = {
+    Weaponskill = Equip.NewSet {
         -- preferred stats: Att, Acc, STR
         Head = "Ogre Mask",            -- Att+10
         Neck = "Tiger Stole",          -- Att+5
@@ -118,7 +86,7 @@ local sets = {
 
         Body = "Assault Jerkin",       -- Att+16
         Hands = "Ogre Gloves",         -- STR+6
-        Ring1 = "Courage Ring",        -- STR+2
+        Ring1 = "Woodsman Ring",       -- Acc+5
         Ring2 = "Courage Ring",        -- STR+2
 
         Back = "Psilos Mantle",        -- Att+12, Acc+1
@@ -126,11 +94,11 @@ local sets = {
         Legs = "Duelist's Tights",     -- DEX+5
         Feet = "Ogre Ledelsens",       -- Att+10
     },
-    MaxMp = {
+    MaxMp = Equip.NewSet {
         -- preferred stats: MP
         Main = "Fencing Degen",        -- MP+10
-        Sub = Const.Displaced,
-        Range = Const.Displaced,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",        -- MP+30
 
         Head = "Gold Hairpin",         -- MP+30
@@ -148,8 +116,8 @@ local sets = {
         Legs = "Savage Loincloth",     -- MP+32
         Feet = "Duelist's Boots",      -- MP+15
     },
-    Pdt = {
-        Main = Staves.Earth,   -- PDT-20
+    Pdt = Equip.NewSet {
+        Main = Equip.Staves.Earth,   -- PDT-20
 
         -- Head = "Darksteel Cap +1",     -- PDT-2
         -- Neck = "",
@@ -166,7 +134,7 @@ local sets = {
         -- Legs = "Dst. Subligar +1",     -- PDT-3
         -- Feet = "Dst. Leggings +1",     -- PDT-2
     },
-    Mdt = {
+    Mdt = Equip.NewSet {
         -- Head = "Coral Visor +1",       -- MDT-2
         -- Neck = "Jeweled Collar",       -- Fire, Ice, Wind, Earth, Lightning, Water +10
         -- Ear1 = "Merman's Earring",     -- MDT-2
@@ -182,7 +150,7 @@ local sets = {
         Legs = "Crimson Cuisses",      -- Fire, Thunder, Water, Dark +20
         -- Feet = "Crimson Greaves",      -- Ice, Wind, Earth, Light +20
     },
-    Bdt = {
+    Bdt = Equip.NewSet {
         -- Head = "",
         -- Neck = "",
         -- Ear1 = "",
@@ -198,21 +166,15 @@ local sets = {
         -- Legs = "",
         -- Feet = "",
     },
-    Stealth = {
-        Hands = "Dream Mittens +1",
-        Back = "Skulker's Cape",
-        Waist = "Swift Belt",
-        Feet = "Dream Boots +1",
-    },
-    FastCast = {
+    FastCast = Equip.NewSet {
         Head = "Warlock's Chapeau",    -- FC+10
         Body = "Duelist's Tabard",     -- FC+10
     },
-    EnfeebInt = {
+    EnfeebInt = Equip.NewSet {
         -- preferred stats: Enfeeb, INT, Enm-
         Main = "Fencing Degen",        -- Enfeeb+3, INT+3
         Sub = "Yew Wand +1",           -- INT+4
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",       -- INT+1
 
         Head = "Duelist's Chapeau",    -- Enfeeb+15
@@ -230,11 +192,11 @@ local sets = {
         Legs = "Errant Slops",         -- INT+7, Enm-3
         Feet = "Wise Pigaches",        -- INT+4, Enm-1
     },
-    EnfeebMnd = {
+    EnfeebMnd = Equip.NewSet {
         -- preferred stats: Enfeeb, MND, Enm-
         Main = "Fencing Degen",        -- Enfeeb+3, MND+3
         Sub = "Yew Wand +1",           -- MND+4
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",
 
         Head = "Duelist's Chapeau",    -- Enfeeb+15
@@ -252,11 +214,11 @@ local sets = {
         Legs = "Errant Slops",         -- MND+7, Enm-3
         Feet = "Duelist's Boots",      -- MND+4
     },
-    Shadows = {
+    Shadows = Equip.NewSet {
         -- preferred stats: SID, Parry, Eva
         Main = "Ryl.Grd. Fleuret",     -- Parry+5
-        Sub = Const.Displaced,
-        Range = Const.Displaced,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",
 
         Head = "Duelist's Chapeau",    -- Refresh
@@ -274,17 +236,17 @@ local sets = {
         Legs = "Cmb.Cst. Slacks",      -- Eva+5
         Feet = "Duelist's Boots",      -- Eva+5
     },
-    NinjutsuAcc = {
+    NinjutsuAcc = Equip.NewSet {
         -- preferred stats: Ninjutsu, mAcc, INT
     },
-    NinjutsuPot = {
+    NinjutsuPot = Equip.NewSet {
         -- preferred stats: Ninjutsu, INT, mAcc
     },
-    Stoneskin = {
+    Stoneskin = Equip.NewSet {
         -- preferred stats: MND, Enhancing
         Main = "Yew Wand +1",          -- MND+4
         Sub = "Yew Wand +1",           -- MND+4
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",
 
         Head = "Duelist's Chapeau",
@@ -302,16 +264,16 @@ local sets = {
         Legs = "Errant Slops",         -- MND+7
         Feet = "Duelist's Boots",      -- MND+4
     },
-    Enhancing = {
+    Enhancing = Equip.NewSet {
         -- preferred stats: Enhancing
         Neck = "Enhancing Torque",     -- Enhancing+7
         Legs = "Warlock's Tights",     -- Enhancing+15
     },
-    Cure = {
+    Cure = Equip.NewSet {
         -- preferred stats: Cure%, Enm+, MND, HP
         Main = "Yew Wand +1",          -- MND+4
         Sub = "Yew Wand +1",           -- MND+4
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
         Head = "Duelist's Chapeau",
@@ -329,11 +291,11 @@ local sets = {
         Legs = "Crimson Cuisses",      -- HP+25
         Feet = "Duelist's Boots",      -- MND+4
     },
-    Heal = {
+    Heal = Equip.NewSet {
         -- preferred stats: Cure%, MND, Enm-, VIT, Healing
         Main = "Yew Wand +1",          -- MND+4
         Sub = "Yew Wand +1",           -- MND+4
-        Range = Const.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",
 
         Head = "Duelist's Chapeau",
@@ -351,11 +313,11 @@ local sets = {
         Legs = "Errant Slops",         -- MND+7, Enm-3
         Feet = "Duelist's Boots",      -- MND+4
     },
-    Nuke = {
+    Nuke = Equip.NewSet {
         -- preferred stats: MAB, INT, Ele, Enm-
-        Main = "Ice Staff",            -- Ele+10, INT+4
-        Sub = Const.Displaced,
-        Range = Const.Displaced,
+        Main = Equip.Staves.Ice,       -- Ele+10, INT+4
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",       -- INT+1
 
         Head = "Warlock's Chapeau",    -- Ele+10, INT+3
@@ -373,11 +335,11 @@ local sets = {
         Legs = "Duelist's Tights",     -- Ele+10
         Feet = "Duelist's Boots",      -- MAB+4
     },
-    Drain = {
+    Drain = Equip.NewSet {
         -- preferred stats: Dark, MP, mAcc, INT, Enm-
-        Main = "Dark Staff",           -- Dark affinity
-        Sub = Const.Displaced,
-        Range = Const.Displaced,
+        Main = Equip.Staves.Dark,      -- Dark affinity
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",        -- MP+30
 
         Head = "Warlock's Chapeau",    -- INT+3
@@ -398,17 +360,12 @@ local sets = {
 }
 
 local settings = {
-    Tank    = false,
-    Solo    = false,
-    Pdt     = false,
-    Mdt     = false,
-    Convert = false,
-    Rested  = false,
-    TpSet   = sets.AutoBal,
+    Tank     = false,
+    Solo     = false,
+    Pdt      = false,
+    Mdt      = false,
+    IsRested = false,
 }
-
-local equipSlot = gFunc.Equip
-local equipSet = gFunc.EquipSet
 
 local function equipCureCheat(spell)
     local hpNeeded = 0
@@ -438,14 +395,14 @@ local function handleCommand(args)
     if cmd == 'solo' then
         settings.Solo = not settings.Solo
         if settings.Solo then
-            gFunc.ForceEquipSet(sets.Solo)
-            gFunc.Disable(EquipSlots.Main)
-            gFunc.Disable(EquipSlots.Sub)
-            gFunc.Disable(EquipSlots.Range)
+            Equip.Set(sets.Solo, true)
+            Equip.Disable(Equip.Slots.Main)
+            Equip.Disable(Equip.Slots.Sub)
+            Equip.Disable(Equip.Slots.Range)
         else
-            gFunc.Enable(EquipSlots.Main)
-            gFunc.Enable(EquipSlots.Sub)
-            gFunc.Enable(EquipSlots.Range)
+            Equip.Enable(Equip.Slots.Main)
+            Equip.Enable(Equip.Slots.Sub)
+            Equip.Enable(Equip.Slots.Range)
         end
     elseif cmd == 'tank' then
         settings.Tank = not settings.Tank
@@ -455,12 +412,6 @@ local function handleCommand(args)
     elseif cmd == 'mdt' then
         settings.Mdt = not settings.Mdt
         if settings.Mdt then settings.Pdt = false end
-    elseif cmd == 'bal' then
-        settings.TpSet = sets.AutoBal
-    elseif cmd == 'acc' then
-        settings.TpSet = sets.AutoAcc
-    elseif cmd == 'dmg' then
-        settings.TpSet = sets.AutoDmg
     end
 end
 
@@ -468,30 +419,30 @@ local function handleDefault()
     local player = gData.GetPlayer()
     local env = gData.GetEnvironment()
 
-    equipSet(sets.Idle)
+    Equip.Set(sets.Idle)
 
     if settings.Pdt then
-        equipSet(sets.Pdt)
+        Equip.Set(sets.Pdt)
     elseif settings.Mdt then
-        equipSet(sets.Mdt)
+        Equip.Set(sets.Mdt)
     elseif Status.IsAttacking(player) then
-        equipSet(settings.TpSet)
+        Equip.Set(sets.Auto)
 
         if player.HPP <= 75 and player.TP < 1000 and Status.HasStatus('en%a+') then
-            equipSlot(EquipSlots.Ring2, "Fencer's Ring")
+            Equip.Ring2("Fencer's Ring")
         end
     end
 
     if Status.IsInSandoria(env) then
-        equipSlot(EquipSlots.Body, "Kingdom Aketon")
+        Equip.Body("Kingdom Aketon")
     elseif Status.IsInBastok(env) then
-        equipSlot(EquipSlots.Body, "Republic Aketon")
+        Equip.Body("Republic Aketon")
     elseif Status.IsInWindurst(env) then
-        equipSlot(EquipSlots.Body, "Federation Aketon")
+        Equip.Body("Federation Aketon")
     end
 
     if Status.IsResting(player, settings) then
-        equipSet('Rest')
+        Equip.Set(sets.Rest)
     end
 end
 
@@ -503,13 +454,6 @@ local function handleAbility()
     end
 end
 
-local function handleItem()
-    local item = gData.GetAction()
-    if item.Name == 'Orange Juice' then
-        equipSlot(EquipSlots.Legs, "Dream Pants +1")
-    end
-end
-
 local function handlePrecast()
     local spell = gData.GetAction()
     local target = gData.GetTarget()
@@ -518,66 +462,63 @@ local function handlePrecast()
         equipCureCheat(spell)
     end
 
-    equipSet(sets.FastCast)
+    Equip.Set(sets.FastCast)
 end
 
 local function handleMidcast()
     local spell = gData.GetAction()
-    local target = gData.GetTarget()
 
     if Status.IsStealth(spell) then
-        equipSet(sets.Stealth)
+        Equip.Set(sets.Stealth)
     elseif Status.IsHeal(spell) then
-        if settings.Tank and target.Name == 'Lin' then
-            equipSet(sets.Cure)
-            Obi.Equip(spell)
+        if settings.Tank then
+            Equip.Set(sets.Cure)
+            Equip.Obi(spell)
         else
-            equipSet(sets.Heal)
-            Obi.Equip(spell)
+            Equip.Set(sets.Heal)
+            Equip.Obi(spell)
         end
     elseif Status.IsDrain(spell) then
-        equipSet(sets.Drain)
-        Obi.Equip(spell)
+        Equip.Set(sets.Drain)
+        Equip.Obi(spell)
     elseif Status.IsStoneskin(spell) then
-        equipSet(sets.Stoneskin)
+        Equip.Set(sets.Stoneskin)
     elseif Status.IsEnhancement(spell) then
-        equipSet(sets.Enhancing)
+        Equip.Set(sets.Enhancing)
     elseif Status.IsShadows(spell) then
-        equipSet(sets.Shadows)
+        Equip.Set(sets.Shadows)
     elseif Status.IsNuke(spell) then
-        equipSet(sets.Nuke)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
+        Equip.Set(sets.Nuke)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
     elseif Status.IsEnfeebMnd(spell) then
-        equipSet(sets.EnfeebMnd)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
+        Equip.Set(sets.EnfeebMnd)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
     elseif Status.IsEnfeebInt(spell) then
-        equipSet(sets.EnfeebInt)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
+        Equip.Set(sets.EnfeebInt)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
     elseif Status.IsPotencyNinjutsu(spell) then
-        equipSet(sets.NinjutsuPot)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
+        Equip.Set(sets.NinjutsuPot)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
     elseif Status.IsAccuracyNinjutsu(spell) then
-        equipSet(sets.NinjutsuAcc)
-        Staves.Equip(spell)
-        Obi.Equip(spell)
+        Equip.Set(sets.NinjutsuAcc)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
     else
+        Equip.Set(sets.Cast)
         if settings.Pdt then
-            equipSet(sets.Pdt)
+            Equip.Set(sets.Pdt)
         elseif settings.Mdt then
-            equipSet(sets.Mdt)
-        else
-            equipSet(sets.Cast)
+            Equip.Set(sets.Mdt)
         end
     end
 end
 
 local function handleWeaponskill()
-    local weaponskill = gData.GetAction()
-    equipSet(sets.Weaponskill)
+    Equip.Set(sets.Weaponskill)
 end
 
 return {
@@ -587,7 +528,7 @@ return {
     HandleCommand = handleCommand,
     HandleDefault = handleDefault,
     HandleAbility = handleAbility,
-    HandleItem = handleItem,
+    HandleItem = gFunc.LoadFile('common/items.lua'),
     HandlePrecast = handlePrecast,
     HandleMidcast = handleMidcast,
     HandlePreshot = noop,
