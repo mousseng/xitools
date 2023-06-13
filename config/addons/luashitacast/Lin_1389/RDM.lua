@@ -31,7 +31,7 @@ local sets = {
     },
     Cast = Equip.NewSet {
         -- preferred stats: Haste, MP, EVA
-        Main = Equip.Staves.Earth,
+        Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",        -- MP+30
@@ -216,7 +216,7 @@ local sets = {
     },
     Shadows = Equip.NewSet {
         -- preferred stats: SID, Parry, Eva
-        Main = "Ryl.Grd. Fleuret",     -- Parry+5
+        Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",
@@ -469,7 +469,7 @@ local function handleMidcast()
     local spell = gData.GetAction()
 
     if Status.IsStealth(spell) then
-        Equip.Set(sets.Stealth)
+        Equip.Stealth()
     elseif Status.IsHeal(spell) then
         if settings.Tank then
             Equip.Set(sets.Cure)

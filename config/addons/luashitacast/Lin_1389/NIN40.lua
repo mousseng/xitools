@@ -148,7 +148,7 @@ local function handleMidcast()
     local spell = gData.GetAction()
 
     if Status.IsStealth(spell) then
-        Equip.Set(sets.Stealth)
+        Equip.Stealth()
     elseif Status.IsShadows(spell) or Status.IsDrain(spell) then
         Equip.Set(sets.Shadows)
     elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) or Status.IsAccuracyNinjutsu(spell) then

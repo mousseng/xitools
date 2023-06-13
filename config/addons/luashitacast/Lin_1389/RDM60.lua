@@ -29,6 +29,8 @@ local sets = {
         Feet = "Warlock's Boots",
     },
     Cast = Equip.NewSet {
+        Main = Equip.Staves.Wind,
+        Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
@@ -194,7 +196,7 @@ local function handleMidcast()
     local spell = gData.GetAction()
 
     if Status.IsStealth(spell) then
-        Equip.Set(sets.Stealth)
+        Equip.Stealth()
     elseif Status.IsHeal(spell) then
         Equip.Set(sets.MaxMND)
         Equip.Staff(spell)

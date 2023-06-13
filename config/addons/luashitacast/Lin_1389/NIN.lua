@@ -6,9 +6,13 @@ local Equip = gFunc.LoadFile('common/equip.lua')
 ---@module 'common.status'
 local Status = gFunc.LoadFile('common/status.lua')
 
+local settings = {
+    Ammo = "Pebble",
+}
+
 local sets = {
     Idle = Equip.NewSet {
-        Main = Equip.Staves.Earth,
+        Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
         Ammo = "Dart",
@@ -34,12 +38,12 @@ local sets = {
         },
     },
     Auto = Equip.NewSet {
-        Main = "Zushio",
-        Sub = "Anju",
+        Main = "Yoto",
+        Sub = "Yoto",
         Range = Equip.Special.Displaced,
         Ammo = "Dart",
 
-        Head = "Erd. Headband",
+        Head = "Super Ribbon",
         Neck = "Spike Necklace",
         Ear1 = "Beetle Earring +1",
         Ear2 = "Beetle Earring +1",
@@ -55,6 +59,8 @@ local sets = {
         Feet = "Fed. Kyahan",
     },
     Naked = Equip.NewSet {
+        Main = "Yoto",
+        Sub = "Yoto",
         Range = Equip.Special.Displaced,
         Ammo = "Dart",
 
@@ -89,8 +95,8 @@ local sets = {
         Feet = "Fed. Kyahan",
     },
     Shadows = Equip.NewSet {
-        Main = "Parrying Knife",
-        Sub = "Parrying Knife",
+        Main = Equip.Staves.Wind,
+        Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
         Ammo = "Dart",
 
@@ -114,8 +120,8 @@ local sets = {
         },
     },
     Ninjutsu = Equip.NewSet {
-        Main = "Parrying Knife",
-        Sub = "Parrying Knife",
+        Main = Equip.Staves.Wind,
+        Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
@@ -134,7 +140,34 @@ local sets = {
         Legs = "Nokizaru Hakama",
         Feet = "Ninja Kyahan",
     },
+    Weaponskill = Equip.NewSet {
+        Main = "Yoto",
+        Sub = "Yoto",
+        Range = Equip.Special.Displaced,
+        Ammo = "Morion Tathlum",
+
+        Head = "Super Ribbon",
+        Neck = "Spike Necklace",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
+
+        Body = "Brigandine", -- Ninja Chainmail
+        Hands = "Windurstian Tekko",
+        Ring1 = "Courage Ring",
+        Ring2 = "Courage Ring",
+
+        Back = "High Brth. Mantle",
+        Waist = "Ryl.Kgt. Belt",
+        Legs = "Republic Subligar",
+        Feet = "Fed. Kyahan",
+    },
 }
+
+local function handleCommand(args)
+    if args[1] == 'ammo' then
+        settings.Ammo = args[2] or "Pebble"
+    end
+end
 
 local function handleDefault()
     local player = gData.GetPlayer()
@@ -157,6 +190,10 @@ local function handleDefault()
     end
 end
 
+local function handlePreshot()
+    Equip.Ammo(settings.Ammo)
+end
+
 local function handleMidshot()
     Equip.Set(sets.Throw)
 end
@@ -165,7 +202,7 @@ local function handleMidcast()
     local spell = gData.GetAction()
 
     if Status.IsStealth(spell) then
-        Equip.Set(sets.Stealth)
+        Equip.Stealth()
     elseif Status.IsShadows(spell) then
         Equip.Set(sets.Shadows)
     elseif Status.IsDrain(spell) then
@@ -181,8 +218,9 @@ local function handleWeaponskill()
     local weaponskill = gData.GetAction().Name
 
     if weaponskill == 'Blade: Teki'
-    or weaponskill == 'Blade: To' then
-        Equip.Set(sets.Ninjutsu)
+    or weaponskill == 'Blade: To'
+    or weaponskill == 'Blade: Chi' then
+        Equip.Set(sets.Weaponskill)
     end
 end
 
@@ -190,12 +228,12 @@ return {
     Sets = sets,
     OnLoad = noop,
     OnUnload = noop,
-    HandleCommand = noop,
+    HandleCommand = handleCommand,
     HandleDefault = handleDefault,
     HandleAbility = noop,
     HandleItem = gFunc.LoadFile('common/items.lua'),
     HandlePrecast = noop,
-    HandlePreshot = noop,
+    HandlePreshot = handlePreshot,
     HandleMidcast = handleMidcast,
     HandleMidshot = handleMidshot,
     HandleWeaponskill = handleWeaponskill,
