@@ -51,12 +51,13 @@ local shadow = imgui.GetColorU32({ 0, 0, 0, 0.4 })
 local circle = imgui.GetColorU32({ 1, 1, 1, 0.1 })
 local transparent = imgui.GetColorU32({ 1, 1, 1, 0.3 })
 local turn = math.pi / 3
+local circumference = math.pi * 2
 local rotation = math.pi
 local radius = 70
 local height = radius * 3
 local width = radius * 3
 local size = { height, width }
-local flags = bit.bor(ImGuiWindowFlags_NoDecoration)
+local flags = bit.bor(ImGuiWindowFlags_NoDecoration, ImGuiWindowFlags_NoBackground)
 
 local function CreateTexture(filePath)
     -- Courtesy of Thorny's mobDb
@@ -176,6 +177,9 @@ local function OnPresent()
             local excess = math.max(0, currentAnim - animationTime)
             local animProgress = (delta - excess) / animationTime
             rotation = rotation + animProgress * turn * currentDist
+            if rotation > circumference then
+                rotation = rotation - circumference
+            end
         elseif currentAnim ~= nil and currentAnim > animationTime then
             currentAnim = nil
             currentDist = nil
