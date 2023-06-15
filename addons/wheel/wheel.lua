@@ -13,6 +13,7 @@ local io = imgui.GetIO()
 local gfxDevice = d3d8.get_device()
 local animationTime = 400
 local currentAnim = nil
+local currentDist = nil
 local lastFrame = ashita.time.clock().ms
 local spellLevel = 'Ni'
 local wheelPosition = 0
@@ -49,6 +50,8 @@ local white = imgui.GetColorU32({ 1, 1, 1, 1.0 })
 local shadow = imgui.GetColorU32({ 0, 0, 0, 0.4 })
 local circle = imgui.GetColorU32({ 1, 1, 1, 0.1 })
 local transparent = imgui.GetColorU32({ 1, 1, 1, 0.3 })
+local turn = math.pi / 3
+local rotation = math.pi
 local radius = 70
 local height = radius * 3
 local width = radius * 3
@@ -78,16 +81,16 @@ local function GetTimer(recast, spellId)
     return nil
 end
 
-local function DrawIcon(draw, recast, idx, box)
+local function DrawIcon(draw, recast, idx, tl, br)
     local recast1 = GetTimer(recast, wheel[idx][spellLevel])
 
     local icon = tonumber(ffi.cast('uint32_t', wheel[idx].Icon))
     if recast1 ~= nil then
-        draw:AddImage(icon, box.tl, box.br, { 0, 0 }, { 1, 1 }, transparent)
-        draw:AddText(Offset(box.tl, 9), shadow, recast1)
-        draw:AddText(Offset(box.tl, 8), white, recast1)
+        draw:AddImage(icon, tl, br, { 0, 0 }, { 1, 1 }, transparent)
+        draw:AddText(Offset(tl, 9), shadow, recast1)
+        draw:AddText(Offset(tl, 8), white, recast1)
     else
-        draw:AddImage(icon, box.tl, box.br)
+        draw:AddImage(icon, tl, br)
     end
 end
 
@@ -98,16 +101,17 @@ local function KeyMod()
         or io.KeySuper
 end
 
-local function InBox(point, box)
-    return point.x >= box.tl[1]
-        and point.y >= box.tl[2]
-        and point.x <= box.br[1]
-        and point.y <= box.br[2]
+local function InBox(point, tl, br)
+    return point.x >= tl[1]
+        and point.y >= tl[2]
+        and point.x <= br[1]
+        and point.y <= br[2]
 end
 
 local function AdvanceWheelTo(position)
-    wheelPosition = position % 6
     currentAnim = 0
+    currentDist = (position - wheelPosition + 6) % 6
+    wheelPosition = position % 6
 end
 
 local function CastSpell(id)
@@ -163,79 +167,46 @@ local function OnPresent()
         local recast = AshitaCore:GetMemoryManager():GetRecast()
         local draw = imgui.GetWindowDrawList()
         local x, y = imgui.GetWindowPos()
+        local lClick = io.MouseReleased[1]
+        local rClick = io.MouseReleased[2]
+        local clickable = not KeyMod()
 
-        local idx1 = (wheelPosition + 0) % 6
-        local idx2 = (wheelPosition + 1) % 6
-        local idx3 = (wheelPosition + 2) % 6
-        local idx4 = (wheelPosition + 3) % 6
-        local idx5 = (wheelPosition + 4) % 6
-        local idx6 = (wheelPosition + 5) % 6
-
-        local rotation = 0
         if currentAnim ~= nil and currentAnim <= animationTime then
             currentAnim = currentAnim + delta
-            local animProgress = currentAnim / animationTime
-            rotation = animProgress * math.pi / 3
+            local excess = math.max(0, currentAnim - animationTime)
+            local animProgress = (delta - excess) / animationTime
+            rotation = rotation + animProgress * turn * currentDist
         elseif currentAnim ~= nil and currentAnim > animationTime then
             currentAnim = nil
+            currentDist = nil
         end
 
         local center = { x + (width / 2), y + (height / 2) }
-        local pos1 = { center[1] + radius * math.sin(3 * math.pi / -3 + rotation), center[2] + radius * math.cos(3 * math.pi / -3 + rotation) }
-        local pos2 = { center[1] + radius * math.sin(4 * math.pi / -3 + rotation), center[2] + radius * math.cos(4 * math.pi / -3 + rotation) }
-        local pos3 = { center[1] + radius * math.sin(5 * math.pi / -3 + rotation), center[2] + radius * math.cos(5 * math.pi / -3 + rotation) }
-        local pos4 = { center[1] + radius * math.sin(0 * math.pi / -3 + rotation), center[2] + radius * math.cos(0 * math.pi / -3 + rotation) }
-        local pos5 = { center[1] + radius * math.sin(1 * math.pi / -3 + rotation), center[2] + radius * math.cos(1 * math.pi / -3 + rotation) }
-        local pos6 = { center[1] + radius * math.sin(2 * math.pi / -3 + rotation), center[2] + radius * math.cos(2 * math.pi / -3 + rotation) }
-
-        local box1 = { tl = Offset(pos1, -24), br = Offset(pos1, 24) }
-        local box2 = { tl = Offset(pos2, -24), br = Offset(pos2, 24) }
-        local box3 = { tl = Offset(pos3, -24), br = Offset(pos3, 24) }
-        local box4 = { tl = Offset(pos4, -24), br = Offset(pos4, 24) }
-        local box5 = { tl = Offset(pos5, -24), br = Offset(pos5, 24) }
-        local box6 = { tl = Offset(pos6, -24), br = Offset(pos6, 24) }
-
         draw:AddCircle(center, radius, circle, 0, 2.0)
-        DrawIcon(draw, recast, idx1, box1)
-        DrawIcon(draw, recast, idx2, box2)
-        DrawIcon(draw, recast, idx3, box3)
-        DrawIcon(draw, recast, idx4, box4)
-        DrawIcon(draw, recast, idx5, box5)
-        DrawIcon(draw, recast, idx6, box6)
 
-        if io.MouseReleased[1] and not KeyMod() then
-            local startPos = io.MouseClickedPos[1]
-            local finalPos = io.MousePos
+        for i = 0, 5 do
+            -- divide by -3 to get clockwise rotation
+            local posX = center[1] + radius * math.sin(i * math.pi / -3 + rotation)
+            local posY = center[2] + radius * math.cos(i * math.pi / -3 + rotation)
 
-            if InBox(startPos, box1) and InBox(finalPos, box1) then
-                CastSpell(wheel[idx1].Ni)
-            elseif InBox(startPos, box2) and InBox(finalPos, box2) then
-                CastSpell(wheel[idx2].Ni)
-            elseif InBox(startPos, box3) and InBox(finalPos, box3) then
-                CastSpell(wheel[idx3].Ni)
-            elseif InBox(startPos, box4) and InBox(finalPos, box4) then
-                CastSpell(wheel[idx4].Ni)
-            elseif InBox(startPos, box5) and InBox(finalPos, box5) then
-                CastSpell(wheel[idx5].Ni)
-            elseif InBox(startPos, box6) and InBox(finalPos, box6) then
-                CastSpell(wheel[idx6].Ni)
-            end
-        elseif io.MouseReleased[2] and not KeyMod() then
-            local startPos = io.MouseClickedPos[2]
-            local finalPos = io.MousePos
+            local topLeft = { posX - 24, posY - 24 }
+            local bottomRight = { posX + 24, posY + 24 }
+            DrawIcon(draw, recast, i, topLeft, bottomRight)
 
-            if InBox(startPos, box1) and InBox(finalPos, box1) then
-                CastSpell(wheel[idx1].Ichi)
-            elseif InBox(startPos, box2) and InBox(finalPos, box2) then
-                CastSpell(wheel[idx2].Ichi)
-            elseif InBox(startPos, box3) and InBox(finalPos, box3) then
-                CastSpell(wheel[idx3].Ichi)
-            elseif InBox(startPos, box4) and InBox(finalPos, box4) then
-                CastSpell(wheel[idx4].Ichi)
-            elseif InBox(startPos, box5) and InBox(finalPos, box5) then
-                CastSpell(wheel[idx5].Ichi)
-            elseif InBox(startPos, box6) and InBox(finalPos, box6) then
-                CastSpell(wheel[idx6].Ichi)
+            if lClick and clickable then
+                local startPos = io.MouseClickedPos[1]
+                local finalPos = io.MousePos
+
+                if InBox(startPos, topLeft, bottomRight) and InBox(finalPos, topLeft, bottomRight) then
+                    CastSpell(wheel[i].Ni)
+                end
+            elseif rClick and clickable then
+                local startPos = io.MouseClickedPos[2]
+                local finalPos = io.MousePos
+
+                if InBox(startPos, topLeft, bottomRight) and InBox(finalPos, topLeft, bottomRight) then
+                    CastSpell(wheel[i].Ichi)
+                end
             end
         end
 
