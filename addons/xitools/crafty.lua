@@ -15,6 +15,16 @@ local textBaseWidth = imgui.CalcTextSize('A')
 local inProgSynth = nil
 
 local crystalMap = {
+    -- nq crystals
+    [4096] = 4096,
+    [4097] = 4097,
+    [4098] = 4098,
+    [4099] = 4099,
+    [4100] = 4100,
+    [4101] = 4101,
+    [4102] = 4102,
+    [4103] = 4103,
+    -- hq crystals
     [4238] = 4096,
     [4239] = 4097,
     [4240] = 4098,
@@ -23,6 +33,7 @@ local crystalMap = {
     [4243] = 4101,
     [4244] = 4102,
     [4245] = 4103,
+    -- some other shit
     [6506] = 4096,
     [6507] = 4097,
     [6508] = 4098,
