@@ -8,147 +8,121 @@ local Status = gFunc.LoadFile('common/status.lua')
 
 local sets = {
     Idle = Equip.NewSet {
-        -- preferred stats: MP, DEF, EVA
         Main = Equip.Staves.Earth,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = "Hedgehog Bomb",        -- MP+30
+        Ammo = "Hedgehog Bomb",
 
-        Head = "Duelist's Chapeau",    -- Refresh, MP+14, DEF+24
-        Neck = "Uggalepih Pendant",    -- MP+20
-        Ear1 = "Drone Earring",        -- AGI+3
-        Ear2 = "Drone Earring",        -- AGI+3
+        Head = "Duelist's Chapeau",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
 
-        Body = "Duelist's Tabard",     -- MP+24, DEF+45
-        Hands = "Warlock's Gloves",    -- MP+12, DEF+16
-        Ring1 = "Zoredonite Ring",     -- MP+20
-        Ring2 = "Sattva Ring",         -- DT-5
+        Body = "Duelist's Tabard",
+        Hands = "Warlock's Gloves",
+        Ring1 = "Zoredonite Ring",
+        Ring2 = "Sattva Ring",
 
-        Back = "Hexerei Cape",         -- MP+8, DT-3, DEF+5
-        Waist = "Ryl.Kgt. Belt",       -- DEF+5, AGI+2
-        Legs = "Crimson Cuisses",      -- Move, MP+25, DEF+43
-        Feet = "Duelist's Boots",      -- MP+15, DEF+15, Eva+5
-    },
-    Cast = Equip.NewSet {
-        -- preferred stats: Haste, MP, EVA
-        Main = Equip.Staves.Wind,
-        Sub = Equip.Special.Displaced,
-        Range = Equip.Special.Displaced,
-        Ammo = "Hedgehog Bomb",        -- MP+30
-
-        Head = "Duelist's Chapeau",    -- Refresh, MP+14
-        Neck = "Uggalepih Pendant",    -- MP+20
-        Ear1 = "Drone Earring",        -- AGI+3
-        Ear2 = "Drone Earring",        -- AGI+3
-
-        Body = "Duelist's Tabard",     -- MP+24
-        Hands = "Warlock's Gloves",    -- MP+12
-        Ring1 = "Zoredonite Ring",     -- MP+20
-        Ring2 = "Sattva Ring",         -- DT-5
-
-        Back = "Hexerei Cape",         -- MP+8, DT-3, DEF+5
-        Waist = "Swift Belt",          -- Haste+4
-        Legs = "Crimson Cuisses",      -- MP+25
-        Feet = "Duelist's Boots",      -- MP+15, Eva+5
+        Back = "Hexerei Cape",
+        Waist = "Ryl.Kgt. Belt",
+        Legs = "Crimson Cuisses",
+        Feet = "Duelist's Boots",
     },
     Rest = Equip.NewSet {
-        -- preferred stats: hMP
-        Main = Equip.Staves.Dark,      -- hMP+10
-        Body = "Errant Hpl.",          -- hMP+5
-        Waist = "Duelist's Belt",      -- hMP+4
+        Main = Equip.Staves.Dark,
+        Body = "Errant Hpl.",
+        Waist = "Duelist's Belt",
     },
     Solo = Equip.NewSet {
         Main = "Martial Anelace",
         Sub = "Joyeuse",
     },
     Auto = Equip.NewSet {
-        Head = "Ogre Mask",            -- Att+10
-        Neck = "Spike Necklace",       -- STR+3, DEX+3
-        Ear1 = "Beetle Earring +1",    -- Att+3
-        Ear2 = "Beetle Earring +1",    -- Att+3
+        Head = "Ogre Mask",
+        Neck = "Spike Necklace",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
 
-        Body = "Assault Jerkin",       -- Att+16
-        Hands = "Warlock's Gloves",    -- DEX+4
-        Ring1 = "Woodsman Ring",       -- Acc+5
-        Ring2 = "Balance Ring",        -- DEX+2
+        Body = "Assault Jerkin",
+        Hands = "Warlock's Gloves",
+        Ring1 = "Woodsman Ring",
+        Ring2 = "Balance Ring",
 
-        Back = "Psilos Mantle",        -- Att+12, Acc+1
-        Waist = "Swift Belt",          -- Haste+4, Acc+3
-        Legs = "Duelist's Tights",     -- DEX+5
-        Feet = "Ogre Ledelsens",       -- Att+10
+        Back = "Psilos Mantle",
+        Waist = "Swift Belt",
+        Legs = "Duelist's Tights",
+        Feet = "Ogre Ledelsens",
     },
     Weaponskill = Equip.NewSet {
-        -- preferred stats: Att, Acc, STR
-        Head = "Ogre Mask",            -- Att+10
-        Neck = "Tiger Stole",          -- Att+5
-        Ear1 = "Beetle Earring +1",    -- Att+3
-        Ear2 = "Beetle Earring +1",    -- Att+3
+        Head = "Ogre Mask",
+        Neck = "Tiger Stole",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
 
-        Body = "Assault Jerkin",       -- Att+16
-        Hands = "Ogre Gloves",         -- STR+6
-        Ring1 = "Woodsman Ring",       -- Acc+5
-        Ring2 = "Courage Ring",        -- STR+2
+        Body = "Assault Jerkin",
+        Hands = "Ogre Gloves",
+        Ring1 = "Woodsman Ring",
+        Ring2 = "Courage Ring",
 
-        Back = "Psilos Mantle",        -- Att+12, Acc+1
-        Waist = "Life Belt",           -- Acc+10
-        Legs = "Duelist's Tights",     -- DEX+5
-        Feet = "Ogre Ledelsens",       -- Att+10
+        Back = "Psilos Mantle",
+        Waist = "Life Belt",
+        Legs = "Duelist's Tights",
+        Feet = "Ogre Ledelsens",
     },
     MaxMp = Equip.NewSet {
-        -- preferred stats: MP
-        Main = "Fencing Degen",        -- MP+10
+        Main = "Fencing Degen",
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = "Hedgehog Bomb",        -- MP+30
+        Ammo = "Hedgehog Bomb",
 
-        Head = "Gold Hairpin",         -- MP+30
-        Neck = "Uggalepih Pendant",    -- MP+20
-        Ear1 = "Morion Earring",       -- MP+4
+        Head = "Gold Hairpin",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Morion Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Duelist's Tabard",     -- MP+24
-        Hands = "Savage Gauntlets",    -- MP+16
-        Ring1 = "Zoredonite Ring",     -- MP+20
+        Body = "Duelist's Tabard",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Zoredonite Ring",
         Ring2 = "Chariot Band",
 
-        Back = "Rainbow Cape",         -- MP+9
-        Waist = "Friar's Rope",        -- MP+5
-        Legs = "Savage Loincloth",     -- MP+32
-        Feet = "Duelist's Boots",      -- MP+15
+        Back = "Rainbow Cape",
+        Waist = "Friar's Rope",
+        Legs = "Savage Loincloth",
+        Feet = "Duelist's Boots",
     },
     Pdt = Equip.NewSet {
-        Main = Equip.Staves.Earth,   -- PDT-20
+        Main = Equip.Staves.Earth,
 
-        -- Head = "Darksteel Cap +1",     -- PDT-2
+        -- Head = "Darksteel Cap +1",
         -- Neck = "",
         -- Ear1 = "",
         -- Ear2 = "",
 
-        -- Body = "Dst. Harness +1",      -- PDT-4
-        -- Hands = "Dst. Mittens +1",     -- PDT-2
-        Ring1 = "Jelly Ring",          -- PDT-5
-        Ring2 = "Sattva Ring",         -- DT-5
+        -- Body = "Dst. Harness +1",
+        -- Hands = "Dst. Mittens +1",
+        Ring1 = "Jelly Ring",
+        Ring2 = "Sattva Ring",
 
-        Back = "Hexerei Cape",         -- DT-3
+        Back = "Hexerei Cape",
         -- Waist = "",
-        -- Legs = "Dst. Subligar +1",     -- PDT-3
-        -- Feet = "Dst. Leggings +1",     -- PDT-2
+        -- Legs = "Dst. Subligar +1",
+        -- Feet = "Dst. Leggings +1",
     },
     Mdt = Equip.NewSet {
-        -- Head = "Coral Visor +1",       -- MDT-2
-        -- Neck = "Jeweled Collar",       -- Fire, Ice, Wind, Earth, Lightning, Water +10
-        -- Ear1 = "Merman's Earring",     -- MDT-2
-        -- Ear2 = "Merman's Earring",     -- MDT-2
+        -- Head = "Coral Visor +1",
+        -- Neck = "Jeweled Collar",
+        -- Ear1 = "Merman's Earring",
+        -- Ear2 = "Merman's Earring",
 
-        -- Body = "Cor. Scale Mail +1",   -- MDT-4
-        -- Hands = "Coral Fng.Gnt. +1",   -- MDT-2
-        -- Ring1 = "Merman's Ring",       -- MDT-4
-        Ring2 = "Sattva Ring",         -- DT-5
+        -- Body = "Cor. Scale Mail +1",
+        -- Hands = "Coral Fng.Gnt. +1",
+        -- Ring1 = "Merman's Ring",
+        Ring2 = "Sattva Ring",
 
-        Back = "Hexerei Cape",         -- DT-3
+        Back = "Hexerei Cape",
         -- Waist = "Duelist's Belt",
-        Legs = "Crimson Cuisses",      -- Fire, Thunder, Water, Dark +20
-        -- Feet = "Crimson Greaves",      -- Ice, Wind, Earth, Light +20
+        Legs = "Crimson Cuisses",
+        -- Feet = "Crimson Greaves",
     },
     Bdt = Equip.NewSet {
         -- Head = "",
@@ -159,203 +133,192 @@ local sets = {
         -- Body = "",
         -- Hands = "",
         -- Ring1 = "",
-        Ring2 = "Sattva Ring",         -- DT-5
+        Ring2 = "Sattva Ring",
 
-        Back = "Hexerei Cape",         -- DT-3
+        Back = "Hexerei Cape",
         -- Waist = ""
         -- Legs = "",
         -- Feet = "",
     },
     FastCast = Equip.NewSet {
-        Head = "Warlock's Chapeau",    -- FC+10
-        Body = "Duelist's Tabard",     -- FC+10
-    },
-    EnfeebInt = Equip.NewSet {
-        -- preferred stats: Enfeeb, INT, Enm-
-        Main = "Fencing Degen",        -- Enfeeb+3, INT+3
-        Sub = "Yew Wand +1",           -- INT+4
-        Range = Equip.Special.Displaced,
-        Ammo = "Morion Tathlum",       -- INT+1
-
-        Head = "Duelist's Chapeau",    -- Enfeeb+15
-        Neck = "Uggalepih Pendant",
-        Ear1 = "Morion Earring",       -- INT+1
-        Ear2 = "Abyssal Earring",      -- INT+2
-
-        Body = "Warlock's Tabard",     -- Enfeeb+15
-        Hands = "Sly Gauntlets",       -- INT+3
-        Ring1 = "Eremite's Ring",      -- INT+2
-        Ring2 = "Eremite's Ring",      -- INT+2
-
-        Back = "Rainbow Cape",         -- INT+3
-        Waist = "Duelist's Belt",      -- INT+4
-        Legs = "Errant Slops",         -- INT+7, Enm-3
-        Feet = "Wise Pigaches",        -- INT+4, Enm-1
-    },
-    EnfeebMnd = Equip.NewSet {
-        -- preferred stats: Enfeeb, MND, Enm-
-        Main = "Fencing Degen",        -- Enfeeb+3, MND+3
-        Sub = "Yew Wand +1",           -- MND+4
-        Range = Equip.Special.Displaced,
-        Ammo = "Hedgehog Bomb",
-
-        Head = "Duelist's Chapeau",    -- Enfeeb+15
-        Neck = "Uggalepih Pendant",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
-
-        Body = "Warlock's Tabard",     -- Enfeeb+15
-        Hands = "Savage Gauntlets",    -- MND+2
-        Ring1 = "Saintly Ring",        -- MND+2
-        Ring2 = "Saintly Ring",        -- MND+2
-
-        Back = "Rainbow Cape",         -- MND+3
-        Waist = "Duelist's Belt",      -- MND+4
-        Legs = "Errant Slops",         -- MND+7, Enm-3
-        Feet = "Duelist's Boots",      -- MND+4
+        Head = "Warlock's Chapeau",
+        Body = "Duelist's Tabard",
     },
     Shadows = Equip.NewSet {
-        -- preferred stats: SID, Parry, Eva
         Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",
 
-        Head = "Duelist's Chapeau",    -- Refresh
+        Head = "Duelist's Chapeau",
         Neck = "Uggalepih Pendant",
-        Ear1 = "Drone Earring",        -- AGI+3
-        Ear2 = "Drone Earring",        -- AGI+3
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
 
-        Body = "Warlock's Tabard",     -- SID+10
-        Hands = "Warlock's Gloves",    -- Parry+10
-        Ring1 = "Reflex Ring",         -- AGI+2
-        Ring2 = "Peridot Ring",        -- AGI+2
+        Body = "Warlock's Tabard",
+        Hands = "Warlock's Gloves",
+        Ring1 = "Reflex Ring",
+        Ring2 = "Peridot Ring",
 
-        Back = "Hexerei Cape",         -- DT-3
-        Waist = "Swift Belt",          -- Haste+4
-        Legs = "Cmb.Cst. Slacks",      -- Eva+5
-        Feet = "Duelist's Boots",      -- Eva+5
-    },
-    NinjutsuAcc = Equip.NewSet {
-        -- preferred stats: Ninjutsu, mAcc, INT
-    },
-    NinjutsuPot = Equip.NewSet {
-        -- preferred stats: Ninjutsu, INT, mAcc
+        Back = "Hexerei Cape",
+        Waist = "Swift Belt",
+        Legs = "Cmb.Cst. Slacks",
+        Feet = "Duelist's Boots",
     },
     Stoneskin = Equip.NewSet {
-        -- preferred stats: MND, Enhancing
-        Main = "Yew Wand +1",          -- MND+4
-        Sub = "Yew Wand +1",           -- MND+4
+        Main = "Yew Wand +1",
+        Sub = "Yew Wand +1",
         Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",
 
         Head = "Duelist's Chapeau",
-        Neck = "Justice Badge",        -- MND+3
+        Neck = "Justice Badge",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Errant Hpl.",          -- MND+10
-        Hands = "Savage Gauntlets",    -- MND+2
-        Ring1 = "Saintly Ring",        -- MND+2
-        Ring2 = "Saintly Ring",        -- MND+2
+        Body = "Errant Hpl.",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Saintly Ring",
+        Ring2 = "Saintly Ring",
 
-        Back = "Rainbow Cape",         -- MND+3
-        Waist = "Duelist's Belt",      -- MND+4
-        Legs = "Errant Slops",         -- MND+7
-        Feet = "Duelist's Boots",      -- MND+4
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Errant Slops",
+        Feet = "Duelist's Boots",
     },
     Enhancing = Equip.NewSet {
-        -- preferred stats: Enhancing
-        Neck = "Enhancing Torque",     -- Enhancing+7
-        Legs = "Warlock's Tights",     -- Enhancing+15
+        Neck = "Enhancing Torque",
+        Legs = "Warlock's Tights",
     },
     Cure = Equip.NewSet {
-        -- preferred stats: Cure%, Enm+, MND, HP
-        Main = "Yew Wand +1",          -- MND+4
-        Sub = "Yew Wand +1",           -- MND+4
+        Main = "Yew Wand +1",
+        Sub = "Yew Wand +1",
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
         Head = "Duelist's Chapeau",
-        Neck = "Harmonia's Torque",    -- Enm+3
+        Neck = "Harmonia's Torque",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Savage Separates",     -- HP+32
-        Hands = "Savage Gauntlets",    -- MND+2, VIT+4
-        Ring1 = "Sattva Ring",         -- Enm+5, VIT+5
-        Ring2 = "Bomb Queen Ring",     -- HP+75
+        Body = "Savage Separates",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Sattva Ring",
+        Ring2 = "Bomb Queen Ring",
 
-        Back = "White Cape",           -- MND+2
-        Waist = "Duelist's Belt",      -- MND+4
-        Legs = "Crimson Cuisses",      -- HP+25
-        Feet = "Duelist's Boots",      -- MND+4
+        Back = "White Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Crimson Cuisses",
+        Feet = "Duelist's Boots",
     },
     Heal = Equip.NewSet {
-        -- preferred stats: Cure%, MND, Enm-, VIT, Healing
-        Main = "Yew Wand +1",          -- MND+4
-        Sub = "Yew Wand +1",           -- MND+4
+        Main = "Yew Wand +1",
+        Sub = "Yew Wand +1",
         Range = Equip.Special.Displaced,
         Ammo = "Hedgehog Bomb",
 
         Head = "Duelist's Chapeau",
-        Neck = "Justice Badge",        -- MND+3
+        Neck = "Justice Badge",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Errant Hpl.",          -- MND+10, Enm-3
-        Hands = "Savage Gauntlets",    -- MND+2, VIT+4
-        Ring1 = "Saintly Ring",        -- MND+2
-        Ring2 = "Saintly Ring",        -- MND+2
+        Body = "Errant Hpl.",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Saintly Ring",
+        Ring2 = "Saintly Ring",
 
-        Back = "Rainbow Cape",         -- MND+3
-        Waist = "Duelist's Belt",      -- MND+4
-        Legs = "Errant Slops",         -- MND+7, Enm-3
-        Feet = "Duelist's Boots",      -- MND+4
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Errant Slops",
+        Feet = "Duelist's Boots",
+    },
+    EnfeebInt = Equip.NewSet {
+        Main = "Fencing Degen",
+        Sub = "Yew Wand +1",
+        Range = Equip.Special.Displaced,
+        Ammo = "Morion Tathlum",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Enfeebling Torque",
+        Ear1 = "Morion Earring",
+        Ear2 = "Abyssal Earring",
+
+        Body = "Warlock's Tabard",
+        Hands = "Sly Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
+
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Errant Slops",
+        Feet = "Wise Pigaches",
+    },
+    EnfeebMnd = Equip.NewSet {
+        Main = "Fencing Degen",
+        Sub = "Yew Wand +1",
+        Range = Equip.Special.Displaced,
+        Ammo = "Hedgehog Bomb",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Enfeebling Torque",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Warlock's Tabard",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Saintly Ring",
+        Ring2 = "Saintly Ring",
+
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Errant Slops",
+        Feet = "Duelist's Boots",
+    },
+    NinjutsuAcc = Equip.NewSet {
+    },
+    NinjutsuPot = Equip.NewSet {
     },
     Nuke = Equip.NewSet {
-        -- preferred stats: MAB, INT, Ele, Enm-
-        Main = Equip.Staves.Ice,       -- Ele+10, INT+4
+        Main = Equip.Staves.Ice,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = "Morion Tathlum",       -- INT+1
+        Ammo = "Morion Tathlum",
 
-        Head = "Warlock's Chapeau",    -- Ele+10, INT+3
-        Neck = "Uggalepih Pendant",    -- MAB+8
-        Ear1 = "Moldavite Earring",    -- MAB+5
-        Ear2 = "Abyssal Earring",      -- INT+2
+        Head = "Warlock's Chapeau",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Moldavite Earring",
+        Ear2 = "Abyssal Earring",
 
-        Body = "Errant Hpl.",          -- INT+10, Enm-3
-        Hands = "Sly Gauntlets",       -- INT+3
-        Ring1 = "Eremite's Ring",      -- INT+2
-        Ring2 = "Eremite's Ring",      -- INT+2
+        Body = "Errant Hpl.",
+        Hands = "Sly Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
 
-        Back = "Rainbow Cape",         -- INT+3
-        Waist = "Duelist's Belt",      -- INT+4
-        Legs = "Duelist's Tights",     -- Ele+10
-        Feet = "Duelist's Boots",      -- MAB+4
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Duelist's Tights",
+        Feet = "Duelist's Boots",
     },
     Drain = Equip.NewSet {
-        -- preferred stats: Dark, MP, mAcc, INT, Enm-
-        Main = Equip.Staves.Dark,      -- Dark affinity
+        Main = Equip.Staves.Dark,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = "Hedgehog Bomb",        -- MP+30
+        Ammo = "Hedgehog Bomb",
 
-        Head = "Warlock's Chapeau",    -- INT+3
-        Neck = "Uggalepih Pendant",    -- MP+20
-        Ear1 = "Morion Earring",       -- INT+1
-        Ear2 = "Abyssal Earring",      -- Dark+5, INT+2
+        Head = "Warlock's Chapeau",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Morion Earring",
+        Ear2 = "Abyssal Earring",
 
-        Body = "Errant Hpl.",          -- INT+10, Enm-3
-        Hands = "Sly Gauntlets",       -- INT+3
-        Ring1 = "Eremite's Ring",      -- INT+2
-        Ring2 = "Eremite's Ring",      -- INT+2
+        Body = "Errant Hpl.",
+        Hands = "Sly Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
 
-        Back = "Rainbow Cape",         -- INT+3, MP+9
-        Waist = "Swift Belt",          -- Haste+4
-        Legs = "Errant Slops",         -- INT+7, Enm-3
-        Feet = "Wise Pigaches",        -- INT+4, Enm-1
+        Back = "Rainbow Cape",
+        Waist = "Swift Belt",
+        Legs = "Errant Slops",
+        Feet = "Wise Pigaches",
     },
 }
 
@@ -450,7 +413,7 @@ local function handleAbility()
     local ability = gData.GetAction()
 
     if ability.Name == 'Convert' then
-        gFunc.LockSet(sets.MaxMp, 10)
+        Equip.LockSet(sets.MaxMp, 10)
     end
 end
 
@@ -508,7 +471,9 @@ local function handleMidcast()
         Equip.Staff(spell)
         Equip.Obi(spell)
     else
-        Equip.Set(sets.Cast)
+        Equip.Set(sets.Idle)
+        Equip.Main(Equip.Staves.Wind)
+        Equip.Sub(Equip.Special.Displaced)
         if settings.Pdt then
             Equip.Set(sets.Pdt)
         elseif settings.Mdt then

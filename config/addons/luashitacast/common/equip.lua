@@ -126,6 +126,14 @@ local function Set(set, force)
     end
 end
 
+local function LockSet(set, timer)
+    gFunc.LockSet(set.Base, timer)
+
+    if set.AtNight and Status.IsNight() then
+        gFunc.LockSet(set.AtNight, timer)
+    end
+end
+
 local Main  = Item:bindn(Slots.Main)
 local Sub   = Item:bindn(Slots.Sub)
 local Range = Item:bindn(Slots.Range)
@@ -200,4 +208,5 @@ return {
     Enable  = Enable,
     Item    = Item,
     Set     = Set,
+    LockSet = LockSet,
 }

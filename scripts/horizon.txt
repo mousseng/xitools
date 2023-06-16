@@ -57,6 +57,7 @@
 
 /alias add /solo /lac fwd solo
 /alias add /tank /lac fwd tank
+/alias add /ammo /lac fwd ammo
 /alias add /glam /lockstyleset
 
 /wait 3

@@ -87,10 +87,12 @@ local spells = {
     Barwatera = 71,
     SlowII = 79,
     ParalyzeII = 80,
+    Repose = 98,
     Enfire = 100,
     Enwater = 105,
     Phalanx = 106,
     PhalanxII = 107,
+    Flash = 112,
     Invisible = 136,
     Sneak = 137,
     Fire = 144,
@@ -111,6 +113,7 @@ local spells = {
     Blind = 254,
     Bind = 258,
     BlindII = 276,
+    Enlight = 310,
     MonomiIchi = 317,
     KatonIchi = 320,
     SuitonSan = 337,
@@ -154,6 +157,22 @@ end
 local function IsHeal(spell)
     return spell.Id >= spells.CureI
         and spell.Id <= spells.CuragaV
+end
+
+---@param spell table
+---@return boolean
+local function IsAccuracyDivine(spell)
+    return (spell.Id >= spells.Holy and spell.Id <= spells.HolyII)
+        or (spell.Id >= spells.Banish and spell.Id <= spells.BanishV)
+        or (spell.Id >= spells.Banishga and spell.Id <= spells.BanishgaV)
+end
+
+---@param spell table
+---@return boolean
+local function IsPotencyDivine(spell)
+    return spell.Id == spells.Flash
+        or spell.Id == spells.Enlight
+        or spell.Id == spells.Repose
 end
 
 ---@param spell table
@@ -233,6 +252,8 @@ return {
     IsShadows = IsShadows,
     IsPotencyNinjutsu = IsPotencyNinjutsu,
     IsAccuracyNinjutsu = IsAccuracyNinjutsu,
+    IsPotencyDivine = IsPotencyDivine,
+    IsAccuracyDivine = IsAccuracyDivine,
     IsStoneskin = IsStoneskin,
     IsEnhancement = IsEnhancement,
 }

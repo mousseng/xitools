@@ -28,27 +28,6 @@ local sets = {
         Legs = "Savage Loincloth",
         Feet = "Savage Gaiters",
     },
-    Cast = Equip.NewSet {
-        Main = "Fencing Degen",
-        Sub = "Hornetneedle",
-        Range = "displaced",
-        Ammo = "Morion Tathlum",
-
-        Head = "Erd. Headband",
-        Neck = "Wing Pendant",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
-
-        Body = "Brigandine",
-        Hands = "Savage Gauntlets",
-        Ring1 = "San d'Orian Ring",
-        Ring2 = "Chariot Band",
-
-        Back = "High Brth. Mantle",
-        Waist = "Ryl.Kgt. Belt",
-        Legs = "Cmb.Cst. Slacks",
-        Feet = "Savage Gaiters",
-    },
     Rest = Equip.NewSet {
         Main = "Pilgrim's Wand",
     },
@@ -186,7 +165,7 @@ local function handleAbility()
     local ability = gData.GetAction()
 
     if ability.Name == 'Convert' then
-        gFunc.LockSet(sets.MaxMp, 10)
+        Equip.LockSet(sets.MaxMp, 10)
     end
 end
 
@@ -208,7 +187,7 @@ local function handleMidcast()
     elseif Status.IsEnfeebInt(spell) then
         Equip.Set(sets.EnfeebInt)
     else
-        Equip.Set(sets.Cast)
+        Equip.Set(sets.Idle)
     end
 end
 

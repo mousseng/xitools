@@ -24,7 +24,7 @@ local sets = {
 
         Body = "Brigandine", -- Ninja Chainmail
         Hands = "Windurstian Tekko",
-        Ring1 = "San d'Orian Ring",
+        Ring1 = "Sattva Ring",
         Ring2 = "Chariot Band",
 
         Back = "High Brth. Mantle",
@@ -50,7 +50,7 @@ local sets = {
 
         Body = "Brigandine", -- Ninja Chainmail
         Hands = "Windurstian Tekko",
-        Ring1 = "Balance Ring",
+        Ring1 = "Sattva Ring",
         Ring2 = "Woodsman Ring",
 
         Back = "High Brth. Mantle",
@@ -108,7 +108,7 @@ local sets = {
         Body = "Brigandine", -- Ninja Chainmail
         Hands = "Savage Gauntlets",
         Ring1 = "Reflex Ring",
-        Ring2 = "Peridot Ring",
+        Ring2 = "Sattva Ring",
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
@@ -125,7 +125,7 @@ local sets = {
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
-        Head = "Erd. Headband", -- Ninja Hatsuburi
+        Head = "Ninja Hatsuburi",
         Neck = "Ryl.Sqr. Collar",
         Ear1 = "Morion Earring",
         Ear2 = "Moldavite Earring",
@@ -162,6 +162,18 @@ local sets = {
         Feet = "Fed. Kyahan",
     },
 }
+
+local function onLoad()
+    AshitaCore:GetChatManager():QueueCommand(-1, '/addon reload wheel')
+    ashita.tasks.once(1, function()
+        AshitaCore:GetChatManager():QueueCommand( 1, '/wheel level ni')
+        AshitaCore:GetChatManager():QueueCommand( 1, '/wheel lock')
+    end)
+end
+
+local function onUnload()
+    AshitaCore:GetChatManager():QueueCommand(-1, '/addon unload wheel')
+end
 
 local function handleCommand(args)
     if args[1] == 'ammo' then
@@ -208,9 +220,13 @@ local function handleMidcast()
     elseif Status.IsDrain(spell) then
         Equip.Set(sets.Shadows)
         Equip.Staff(spell)
-    elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) or Status.IsAccuracyNinjutsu(spell) then
+    elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) then
         Equip.Set(sets.Ninjutsu)
         Equip.Staff(spell)
+    elseif Status.IsAccuracyNinjutsu(spell) then
+        Equip.Set(sets.Ninjutsu)
+        Equip.Staff(spell)
+        Equip.Ring2("Sattva Ring")
     end
 end
 
@@ -226,8 +242,8 @@ end
 
 return {
     Sets = sets,
-    OnLoad = noop,
-    OnUnload = noop,
+    OnLoad = onLoad,
+    OnUnload = onUnload,
     HandleCommand = handleCommand,
     HandleDefault = handleDefault,
     HandleAbility = noop,

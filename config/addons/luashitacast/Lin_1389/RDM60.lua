@@ -28,27 +28,6 @@ local sets = {
         Legs = "Savage Loincloth",
         Feet = "Warlock's Boots",
     },
-    Cast = Equip.NewSet {
-        Main = Equip.Staves.Wind,
-        Sub = Equip.Special.Displaced,
-        Range = Equip.Special.Displaced,
-        Ammo = "Morion Tathlum",
-
-        Head = "Erd. Headband",
-        Neck = "Wing Pendant",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
-
-        Body = "Warlock's Tabard",
-        Hands = "Savage Gauntlets",
-        Ring1 = "Zoredonite Ring",
-        Ring2 = "Sattva Ring",
-
-        Back = "High Brth. Mantle",
-        Waist = "Ryl.Kgt. Belt",
-        Legs = "Cmb.Cst. Slacks",
-        Feet = "Warlock's Boots",
-    },
     Rest = Equip.NewSet {
         Main = Equip.Staves.Dark,
     },
@@ -184,7 +163,7 @@ local function handleAbility()
     local ability = gData.GetAction()
 
     if ability.Name == 'Convert' then
-        gFunc.LockSet(sets.MaxMp, 10)
+        Equip.LockSet(sets.MaxMp, 10)
     end
 end
 
@@ -217,6 +196,8 @@ local function handleMidcast()
     or Status.IsAccuracyNinjutsu(spell) then
         Equip.Set(sets.MaxINT)
         Equip.Staff(spell)
+    else
+        Equip.Set(sets.Idle)
     end
 end
 
