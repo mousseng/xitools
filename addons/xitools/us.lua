@@ -24,6 +24,34 @@ local Alliances = { }
 -- bit 6: ?
 -- bit 7: level sync target
 
+---@class PartyMember
+---@field entity           table
+---@field name             string
+---@field showCastbar      boolean
+---@field serverId         integer
+---@field isInZone         boolean
+---@field isActive         boolean
+---@field isPartyLeader    boolean
+---@field isAllianceLeader boolean
+---@field isSyncTarget     boolean
+---@field isTarget         boolean
+---@field isSubTarget      boolean
+---@field isPartyTarget    boolean
+---@field job              string
+---@field sub              string?
+---@field jobLevel         integer
+---@field subLevel         integer
+---@field zoneId           integer
+---@field hpp              integer
+---@field mpp              integer
+---@field hp               integer
+---@field mp               integer
+---@field tp               integer
+---@field windowName       string
+---@field windowSize       integer[]
+---@field windowPos        integer[]
+---@field statusIds        integer[]
+
 ---@param icon userdata
 local function CreateTexture(icon)
     -- Courtesy of Thorny's partybuffs
@@ -116,6 +144,7 @@ local function GetPlayer(options, target, party, stal)
     }
 end
 
+---@return PartyMember
 local function GetMember(i, window, target, party, stal)
     local serverId = party:GetMemberServerId(i)
     local buffs = GetStatusEffects(party, serverId)

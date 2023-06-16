@@ -160,7 +160,7 @@ local jobs = {
 }
 
 ---@param id integer
----@return string?
+---@return 'WAR'|'MNK'|'WHM'|'BLM'|'RDM'|'THF'|'PLD'|'DRK'|'BST'|'BRD'|'RNG'|'SAM'|'NIN'|'DRG'|'SMN'|'BLU'|'COR'|'PUP'|'DNC'|'SCH'|'GEO'|'RUN'|nil
 function ffxi.GetJobAbbr(id)
     return jobs[id]
 end
