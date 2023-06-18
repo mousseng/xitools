@@ -6,46 +6,489 @@ local packets = require('utils.packets')
 
 local Scale = 1.0
 
-local Threnodies = {
-    [454] = 'fire',
-    [455] = 'ice',
-    [456] = 'wind',
-    [457] = 'earth',
-    [458] = 'lightning',
-    [459] = 'water',
-    [460] = 'light',
-    [461] = 'dark',
+local StatusType = {
+    -- standard fare
+    Dia = 'dia',
+    Bio = 'bio',
+    Paralyze = 'para',
+    Slow = 'slow',
+    Gravity = 'grav',
+    Blind = 'blind',
+    Flash = 'flash',
+    -- utility
+    Silence = 'silence',
+    Sleep = 'sleep',
+    Bind = 'bind',
+    Stun = 'stun',
+    -- misc
+    Virus = 'virus',
+    Curse = 'curse',
+    -- dots
+    Poison = 'poison',
+    Shock = 'shock',
+    Rasp = 'rasp',
+    Choke = 'choke',
+    Frost = 'frost',
+    Burn = 'burn',
+    Drown = 'drown',
+    -- bard stuff
+    Requiem = 'requiem',
+    Elegy = 'elegy',
+    Threnody = 'threnody',
+    ThrenodyEle = 'threnodyEle',
 }
 
-local Statuses = {
-    dbTier1 = T{ 23, 33, 230, },
-    dbTier2 = T{ 24, 231, },
-    dbTier3 = T{ 25, 232, },
-    dia = T{ 23, 24, 25, 33, },
-    bio = T{ 230, 231, 232, },
-    paralyze = T{ 58, 80, },
-    slow = T{ 56, 79, },
-    gravity = T{ 216, },
-    kurayami = T{ 347, 348, 349, },
-    jubaku = T{ 341, 342, 343 },
-    hojo = T{ 344, 345, 346, },
-    blind = T{ 254, 276, 361, },
-    flash = T{ 112, },
-    silence = T{ 59, 359, },
-    sleep = T{ 253, 259, 273, 274, },
-    bind = T{ 258, 362, },
-    stun = T{ 252, },
-    poison = T{ 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 350, 351, 352, },
-    threnody = T{ 454, 455, 456, 457, 458, 459, 460, 461 },
-    lullaby = T{ 376, 463, },
-    requiem = T{ 368, 369, 370, 371, 372, 373, },
-    elegy = T{ 421, 422 },
-    drown = 240,
-    shock = 239,
-    rasp = 238,
-    choke = 237,
-    frost = 236,
-    burn = 235,
+local ActionMap = {
+    [  4] = {
+        [ 23] = {
+            name = 'Dia',
+            dur = 60,
+            type = StatusType.Dia,
+            over = StatusType.Bio,
+            msg = T{ 2, 264, 252 },
+        },
+        [ 24] = {
+            name = 'Dia II',
+            dur = 120,
+            type = StatusType.Dia,
+            over = StatusType.Bio,
+            msg = T{ 2, 264, 252 },
+        },
+        [ 25] = {
+            name = 'Dia III',
+            dur = 150,
+            type = StatusType.Dia,
+            over = StatusType.Bio,
+            msg = T{ 2, 264, 252 },
+        },
+        [ 33] = {
+            name = 'Diaga',
+            dur = 60,
+            type = StatusType.Dia,
+            over = StatusType.Bio,
+            msg = T{ 2, 264, 252 },
+        },
+        [ 34] = {
+            name = 'Diaga II',
+            dur = 120,
+            type = StatusType.Dia,
+            over = StatusType.Bio,
+            msg = T{ 2, 264, 252 },
+        },
+        [230] = {
+            name = 'Bio',
+            dur = 60,
+            type = StatusType.Bio,
+            over = StatusType.Dia,
+            msg = T{ 2, 264, 252 },
+        },
+        [231] = {
+            name = 'Bio II',
+            dur = 120,
+            type = StatusType.Bio,
+            over = StatusType.Dia,
+            msg = T{ 2, 264, 252 },
+        },
+        [232] = {
+            name = 'Bio III',
+            dur = 150,
+            type = StatusType.Bio,
+            over = StatusType.Dia,
+            msg = T{ 2, 264, 252 },
+        },
+        [ 58] = {
+            name = 'Paralyze',
+            dur = 120,
+            type = StatusType.Paralyze,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [ 80] = {
+            name = 'Paralyze II',
+            dur = 120,
+            type = StatusType.Paralyze,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [356] = {
+            name = 'Paralyzega',
+            dur = 120,
+            type = StatusType.Paralyze,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [341] = {
+            name = 'Jubaku: Ichi',
+            dur = 180,
+            type = StatusType.Paralyze,
+            msg = T{ 237, 267, 278 },
+        },
+        [342] = {
+            name = 'Jubaku: Ni',
+            dur = 300,
+            type = StatusType.Paralyze,
+            msg = T{ 237, 267, 278 },
+        },
+        [343] = {
+            name = 'Jubaku: San',
+            dur = 420,
+            type = StatusType.Paralyze,
+            msg = T{ 237, 267, 278 },
+        },
+        [ 56] = {
+            name = 'Slow',
+            dur = 180,
+            type = StatusType.Slow,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [ 79] = {
+            name = 'Slow II',
+            dur = 180,
+            type = StatusType.Slow,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [357] = {
+            name = 'Slowga',
+            dur = 180,
+            type = StatusType.Slow,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [344] = {
+            name = 'Hojo: Ichi',
+            dur = 180,
+            type = StatusType.Slow,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [345] = {
+            name = 'Hojo: Ni',
+            dur = 300,
+            type = StatusType.Slow,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [346] = {
+            name = 'Hojo: San',
+            dur = 420,
+            type = StatusType.Slow,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [254] = {
+            name = 'Blind',
+            dur = 180,
+            type = StatusType.Blind,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [276] = {
+            name = 'Blind II',
+            dur = 180,
+            type = StatusType.Blind,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [361] = {
+            name = 'Blindga',
+            dur = 180,
+            type = StatusType.Blind,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [347] = {
+            name = 'Kurayami: Ichi',
+            dur = 180,
+            type = StatusType.Blind,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [348] = {
+            name = 'Kurayami: Ni',
+            dur = 300,
+            type = StatusType.Blind,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [349] = {
+            name = 'Kurayami: San',
+            dur = 420,
+            type = StatusType.Blind,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [216] = {
+            name = 'Gravity',
+            dur = 120,
+            type = StatusType.Gravity,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [217] = {
+            name = 'Gravity II',
+            dur = 180,
+            type = StatusType.Gravity,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [112] = {
+            name = 'Flash',
+            dur = 12,
+            type = StatusType.Flash,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [ 59] = {
+            name = 'Silence',
+            dur = 120,
+            type = StatusType.Silence,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [359] = {
+            name = 'Silencega',
+            dur = 120,
+            type = StatusType.Silence,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [253] = {
+            name = 'Sleep',
+            dur = 60,
+            type = StatusType.Sleep,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [259] = {
+            name = 'Sleep II',
+            dur = 90,
+            type = StatusType.Sleep,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [273] = {
+            name = 'Sleepga',
+            dur = 60,
+            type = StatusType.Sleep,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [274] = {
+            name = 'Sleepga II',
+            dur = 90,
+            type = StatusType.Sleep,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [463] = {
+            name = 'Foe Lullaby',
+            dur = 60,
+            type = StatusType.Sleep,
+            msg = T{ 237, 267, 278 },
+        },
+        [376] = {
+            name = 'Horde Lullaby',
+            dur = 60,
+            type = StatusType.Sleep,
+            msg = T{ 237, 267, 278 },
+        },
+        [258] = {
+            name = 'Bind',
+            dur = 60,
+            type = StatusType.Bind,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [362] = {
+            name = 'Bindga',
+            dur = 60,
+            type = StatusType.Bind,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [252] = {
+            name = 'Stun',
+            dur = 5,
+            type = StatusType.Stun,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [220] = {
+            name = 'Poison',
+            dur = 30,
+            type = StatusType.Poison,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [221] = {
+            name = 'Poison II',
+            dur = 120,
+            type = StatusType.Poison,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [225] = {
+            name = 'Poisonga',
+            dur = 60,
+            type = StatusType.Poison,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [226] = {
+            name = 'Poisonga II',
+            dur = 120,
+            type = StatusType.Poison,
+            msg = T{ 236, 277, 268, 271 },
+        },
+        [350] = {
+            name = 'Dokumori: Ichi',
+            dur = 60,
+            type = StatusType.Poison,
+            msg = T{ 237, 267, 278 },
+        },
+        [351] = {
+            name = 'Dokumori: Ni',
+            dur = 120,
+            type = StatusType.Poison,
+            msg = T{ 237, 267, 278 },
+        },
+        [352] = {
+            name = 'Dokumori: San',
+            dur = 360,
+            type = StatusType.Poison,
+            msg = T{ 237, 267, 278 },
+        },
+        [239] = {
+            name = 'Shock',
+            dur = 120,
+            type = StatusType.Shock,
+            over = StatusType.Drown,
+            msg = T{ 237, 267, 278 },
+        },
+        [238] = {
+            name = 'Rasp',
+            dur = 120,
+            type = StatusType.Rasp,
+            over = StatusType.Shock,
+            msg = T{ 237, 267, 278 },
+        },
+        [237] = {
+            name = 'Choke',
+            dur = 120,
+            type = StatusType.Choke,
+            over = StatusType.Rasp,
+            msg = T{ 237, 267, 278 },
+        },
+        [236] = {
+            name = 'Frost',
+            dur = 120,
+            type = StatusType.Frost,
+            over = StatusType.Choke,
+            msg = T{ 237, 267, 278 },
+        },
+        [235] = {
+            name = 'Burn',
+            dur = 120,
+            type = StatusType.Burn,
+            over = StatusType.Frost,
+            msg = T{ 237, 267, 278 },
+        },
+        [240] = {
+            name = 'Drown',
+            dur = 120,
+            type = StatusType.Drown,
+            over = StatusType.Burn,
+            msg = T{ 237, 267, 278 },
+        },
+        [421] = {
+            name = 'Battlefield Elegy',
+            dur = 150,
+            type = StatusType.Elegy,
+            msg = T{ 237, 267, 278 },
+        },
+        [422] = {
+            name = 'Carnage Elegy',
+            dur = 250,
+            type = StatusType.Elegy,
+            msg = T{ 237, 267, 278 },
+        },
+        [423] = {
+            name = 'Massacre Elegy',
+            dur = 350, -- ???
+            type = StatusType.Elegy,
+            msg = T{ 237, 267, 278 },
+        },
+        [368] = {
+            name = 'Foe Requiem',
+            dur = 100,
+            type = StatusType.Requiem,
+            msg = T{ 237, 267, 278 },
+        },
+        [369] = {
+            name = 'Foe Requiem II',
+            dur = 150,
+            type = StatusType.Requiem,
+            msg = T{ 237, 267, 278 },
+        },
+        [370] = {
+            name = 'Foe Requiem III',
+            dur = 200,
+            type = StatusType.Requiem,
+            msg = T{ 237, 267, 278 },
+        },
+        [371] = {
+            name = 'Foe Requiem IV',
+            dur = 250,
+            type = StatusType.Requiem,
+            msg = T{ 237, 267, 278 },
+        },
+        [372] = {
+            name = 'Foe Requiem V',
+            dur = 300,
+            type = StatusType.Requiem,
+            msg = T{ 237, 267, 278 },
+        },
+        [373] = {
+            name = 'Foe Requiem VI',
+            dur = 350,
+            type = StatusType.Requiem,
+            msg = T{ 237, 267, 278 },
+        },
+        [374] = {
+            name = 'Foe Requiem VII',
+            dur = 400,
+            type = StatusType.Requiem,
+            msg = T{ 237, 267, 278 },
+        },
+        [454] = {
+            name = 'Fire Threnody',
+            dur = 120,
+            type = StatusType.Threnody,
+            msg = T{ 237, 267, 278 },
+            ele = 'fire',
+        },
+        [455] = {
+            name = 'Ice Threnody',
+            dur = 120,
+            type = StatusType.Threnody,
+            msg = T{ 237, 267, 278 },
+            ele = 'ice',
+        },
+        [456] = {
+            name = 'Wind Threnody',
+            dur = 120,
+            type = StatusType.Threnody,
+            msg = T{ 237, 267, 278 },
+            ele = 'wind',
+        },
+        [457] = {
+            name = 'Earth Threnody',
+            dur = 120,
+            type = StatusType.Threnody,
+            msg = T{ 237, 267, 278 },
+            ele = 'earth',
+        },
+        [458] = {
+            name = 'Lightning Threnody',
+            dur = 120,
+            type = StatusType.Threnody,
+            msg = T{ 237, 267, 278 },
+            ele = 'lightning',
+        },
+        [459] = {
+            name = 'Water Threnody',
+            dur = 120,
+            type = StatusType.Threnody,
+            msg = T{ 237, 267, 278 },
+            ele = 'water',
+        },
+        [460] = {
+            name = 'Light Threnody',
+            dur = 120,
+            type = StatusType.Threnody,
+            msg = T{ 237, 267, 278 },
+            ele = 'light',
+        },
+        [461] = {
+            name = 'Dark Threnody',
+            dur = 120,
+            type = StatusType.Threnody,
+            msg = T{ 237, 267, 278 },
+            ele = 'dark',
+        },
+    },
 }
 
 -- The state we're operating on is the expiry time of the statuses
@@ -130,105 +573,21 @@ local function HandleAction(debuffs, action)
 
     for _, target in pairs(action.targets) do
         for _, ability in pairs(target.actions) do
-            if action.category == 4 then
-                -- Set up our state
-                local spell = action.param
+            if ActionMap[action.category] then
+                local actionId = action.param
                 local message = ability.message
-                debuffs[target.id] = debuffs[target.id] or DeepCopy(DefaultDebuffs)
+                local map = ActionMap[action.category][actionId]
 
-                -- Bio and Dia
-                if message == 2 or message == 264 or message == 252 then
-                    local expiry = 0
+                if map and map.msg:contains(message) then
+                    debuffs[target.id] = debuffs[target.id] or DeepCopy(DefaultDebuffs)
+                    debuffs[target.id][map.type] = now + map.dur
 
-                    if Statuses.dbTier1:contains(spell) then
-                        expiry = now + 60
-                    elseif Statuses.dbTier2:contains(spell) then
-                        expiry = now + 120
-                    elseif Statuses.dbTier3:contains(spell) then
-                        expiry = now + 150
+                    if map.ele then
+                        debuffs[target.id][StatusType.ThrenodyEle] = map.ele
                     end
 
-                    if Statuses.dia:contains(spell) then
-                        debuffs[target.id].dia = expiry
-                        debuffs[target.id].bio = 0
-                    elseif Statuses.bio:contains(spell) then
-                        debuffs[target.id].dia = 0
-                        debuffs[target.id].bio = expiry
-                    end
-                -- Regular debuffs
-                elseif message == 236 or message == 277 or message == 268 or message == 271 then
-                    if Statuses.paralyze:contains(spell) then
-                        debuffs[target.id].para = now + 120
-                    elseif Statuses.slow:contains(spell) then
-                        debuffs[target.id].slow = now + 180
-                    elseif Statuses.gravity:contains(spell) then
-                        debuffs[target.id].grav = now + 120
-                    elseif Statuses.blind:contains(spell) then
-                        debuffs[target.id].blind = now + 180
-                    elseif Statuses.flash:contains(spell) then
-                        debuffs[target.id].flash = now + 12
-                    elseif Statuses.silence:contains(spell) then
-                        debuffs[target.id].silence = now + 120
-                    elseif Statuses.sleep:contains(spell) then
-                        debuffs[target.id].sleep = now + 90
-                    elseif Statuses.bind:contains(spell) then
-                        debuffs[target.id].bind = now + 60
-                    elseif Statuses.stun:contains(spell) then
-                        debuffs[target.id].stun = now + 5
-                    elseif Statuses.poison:contains(spell) then
-                        debuffs[target.id].poison = now + 120
-                    end
-                -- Elemental debuffs, ninja debuffs, and bard songs
-                elseif message == 237 or message == 267 or message == 278 then
-                    if spell == Statuses.shock then -- shock
-                        debuffs[target.id].shock = now + 120
-                    elseif spell == Statuses.rasp then
-                        debuffs[target.id].rasp = now + 120
-                    elseif spell == Statuses.choke then
-                        debuffs[target.id].choke = now + 120
-                    elseif spell == Statuses.frost then
-                        debuffs[target.id].frost = now + 120
-                    elseif spell == Statuses.burn then
-                        debuffs[target.id].burn = now + 120
-                    elseif spell == Statuses.drown then
-                        debuffs[target.id].drown = now + 120
-                    elseif Statuses.lullaby:contains(spell) then
-                        -- base is 30, but merits and song+
-                        debuffs[target.id].sleep = now + 60
-                    -- foe requiems; estimating extended durations
-                    elseif spell == Statuses.requiem[1] then
-                        debuffs[target.id].requiem = now + 100
-                    elseif spell == Statuses.requiem[2] then
-                        debuffs[target.id].requiem = now + 150
-                    elseif spell == Statuses.requiem[3] then
-                        debuffs[target.id].requiem = now + 200
-                    elseif spell == Statuses.requiem[4] then
-                        debuffs[target.id].requiem = now + 250
-                    elseif spell == Statuses.requiem[5] then
-                        debuffs[target.id].requiem = now + 300
-                    elseif spell == Statuses.requiem[6] then
-                        debuffs[target.id].requiem = now + 350
-                    elseif spell == Statuses.elegy[1] then
-                        debuffs[target.id].elegy = now + 150
-                    elseif spell == Statuses.elegy[2] then
-                        debuffs[target.id].elegy = now + 250
-                    elseif spell == Statuses.kurayami[1] then
-                        debuffs[target.id].blind = now + 180
-                    elseif spell == Statuses.kurayami[2] then
-                        debuffs[target.id].blind = now + 300
-                    elseif spell == Statuses.kurayami[3] then
-                        debuffs[target.id].blind = now + 420
-                    elseif spell == Statuses.hojo[1] then
-                        debuffs[target.id].slow = now + 180
-                    elseif spell == Statuses.hojo[2] then
-                        debuffs[target.id].slow = now + 300
-                    elseif spell == Statuses.hojo[3] then
-                        debuffs[target.id].slow = now + 420
-                    elseif spell == Statuses.jubaku[1] then
-                        debuffs[target.id].para = now + 180
-                    elseif Statuses.threnody:contains(spell) then
-                        debuffs[target.id].threnody = now + 120
-                        debuffs[target.id].threnodyEle = Threnodies[spell]
+                    if map.over then
+                        debuffs[target.id][map.over] = 0
                     end
                 end
             end
