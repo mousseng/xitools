@@ -23,10 +23,13 @@ local Statuses = {
     dbTier3 = T{ 25, 232, },
     dia = T{ 23, 24, 25, 33, },
     bio = T{ 230, 231, 232, },
-    paralyze = T{ 58, 80, 341, 342, 343, },
-    slow = T{ 56, 79, 344, 345, 346, },
+    paralyze = T{ 58, 80, },
+    slow = T{ 56, 79, },
     gravity = T{ 216, },
-    blind = T{ 254, 276, 361, 347, 348, 349, },
+    kurayami = T{ 347, 348, 349, },
+    jubaku = T{ 341, 342, 343 },
+    hojo = T{ 344, 345, 346, },
+    blind = T{ 254, 276, 361, },
     flash = T{ 112, },
     silence = T{ 59, 359, },
     sleep = T{ 253, 259, 273, 274, },
@@ -175,8 +178,8 @@ local function HandleAction(debuffs, action)
                     elseif Statuses.poison:contains(spell) then
                         debuffs[target.id].poison = now + 120
                     end
-                -- Elemental debuffs and bard songs
-                elseif message == 237 or message == 278 then
+                -- Elemental debuffs, ninja debuffs, and bard songs
+                elseif message == 237 or message == 267 or message == 278 then
                     if spell == Statuses.shock then -- shock
                         debuffs[target.id].shock = now + 120
                     elseif spell == Statuses.rasp then
@@ -209,6 +212,20 @@ local function HandleAction(debuffs, action)
                         debuffs[target.id].elegy = now + 150
                     elseif spell == Statuses.elegy[2] then
                         debuffs[target.id].elegy = now + 250
+                    elseif spell == Statuses.kurayami[1] then
+                        debuffs[target.id].blind = now + 180
+                    elseif spell == Statuses.kurayami[2] then
+                        debuffs[target.id].blind = now + 300
+                    elseif spell == Statuses.kurayami[3] then
+                        debuffs[target.id].blind = now + 420
+                    elseif spell == Statuses.hojo[1] then
+                        debuffs[target.id].slow = now + 180
+                    elseif spell == Statuses.hojo[2] then
+                        debuffs[target.id].slow = now + 300
+                    elseif spell == Statuses.hojo[3] then
+                        debuffs[target.id].slow = now + 420
+                    elseif spell == Statuses.jubaku[1] then
+                        debuffs[target.id].para = now + 180
                     elseif Statuses.threnody:contains(spell) then
                         debuffs[target.id].threnody = now + 120
                         debuffs[target.id].threnodyEle = Threnodies[spell]
