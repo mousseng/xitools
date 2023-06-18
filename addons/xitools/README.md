@@ -7,6 +7,7 @@ a suite of UI replacement components.
 - `inv` shows your inventories with some interaction enabled
 - `tracker` displays configurable timers for spells and abilities
 - `treas` displays the current loot pool
+- `week` tracks your ENMs because remembering things is hard
 - `crafty` is a crafting skill tracker and recipe list
 - `fishe` is a fishing skill tracker and hook monitor
 - `log` is a dev tool that dumps packets to a log file, probably not useful
@@ -17,6 +18,7 @@ a suite of UI replacement components.
 ## usage
 `/xitools` (or `/xit`) will bring up the config menu
 `/xitools treas` (or `/xit t`) will open the `treas` window if it's enabled
+`/xitools week` (or `/xit w`, `/xit enm`, `/xit e`) will open the `week` window if it's enabled
 `/xitools crafty` (or `/xit c`) will open the `crafty` window if it's enabled
 `/xitools fishe` (or `/xit f`) will open the `fishe` window if it's enabled
 `/xitools inv` (or `/xit i`) will open the `inv` window if it's enabled
