@@ -27,9 +27,15 @@ local KeyItems = {
     ShaftLever          = { Id = 676, Name = "Shaft #2716 Operating Lever" },
     ZephyrFan           = { Id = 677, Name = "Zephyr Fan" },
     MiasmaFilter        = { Id = 678, Name = "Miasma Filter" },
+    CosmoCleanse        = { Id = 734, Name = "Cosmo Cleanse" },
 }
 
 local Weeklies = {
+    {
+        Name = 'Limbus',
+        KeyItem = KeyItems.CosmoCleanse,
+        Cooldown = 72 * 3600,
+    },
     {
         Level = '75',
         Name = 'Boneyard Gully',
@@ -117,7 +123,11 @@ local function DrawWeek(timers)
 
     -- TODO: save this state somewhere instead of querying every frame
     for _, enm in ipairs(Weeklies) do
-        imgui.Text(string.format('%s [Lv%s]', enm.Name, enm.Level))
+        if enm.Level then
+            imgui.Text(string.format('%s [Lv%s]', enm.Name, enm.Level))
+        else
+            imgui.Text(string.format('%s', enm.Name))
+        end
 
         if player:HasKeyItem(enm.KeyItem.Id) then
             imgui.PushStyleColor(ImGuiCol_Text, Colors.KeyObtained)
