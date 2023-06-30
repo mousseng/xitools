@@ -145,6 +145,7 @@ local function IsDrain(spell)
         or spell.Id == spells.AspirII
 end
 
+-- Is this spell an INT-based elemental nuke or dot?
 ---@param spell table
 ---@return boolean
 local function IsNuke(spell)
@@ -161,15 +162,21 @@ end
 
 ---@param spell table
 ---@return boolean
-local function IsAccuracyDivine(spell)
-    return (spell.Id >= spells.Holy and spell.Id <= spells.HolyII)
-        or (spell.Id >= spells.Banish and spell.Id <= spells.BanishV)
-        or (spell.Id >= spells.Banishga and spell.Id <= spells.BanishgaV)
+local function IsHoly(spell)
+    return spell.Id >= spells.Holy and spell.Id <= spells.HolyII
 end
 
 ---@param spell table
 ---@return boolean
-local function IsPotencyDivine(spell)
+local function IsBanish(spell)
+    return (spell.Id >= spells.Banish and spell.Id <= spells.BanishV)
+        or (spell.Id >= spells.Banishga and spell.Id <= spells.BanishgaV)
+end
+
+-- Is this spell non-nuke divine magic?
+---@param spell table
+---@return boolean
+local function IsDivine(spell)
     return spell.Id == spells.Flash
         or spell.Id == spells.Enlight
         or spell.Id == spells.Repose
@@ -223,6 +230,7 @@ local function IsStoneskin(spell)
     return spell.Id == spells.Stoneskin
 end
 
+-- Is this spell affected by enhancing magic skill?
 ---@param spell table
 ---@return boolean
 local function IsEnhancement(spell)
@@ -252,8 +260,9 @@ return {
     IsShadows = IsShadows,
     IsPotencyNinjutsu = IsPotencyNinjutsu,
     IsAccuracyNinjutsu = IsAccuracyNinjutsu,
-    IsPotencyDivine = IsPotencyDivine,
-    IsAccuracyDivine = IsAccuracyDivine,
+    IsHoly = IsHoly,
+    IsBanish = IsBanish,
+    IsDivine = IsDivine,
     IsStoneskin = IsStoneskin,
     IsEnhancement = IsEnhancement,
 }

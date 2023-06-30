@@ -46,12 +46,23 @@ local Consts = {
     Remove = 'remove',
 }
 
+local Elements = {
+    Dark = 'Light',
+    Light = 'Dark',
+    Fire = 'Water',
+    Ice = 'Fire',
+    Wind = 'Ice',
+    Earth = 'Wind',
+    Lightning = 'Earth',
+    Water = 'Lightning',
+}
+
 local Staves = {
     Light = nil,
     Dark = "Dark Staff",
     Fire = nil,
     Ice = "Ice Staff",
-    Water = nil,
+    Water = "Neptune's Staff",
     Thunder = nil,
     Earth = "Earth Staff",
     Wind = "Auster's Staff",
@@ -126,6 +137,7 @@ local function Set(set, force)
     end
 end
 
+-- Hack. TODO: actually track convert MP.
 local function LockSet(set, timer)
     gFunc.LockSet(set.Base, timer)
 
@@ -151,15 +163,44 @@ local Ring1 = Item:bindn(Slots.Ring1)
 local Ring2 = Item:bindn(Slots.Ring2)
 local Back  = Item:bindn(Slots.Back)
 
+-- Equips an owned obi appropriate for the spell being cast. This ensures the
+-- total bonus earned from the obi is positive, but doesn't account for any
+-- iridescence modifiers.
 ---@param spell table
 local function EquipObi(spell)
+    if not Obis[spell.Element] then return end
+
     local env = gData.GetEnvironment()
-    if Obis[spell.Element]
-    and (env.WeatherElement == spell.Element or env.DayElement == spell.Element) then
-        Waist(Obis[spell.Element])
+    local ele = spell.Element
+    local opp = Elements[ele]
+    local mult = 1.0
+
+    if env.WeatherElement == ele then
+        if string.match(env.Weather, 'x2') then
+            mult = mult + 0.25
+        else
+            mult = mult + 0.10
+        end
+    elseif env.WeatherElement == opp then
+        if string.match(env.Weather, 'x2') then
+            mult = mult - 0.25
+        else
+            mult = mult - 0.10
+        end
+    end
+
+    if env.DayElement == ele then
+        mult = mult + 0.10
+    elseif env.DayElement == opp then
+        mult = mult - 0.10
+    end
+
+    if mult > 0 then
+        Waist(Obis[ele])
     end
 end
 
+-- Equips an owned staff appropriate for the spell being cast.
 ---@param spell table
 local function EquipStaff(spell)
     if Staves[spell.Element] then
@@ -168,11 +209,11 @@ local function EquipStaff(spell)
     end
 end
 
+-- Equips gear with bonuses to sneak and invis effects.
 local function EquipStealth()
     local stealthGear = NewSet {
         Hands = "Dream Mittens +1",
         Back = "Skulker's Cape",
-        Waist = "Swift Belt",
         Feet = "Dream Boots +1",
     }
 
