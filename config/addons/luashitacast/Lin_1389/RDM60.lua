@@ -168,7 +168,7 @@ local function handleAbility()
 end
 
 local function handlePrecast()
-    Equip.Set(sets.FastCast)
+    -- Equip.Set(sets.FastCast)
 end
 
 local function handleMidcast()
@@ -177,24 +177,24 @@ local function handleMidcast()
     if Status.IsStealth(spell) then
         Equip.Stealth()
     elseif Status.IsHeal(spell) then
-        Equip.Set(sets.MaxMND)
+        Equip.Set(sets.MaxMnd)
         Equip.Staff(spell)
     elseif Status.IsStoneskin(spell)
     or Status.IsEnhancement(spell) then
-        Equip.Set(sets.MaxMND)
+        Equip.Set(sets.MaxMnd)
     elseif Status.IsDrain(spell)
     or Status.IsNuke(spell) then
-        Equip.Set(sets.MaxINT)
+        Equip.Set(sets.MaxInt)
         Equip.Staff(spell)
     elseif Status.IsEnfeebMnd(spell) then
-        Equip.Set(sets.MaxMND)
+        Equip.Set(sets.MaxMnd)
         Equip.Staff(spell)
     elseif Status.IsEnfeebInt(spell) then
-        Equip.Set(sets.MaxINT)
+        Equip.Set(sets.MaxInt)
         Equip.Staff(spell)
     elseif Status.IsPotencyNinjutsu(spell)
     or Status.IsAccuracyNinjutsu(spell) then
-        Equip.Set(sets.MaxINT)
+        Equip.Set(sets.MaxInt)
         Equip.Staff(spell)
     else
         Equip.Set(sets.Idle)

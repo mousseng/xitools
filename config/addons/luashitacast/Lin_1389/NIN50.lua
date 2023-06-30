@@ -7,7 +7,7 @@ local Equip = gFunc.LoadFile('common/equip.lua')
 local Status = gFunc.LoadFile('common/status.lua')
 
 local sets = {
-    Idle = {
+    Idle = Equip.NewSet {
         Main = "Zushio",
         Sub = "Anju",
         Range = Equip.Special.Displaced,
@@ -28,7 +28,7 @@ local sets = {
         Legs = "Nokizaru Hakama",
         Feet = "Fed. Kyahan",
     },
-    Auto = {
+    Auto = Equip.NewSet {
         Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
@@ -47,7 +47,7 @@ local sets = {
         Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
-    Naked = {
+    Naked = Equip.NewSet {
         Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
@@ -66,20 +66,20 @@ local sets = {
         Legs = "Nokizaru Hakama",
         Feet = "Fed. Kyahan",
     },
-    Throw = {
+    Throw = Equip.NewSet {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
         Ring1 = "Horn Ring",
         Ring2 = "Woodsman Ring",
         Legs = "Nokizaru Hakama",
     },
-    Stealth = {
+    Stealth = Equip.NewSet {
         Hands = "Dream Mittens +1",
         Back = "Skulker's Cape",
         Waist = "Swift Belt",
         Feet = "Dream Boots +1",
     },
-    Shadows = {
+    Shadows = Equip.NewSet {
         Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
@@ -98,7 +98,7 @@ local sets = {
         Legs = "Nokizaru Hakama",
         Feet = "Fed. Kyahan",
     },
-    Ninjutsu = {
+    Ninjutsu = Equip.NewSet {
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
