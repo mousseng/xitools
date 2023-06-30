@@ -383,6 +383,7 @@ local crafty = {
     DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('crafty') then
             imgui.Checkbox('Enabled', options.isEnabled)
+            imgui.Checkbox('Visible', options.isVisible)
 
             for id, skill in pairs(skillsMap) do
                 imgui.InputFloat(skill, options.skills[id], 0.1, 0.1, '%.1f')

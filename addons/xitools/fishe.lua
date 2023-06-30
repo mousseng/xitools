@@ -405,6 +405,7 @@ local fishe = {
     DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('fishe') then
             imgui.Checkbox('Enabled', options.isEnabled)
+            imgui.Checkbox('Visible', options.isVisible)
             imgui.InputFloat('Fishe Level', options.skill, 0.1, 0.1, '%.1f')
 
             imgui.EndTabItem()
