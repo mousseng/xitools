@@ -126,19 +126,19 @@ local sets = {
         Ammo = "Morion Tathlum",
 
         Head = "Ninja Hatsuburi",
-        Neck = "Ryl.Sqr. Collar",
+        Neck = "Rep.Mythril Medal",
         Ear1 = "Morion Earring",
         Ear2 = "Moldavite Earring",
 
-        Body = "Brigandine",
-        Hands = "Savage Gauntlets",
+        Body = "Brigandine", -- black cote? yasha?
+        Hands = "Savage Gauntlets", -- yasha?
         Ring1 = "Eremite's Ring",
         Ring2 = "Eremite's Ring",
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Ninja Kyahan",
+        Feet = "Ninja Kyahan", -- river gaiters? yasha?
     },
     Weaponskill = Equip.NewSet {
         Main = "Yoto",
