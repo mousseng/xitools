@@ -63,7 +63,7 @@ local Staves = {
     Fire = nil,
     Ice = "Ice Staff",
     Water = "Neptune's Staff",
-    Thunder = nil,
+    Thunder = "Thunder Staff",
     Earth = "Earth Staff",
     Wind = "Auster's Staff",
 }
