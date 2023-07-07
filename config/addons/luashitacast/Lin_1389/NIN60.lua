@@ -30,7 +30,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Ryl.Kgt. Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Ninja Kyahan",
+        Feet = "Mountain Gaiters",
 
         AtNight = {
             Legs = "Ninja Hakama",
@@ -77,7 +77,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
 
         AtNight = {
             Legs = "Ninja Hakama",
@@ -113,7 +113,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Ninja Kyahan",
+        Feet = "Mountain Gaiters",
 
         AtNight = {
             Legs = "Ninja Hakama",
@@ -138,7 +138,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Ninja Kyahan",
+        Feet = "Mountain Gaiters",
     },
     Weaponskill = Equip.NewSet {
         Main = "Yoto",

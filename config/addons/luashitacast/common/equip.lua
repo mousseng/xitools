@@ -1,3 +1,4 @@
+---@module 'common.status'
 local Status = gFunc.LoadFile('common/status.lua')
 
 ---@class LacSet

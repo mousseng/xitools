@@ -26,7 +26,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Ryl.Kgt. Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
     },
     Auto = Equip.NewSet {
         Range = Equip.Special.Displaced,
@@ -64,7 +64,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
     },
     Throw = Equip.NewSet {
         Ear1 = "Drone Earring",
@@ -96,9 +96,11 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
     },
     Ninjutsu = Equip.NewSet {
+        Main = "Crimson Blade",
+        Sub = "Crimson Blade",
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
@@ -115,7 +117,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
     },
 }
 

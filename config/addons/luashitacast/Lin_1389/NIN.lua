@@ -7,7 +7,9 @@ local Equip = gFunc.LoadFile('common/equip.lua')
 local Status = gFunc.LoadFile('common/status.lua')
 
 local settings = {
-    Ammo = "Pebble",
+    Main = "Yoto",
+    Sub  = "Yoto",
+    Ammo = "Dart",
 }
 
 local sets = {
@@ -17,12 +19,12 @@ local sets = {
         Range = Equip.Special.Displaced,
         Ammo = "Dart",
 
-        Head = "Erd. Headband",
+        Head = "Arhat's Jinpachi",
         Neck = "Ryl.Sqr. Collar",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Ninja Chainmail",
+        Body = "Arhat's Gi",
         Hands = "Windurstian Tekko",
         Ring1 = "Sattva Ring",
         Ring2 = "Chariot Band",
@@ -30,7 +32,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Ryl.Kgt. Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Ninja Kyahan",
+        Feet = "Mountain Gaiters",
 
         AtNight = {
             Legs = "Ninja Hakama",
@@ -38,10 +40,10 @@ local sets = {
         },
     },
     Auto = Equip.NewSet {
-        Main = "Yoto",
-        Sub = "Yoto",
+        Main = settings.Main,
+        Sub = settings.Sub,
         Range = Equip.Special.Displaced,
-        Ammo = "Dart",
+        Ammo = settings.Ammo,
 
         Head = "Super Ribbon",
         Neck = "Spike Necklace",
@@ -58,31 +60,6 @@ local sets = {
         Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
-    Naked = Equip.NewSet {
-        Main = Equip.Staves.Earth,
-        Sub = Equip.Special.Displaced,
-        Range = Equip.Special.Displaced,
-        Ammo = "Dart",
-
-        Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
-
-        Body = "Ninja Chainmail",
-        Hands = "Windurstian Tekko",
-        Ring1 = "Sattva Ring",
-        Ring2 = "Woodsman Ring",
-
-        Back = "High Brth. Mantle",
-        Waist = "Swift Belt",
-        Legs = "Nokizaru Hakama",
-        Feet = "Fed. Kyahan",
-
-        AtNight = {
-            Legs = "Ninja Hakama",
-        },
-    },
     Throw = Equip.NewSet {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
@@ -98,14 +75,14 @@ local sets = {
         Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = "Dart",
+        Ammo = settings.Ammo,
 
         Head = "Ninja Hatsuburi",
         Neck = "Ryl.Sqr. Collar",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Ninja Chainmail",
+        Body = "Arhat's Gi",
         Hands = "Savage Gauntlets",
         Ring1 = "Reflex Ring",
         Ring2 = "Sattva Ring",
@@ -113,13 +90,34 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Ninja Kyahan",
+        Feet = "Mountain Gaiters",
 
         AtNight = {
             Legs = "Ninja Hakama",
         },
     },
-    Ninjutsu = Equip.NewSet {
+    Enfeeble = Equip.NewSet {
+        Main = Equip.Staves.Wind,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Morion Tathlum",
+
+        Head = "Ninja Hatsuburi",
+        Neck = "Rep.Mythril Medal",
+        Ear1 = "Morion Earring",
+        Ear2 = "Cunning Earring",
+
+        Body = "Arhat's Gi",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Sattva Ring",
+        Ring2 = "Eremite's Ring",
+
+        Back = "High Brth. Mantle",
+        Waist = "Swift Belt",
+        Legs = "Nokizaru Hakama",
+        Feet = "Mountain Gaiters",
+    },
+    Nuke = Equip.NewSet {
         Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
@@ -130,19 +128,19 @@ local sets = {
         Ear1 = "Morion Earring",
         Ear2 = "Moldavite Earring",
 
-        Body = "Brigandine", -- black cote? yasha?
-        Hands = "Savage Gauntlets", -- yasha?
+        Body = "Arhat's Gi",
+        Hands = "Savage Gauntlets",
         Ring1 = "Eremite's Ring",
         Ring2 = "Eremite's Ring",
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Nokizaru Hakama",
-        Feet = "Ninja Kyahan", -- river gaiters? yasha?
+        Feet = "Mountain Gaiters",
     },
     Weaponskill = Equip.NewSet {
-        Main = "Yoto",
-        Sub = "Yoto",
+        Main = settings.Main,
+        Sub = settings.Sub,
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
@@ -189,8 +187,6 @@ local function handleDefault()
 
     if Status.IsAttacking(player) and Status.HasStatus('Copy Image') then
         Equip.Set(sets.Auto)
-    elseif Status.IsAttacking(player) then
-        Equip.Set(sets.Naked)
     end
 
     if Status.IsInSandoria(env) then
@@ -222,12 +218,11 @@ local function handleMidcast()
         Equip.Set(sets.Shadows)
         Equip.Staff(spell)
     elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) then
-        Equip.Set(sets.Ninjutsu)
+        Equip.Set(sets.Nuke)
         Equip.Staff(spell)
     elseif Status.IsAccuracyNinjutsu(spell) then
-        Equip.Set(sets.Ninjutsu)
+        Equip.Set(sets.Enfeeble)
         Equip.Staff(spell)
-        Equip.Ring2("Sattva Ring")
     end
 end
 

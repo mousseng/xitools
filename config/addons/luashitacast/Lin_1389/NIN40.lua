@@ -26,7 +26,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Tilt Belt",
         Legs = "Republic Subligar",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
     },
     Auto = {
         Range = Equip.Special.Displaced,
@@ -64,7 +64,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Tilt Belt",
         Legs = "Republic Subligar",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
     },
     Throw = {
         Ear1 = "Drone Earring",
@@ -96,7 +96,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Friar's Rope",
         Legs = "Republic Subligar",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
     },
     Ninjutsu = {
         Range = Equip.Special.Displaced,
@@ -115,7 +115,7 @@ local sets = {
         Back = "High Brth. Mantle",
         Waist = "Tilt Belt",
         Legs = "Republic Subligar",
-        Feet = "Fed. Kyahan",
+        Feet = "Mountain Gaiters",
     },
 }
 
