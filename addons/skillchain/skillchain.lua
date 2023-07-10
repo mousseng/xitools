@@ -52,6 +52,14 @@ local Chains = { }
 ---@type integer
 local LastPulse = os.time()
 
+local function when(cond, t, f)
+    if cond then
+        return t
+    else
+        return f
+    end
+end
+
 -- Fetch an entity by its server ID. Helpful when looking up information from
 -- packets, which tend to not include the entity index (since that's a client
 -- thing only). Returns nil if no matching entity is found.
@@ -266,11 +274,13 @@ end
 ---@param packet table
 ---@param mobs Skillchain[]
 local function HandleMagicAbility(packet, mobs)
+    local burstInfo = MagicBursts[packet.param]
+
     -- Don't care about skillchains we can't participate in
-    if not isServerIdInParty(packet.actor_id)
-    or MagicBursts[packet.param] == nil then
+    if not isServerIdInParty(packet.actor_id) or burstInfo == nil then
         return
     end
+
 
     -- Iterate down to the meat of our data
     for i = 1, packet.target_count do
@@ -285,13 +295,13 @@ local function HandleMagicAbility(packet, mobs)
                 ---@type SkillchainStep
                 local chain_step = nil
 
-                if action.message == MagicBursts[packet.param].burst_msg then
+                if action.message == burstInfo.burst_msg then
                     chain_step = {
                         id = packet.param,
                         time = os.time(),
                         type = ChainType.MagicBurst,
                         name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[1],
-                        base_damage = action.param,
+                        base_damage = when(burstInfo.no_dmg, nil, action.param),
                         bonus_damage = nil,
                         resonance = nil,
                     }
@@ -319,7 +329,11 @@ local function DrawMob(mob)
             Imgui.BulletText(string.format('%s [%i + %i dmg]\n%s (%s)', chain.name, chain.base_damage, chain.bonus_damage or 0, chain.resonance, Elements[chain.resonance]))
         -- Display any magic bursts that occurred and their damage.
         elseif chain.type == ChainType.MagicBurst then
-            Imgui.BulletText(string.format('Magic Burst! %s [%i dmg]', chain.name, chain.base_damage))
+            if chain.base_damage ~= nil then
+                Imgui.BulletText(string.format('Magic Burst! %s [%i dmg]', chain.name, chain.base_damage))
+            else
+                Imgui.BulletText(string.format('Magic Burst! %s', chain.name))
+            end
         elseif chain.type == ChainType.Miss then
             Imgui.BulletText(string.format('%s missed.', chain.name))
         else
