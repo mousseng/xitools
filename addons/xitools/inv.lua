@@ -8,7 +8,7 @@ local imgui = require('imgui')
 local ui = require('ui')
 
 local textures = { }
-local inventories = T{ bag = T{}, house = T{}, wardrobe = T{}, gil = 0, }
+local inventories = T{ bag = T{}, satchel = T{}, house = T{}, wardrobe = T{}, gil = 0, }
 local gfxDevice = d3d8.get_device()
 local fontWidth = imgui.CalcTextSize('A')
 
@@ -267,6 +267,9 @@ local function UpdateInventories()
     inventories.bag = UpdateInventory(inv, res, 0)
         :sort(SortInventory)
 
+    inventories.satchel = UpdateInventory(inv, res, 5)
+        :sort(SortInventory)
+
     inventories.wardrobe = UpdateInventory(inv, res, 8)
         :extend(UpdateInventory(inv, res, 10))
         :extend(UpdateInventory(inv, res, 11))
@@ -433,13 +436,18 @@ local function DrawInventory()
             imgui.EndTabItem()
         end
 
-        if imgui.BeginTabItem('house') then
-            DrawBag('house')
+        if imgui.BeginTabItem('satchel') then
+            DrawBag('satchel')
             imgui.EndTabItem()
         end
 
-        if imgui.BeginTabItem('wardrobe') then
+        if imgui.BeginTabItem('ward') then
             DrawBag('wardrobe')
+            imgui.EndTabItem()
+        end
+
+        if imgui.BeginTabItem('house') then
+            DrawBag('house')
             imgui.EndTabItem()
         end
     end
