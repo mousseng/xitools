@@ -393,7 +393,14 @@ local function AddContextMenu(item)
     return menuOpened
 end
 
-local function DrawItem(item)
+local contextMenus = {
+    bag      = AddContextMenu,
+    satchel  = function() return false end,
+    house    = function() return false end,
+    wardrobe = AddContextMenu,
+}
+
+local function DrawItem(item, addCtxMenu)
     local iconSize = 32
     local curX, curY = imgui.GetCursorScreenPos()
     local drawList = imgui.GetWindowDrawList()
@@ -409,7 +416,7 @@ local function DrawItem(item)
         AddTooltip(item)
     end
 
-    if AddContextMenu(item) then
+    if addCtxMenu(item) then
         AddHighlight(curX, curY, iconSize, drawList)
     end
 end
@@ -422,7 +429,7 @@ local function DrawBag(bagId)
             imgui.SameLine()
         end
 
-        DrawItem(item)
+        DrawItem(item, contextMenus[bagId])
     end
 end
 
