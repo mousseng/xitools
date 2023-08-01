@@ -20,19 +20,20 @@ local Status = gFunc.LoadFile('common/status.lua')
 ---@field Back  string?
 
 ---@class Gearset
----@field Base    LacSet
----@field AtNight LacSet?
+---@field Base     LacSet
+---@field AtNight  LacSet?
+---@field AtHalfMp LacSet?
 
 local Slots = {
-    Main  = 1,
-    Sub   = 2,
-    Range = 3,
-    Ammo  = 4,
-    Head  = 5,
-    Body  = 6,
-    Hands = 7,
-    Legs  = 8,
-    Feet  = 9,
+    Main  =  1,
+    Sub   =  2,
+    Range =  3,
+    Ammo  =  4,
+    Head  =  5,
+    Body  =  6,
+    Hands =  7,
+    Legs  =  8,
+    Feet  =  9,
     Neck  = 10,
     Waist = 11,
     Ear1  = 12,
@@ -44,44 +45,45 @@ local Slots = {
 
 local Consts = {
     Displaced = 'displaced',
-    Remove = 'remove',
+    Remove    = 'remove',
 }
 
 local Elements = {
-    Dark = 'Light',
-    Light = 'Dark',
-    Fire = 'Water',
-    Ice = 'Fire',
-    Wind = 'Ice',
-    Earth = 'Wind',
+    Light     = 'Dark',
+    Dark      = 'Light',
+    Fire      = 'Water',
+    Ice       = 'Fire',
+    Water     = 'Lightning',
     Lightning = 'Earth',
-    Water = 'Lightning',
+    Earth     = 'Wind',
+    Wind      = 'Ice',
 }
 
 local Staves = {
-    Light = nil,
-    Dark = "Dark Staff",
-    Fire = nil,
-    Ice = "Ice Staff",
-    Water = "Neptune's Staff",
+    Light   = nil,
+    Dark    = "Dark Staff",
+    Fire    = nil,
+    Ice     = "Ice Staff",
+    Water   = "Neptune's Staff",
     Thunder = "Thunder Staff",
-    Earth = "Earth Staff",
-    Wind = "Auster's Staff",
+    Earth   = "Earth Staff",
+    Wind    = "Auster's Staff",
 }
 
 local Obis = {
-    Light = nil,
-    Dark = nil,
-    Fire = nil,
-    Ice = nil,
-    Water = nil,
+    Light   = nil,
+    Dark    = nil,
+    Fire    = nil,
+    Ice     = nil,
+    Water   = nil,
     Thunder = nil,
-    Earth = nil,
-    Wind = nil,
+    Earth   = nil,
+    Wind    = nil,
 }
 
 local SetExtensions = {
     'AtNight',
+    'AtHalfMp',
 }
 
 ---@param set table
@@ -135,6 +137,10 @@ local function Set(set, force)
 
     if set.AtNight and Status.IsNight() then
         equipFn(set.AtNight)
+    end
+
+    if set.AtHalfMp and Status.IsHalfMp() then
+        equipFn(set.AtHalfMp)
     end
 end
 
