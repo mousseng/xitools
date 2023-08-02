@@ -14,7 +14,7 @@ local sets = {
         Ammo = "Pebble",
 
         Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
+        Neck = "Spike Necklace",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
@@ -47,25 +47,6 @@ local sets = {
         Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
-    Naked = Equip.NewSet {
-        Range = Equip.Special.Displaced,
-        Ammo = "Pebble",
-
-        Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
-
-        Body = "Brigandine",
-        Hands = "Windurstian Tekko",
-        Ring1 = "Sattva Ring",
-        Ring2 = "Woodsman Ring",
-
-        Back = "High Brth. Mantle",
-        Waist = "Swift Belt",
-        Legs = "Nokizaru Hakama",
-        Feet = "Mountain Gaiters",
-    },
     Throw = Equip.NewSet {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
@@ -73,18 +54,12 @@ local sets = {
         Ring2 = "Woodsman Ring",
         Legs = "Nokizaru Hakama",
     },
-    Stealth = Equip.NewSet {
-        Hands = "Dream Mittens +1",
-        Back = "Skulker's Cape",
-        Waist = "Swift Belt",
-        Feet = "Dream Boots +1",
-    },
     Shadows = Equip.NewSet {
         Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
         Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
+        Neck = "Spike Necklace",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
@@ -105,7 +80,7 @@ local sets = {
         Ammo = "Morion Tathlum",
 
         Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
+        Neck = "Spike Necklace",
         Ear1 = "Morion Earring",
         Ear2 = "Moldavite Earring",
 
@@ -127,10 +102,8 @@ local function handleDefault()
 
     Equip.Set(sets.Idle)
 
-    if Status.IsAttacking(player) and Status.HasStatus('Copy Image') then
+    if Status.IsAttacking(player) then
         Equip.Set(sets.Auto)
-    elseif Status.IsAttacking(player) then
-        Equip.Set(sets.Naked)
     end
 
     if Status.IsInSandoria(env) then

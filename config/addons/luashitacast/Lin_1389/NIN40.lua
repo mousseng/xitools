@@ -7,14 +7,14 @@ local Equip = gFunc.LoadFile('common/equip.lua')
 local Status = gFunc.LoadFile('common/status.lua')
 
 local sets = {
-    Idle = {
+    Idle = Equip.NewSet {
         Main = "Zushio",
         Sub = "Anju",
         Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
         Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
+        Neck = "Spike Necklace",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
@@ -28,7 +28,7 @@ local sets = {
         Legs = "Republic Subligar",
         Feet = "Mountain Gaiters",
     },
-    Auto = {
+    Auto = Equip.NewSet {
         Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
@@ -43,48 +43,23 @@ local sets = {
         Ring2 = "Woodsman Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Warlock's Belt",
+        Waist = "Tilt Belt",
         Legs = "Republic Subligar",
         Feet = "Fed. Kyahan",
     },
-    Naked = {
-        Range = Equip.Special.Displaced,
-        Ammo = "Pebble",
-
-        Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
-
-        Body = "Savage Separates",
-        Hands = "Windurstian Tekko",
-        Ring1 = "Sattva Ring",
-        Ring2 = "Woodsman Ring",
-
-        Back = "High Brth. Mantle",
-        Waist = "Tilt Belt",
-        Legs = "Republic Subligar",
-        Feet = "Mountain Gaiters",
-    },
-    Throw = {
+    Throw = Equip.NewSet {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
         Ring1 = "Horn Ring",
         Ring2 = "Woodsman Ring",
         Legs = "Republic Subligar",
     },
-    Stealth = {
-        Hands = "Dream Mittens +1",
-        Back = "Skulker's Cape",
-        Waist = "Swift Belt",
-        Feet = "Dream Boots +1",
-    },
-    Shadows = {
+    Shadows = Equip.NewSet {
         Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
         Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
+        Neck = "Spike Necklace",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
@@ -98,12 +73,12 @@ local sets = {
         Legs = "Republic Subligar",
         Feet = "Mountain Gaiters",
     },
-    Ninjutsu = {
+    Ninjutsu = Equip.NewSet {
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
         Head = "Erd. Headband",
-        Neck = "Ryl.Sqr. Collar",
+        Neck = "Spike Necklace",
         Ear1 = "Morion Earring",
         Ear2 = "Cunning Earring",
 
@@ -113,7 +88,7 @@ local sets = {
         Ring2 = "Eremite's Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Tilt Belt",
+        Waist = "Friar's Rope",
         Legs = "Republic Subligar",
         Feet = "Mountain Gaiters",
     },
@@ -125,10 +100,8 @@ local function handleDefault()
 
     Equip.Set(sets.Idle)
 
-    if Status.IsAttacking(player) and Status.HasStatus('Copy Image') then
+    if Status.IsAttacking(player) then
         Equip.Set(sets.Auto)
-    elseif Status.IsAttacking(player) then
-        Equip.Set(sets.Naked)
     end
 
     if Status.IsInSandoria(env) then
