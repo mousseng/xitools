@@ -7,8 +7,8 @@ local Equip = gFunc.LoadFile('common/equip.lua')
 local Status = gFunc.LoadFile('common/status.lua')
 
 local settings = {
-    Main = "Fudo", -- Senjuinrikio
-    Sub  = "Fudo",
+    Main = "Yoto",
+    Sub  = "Yoto",
     Ammo = "Dart",
 }
 
@@ -43,43 +43,22 @@ local sets = {
         Main = settings.Main,
         Sub = settings.Sub,
         Range = Equip.Special.Displaced,
-        Ammo = "Bomb Core",
+        Ammo = settings.Ammo,
 
-        Head = "Super Ribbon", -- upgrade to Optical Hat or Panther Mask
-        Neck = "Spike Necklace", -- upgrade to PCC or Sandy Conquest
-        Ear1 = "Merman's Earring",
-        Ear2 = "Merman's Earring",
+        Head = "Super Ribbon",
+        Neck = "Spike Necklace",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
 
-        Body = "Ninja Chainmail", -- upgrade to Relic? or AF+1
-        Hands = "Windurstian Tekko", -- upgrade to Dusk, H/O/B-Kote, AF+1, or Relic
+        Body = "Ninja Chainmail",
+        Hands = "Windurstian Tekko",
         Ring1 = "Sattva Ring",
         Ring2 = "Woodsman Ring",
 
-        Back = "Psilos Mantle", -- upgrade to Forager's
+        Back = "High Brth. Mantle",
         Waist = "Swift Belt",
-        Legs = "Koga Hakama",
-        Feet = "Fed. Kyahan", -- upgrade to Fumas
-    },
-    Weaponskill = Equip.NewSet {
-        Main = settings.Main,
-        Sub = settings.Sub,
-        Range = Equip.Special.Displaced,
-        Ammo = "Bomb Core",
-
-        Head = "Super Ribbon", -- upgrade to Optical Hat or Walkure
-        Neck = "Spike Necklace", -- upgrade to gorget?
-        Ear1 = "Merman's Earring",
-        Ear2 = "Merman's Earring",
-
-        Body = "Assault Jerkin", -- upgrade to Hauby
-        Hands = "Windurstian Tekko", -- upgrade to H/O/B-Kote, AF+1, or Relic
-        Ring1 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
-        Ring2 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
-
-        Back = "Psilos Mantle", -- upgrade to Forager's
-        Waist = "Ryl.Kgt. Belt", -- upgrade to Warwolf
-        Legs = "Republic Subligar", -- upgrade to Byakko's
-        Feet = "Fed. Kyahan", -- upgrade to Rutters or Shura
+        Legs = "Republic Subligar",
+        Feet = "Fed. Kyahan",
     },
     Throw = Equip.NewSet {
         Main = Equip.Staves.Earth,
@@ -108,20 +87,20 @@ local sets = {
         Range = Equip.Special.Displaced,
         Ammo = settings.Ammo,
 
-        Head = "Yasha Jinpachi",
+        Head = "Ninja Hatsuburi",
         Neck = "Evasion Torque",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Yasha Samue",
-        Hands = "Koga Tekko",
+        Body = "Arhat's Gi",
+        Hands = "Savage Gauntlets",
         Ring1 = "Reflex Ring",
         Ring2 = "Sattva Ring",
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
-        Legs = "Yasha Hakama",
-        Feet = "Yasha Sune-ate",
+        Legs = "Nokizaru Hakama",
+        Feet = "Mountain Gaiters",
 
         AtNight = {
             Legs = "Ninja Hakama",
@@ -133,20 +112,20 @@ local sets = {
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
-        Head = "Yasha Jinpachi",
+        Head = "Ninja Hatsuburi",
         Neck = "Evasion Torque",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
+        Ear1 = "Morion Earring",
+        Ear2 = "Cunning Earring",
 
-        Body = "Yasha Samue",
-        Hands = "Koga Tekko",
+        Body = "Arhat's Gi",
+        Hands = "Savage Gauntlets",
         Ring1 = "Sattva Ring",
         Ring2 = "Eremite's Ring",
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
-        Legs = "Yasha Hakama",
-        Feet = "Yasha Sune-ate",
+        Legs = "Nokizaru Hakama",
+        Feet = "Mountain Gaiters",
     },
     Nuke = Equip.NewSet {
         Main = Equip.Staves.Wind,
@@ -154,24 +133,45 @@ local sets = {
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
-        Head = "Yasha Jinpachi",
+        Head = "Ninja Hatsuburi",
         Neck = "Rep.Mythril Medal",
-        Ear1 = "Morion Earring", -- upgrade to Morion Earring +1 or Novio
+        Ear1 = "Morion Earring",
         Ear2 = "Moldavite Earring",
 
-        Body = "Yasha Samue", -- upgrade to Kirin's Osode
-        Hands = "Koga Tekko",
-        Ring1 = "Eremite's Ring", -- upgrade to Snow Ring
-        Ring2 = "Eremite's Ring", -- upgrade to Snow Ring
+        Body = "Arhat's Gi",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
 
-        Back = "High Brth. Mantle", -- upgrade to Windy Conquest or Astute Cape
-        Waist = "Swift Belt", -- upgrade to Jungle Rope
-        Legs = "Yasha Hakama",
-        Feet = "Yasha Sune-ate", -- upgrade to AF+1
+        Back = "High Brth. Mantle",
+        Waist = "Swift Belt",
+        Legs = "Nokizaru Hakama",
+        Feet = "Mountain Gaiters",
 
         AtHalfMp = {
             Neck = "Uggalepih Pendant",
         },
+    },
+    Weaponskill = Equip.NewSet {
+        Main = settings.Main,
+        Sub = settings.Sub,
+        Range = Equip.Special.Displaced,
+        Ammo = "Morion Tathlum",
+
+        Head = "Super Ribbon",
+        Neck = "Spike Necklace",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
+
+        Body = "Ninja Chainmail",
+        Hands = "Windurstian Tekko",
+        Ring1 = "Courage Ring",
+        Ring2 = "Courage Ring",
+
+        Back = "High Brth. Mantle",
+        Waist = "Ryl.Kgt. Belt",
+        Legs = "Republic Subligar",
+        Feet = "Fed. Kyahan",
     },
 }
 
@@ -199,7 +199,7 @@ local function handleDefault()
 
     Equip.Set(sets.Idle)
 
-    if Status.IsAttacking(player) then
+    if Status.IsAttacking(player) and Status.HasStatus('Copy Image') then
         Equip.Set(sets.Auto)
     end
 
