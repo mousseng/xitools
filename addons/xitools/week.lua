@@ -16,6 +16,11 @@ local Colors = {
     TimerUnknown  = { 1.00, 0.96, 0.56, 1.0 },
 }
 
+local Icons = {
+    Times = '\xef\x81\x97',
+    Check = '\xef\x81\x98',
+}
+
 local KeyItems = {
     ChocoboLicense      = { Id = 138, Name = "Chocobo License" },
     CenserOfAbandonment = { Id = 670, Name = "Censer of Abandonment" },
@@ -30,8 +35,9 @@ local KeyItems = {
     CosmoCleanse        = { Id = 734, Name = "Cosmo Cleanse" },
 }
 
-local Weeklies = {
+local Weeklies = T{
     {
+        Level = '75',
         Name = 'Limbus',
         KeyItem = KeyItems.CosmoCleanse,
         Cooldown = 72 * 3600,
@@ -49,7 +55,7 @@ local Weeklies = {
         Cooldown = 120 * 3600,
     },
     {
-        Level = '60 or 75',
+        Level = '75, 60',
         Name = 'Mine Shaft #2716',
         KeyItem = KeyItems.ShaftLever,
         Cooldown = 120 * 3600,
@@ -61,7 +67,7 @@ local Weeklies = {
         Cooldown = 120 * 3600,
     },
     {
-        Level = '40 or 50',
+        Level = '50, 40',
         Name = 'Monarch Linn',
         KeyItem = KeyItems.MonarchBeard,
         Cooldown = 120 * 3600,
@@ -92,18 +98,101 @@ local Weeklies = {
     },
 }
 
-local function GetReadyTime(targetTime, now)
-    if targetTime == nil then
-        imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerUnknown)
-        return '???'
-    elseif now >= targetTime then
-        imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerReady)
-        return 'now!'
+local function SortByLength(l, r)
+    if #l == #r then
+        return l > r
+    else
+        return #l > #r
     end
-
-    imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerNotReady)
-    return os.date('on %a, %b %d at %X', targetTime)
 end
+
+local TableDef = {
+    {
+        Name = 'Activity',
+        Flags = ImGuiTableColumnFlags_None,
+        Width = imgui.CalcTextSize(
+            Weeklies
+                :map(function(w) return w.Name end)
+                :append('Activity')
+                :sort(SortByLength)
+                :first()
+            ),
+        Draw = function(activity, player, timers, now)
+            imgui.Text(activity.Name)
+        end,
+    },
+    {
+        Name = 'Level(s)',
+        Flags = ImGuiTableColumnFlags_None,
+        Width = imgui.CalcTextSize(
+            Weeklies
+                :map(function(w) return w.Level end)
+                :append('Level(s)')
+                :sort(SortByLength)
+                :first()
+            ),
+        Draw = function(activity, player, timers, now)
+            imgui.Text(activity.Level)
+        end,
+    },
+    {
+        Name = 'Key Item',
+        Flags = ImGuiTableColumnFlags_None,
+        Width = imgui.CalcTextSize(
+            Weeklies
+                :map(function(w) return w.KeyItem.Name end)
+                :append('Key Item')
+                :sort(SortByLength)
+                :first()
+            ),
+        Draw = function(activity, player, timers, now)
+            imgui.Text(activity.KeyItem.Name)
+        end,
+    },
+    {
+        Name = 'Have KI',
+        Flags = ImGuiTableColumnFlags_None,
+        Width = imgui.CalcTextSize('Have KI'),
+        Draw = function(activity, player, timers, now)
+            -- TODO: save this state somewhere instead of querying every frame
+            local color = Colors.KeyMissing
+            local icon = Icons.Times
+
+            if player:HasKeyItem(activity.KeyItem.Id) then
+                color = Colors.KeyObtained
+                icon = Icons.Check
+            end
+
+            imgui.PushStyleColor(ImGuiCol_Text, color)
+            imgui.Text(icon)
+            imgui.PopStyleColor()
+        end,
+    },
+    {
+        Name = 'Next KI',
+        Flags = ImGuiTableColumnFlags_None,
+        Width = imgui.CalcTextSize('Day, Mon 99 at hh:mm:ss'),
+        Draw = function(activity, player, timers, now)
+            -- TODO: save this state somewhere instead of querying every frame
+            local targetTime = timers[activity.Name]
+            local readyTime = ''
+
+            if targetTime == nil then
+                imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerUnknown)
+                readyTime = '???'
+            elseif now >= targetTime then
+                imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerReady)
+                readyTime = 'now'
+            else
+                imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerNotReady)
+                readyTime = os.date('%a, %b %d at %X', targetTime)
+            end
+
+            imgui.Text(readyTime)
+            imgui.PopStyleColor()
+        end,
+    },
+}
 
 local function DrawWeek(timers)
     local now = os.time()
@@ -121,29 +210,26 @@ local function DrawWeek(timers)
 
     imgui.Separator()
 
-    -- TODO: save this state somewhere instead of querying every frame
-    for _, enm in ipairs(Weeklies) do
-        if enm.Level then
-            imgui.Text(string.format('%s [Lv%s]', enm.Name, enm.Level))
-        else
-            imgui.Text(string.format('%s', enm.Name))
+    imgui.PushStyleVar(ImGuiStyleVar_CellPadding, { 10, 3 })
+    if imgui.BeginTable('xitools.week.summary', #TableDef) then
+        imgui.TableSetupScrollFreeze(0, 1)
+        for _, col in ipairs(TableDef) do
+            imgui.TableSetupColumn(col.Name, col.Flags, col.Width)
+        end
+        imgui.TableHeadersRow()
+
+        for _, activity in ipairs(Weeklies) do
+            imgui.TableNextRow()
+
+            for _, col in ipairs(TableDef) do
+                imgui.TableNextColumn()
+                col.Draw(activity, player, timers, now)
+            end
         end
 
-        if player:HasKeyItem(enm.KeyItem.Id) then
-            imgui.PushStyleColor(ImGuiCol_Text, Colors.KeyObtained)
-            imgui.Text(string.format('%s obtained', enm.KeyItem.Name))
-            imgui.PopStyleColor()
-        else
-            imgui.PushStyleColor(ImGuiCol_Text, Colors.KeyMissing)
-            imgui.Text(string.format('%s missing', enm.KeyItem.Name))
-            imgui.PopStyleColor()
-        end
-
-        local readyTime = GetReadyTime(timers[enm.Name], now)
-        imgui.Text(string.format('Obtainable %s', readyTime))
-        imgui.PopStyleColor()
-        imgui.Separator()
+        imgui.EndTable()
     end
+    imgui.PopStyleVar()
 end
 
 ---@type xitool
