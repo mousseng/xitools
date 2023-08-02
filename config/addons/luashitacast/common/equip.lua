@@ -19,8 +19,7 @@ local Status = gFunc.LoadFile('common/status.lua')
 ---@field Ring2 string?
 ---@field Back  string?
 
----@class Gearset
----@field Base     LacSet
+---@class LacSetExt
 ---@field AtNight  LacSet?
 ---@field AtHalfMp LacSet?
 
@@ -81,32 +80,38 @@ local Obis = {
     Wind    = nil,
 }
 
-local SetExtensions = {
+local SetExtensionTypes = {
     'AtNight',
     'AtHalfMp',
 }
 
----@param set table
----@return Gearset
+---@type { [string]: LacSetExt }
+local SetExtensions = {}
+
+--- Given a gearset definition, trim all the extension properties not supported
+--- by LAC and return the base set. Known extensions are stored in a map to be
+--- equipped in the correct circumstances.
+---@param set LacSetExt
+---@return LacSet
 local function NewSet(set)
-    ---@type Gearset
-    local parsedSet = {
-        Base = {},
-    }
+    ---@type LacSet
+    local trimmedSet = {}
 
     for slot, _ in pairs(Slots) do
         if set[slot] then
-            parsedSet.Base[slot] = set[slot]
+            trimmedSet[slot] = set[slot]
         end
     end
 
-    for _, ext in pairs(SetExtensions) do
+    local setId = tostring(trimmedSet)
+    SetExtensions[setId] = {}
+    for _, ext in pairs(SetExtensionTypes) do
         if set[ext] then
-            parsedSet[ext] = set[ext]
+            SetExtensions[setId][ext] = set[ext]
         end
     end
 
-    return parsedSet
+    return trimmedSet
 end
 
 ---@param slot string|number
@@ -125,7 +130,7 @@ local function Item(slot, item)
     gFunc.Equip(Slots[slot] or slot, item)
 end
 
----@param set   Gearset
+---@param set   LacSet
 ---@param force boolean?
 local function Set(set, force)
     local equipFn = gFunc.EquipSet
@@ -133,14 +138,16 @@ local function Set(set, force)
         equipFn = gFunc.ForceEquipSet
     end
 
-    equipFn(set.Base)
+    equipFn(set)
 
-    if set.AtNight and Status.IsNight() then
-        equipFn(set.AtNight)
+    local setId = tostring(set)
+    local setExt = SetExtensions[setId]
+    if setExt.AtNight and Status.IsNight() then
+        equipFn(setExt.AtNight)
     end
 
-    if set.AtHalfMp and Status.IsHalfMp() then
-        equipFn(set.AtHalfMp)
+    if setExt.AtHalfMp and Status.IsHalfMp() then
+        equipFn(setExt.AtHalfMp)
     end
 end
 

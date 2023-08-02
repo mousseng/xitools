@@ -4,6 +4,12 @@ local function IsNight()
     return time.hour >= 18 or time.hour < 6
 end
 
+---@return boolean
+local function IsHalfMp()
+    local player = gData.GetPlayer()
+    return player.MPP <= 50
+end
+
 ---@param env table
 ---@return boolean
 local function IsInSandoria(env)
@@ -244,6 +250,7 @@ end
 return {
     -- player stuff
     HasStatus = HasStatus,
+    IsHalfMp = IsHalfMp,
     IsNight = IsNight,
     IsAttacking = IsAttacking,
     IsResting = IsResting,
