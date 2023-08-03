@@ -106,6 +106,7 @@ local function SortByLength(l, r)
     end
 end
 
+local TableFlags = bit.bor(ImGuiTableFlags_RowBg, ImGuiTableFlags_Borders, ImGuiTableFlags_NoBordersInBody)
 local TableDef = {
     {
         Name = 'Activity',
@@ -211,7 +212,7 @@ local function DrawWeek(timers)
     imgui.Separator()
 
     imgui.PushStyleVar(ImGuiStyleVar_CellPadding, { 10, 3 })
-    if imgui.BeginTable('xitools.week.summary', #TableDef) then
+    if imgui.BeginTable('xitools.week.summary', #TableDef, TableFlags) then
         imgui.TableSetupScrollFreeze(0, 1)
         for _, col in ipairs(TableDef) do
             imgui.TableSetupColumn(col.Name, col.Flags, col.Width)
