@@ -8,6 +8,7 @@ local ffxi = require('utils.ffxi')
 local imgui = require('imgui')
 local settings = require('settings')
 local ui = require('ui')
+local migrations = require('migrations')
 
 ---@class xitool
 ---@field Name            string
@@ -55,6 +56,7 @@ local normalWindows = {
 local tools = T{}:extend(uiWindows):extend(normalWindows)
 
 local defaultOptions = T{
+    version = nil,
     globals = T{
         showDemo = T{ false },
         hideUnderMap = T{ true },
@@ -144,8 +146,9 @@ local function DrawConfig()
 end
 
 settings.register('settings', 'settings_update', function (s)
-    if (s ~= nil) then
+    if s ~= nil then
         options = s
+        migrations.run(options, addon.version)
     end
 
     settings.save()
@@ -158,6 +161,10 @@ settings.register('settings', 'settings_update', function (s)
 end)
 
 ashita.events.register('load', 'load_handler', function()
+    if migrations.run(options, addon.version) then
+        settings.save()
+    end
+
     for _, tool in ipairs(tools) do
         if tool.Load ~= nil then
             tool.Load(options.tools[tool.Name], options.globals)
