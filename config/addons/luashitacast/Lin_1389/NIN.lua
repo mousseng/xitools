@@ -48,17 +48,21 @@ local sets = {
         Head = "Super Ribbon", -- upgrade to Optical Hat or Panther Mask
         Neck = "Spike Necklace", -- upgrade to PCC or Sandy Conquest
         Ear1 = "Merman's Earring",
-        Ear2 = "Merman's Earring",
+        Ear2 = "Brutal Earring",
 
         Body = "Ninja Chainmail", -- upgrade to Relic? or AF+1
-        Hands = "Windurstian Tekko", -- upgrade to Dusk, H/O/B-Kote, AF+1, or Relic
+        Hands = "Windurstian Tekko", -- upgrade to Dusk, H/O/B-Kote, AF+1
         Ring1 = "Sattva Ring",
         Ring2 = "Woodsman Ring",
 
         Back = "Psilos Mantle", -- upgrade to Forager's
         Waist = "Swift Belt",
-        Legs = "Koga Hakama",
+        Legs = "Koga Hakama", -- upgrade to Byakko's
         Feet = "Fed. Kyahan", -- upgrade to Fumas
+
+        -- AtNight = {
+        --     Hands = "Koga Tekko",
+        -- },
     },
     Weaponskill = Equip.NewSet {
         Main = settings.Main,
@@ -69,10 +73,10 @@ local sets = {
         Head = "Super Ribbon", -- upgrade to Optical Hat or Walkure
         Neck = "Spike Necklace", -- upgrade to gorget?
         Ear1 = "Merman's Earring",
-        Ear2 = "Merman's Earring",
+        Ear2 = "Brutal Earring",
 
-        Body = "Assault Jerkin", -- upgrade to Hauby
-        Hands = "Windurstian Tekko", -- upgrade to H/O/B-Kote, AF+1, or Relic
+        Body = "Assault Jerkin", -- upgrade to Hauby or Relic
+        Hands = "Windurstian Tekko", -- upgrade to H/O/B-Kote, AF+1
         Ring1 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
         Ring2 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
 
@@ -80,6 +84,10 @@ local sets = {
         Waist = "Ryl.Kgt. Belt", -- upgrade to Warwolf
         Legs = "Republic Subligar", -- upgrade to Byakko's
         Feet = "Fed. Kyahan", -- upgrade to Rutters or Shura
+
+        -- AtNight = {
+        --     Hands = "Koga Tekko",
+        -- },
     },
     Throw = Equip.NewSet {
         Main = Equip.Staves.Earth,
@@ -88,7 +96,7 @@ local sets = {
         Ammo = settings.Ammo,
 
         Head = "Arhat's Jinpachi",
-        Neck = "Evasion Torque",
+        Neck = "Harmonia's Torque",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
@@ -134,7 +142,7 @@ local sets = {
         Ammo = "Morion Tathlum",
 
         Head = "Yasha Jinpachi",
-        Neck = "Evasion Torque",
+        Neck = "Harmonia's Torque",
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
