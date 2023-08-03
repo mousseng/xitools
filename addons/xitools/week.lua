@@ -174,19 +174,18 @@ local TableDef = {
         Flags = ImGuiTableColumnFlags_None,
         Width = imgui.CalcTextSize('Day, Mon 99 at hh:mm:ss'),
         Draw = function(activity, player, timers, now)
-            -- TODO: save this state somewhere instead of querying every frame
             local targetTime = timers[activity.Name]
             local readyTime = ''
 
             if targetTime == nil then
                 imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerUnknown)
                 readyTime = '???'
-            elseif now >= targetTime then
+            elseif now >= targetTime.time then
                 imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerReady)
                 readyTime = 'now'
             else
                 imgui.PushStyleColor(ImGuiCol_Text, Colors.TimerNotReady)
-                readyTime = os.date('%a, %b %d at %X', targetTime)
+                readyTime = targetTime.desc
             end
 
             imgui.Text(readyTime)
@@ -271,7 +270,11 @@ local week = {
             for _, weekly in pairs(Weeklies) do
                 if not player:HasKeyItem(weekly.KeyItem.Id)
                 and keyItems.heldList[weekly.KeyItem.Id] then
-                    options.timers[weekly.Name] = now + weekly.Cooldown
+                    local timestamp = now + weekly.Cooldown
+                    options.timers[weekly.Name] = {
+                        time = timestamp,
+                        desc = os.date('%a, %b %d at %X', timestamp)
+                    }
                 end
             end
         end
