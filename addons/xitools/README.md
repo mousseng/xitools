@@ -14,6 +14,7 @@ a suite of UI replacement components.
 
 ![us](./img/us.png)
 ![several](./img/several.png)
+![week](./img/week.png)
 
 ## usage
 `/xitools` (or `/xit`) will bring up the config menu
