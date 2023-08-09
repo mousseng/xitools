@@ -25,7 +25,7 @@ local sets = {
         Ear2 = "Drone Earring",
 
         Body = "Arhat's Gi",
-        Hands = "Windurstian Tekko",
+        Hands = "Koga Tekko",
         Ring1 = "Sattva Ring",
         Ring2 = "Chariot Band",
 
@@ -47,7 +47,7 @@ local sets = {
 
         Head = "Super Ribbon", -- upgrade to Optical Hat or Panther Mask
         Neck = "Spike Necklace", -- upgrade to PCC or Sandy Conquest
-        Ear1 = "Merman's Earring",
+        Ear1 = "Merman's Earring", -- upgrade to Stealth
         Ear2 = "Brutal Earring",
 
         Body = "Ninja Chainmail", -- upgrade to Relic? or AF+1
@@ -58,11 +58,11 @@ local sets = {
         Back = "Psilos Mantle", -- upgrade to Forager's
         Waist = "Swift Belt",
         Legs = "Koga Hakama", -- upgrade to Byakko's
-        Feet = "Fed. Kyahan", -- upgrade to Fumas
+        Feet = "Fed. Kyahan", -- upgrade to Fuma
 
-        -- AtNight = {
-        --     Hands = "Koga Tekko",
-        -- },
+        AtNight = {
+            Hands = "Koga Tekko",
+        },
     },
     Weaponskill = Equip.NewSet {
         Main = settings.Main,
@@ -85,9 +85,9 @@ local sets = {
         Legs = "Republic Subligar", -- upgrade to Byakko's
         Feet = "Fed. Kyahan", -- upgrade to Rutters or Shura
 
-        -- AtNight = {
-        --     Hands = "Koga Tekko",
-        -- },
+        AtNight = {
+            Hands = "Koga Tekko",
+        },
     },
     Throw = Equip.NewSet {
         Main = Equip.Staves.Earth,
@@ -123,13 +123,13 @@ local sets = {
 
         Body = "Yasha Samue",
         Hands = "Koga Tekko",
-        Ring1 = "Reflex Ring",
-        Ring2 = "Sattva Ring",
+        Ring1 = "Sattva Ring",
+        Ring2 = "Reflex Ring", -- upgrade to Loquacious
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
         Legs = "Yasha Hakama",
-        Feet = "Yasha Sune-ate",
+        Feet = "Yasha Sune-ate", -- upgrade to Fuma
 
         AtNight = {
             Legs = "Ninja Hakama",
@@ -149,10 +149,10 @@ local sets = {
         Body = "Yasha Samue",
         Hands = "Koga Tekko",
         Ring1 = "Sattva Ring",
-        Ring2 = "Eremite's Ring",
+        Ring2 = "Reflex Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Swift Belt",
+        Waist = "Swift Belt", -- upgrade to Koga Sarashi
         Legs = "Yasha Hakama",
         Feet = "Yasha Sune-ate",
     },
@@ -163,14 +163,14 @@ local sets = {
         Ammo = "Morion Tathlum",
 
         Head = "Yasha Jinpachi",
-        Neck = "Rep.Mythril Medal",
+        Neck = "Rep.Mythril Medal", -- upgrade to Torque for high-eva?
         Ear1 = "Morion Earring", -- upgrade to Morion Earring +1 or Novio
         Ear2 = "Moldavite Earring",
 
         Body = "Yasha Samue", -- upgrade to Kirin's Osode
         Hands = "Koga Tekko",
-        Ring1 = "Eremite's Ring", -- upgrade to Snow Ring
-        Ring2 = "Eremite's Ring", -- upgrade to Snow Ring
+        Ring1 = "Snow Ring",
+        Ring2 = "Snow Ring",
 
         Back = "High Brth. Mantle", -- upgrade to Windy Conquest or Astute Cape
         Waist = "Swift Belt", -- upgrade to Jungle Rope

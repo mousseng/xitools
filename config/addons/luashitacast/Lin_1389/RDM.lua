@@ -111,7 +111,7 @@ local sets = {
     Mdt = Equip.NewSet {
         -- Head = "Coral Visor +1",
         -- Neck = "Jeweled Collar",
-        -- Ear1 = "Merman's Earring",
+        Ear1 = "Merman's Earring",
         -- Ear2 = "Merman's Earring",
 
         -- Body = "Cor. Scale Mail +1",
@@ -310,7 +310,7 @@ local sets = {
         Ear1 = "Morion Earring",
         Ear2 = "Abyssal Earring",
 
-        Body = "Errant Hpl.",
+        Body = "Duelist's Tabard",
         Hands = "Sly Gauntlets",
         Ring1 = "Eremite's Ring",
         Ring2 = "Eremite's Ring",

@@ -65,8 +65,8 @@ local sets = {
 
         Body = "Savage Separates",
         Hands = "Savage Gauntlets",
-        Ring1 = "Reflex Ring",
-        Ring2 = "Peridot Ring",
+        Ring1 = "Sattva Ring",
+        Ring2 = "Reflex Ring",
 
         Back = "High Brth. Mantle",
         Waist = "Friar's Rope",
