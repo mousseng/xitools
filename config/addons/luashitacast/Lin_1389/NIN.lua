@@ -17,7 +17,7 @@ local sets = {
         Main = Equip.Staves.Earth,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = settings.Ammo,
+        Ammo = "Nokizaru Shuriken",
 
         Head = "Arhat's Jinpachi",
         Neck = "Evasion Torque",
@@ -114,7 +114,7 @@ local sets = {
         Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = settings.Ammo,
+        Ammo = "Nokizaru Shuriken",
 
         Head = "Yasha Jinpachi",
         Neck = "Evasion Torque",
@@ -139,7 +139,7 @@ local sets = {
         Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = "Morion Tathlum",
+        Ammo = "Nokizaru Shuriken",
 
         Head = "Yasha Jinpachi",
         Neck = "Harmonia's Torque",
@@ -152,7 +152,7 @@ local sets = {
         Ring2 = "Reflex Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Swift Belt", -- upgrade to Koga Sarashi
+        Waist = "Swift Belt", -- upgrade to Koga Sarashi or Warwolf
         Legs = "Yasha Hakama",
         Feet = "Yasha Sune-ate",
     },
@@ -249,13 +249,7 @@ local function handleMidcast()
 end
 
 local function handleWeaponskill()
-    local weaponskill = gData.GetAction().Name
-
-    if weaponskill == 'Blade: Teki'
-    or weaponskill == 'Blade: To'
-    or weaponskill == 'Blade: Chi' then
-        Equip.Set(sets.Weaponskill)
-    end
+    Equip.Set(sets.Weaponskill)
 end
 
 return {
