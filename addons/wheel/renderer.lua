@@ -106,16 +106,16 @@ function renderer.calc(state)
 
         -- multiply out the partial rotation
         drawing.rotation = drawing.rotation + animation.progress * animation.distance * turn
-
-        -- just so we don't increment forever, chop off any excess circumferences
-        if drawing.rotation > circumference then
-            drawing.rotation = drawing.rotation - circumference
-        end
     -- if we've finished animating, reset the animation state
     elseif animation.progress ~= nil and animation.progress > animation.speed then
         animation.current = nil
         animation.progress = nil
         animation.distance = nil
+
+        -- just so we don't increment forever, chop off any excess circumferences
+        if drawing.rotation > circumference then
+            drawing.rotation = drawing.rotation - circumference
+        end
     end
 
     -- move on to figuring out offsets and recasts for each spoke
