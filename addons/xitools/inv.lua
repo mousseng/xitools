@@ -347,8 +347,11 @@ end
 
 local function AddTooltip(item)
     imgui.BeginTooltip()
+
+    imgui.PushTextWrapPos(fontWidth * 64)
     imgui.Text(item.name)
     imgui.Text(item.desc)
+    imgui.PopTextWrapPos()
 
     if item.stack then
         imgui.Text(item.stack)
