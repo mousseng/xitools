@@ -24,7 +24,8 @@ function ffxi.GetMenuName()
     end
     local menuHeader = ashita.memory.read_uint32(subValue + 4)
     local menuName = ashita.memory.read_string(menuHeader + 0x46, 16)
-    return string.gsub(menuName, '\x00', '')
+    local cleanedName = string.gsub(menuName, '\x00', '')
+    return cleanedName
 end
 
 --- Determines if the map is open in game.
