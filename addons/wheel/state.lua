@@ -73,6 +73,7 @@ end)
 
 local wheel = {
     level = 'Ni',
+    alt = 'Ichi',
     position = 0,
     spokes = {
         [0] = { Name = 'Doton',  Ichi = 329, Ni = 330, San = 331 },

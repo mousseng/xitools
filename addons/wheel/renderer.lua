@@ -170,14 +170,14 @@ function renderer.draw(state)
                 local finalPos = io.MousePos
 
                 if InBox(startPos, tl, br) and InBox(finalPos, tl, br) then
-                    state.cast(i, 'Ni')
+                    state.cast(i, state.level)
                 end
             elseif rClick and clickable then
                 local startPos = io.MouseClickedPos[2]
                 local finalPos = io.MousePos
 
                 if InBox(startPos, tl, br) and InBox(finalPos, tl, br) then
-                    state.cast(i, 'Ichi')
+                    state.cast(i, state.alt)
                 end
             end
         end

@@ -8,11 +8,31 @@ local ffxi = require('ffxi')
 local state = require('state')
 local renderer = require('renderer')
 
+local LevelMap = {
+    ['Ichi'] = true,
+    ['Ni']   = true,
+    ['San']  = true,
+}
+
 local function AdvanceWheelTo(position)
     renderer.animation.current = 0
     renderer.animation.progress = 0
     renderer.animation.distance = (position - state.position + 6) % 6
     state.position = position % 6
+end
+
+local function PrintHelp()
+    -- TODO
+end
+
+local function GetLevelFromArgs(args)
+    local level = args[3]:proper()
+    if LevelMap[level] == nil then
+        PrintHelp()
+        return nil
+    end
+
+    return level
 end
 
 local function OnLoad()
@@ -26,27 +46,41 @@ local function OnCommand(e)
     end
 
     if #args == 1 then
-        -- TODO: print help
+        PrintHelp()
         return
     end
 
-    if args[2]:lower() == 'level' then
+    local verb = args[2]:lower()
+    if verb == 'level' then
         if #args == 2 then
-            -- TODO: print help
+            PrintHelp()
             return
         end
 
-        state.level = args[3]:proper()
-    elseif args[2]:lower() == 'lock' then
+        local level = GetLevelFromArgs(args)
+        state.level = level
+    elseif verb == 'alt' then
+        if #args == 2 then
+            PrintHelp()
+            return
+        end
+
+        local level = GetLevelFromArgs(args)
+        state.alt = level
+    elseif verb == 'spin' then
+        if #args == 2 then
+            state.cast(state.position, state.level)
+            return
+        end
+
+        local level = GetLevelFromArgs(args)
+        state.cast(state.position, level)
+    elseif verb == 'lock' then
         renderer.lock()
-    elseif args[2]:lower() == 'unlock' then
+    elseif verb == 'unlock' then
         renderer.unlock()
-    elseif args[2]:lower() == 'ichi' or args[2] == '1' then
-        state.cast(state.position, 'Ichi')
-    elseif args[2]:lower() == 'ni' or args[2] == '2' then
-        state.cast(state.position, 'Ni')
-    elseif args[2]:lower() == 'san' or args[2] == '3' then
-        state.cast(state.position, 'San')
+    else
+        PrintHelp()
     end
 end
 
