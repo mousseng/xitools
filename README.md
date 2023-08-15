@@ -5,6 +5,7 @@ a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 - `xitools` is a suite of UI replacement components, check its README for details
 - `recast` is a fork of `recast` that has been imgui-fied
 - `skillchain` tracks active and potential skillchains and magic bursts
+- `wheel` is a one-button ninja nuke thing
 - `repl` is a debugging tool to run lua code maybe more easily
 - `rcheck` makes it easy to check party/alliance readiness by asking and doing
   the tallying for you
