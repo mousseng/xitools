@@ -5,9 +5,38 @@ local function IsNight()
 end
 
 ---@return boolean
+local function IsNightPlus()
+    local time = gData.GetTimestamp()
+    return time.hour >= 17 or time.hour < 7
+end
+
+---@return boolean
 local function IsHalfMp()
     local player = gData.GetPlayer()
     return player.MPP <= 50
+end
+
+---@return boolean
+local function IsItemInContainer(bagId, inv, itemId)
+    local bagMax = inv:GetContainerCountMax(bagId)
+    for i = 0, bagMax do
+        local invSlot = inv:GetContainerItem(bagId, i)
+        if invSlot ~= nil and invSlot.Count > 0 and invSlot.Id > 0 and invSlot.Id == itemId then
+            return true
+        end
+    end
+
+    return false
+end
+
+---@return boolean
+local function HasEquipment(item)
+    local inv = AshitaCore:GetMemoryManager():GetInventory()
+    local itemId = AshitaCore:GetMemoryManager():GetResourceManager():GetItemByName(item, 0).Id
+
+    return IsItemInContainer( 0, inv, itemId)
+        or IsItemInContainer( 8, inv, itemId)
+        or IsItemInContainer(10, inv, itemId)
 end
 
 ---@param env table
@@ -252,6 +281,7 @@ return {
     HasStatus = HasStatus,
     IsHalfMp = IsHalfMp,
     IsNight = IsNight,
+    IsNightPlus = IsNightPlus,
     IsAttacking = IsAttacking,
     IsResting = IsResting,
     IsInBastok = IsInBastok,
@@ -272,4 +302,6 @@ return {
     IsDivine = IsDivine,
     IsStoneskin = IsStoneskin,
     IsEnhancement = IsEnhancement,
+    -- misc
+    HasEquipment = HasEquipment,
 }

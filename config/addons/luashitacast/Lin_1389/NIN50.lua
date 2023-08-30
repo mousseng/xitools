@@ -8,8 +8,8 @@ local Status = gFunc.LoadFile('common/status.lua')
 
 local sets = {
     Idle = Equip.NewSet {
-        Main = "Zushio",
-        Sub = "Anju",
+        Main = "Crimson Blade",
+        Sub = "Crimson Blade",
         Range = Equip.Special.Displaced,
         Ammo = "Pebble",
 
@@ -18,7 +18,7 @@ local sets = {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Windurstian Tekko",
         Ring1 = "Sattva Ring",
         Ring2 = "Chariot Band",
@@ -37,7 +37,7 @@ local sets = {
         Ear1 = "Beetle Earring +1",
         Ear2 = "Beetle Earring +1",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Windurstian Tekko",
         Ring1 = "Balance Ring",
         Ring2 = "Woodsman Ring",
@@ -63,10 +63,10 @@ local sets = {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Savage Gauntlets",
-        Ring1 = "Reflex Ring",
-        Ring2 = "Peridot Ring",
+        Ring1 = "Sattva Ring",
+        Ring2 = "Reflex Ring",
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
@@ -74,8 +74,6 @@ local sets = {
         Feet = "Mountain Gaiters",
     },
     Ninjutsu = Equip.NewSet {
-        Main = "Crimson Blade",
-        Sub = "Crimson Blade",
         Range = Equip.Special.Displaced,
         Ammo = "Morion Tathlum",
 
@@ -84,13 +82,13 @@ local sets = {
         Ear1 = "Morion Earring",
         Ear2 = "Moldavite Earring",
 
-        Body = "Brigandine",
+        Body = "Savage Separates",
         Hands = "Savage Gauntlets",
         Ring1 = "Eremite's Ring",
         Ring2 = "Eremite's Ring",
 
         Back = "High Brth. Mantle",
-        Waist = "Swift Belt",
+        Waist = "Ryl.Kgt. Belt",
         Legs = "Nokizaru Hakama",
         Feet = "Mountain Gaiters",
     },

@@ -7,7 +7,7 @@ local Equip = gFunc.LoadFile('common/equip.lua')
 local Status = gFunc.LoadFile('common/status.lua')
 
 local settings = {
-    Main = "Fudo", -- Senjuinrikio
+    Main = "Senjuinrikio",
     Sub  = "Fudo",
     Ammo = "Dart",
 }
@@ -21,16 +21,16 @@ local sets = {
 
         Head = "Arhat's Jinpachi",
         Neck = "Evasion Torque",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
+        Ear1 = "Drone Earring", -- upgrade to Dodge/Evasion/Gold+1/Platinum/Elusive
+        Ear2 = "Drone Earring", -- upgrade to Dodge/Evasion/Gold+1/Platinum/Elusive
 
         Body = "Arhat's Gi",
-        Hands = "Koga Tekko",
+        Hands = "Kog. Tekko +1",
         Ring1 = "Sattva Ring",
         Ring2 = "Chariot Band",
 
-        Back = "High Brth. Mantle",
-        Waist = "Ryl.Kgt. Belt",
+        Back = "High Brth. Mantle", -- upgrade to Resentment Cape
+        Waist = "Ryl.Kgt. Belt", -- upgrade to Scouter's Rope
         Legs = "Nokizaru Hakama",
         Feet = "Mountain Gaiters",
 
@@ -46,11 +46,11 @@ local sets = {
         Ammo = "Bomb Core",
 
         Head = "Super Ribbon", -- upgrade to Optical Hat or Panther Mask
-        Neck = "Spike Necklace", -- upgrade to PCC or Sandy Conquest
+        Neck = "Spike Necklace", -- upgrade to PCC
         Ear1 = "Merman's Earring", -- upgrade to Stealth
         Ear2 = "Brutal Earring",
 
-        Body = "Ninja Chainmail", -- upgrade to Relic? or AF+1
+        Body = "Koga Chainmail", -- upgrade to AF+1
         Hands = "Windurstian Tekko", -- upgrade to Dusk, H/O/B-Kote, AF+1
         Ring1 = "Sattva Ring",
         Ring2 = "Woodsman Ring",
@@ -60,8 +60,8 @@ local sets = {
         Legs = "Koga Hakama", -- upgrade to Byakko's
         Feet = "Fed. Kyahan", -- upgrade to Fuma
 
-        AtNight = {
-            Hands = "Koga Tekko",
+        AtNightPlus = {
+            Hands = "Kog. Tekko +1",
         },
     },
     Weaponskill = Equip.NewSet {
@@ -75,7 +75,7 @@ local sets = {
         Ear1 = "Merman's Earring",
         Ear2 = "Brutal Earring",
 
-        Body = "Assault Jerkin", -- upgrade to Hauby or Relic
+        Body = "Koga Chainmail", -- upgrade to Hauby
         Hands = "Windurstian Tekko", -- upgrade to H/O/B-Kote, AF+1
         Ring1 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
         Ring2 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
@@ -85,8 +85,8 @@ local sets = {
         Legs = "Republic Subligar", -- upgrade to Byakko's
         Feet = "Fed. Kyahan", -- upgrade to Rutters or Shura
 
-        AtNight = {
-            Hands = "Koga Tekko",
+        AtNightPlus = {
+            Hands = "Kog. Tekko +1",
         },
     },
     Throw = Equip.NewSet {
@@ -100,15 +100,36 @@ local sets = {
         Ear1 = "Drone Earring",
         Ear2 = "Drone Earring",
 
-        Body = "Arhat's Gi",
+        Body = "Koga Chainmail",
         Hands = "Ninja Tekko",
         Ring1 = "Woodsman Ring",
         Ring2 = "Horn Ring",
 
-        Back = "High Brth. Mantle",
+        Back = "Psilos Mantle",
         Waist = "Ryl.Kgt. Belt",
         Legs = "Ninja Hakama",
         Feet = "Fed. Kyahan",
+    },
+    Stoneskin = Equip.NewSet {
+        Main = Equip.Staves.Water,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Nokizaru Shuriken",
+
+        Head = "Super Ribbon",
+        Neck = "Justice Badge", -- upgrade to Promise Badge
+        Ear1 = "Drone Earring", -- upgrade to Geist Earring
+        Ear2 = "Drone Earring", -- upgrade to Geist Earring
+
+        Body = "Yasha Samue", -- ???
+        Hands = "Savage Gauntlets",
+        Ring1 = "Saintly Ring",
+        Ring2 = "Saintly Ring",
+
+        Back = "High Brth. Mantle", -- ???
+        Waist = "Ryl.Kgt. Belt",
+        Legs = "Savage Loincloth",
+        Feet = "Suzaku's Sune-Ate",
     },
     Shadows = Equip.NewSet {
         Main = Equip.Staves.Wind,
@@ -122,7 +143,7 @@ local sets = {
         Ear2 = "Drone Earring",
 
         Body = "Yasha Samue",
-        Hands = "Koga Tekko",
+        Hands = "Kog. Tekko +1",
         Ring1 = "Sattva Ring",
         Ring2 = "Reflex Ring", -- upgrade to Loquacious
 
@@ -143,13 +164,13 @@ local sets = {
 
         Head = "Yasha Jinpachi",
         Neck = "Harmonia's Torque",
-        Ear1 = "Drone Earring",
-        Ear2 = "Drone Earring",
+        Ear1 = "Drone Earring", -- upgrade to Eris Earring
+        Ear2 = "Drone Earring", -- upgrade to Eris Earring
 
         Body = "Yasha Samue",
-        Hands = "Koga Tekko",
+        Hands = "Kog. Tekko +1",
         Ring1 = "Sattva Ring",
-        Ring2 = "Reflex Ring",
+        Ring2 = "Reflex Ring", -- upgrade to Mermaid Ring
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt", -- upgrade to Koga Sarashi or Warwolf
@@ -160,21 +181,21 @@ local sets = {
         Main = Equip.Staves.Wind,
         Sub = Equip.Special.Displaced,
         Range = Equip.Special.Displaced,
-        Ammo = "Morion Tathlum",
+        Ammo = "Phtm. Tathlum",
 
-        Head = "Yasha Jinpachi",
-        Neck = "Rep.Mythril Medal", -- upgrade to Torque for high-eva?
-        Ear1 = "Morion Earring", -- upgrade to Morion Earring +1 or Novio
+        Head = "Yasha Jinpachi", -- upgrade to +1
+        Neck = "Rep.Mythril Medal",
+        Ear1 = "Abyssal Earring", -- upgrade to Novio
         Ear2 = "Moldavite Earring",
 
         Body = "Yasha Samue", -- upgrade to Kirin's Osode
-        Hands = "Koga Tekko",
+        Hands = "Kog. Tekko +1",
         Ring1 = "Snow Ring",
         Ring2 = "Snow Ring",
 
         Back = "High Brth. Mantle", -- upgrade to Windy Conquest or Astute Cape
-        Waist = "Swift Belt", -- upgrade to Jungle Rope
-        Legs = "Yasha Hakama",
+        Waist = "Ryl.Kgt. Belt", -- upgrade to Jungle Rope
+        Legs = "Yasha Hakama",  -- upgrade to +1
         Feet = "Yasha Sune-ate", -- upgrade to AF+1
 
         AtHalfMp = {
@@ -222,6 +243,10 @@ end
 
 local function handlePreshot()
     Equip.Ammo(settings.Ammo)
+
+    if not Status.HasEquipment(settings.Ammo) then
+        gFunc.CancelAction()
+    end
 end
 
 local function handleMidshot()
@@ -238,13 +263,18 @@ local function handleMidcast()
         Equip.Set(sets.Shadows)
     elseif Status.IsDrain(spell) then
         Equip.Set(sets.Shadows)
+        Equip.Obi(spell)
         Equip.Staff(spell)
     elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) then
         Equip.Set(sets.Nuke)
+        Equip.Obi(spell)
         Equip.Staff(spell)
     elseif Status.IsAccuracyNinjutsu(spell) then
         Equip.Set(sets.Enfeeble)
+        Equip.Obi(spell)
         Equip.Staff(spell)
+    elseif Status.IsStoneskin(spell) then
+        Equip.Set(sets.Stoneskin)
     end
 end
 

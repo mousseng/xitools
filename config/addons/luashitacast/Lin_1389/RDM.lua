@@ -30,6 +30,7 @@ local sets = {
     },
     Rest = Equip.NewSet {
         Main = Equip.Staves.Dark,
+        Ear1 = "Relaxing Earring",
         Body = "Errant Hpl.",
         Waist = "Duelist's Belt",
     },

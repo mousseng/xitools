@@ -20,8 +20,9 @@ local Status = gFunc.LoadFile('common/status.lua')
 ---@field Back  string?
 
 ---@class LacSetExt
----@field AtNight  LacSet?
----@field AtHalfMp LacSet?
+---@field AtNight     LacSet?
+---@field AtNightPlus LacSet?
+---@field AtHalfMp    LacSet?
 
 local Slots = {
     Main  =  1,
@@ -73,7 +74,7 @@ local Obis = {
     Light   = nil,
     Dark    = nil,
     Fire    = nil,
-    Ice     = nil,
+    Ice     = "Hyorin Obi",
     Water   = nil,
     Thunder = nil,
     Earth   = nil,
@@ -82,6 +83,7 @@ local Obis = {
 
 local SetExtensionTypes = {
     'AtNight',
+    'AtNightPlus',
     'AtHalfMp',
 }
 
@@ -144,6 +146,10 @@ local function Set(set, force)
     local setExt = SetExtensions[setId]
     if setExt.AtNight and Status.IsNight() then
         equipFn(setExt.AtNight)
+    end
+
+    if setExt.AtNightPlus and Status.IsNightPlus() then
+        equipFn(setExt.AtNightPlus)
     end
 
     if setExt.AtHalfMp and Status.IsHalfMp() then
@@ -209,7 +215,7 @@ local function EquipObi(spell)
         mult = mult - 0.10
     end
 
-    if mult > 0 then
+    if mult > 1.0 then
         Waist(Obis[ele])
     end
 end
