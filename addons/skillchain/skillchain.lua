@@ -4,10 +4,10 @@ addon.version = '4.0'
 addon.desc    = 'A little skillchain tracker so you know when things happen'
 
 require('common')
-local Settings = require('settings')
-local Ffxi = require('lin.ffxi')
-local Imgui = require('lin.imgui')
-local Packets = require('lin.packets')
+local settings = require('settings')
+local ffxi = require('lin.ffxi')
+local imgui = require('lin.imgui')
+local packets = require('lin.packets')
 
 local Elements = require('data.elements')
 local ChainType = require('data.chaintype')
@@ -37,7 +37,7 @@ local MobSkills = require('data.mobskills')
 ---@field resonance Resonance?
 
 ---@type SkillchainSettings
-local Defaults = {
+local defaultConfig = {
     dataSet = 'retail',
     windowName = 'Skillchain',
     windowSize = { -1, -1 },
@@ -45,13 +45,13 @@ local Defaults = {
 }
 
 ---@type SkillchainSettings
-local Config = Settings.load(Defaults)
+local config = settings.load(defaultConfig)
 
 ---@type Skillchain[]
-local Chains = { }
+local chains = { }
 
 ---@type integer
-local LastPulse = os.time()
+local lastPulse = os.time()
 
 local function when(cond, t, f)
     if cond then
@@ -188,7 +188,7 @@ end
 ---@param packet ActionPacket
 ---@param mobs Skillchain[]
 local function HandleWeaponskill(packet, mobs)
-    local weaponskillInfo = Weaponskills[Config.dataSet][packet.param]
+    local weaponskillInfo = Weaponskills[config.dataSet][packet.param]
 
     -- Don't care about skillchains we can't participate in
     if not isServerIdInParty(packet.actor_id) or weaponskillInfo == nil then
@@ -207,7 +207,7 @@ end
 ---@param packet ActionPacket
 ---@param mobs Skillchain[]
 local function HandlePetAbility(packet, mobs)
-    local petAbilInfo = MobSkills[Config.dataSet][packet.param]
+    local petAbilInfo = MobSkills[config.dataSet][packet.param]
 
     -- Don't care about skillchains we can't participate in
     if not isPetServerIdInParty(packet.actor_id) or petAbilInfo == nil then
@@ -226,7 +226,7 @@ end
 ---@param packet ActionPacket
 ---@param mobs Skillchain[]
 local function HandleMobSkill(packet, mobs)
-    local mobSkillInfo = MobSkills[Config.dataSet][packet.param]
+    local mobSkillInfo = MobSkills[config.dataSet][packet.param]
 
     -- Don't care about skillchains we can't participate in
     if not isServerIdInParty(packet.actor_id) or mobSkillInfo == nil then
@@ -245,7 +245,7 @@ end
 ---@param packet ActionPacket
 ---@param mobs Skillchain[]
 local function HandleMagicAbility(packet, mobs)
-    local burstInfo = MagicBursts[Config.dataSet][packet.param]
+    local burstInfo = MagicBursts[config.dataSet][packet.param]
 
     -- Don't care about skillchains we can't participate in
     if not isServerIdInParty(packet.actor_id) or burstInfo == nil then
@@ -289,25 +289,25 @@ end
 ---@param mob Skillchain
 local function DrawMob(mob)
     -- Create the heading for our skillchain.
-    Imgui.Text(mob.name)
+    imgui.Text(mob.name)
     -- Fill out the body of our skillchain.
     for _, chain in pairs(mob.chain) do
         -- Is this the first step of a chain? If so, don't show burstable
         -- elements (since you can't burst).
         if chain.type == ChainType.Starter then
-            Imgui.BulletText(string.format('%s [%i dmg]\n%s', chain.name, chain.base_damage, chain.resonance))
+            imgui.BulletText(string.format('%s [%i dmg]\n%s', chain.name, chain.base_damage, chain.resonance))
         -- Otherwise, also display the bonus damage and burstable elements.
         elseif chain.type == ChainType.Skillchain then
-            Imgui.BulletText(string.format('%s [%i + %i dmg]\n%s (%s)', chain.name, chain.base_damage, chain.bonus_damage or 0, chain.resonance, Elements[chain.resonance]))
+            imgui.BulletText(string.format('%s [%i + %i dmg]\n%s (%s)', chain.name, chain.base_damage, chain.bonus_damage or 0, chain.resonance, Elements[chain.resonance]))
         -- Display any magic bursts that occurred and their damage.
         elseif chain.type == ChainType.MagicBurst then
             if chain.base_damage ~= nil then
-                Imgui.BulletText(string.format('Magic Burst! %s [%i dmg]', chain.name, chain.base_damage))
+                imgui.BulletText(string.format('Magic Burst! %s [%i dmg]', chain.name, chain.base_damage))
             else
-                Imgui.BulletText(string.format('Magic Burst! %s', chain.name))
+                imgui.BulletText(string.format('Magic Burst! %s', chain.name))
             end
         elseif chain.type == ChainType.Miss then
-            Imgui.BulletText(string.format('%s missed.', chain.name))
+            imgui.BulletText(string.format('%s missed.', chain.name))
         else
             -- chain.type == ChainType.Unknown
         end
@@ -321,12 +321,12 @@ local function DrawMob(mob)
             -- you must wait 3 seconds before weaponskilling, but the remaining
             -- 7 seconds are free game for burst and skilling
             if time_remaining <= 7 then
-                Imgui.BulletText(string.format('%is - go!', time_remaining))
+                imgui.BulletText(string.format('%is - go!', time_remaining))
             else
-                Imgui.BulletText(string.format('%is - wait...', time_remaining))
+                imgui.BulletText(string.format('%is - wait...', time_remaining))
             end
         else
-            Imgui.BulletText('closed.')
+            imgui.BulletText('closed.')
         end
     end
 end
@@ -338,7 +338,7 @@ local function DrawSkillchain(mobs)
     for _, mob in pairs(mobs) do
         if #mob.chain > 0 then
             if i > 1 then
-                Imgui.Text('')
+                imgui.Text('')
             end
             DrawMob(mob)
             i = i + 1
@@ -368,10 +368,10 @@ end
 ---@param s SkillchainSettings?
 local function UpdateSettings(s)
     if s ~= nil then
-        Config = s
+        config = s
     end
 
-    Settings.save()
+    settings.save()
 end
 
 local function OnLoad()
@@ -390,9 +390,9 @@ local function OnCommand(e)
     end
 
     if args[2] == 'retail' then
-        Config.dataSet = 'retail'
+        config.dataSet = 'retail'
     elseif args[2] == 'horizon' then
-        Config.dataSet = 'horizon'
+        config.dataSet = 'horizon'
     elseif args[2] == 'test' then
         ---@type Skillchain
         local testMob = {
@@ -412,7 +412,7 @@ local function OnCommand(e)
         }
 
         table.insert(testMob.chain, testStep)
-        table.insert(Chains, testMob)
+        table.insert(chains, testMob)
     end
 
     e.blocked = true
@@ -421,42 +421,42 @@ end
 ---@param e PacketInEventArgs
 local function OnPacket(e)
     if e.id == 0x28 then
-        local action = Packets.ParseAction(e.data_modified_raw)
+        local action = packets.ParseAction(e.data_modified_raw)
 
         if action.category == 3 then
-            HandleWeaponskill(action, Chains)
+            HandleWeaponskill(action, chains)
         elseif action.category == 4 then
-            HandleMagicAbility(action, Chains)
+            HandleMagicAbility(action, chains)
         elseif action.category == 11 then
-            HandleMobSkill(action, Chains)
+            HandleMobSkill(action, chains)
         elseif action.category == 13 then
-            HandlePetAbility(action, Chains)
+            HandlePetAbility(action, chains)
         end
     end
 end
 
 local function OnPresent()
     local activeCount = 0
-    for _, mob in pairs(Chains) do
+    for _, mob in pairs(chains) do
         if #mob.chain > 0 then
             activeCount = activeCount + 1
         end
     end
 
-    if activeCount > 0 and not Ffxi.IsChatExpanded() then
-        Imgui.Lin.DrawWindow(Config.windowName, Config.windowSize, Config.windowPos, function()
-            DrawSkillchain(Chains)
+    if activeCount > 0 and not ffxi.IsChatExpanded() then
+        imgui.Lin.DrawWindow(config.windowName, config.windowSize, config.windowPos, function()
+            DrawSkillchain(chains)
         end)
     end
 
     local now = os.time()
-    if now - LastPulse > 1 then
-        LastPulse = now
-        RunGarbageCollector(Chains)
+    if now - lastPulse > 1 then
+        lastPulse = now
+        RunGarbageCollector(chains)
     end
 end
 
-Settings.register('settings', 'settings_update', UpdateSettings)
+settings.register('settings', 'settings_update', UpdateSettings)
 ashita.events.register('load', 'on_load', OnLoad)
 ashita.events.register('unload', 'on_unload', OnUnload)
 ashita.events.register('command', 'on_command', OnCommand)
