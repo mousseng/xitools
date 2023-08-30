@@ -14,20 +14,21 @@
 ---@field actions      Action[]
 
 ---@class Action
----@field reaction               integer
----@field animation              integer
----@field effect                 integer
----@field stagger                integer
+---@field miss                   integer
+---@field kind                   integer
+---@field sub_kind               integer
+---@field info                   integer
+---@field scale                  integer
 ---@field param                  integer
 ---@field message                integer
----@field unknown                integer
----@field has_add_effect         boolean
----@field add_effect_animation   integer?
----@field add_effect_effect      integer?
----@field add_effect_param       integer?
----@field add_effect_message     integer?
----@field has_spike_effect       boolean
----@field spike_effect_animation integer?
----@field spike_effect_effect    integer?
----@field spike_effect_param     integer?
----@field spike_effect_message   integer?
+---@field bit                    integer
+---@field has_proc               boolean
+---@field proc_animation         integer?
+---@field proc_effect            integer?
+---@field proc_param             integer?
+---@field proc_message           integer?
+---@field has_reaction           boolean
+---@field reaction_animation     integer?
+---@field reaction_effect        integer?
+---@field reaction_param         integer?
+---@field reaction_message       integer?
