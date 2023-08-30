@@ -252,6 +252,7 @@ local retail = {
     [3488] = { name = "Arching Arrow",        attr = { Fusion, } },
     [3489] = { name = "Stellar Arrow",        attr = { Darkness, Gravitation, } },
     [3490] = { name = "Lux Arrow",            attr = { Fragmentation, Distortion, } },
+    [3542] = { name = "Oisoya"   ,            attr = { Light, Distortion, } },
     [3708] = { name = "Swift Blade",          attr = { Gravitation, } },
     [3709] = { name = "Chant Du Cygne",       attr = { Light, Distortion, } },
     [3711] = { name = "Vorpal Blade",         attr = { Scission, Impaction, } },
