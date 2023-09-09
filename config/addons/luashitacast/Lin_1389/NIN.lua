@@ -57,7 +57,7 @@ local sets = {
 
         Back = "Psilos Mantle", -- upgrade to Forager's
         Waist = "Swift Belt",
-        Legs = "Koga Hakama", -- upgrade to Byakko's
+        Legs = "Byakko's Haidate",
         Feet = "Fed. Kyahan", -- upgrade to Fuma
 
         AtNightPlus = {
@@ -82,7 +82,7 @@ local sets = {
 
         Back = "Psilos Mantle", -- upgrade to Forager's
         Waist = "Ryl.Kgt. Belt", -- upgrade to Warwolf
-        Legs = "Republic Subligar", -- upgrade to Byakko's
+        Legs = "Byakko's Haidate",
         Feet = "Fed. Kyahan", -- upgrade to Rutters or Shura
 
         AtNightPlus = {
@@ -121,12 +121,12 @@ local sets = {
         Ear1 = "Drone Earring", -- upgrade to Geist Earring
         Ear2 = "Drone Earring", -- upgrade to Geist Earring
 
-        Body = "Yasha Samue", -- ???
+        Body = "Yasha Samue", -- upgrade to Kirin's Osode
         Hands = "Savage Gauntlets",
         Ring1 = "Saintly Ring",
         Ring2 = "Saintly Ring",
 
-        Back = "High Brth. Mantle", -- ???
+        Back = "High Brth. Mantle", -- upgrade to merciful cape
         Waist = "Ryl.Kgt. Belt",
         Legs = "Savage Loincloth",
         Feet = "Suzaku's Sune-Ate",
@@ -149,7 +149,7 @@ local sets = {
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt",
-        Legs = "Yasha Hakama",
+        Legs = "Byakko's Haidate",
         Feet = "Yasha Sune-ate", -- upgrade to Fuma
 
         AtNight = {
@@ -174,7 +174,7 @@ local sets = {
 
         Back = "High Brth. Mantle",
         Waist = "Swift Belt", -- upgrade to Koga Sarashi or Warwolf
-        Legs = "Yasha Hakama",
+        Legs = "Byakko's Haidate",
         Feet = "Yasha Sune-ate",
     },
     Nuke = Equip.NewSet {

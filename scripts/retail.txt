@@ -27,6 +27,7 @@
 /addon load instantchat
 /addon load simplelog
 /addon load thotbar
+/addon load skillchain
 
 /bindblock
 /bind insert /ashita
@@ -51,6 +52,8 @@
 /bind !F4 /input /ta <a23>
 /bind !F5 /input /ta <a24>
 /bind !F6 /input /ta <a25>
+
+/alias add /glam /lockstyleset
 
 /wait 3
 
