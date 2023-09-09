@@ -15,6 +15,7 @@ local Resonances = require('data.resonances')
 local MagicBursts = require('data.magicbursts')
 local Weaponskills = require('data.weaponskills')
 local MobSkills = require('data.mobskills')
+local WeaponskillMsgs = T{ 185, 264, }
 
 ---@class SkillchainSettings
 ---@field dataSet 'retail'|'horizon'
@@ -143,6 +144,12 @@ local function handleChainStep(packet, mobs, actionName, attrInfo)
 
         for j = 1, target.action_count do
             local action = target.actions[j]
+
+            -- skip non-chaining stuff like jumps, bashes, and steals
+            -- if T{ 110, 129, 244, 317, 327, }:contains(action.message) then
+            if not WeaponskillMsgs:contains(action.message) then
+                return
+            end
 
             -- Prep chain step display data
             ---@type SkillchainStep
@@ -431,7 +438,7 @@ local function OnPacket(e)
             if action.param > 256 then
                 HandleMobSkill(action, chains)
             else
-            HandleWeaponskill(action, chains)
+                HandleWeaponskill(action, chains)
             end
         elseif action.category == 4 then
             HandleMagicAbility(action, chains)
