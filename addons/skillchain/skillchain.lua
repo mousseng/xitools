@@ -421,10 +421,18 @@ end
 ---@param e PacketInEventArgs
 local function OnPacket(e)
     if e.id == 0x28 then
+        ---@type ActionPacket
         local action = packets.ParseAction(e.data_modified_raw)
 
         if action.category == 3 then
+            -- For some reason, some trusts (like Valaineral) send their mobskills
+            -- as weaponskill packets instead. It's possible there's something in
+            -- the sub_kind, scale, or message that could be used to distinguish
+            if action.param > 256 then
+                HandleMobSkill(action, chains)
+            else
             HandleWeaponskill(action, chains)
+            end
         elseif action.category == 4 then
             HandleMagicAbility(action, chains)
         elseif action.category == 11 then
