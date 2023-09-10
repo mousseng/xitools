@@ -198,7 +198,7 @@ local function HandleWeaponskill(packet, mobs)
     local weaponskillInfo = Weaponskills[config.dataSet][packet.param]
 
     -- Don't care about skillchains we can't participate in
-    if not isServerIdInParty(packet.actor_id) or weaponskillInfo == nil then
+    if not isServerIdInParty(packet.actor_id) or weaponskillInfo == nil or weaponskillInfo.attr == nil then
         return
     end
 
@@ -217,7 +217,7 @@ local function HandlePetAbility(packet, mobs)
     local petAbilInfo = MobSkills[config.dataSet][packet.param]
 
     -- Don't care about skillchains we can't participate in
-    if not isPetServerIdInParty(packet.actor_id) or petAbilInfo == nil then
+    if not isPetServerIdInParty(packet.actor_id) or petAbilInfo == nil or petAbilInfo.attr == nil then
         return
     end
 
@@ -236,7 +236,7 @@ local function HandleMobSkill(packet, mobs)
     local mobSkillInfo = MobSkills[config.dataSet][packet.param]
 
     -- Don't care about skillchains we can't participate in
-    if not isServerIdInParty(packet.actor_id) or mobSkillInfo == nil then
+    if not isServerIdInParty(packet.actor_id) or mobSkillInfo == nil or mobSkillInfo.attr == nil then
         return
     end
 
