@@ -100,7 +100,11 @@ end
 local function OnPresent()
     renderer.calc(state)
 
-    if GetPlayerEntity() == nil or ffxi.IsMapOpen() or ffxi.IsChatExpanded() then
+    if GetPlayerEntity() == nil
+    or ffxi.IsMapOpen()
+    or ffxi.IsChatExpanded()
+    or ffxi.IsEventHappening()
+    or ffxi.IsInterfaceHidden() then
         return
     end
 
