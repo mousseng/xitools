@@ -185,7 +185,8 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
 
     if (options.globals.hideUnderChat[1] and ffxi.IsChatExpanded())
     or (options.globals.hideUnderMap[1] and ffxi.IsMapOpen())
-    or (options.globals.hideWhileLoading[1] and GetPlayerEntity() == nil) then
+    or (options.globals.hideWhileLoading[1] and GetPlayerEntity() == nil)
+    or ffxi.IsEventHappening() or ffxi.IsInterfaceHidden() then
         return
     end
 
