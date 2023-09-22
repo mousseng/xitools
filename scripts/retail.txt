@@ -28,6 +28,11 @@
 /addon load simplelog
 /addon load thotbar
 /addon load skillchain
+/addon load captain
+/addon load nolock
+/addon load combatmessages
+/addon load logs
+/addon load loggers
 
 /bindblock
 /bind insert /ashita
@@ -54,6 +59,7 @@
 /bind !F6 /input /ta <a25>
 
 /alias add /glam /lockstyleset
+/alias add /gear /lac fwd gear
 
 /wait 3
 
@@ -64,3 +70,4 @@
 /sl target on
 /sl others on
 /fps 0
+/captain hide
