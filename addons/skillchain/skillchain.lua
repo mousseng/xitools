@@ -15,7 +15,7 @@ local Resonances = require('data.resonances')
 local MagicBursts = require('data.magicbursts')
 local Weaponskills = require('data.weaponskills')
 local MobSkills = require('data.mobskills')
-local WeaponskillMsgs = T{ 185, 264, }
+local WeaponskillMsgs = T{ 185, 188, 264, }
 
 ---@class SkillchainSettings
 ---@field dataSet 'retail'|'horizon'
