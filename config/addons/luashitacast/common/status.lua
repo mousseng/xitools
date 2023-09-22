@@ -1,23 +1,28 @@
+local status = {
+    lastStatus = 'Engaged',
+    currentStatus = 'Engaged',
+}
+
 ---@return boolean
-local function IsNight()
+function status.IsNight()
     local time = gData.GetTimestamp()
     return time.hour >= 18 or time.hour < 6
 end
 
 ---@return boolean
-local function IsNightPlus()
+function status.IsNightPlus()
     local time = gData.GetTimestamp()
     return time.hour >= 17 or time.hour < 7
 end
 
 ---@return boolean
-local function IsHalfMp()
+function status.IsHalfMp()
     local player = gData.GetPlayer()
     return player.MPP <= 50
 end
 
 ---@return boolean
-local function IsItemInContainer(bagId, inv, itemId)
+function status.IsItemInContainer(bagId, inv, itemId)
     local bagMax = inv:GetContainerCountMax(bagId)
     for i = 0, bagMax do
         local invSlot = inv:GetContainerItem(bagId, i)
@@ -30,18 +35,18 @@ local function IsItemInContainer(bagId, inv, itemId)
 end
 
 ---@return boolean
-local function HasEquipment(item)
+function status.HasEquipment(item)
     local inv = AshitaCore:GetMemoryManager():GetInventory()
     local itemId = AshitaCore:GetMemoryManager():GetResourceManager():GetItemByName(item, 0).Id
 
-    return IsItemInContainer( 0, inv, itemId)
-        or IsItemInContainer( 8, inv, itemId)
-        or IsItemInContainer(10, inv, itemId)
+    return status.IsItemInContainer( 0, inv, itemId)
+        or status.IsItemInContainer( 8, inv, itemId)
+        or status.IsItemInContainer(10, inv, itemId)
 end
 
 ---@param env table
 ---@return boolean
-local function IsInSandoria(env)
+function status.IsInSandoria(env)
     return env.Area == "Northern San d'Oria"
         or env.Area == "Southern San d'Oria"
         or env.Area == "Port San d'Oria"
@@ -50,7 +55,7 @@ end
 
 ---@param env table
 ---@return boolean
-local function IsInBastok(env)
+function status.IsInBastok(env)
     return env.Area == "Bastok Markets"
         or env.Area == "Bastok Mines"
         or env.Area == "Metalworks"
@@ -59,7 +64,7 @@ end
 
 ---@param env table
 ---@return boolean
-local function IsInWindurst(env)
+function status.IsInWindurst(env)
     return env.Area == "Windurst Woods"
         or env.Area == "Windurst Waters"
         or env.Area == "Windurst Walls"
@@ -69,14 +74,24 @@ end
 
 ---@param player table
 ---@return boolean
-local function IsAttacking(player)
+function status.IsAttacking(player)
     return player.Status == 'Engaged'
+end
+
+---@param player table
+---@return boolean
+function status.IsNewlyIdle(player)
+    status.lastStatus = status.currentStatus
+    status.currentStatus = player.Status
+
+    return status.lastStatus == 'Engaged'
+        and status.currentStatus ~= 'Engaged'
 end
 
 ---@param player   table
 ---@param settings table
 ---@return boolean
-local function IsResting(player, settings)
+function status.IsResting(player, settings)
     local isResting = player.Status == 'Resting'
 
     if isResting and not settings.IsRested and player.MPP >= 99 then
@@ -90,7 +105,7 @@ end
 
 ---@param status string
 ---@return boolean
-local function HasStatus(status)
+function status.HasStatus(status)
     local buffs = AshitaCore:GetMemoryManager():GetPlayer():GetBuffs()
 
     local matchText = string.lower(status)
@@ -163,7 +178,7 @@ local spells = {
 
 ---@param spell table
 ---@return boolean
-local function IsStealth(spell)
+function status.IsStealth(spell)
     return spell.Id == spells.Sneak
         or spell.Id == spells.Invisible
         or spell.Id == spells.TonkoIchi
@@ -173,7 +188,7 @@ end
 
 ---@param spell table
 ---@return boolean
-local function IsDrain(spell)
+function status.IsDrain(spell)
     return spell.Id == spells.Drain
         or spell.Id == spells.Aspir
         or spell.Id == spells.DrainII
@@ -183,27 +198,27 @@ end
 -- Is this spell an INT-based elemental nuke or dot?
 ---@param spell table
 ---@return boolean
-local function IsNuke(spell)
+function status.IsNuke(spell)
     return (spell.Id >= spells.Fire and spell.Id <= spells.FloodII)
         or (spell.Id >= spells.Burn and spell.Id <= spells.Drown)
 end
 
 ---@param spell table
 ---@return boolean
-local function IsHeal(spell)
+function status.IsHeal(spell)
     return spell.Id >= spells.CureI
         and spell.Id <= spells.CuragaV
 end
 
 ---@param spell table
 ---@return boolean
-local function IsHoly(spell)
+function status.IsHoly(spell)
     return spell.Id >= spells.Holy and spell.Id <= spells.HolyII
 end
 
 ---@param spell table
 ---@return boolean
-local function IsBanish(spell)
+function status.IsBanish(spell)
     return (spell.Id >= spells.Banish and spell.Id <= spells.BanishV)
         or (spell.Id >= spells.Banishga and spell.Id <= spells.BanishgaV)
 end
@@ -211,7 +226,7 @@ end
 -- Is this spell non-nuke divine magic?
 ---@param spell table
 ---@return boolean
-local function IsDivine(spell)
+function status.IsDivine(spell)
     return spell.Id == spells.Flash
         or spell.Id == spells.Enlight
         or spell.Id == spells.Repose
@@ -219,7 +234,7 @@ end
 
 ---@param spell table
 ---@return boolean
-local function IsEnfeebMnd(spell)
+function status.IsEnfeebMnd(spell)
     return spell.Id == spells.Paralyze
         or spell.Id == spells.ParalyzeII
         or spell.Id == spells.Slow
@@ -229,7 +244,7 @@ end
 
 ---@param spell table
 ---@return boolean
-local function IsEnfeebInt(spell)
+function status.IsEnfeebInt(spell)
     return spell.Id == spells.Gravity
         or spell.Id == spells.GravityII
         or spell.Id == spells.Blind
@@ -240,7 +255,7 @@ end
 
 ---@param spell table
 ---@return boolean
-local function IsShadows(spell)
+function status.IsShadows(spell)
     return spell.Id == spells.Blink
         or spell.Id == spells.UtsusemiIchi
         or spell.Id == spells.UtsusemiNi
@@ -249,26 +264,26 @@ end
 
 ---@param spell table
 ---@return boolean
-local function IsPotencyNinjutsu(spell)
+function status.IsPotencyNinjutsu(spell)
     return spell.Id >= spells.KatonIchi and spell.Id <= spells.SuitonSan
 end
 
 ---@param spell table
 ---@return boolean
-local function IsAccuracyNinjutsu(spell)
+function status.IsAccuracyNinjutsu(spell)
     return spell.Id >= spells.JubakuIchi and spell.Id <= spells.DokumoriSan
 end
 
 ---@param spell table
 ---@return boolean
-local function IsStoneskin(spell)
+function status.IsStoneskin(spell)
     return spell.Id == spells.Stoneskin
 end
 
 -- Is this spell affected by enhancing magic skill?
 ---@param spell table
 ---@return boolean
-local function IsEnhancement(spell)
+function status.IsEnhancement(spell)
     return (spell.Id >= spells.Barfire and spell.Id <= spells.Barwatera)
         or (spell.Id >= spells.Enfire and spell.Id <= spells.Enwater)
         or (spell.Id >= spells.BlazeSpikes and spell.Id <= spells.ShockSpikes)
@@ -276,32 +291,4 @@ local function IsEnhancement(spell)
         or spell.Id == spells.PhalanxII
 end
 
-return {
-    -- player stuff
-    HasStatus = HasStatus,
-    IsHalfMp = IsHalfMp,
-    IsNight = IsNight,
-    IsNightPlus = IsNightPlus,
-    IsAttacking = IsAttacking,
-    IsResting = IsResting,
-    IsInBastok = IsInBastok,
-    IsInSandoria = IsInSandoria,
-    IsInWindurst = IsInWindurst,
-    -- action stuff
-    IsStealth = IsStealth,
-    IsDrain = IsDrain,
-    IsNuke = IsNuke,
-    IsHeal = IsHeal,
-    IsEnfeebMnd = IsEnfeebMnd,
-    IsEnfeebInt = IsEnfeebInt,
-    IsShadows = IsShadows,
-    IsPotencyNinjutsu = IsPotencyNinjutsu,
-    IsAccuracyNinjutsu = IsAccuracyNinjutsu,
-    IsHoly = IsHoly,
-    IsBanish = IsBanish,
-    IsDivine = IsDivine,
-    IsStoneskin = IsStoneskin,
-    IsEnhancement = IsEnhancement,
-    -- misc
-    HasEquipment = HasEquipment,
-}
+return status

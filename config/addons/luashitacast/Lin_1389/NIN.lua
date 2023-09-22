@@ -10,6 +10,7 @@ local settings = {
     Main = "Senjuinrikio",
     Sub  = "Fudo",
     Ammo = "Dart",
+    ExpBand = "Empress Band",
 }
 
 local sets = {
@@ -27,7 +28,7 @@ local sets = {
         Body = "Arhat's Gi",
         Hands = "Kog. Tekko +1",
         Ring1 = "Sattva Ring",
-        Ring2 = "Chariot Band",
+        Ring2 = settings.ExpBand,
 
         Back = "High Brth. Mantle", -- upgrade to Resentment Cape
         Waist = "Ryl.Kgt. Belt", -- upgrade to Scouter's Rope
@@ -75,7 +76,7 @@ local sets = {
         Ear1 = "Merman's Earring",
         Ear2 = "Brutal Earring",
 
-        Body = "Koga Chainmail", -- upgrade to Hauby
+        Body = "Koga Chainmail", -- upgrade to Hauby? or use Osode?
         Hands = "Windurstian Tekko", -- upgrade to H/O/B-Kote, AF+1
         Ring1 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
         Ring2 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
@@ -121,7 +122,7 @@ local sets = {
         Ear1 = "Drone Earring", -- upgrade to Geist Earring
         Ear2 = "Drone Earring", -- upgrade to Geist Earring
 
-        Body = "Yasha Samue", -- upgrade to Kirin's Osode
+        Body = "Kirin's Osode",
         Hands = "Savage Gauntlets",
         Ring1 = "Saintly Ring",
         Ring2 = "Saintly Ring",
@@ -147,7 +148,7 @@ local sets = {
         Ring1 = "Sattva Ring",
         Ring2 = "Reflex Ring", -- upgrade to Loquacious
 
-        Back = "High Brth. Mantle",
+        Back = "Fed. Army Mantle", -- upgrade to Boxer Mantle or Resentment Cape
         Waist = "Swift Belt",
         Legs = "Byakko's Haidate",
         Feet = "Yasha Sune-ate", -- upgrade to Fuma
@@ -172,7 +173,7 @@ local sets = {
         Ring1 = "Sattva Ring",
         Ring2 = "Reflex Ring", -- upgrade to Mermaid Ring
 
-        Back = "High Brth. Mantle",
+        Back = "Fed. Army Mantle", -- upgrade to Astute/Resentment Cape
         Waist = "Swift Belt", -- upgrade to Koga Sarashi or Warwolf
         Legs = "Byakko's Haidate",
         Feet = "Yasha Sune-ate",
@@ -188,12 +189,12 @@ local sets = {
         Ear1 = "Abyssal Earring", -- upgrade to Novio
         Ear2 = "Moldavite Earring",
 
-        Body = "Yasha Samue", -- upgrade to Kirin's Osode
+        Body = "Kirin's Osode",
         Hands = "Kog. Tekko +1",
         Ring1 = "Snow Ring",
         Ring2 = "Snow Ring",
 
-        Back = "High Brth. Mantle", -- upgrade to Windy Conquest or Astute Cape
+        Back = "Fed. Army Mantle", -- sidegrade to Astute Cape
         Waist = "Ryl.Kgt. Belt", -- upgrade to Jungle Rope
         Legs = "Yasha Hakama",  -- upgrade to +1
         Feet = "Yasha Sune-ate", -- upgrade to AF+1

@@ -128,8 +128,12 @@ end
 
 ---@param slot string|number
 ---@param item string
-local function Item(slot, item)
-    gFunc.Equip(Slots[slot] or slot, item)
+local function Item(slot, item, force)
+    if force then
+        gFunc.ForceEquip(Slots[slot] or slot, item)
+    else
+        gFunc.Equip(Slots[slot] or slot, item)
+    end
 end
 
 ---@param set   LacSet
