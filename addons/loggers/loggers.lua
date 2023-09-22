@@ -68,7 +68,7 @@ local function LogPacket(prefix, packet)
         ashita.fs.create_dir(logDir)
     end
 
-    local logName = string.format('%s.log', date)
+    local logName = string.format('%s.loggers', date)
     local logFile = io.open(string.format('%s/%s', logDir, logName), 'a')
     if logFile ~= nil then
         logFile:write(line)
