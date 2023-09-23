@@ -1,6 +1,6 @@
 addon.name      = 'loggers'
 addon.author    = 'lin'
-addon.version   = '1.0'
+addon.version   = '1.1'
 addon.desc      = 'Logs raw packet data to a file'
 
 require('common')
