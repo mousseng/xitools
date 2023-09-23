@@ -62,6 +62,8 @@ local defaultOptions = T{
         hideUnderMap = T{ true },
         hideUnderChat = T{ true },
         hideWhileLoading = T{ true },
+        hideDuringEvent = T{ true },
+        hideWithInterface = T{ true },
         isClickThru = T{ false },
         textColor = T{ 1.00, 1.00, 1.00, 1.0 },
         backgroundColor = T{ 0.08, 0.08, 0.08, 0.8 },
@@ -107,6 +109,8 @@ local function DrawConfig()
         imgui.Checkbox('Hide while map open', options.globals.hideUnderMap)
         imgui.Checkbox('Hide while chat open', options.globals.hideUnderChat)
         imgui.Checkbox('Hide while loading', options.globals.hideWhileLoading)
+        imgui.Checkbox('Hide during events', options.globals.hideDuringEvent)
+        imgui.Checkbox('Hide with game interface', options.globals.hideWithInterface)
 
         if imgui.InputFloat('UI Scale', options.globals.uiScale, 0.01, 0.025) then
             imgui.SetWindowFontScale(options.globals.uiScale[1])
@@ -186,7 +190,8 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
     if (options.globals.hideUnderChat[1] and ffxi.IsChatExpanded())
     or (options.globals.hideUnderMap[1] and ffxi.IsMapOpen())
     or (options.globals.hideWhileLoading[1] and GetPlayerEntity() == nil)
-    or ffxi.IsEventHappening() or ffxi.IsInterfaceHidden() then
+    or (options.globals.hideDuringEvent[1] and ffxi.IsEventHappening())
+    or (options.globals.hideWithInterface[1] and ffxi.IsInterfaceHidden()) then
         return
     end
 
