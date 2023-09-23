@@ -39,7 +39,7 @@ function packets.ParseChatMessage(packet)
         from_gm = struct.unpack('i1', packet, 0x05 + 1),
         zone    = struct.unpack('i2', packet, 0x06 + 1),
         sender  = struct.unpack('s',  packet, 0x08 + 1),
-        text    = struct.unpack('s',  packet, 0x18 + 1),
+        text    = struct.unpack('s',  packet, 0x17 + 1),
     }
 
     return chatmessage
