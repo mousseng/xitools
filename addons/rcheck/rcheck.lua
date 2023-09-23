@@ -1,6 +1,6 @@
 addon.name    = 'rcheck'
 addon.author  = 'lin'
-addon.version = '2.0.0'
+addon.version = '2.1'
 addon.desc    = 'Make ready-checking easy :)'
 
 require('common')
