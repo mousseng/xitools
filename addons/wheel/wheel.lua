@@ -1,6 +1,6 @@
 addon.name    = 'wheel'
 addon.author  = 'lin'
-addon.version = '0.1'
+addon.version = '0.2'
 addon.desc    = 'gavlan wheel, gavlan deal'
 
 require('common')
