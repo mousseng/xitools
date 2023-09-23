@@ -26,6 +26,9 @@ local migrations = {
 
         options.version = '0.21'
     end,
+    ['0.21'] = function(options)
+        options.version = '0.22'
+    end,
 }
 
 return {
