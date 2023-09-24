@@ -103,14 +103,15 @@ function status.IsResting(player, settings)
     return isResting and not settings.IsRested
 end
 
----@param status string
+---@param statusName string
 ---@return boolean
-function status.HasStatus(status)
+function status.HasStatus(statusName)
+    local resx = AshitaCore:GetResourceManager()
     local buffs = AshitaCore:GetMemoryManager():GetPlayer():GetBuffs()
 
-    local matchText = string.lower(status)
+    local matchText = string.lower(statusName)
     for _, buff in pairs(buffs) do
-        local buffString = AshitaCore:GetResourceManager():GetString("buffs.names", buff)
+        local buffString = resx:GetString("buffs.names", buff)
         if buffString and string.lower(buffString):match(matchText) then
             return true
         end

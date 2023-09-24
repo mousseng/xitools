@@ -1,5 +1,6 @@
 require('common')
 local noop = function() end
+local chat = AshitaCore:GetChatManager()
 
 ---@module 'common.equip'
 local Equip = gFunc.LoadFile('common/equip.lua')
@@ -7,6 +8,7 @@ local Equip = gFunc.LoadFile('common/equip.lua')
 local Status = gFunc.LoadFile('common/status.lua')
 
 local settings = {
+    Subjob = 'NON',
     Main = "Kanaria",
     Sub  = "Shigi",
     Ammo = "Date Shuriken",
@@ -61,8 +63,20 @@ local sets = {
     },
 }
 
+local function changeThotbarPalette(subjob)
+    if subjob == nil or subjob == 'NON' or subjob == settings.Subjob then
+        return
+    end
+
+    local thotbarCmd = '/tb palette change %s'
+    chat:QueueCommand(1, thotbarCmd:format(subjob))
+    settings.Subjob = subjob
+end
+
 local function handleDefault()
     local player = gData.GetPlayer()
+
+    changeThotbarPalette(player.SubJob)
 
     if Status.IsNewlyIdle(player) then
         Equip.Set(sets.Idle)
@@ -100,28 +114,30 @@ local function handleCommand(args)
 end
 
 local function onLoad()
-    AshitaCore:GetChatManager():QueueCommand(-1, '/addon reload wheel')
+    chat:QueueCommand(-1, '/addon reload wheel')
+
     ashita.tasks.once(1, function()
-        AshitaCore:GetChatManager():QueueCommand( 1, '/wheel level san')
-        AshitaCore:GetChatManager():QueueCommand( 1, '/wheel lock')
+        chat:QueueCommand(1, '/wheel level san')
+        chat:QueueCommand(1, '/wheel alt ni')
+        chat:QueueCommand(1, '/wheel lock')
     end)
 end
 
 local function onUnload()
-    AshitaCore:GetChatManager():QueueCommand(-1, '/addon unload wheel')
+    chat:QueueCommand(-1, '/addon unload wheel')
 end
 
 return {
-    Sets = sets,
-    OnLoad = onLoad,
-    OnUnload = onUnload,
-    HandleCommand = handleCommand,
-    HandleDefault = handleDefault,
-    HandleAbility = noop,
-    HandleItem = gFunc.LoadFile('common/items.lua'),
-    HandlePrecast = noop,
-    HandlePreshot = noop,
-    HandleMidcast = noop,
-    HandleMidshot = noop,
+    Sets              = sets,
+    OnLoad            = onLoad,
+    OnUnload          = onUnload,
+    HandleCommand     = handleCommand,
+    HandleDefault     = handleDefault,
+    HandleAbility     = noop,
+    HandleItem        = gFunc.LoadFile('common/items.lua'),
+    HandlePrecast     = noop,
+    HandlePreshot     = noop,
+    HandleMidcast     = noop,
+    HandleMidshot     = noop,
     HandleWeaponskill = handleWeaponskill,
 }
