@@ -200,6 +200,11 @@ local treas = {
         pos = T{ 100, 100 },
         flags = bit.bor(ImGuiWindowFlags_NoResize),
     },
+    HandleCommand = function (args, options, gOptions)
+        if #args == 0 then
+            options.isVisible[1] = not options.isVisible[1]
+        end
+    end,
     DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('treas') then
             imgui.Checkbox('Enabled', options.isEnabled)
