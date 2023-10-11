@@ -5,16 +5,16 @@ addon.desc    = 'A little skillchain tracker so you know when things happen'
 
 require('common')
 local settings = require('settings')
-local ffxi = require('lin.ffxi')
-local imgui = require('lin.imgui')
-local packets = require('lin.packets')
+local ffxi = require('lin/ffxi')
+local imgui = require('lin/imgui')
+local packets = require('lin/packets')
 
-local Elements = require('data.elements')
-local ChainType = require('data.chaintype')
-local Resonances = require('data.resonances')
-local MagicBursts = require('data.magicbursts')
-local Weaponskills = require('data.weaponskills')
-local MobSkills = require('data.mobskills')
+local Elements = require('data/elements')
+local ChainType = require('data/chaintype')
+local Resonances = require('data/resonances')
+local MagicBursts = require('data/magicbursts')
+local Weaponskills = require('data/weaponskills')
+local MobSkills = require('data/mobskills')
 local WeaponskillMsgs = T{ 185, 188, 264, }
 
 ---@class SkillchainSettings
@@ -130,63 +130,64 @@ local function isPetServerIdInParty(id)
 end
 
 local function handleChainStep(packet, mobs, actionName, attrInfo)
-    -- Iterate down to the meat of our data
-    for i = 1, packet.target_count do
-        local target = packet.targets[i]
+    if packet.target_count < 1 then
+        return
+    end
 
-        -- Set up our display data
-        ---@type Skillchain
-        local mob = mobs[target.id] or {
-            name = getEntityByServerId(target.id).Name,
-            time = nil,
-            chain = { },
-        }
+    local target = packet.targets[1]
 
-        for j = 1, target.action_count do
-            local action = target.actions[j]
+    -- Set up our display data
+    ---@type Skillchain
+    local mob = mobs[target.id] or {
+        name = getEntityByServerId(target.id).Name,
+        time = nil,
+        chain = { },
+    }
 
-            -- skip non-chaining stuff like jumps, bashes, and steals
-            -- if T{ 110, 129, 244, 317, 327, }:contains(action.message) then
-            if not WeaponskillMsgs:contains(action.message) then
-                return
-            end
+    for j = 1, target.action_count do
+        local action = target.actions[j]
 
-            -- Prep chain step display data
-            ---@type SkillchainStep
-            local chain_step = {
-                id = action.sub_kind,
-                time = os.time(),
-                type = ChainType.Unknown,
-                name = actionName,
-                base_damage = action.param,
-                bonus_damage = action.proc_param,
-                resonance = nil,
-            }
-
-            -- Specialize our chain step
-            if action.miss == 1 then
-                chain_step.type = ChainType.Miss
-            elseif not action.has_proc then
-                chain_step.type = ChainType.Starter
-                chain_step.resonance = attrInfo
-
-                mob.time = os.time()
-                mob.chain = { }
-            elseif action.has_proc then
-                chain_step.type = ChainType.Skillchain
-                chain_step.resonance = Resonances[action.proc_message]
-
-                mob.time = os.time()
-            else
-                chain_step.type = ChainType.Unknown
-            end
-
-            table.insert(mob.chain, chain_step)
+        -- skip non-chaining stuff like jumps, bashes, and steals
+        -- if T{ 110, 129, 244, 317, 327, }:contains(action.message) then
+        if not WeaponskillMsgs:contains(action.message) then
+            return
         end
 
-        -- Replace the existing mob information or add the new one
-        mobs[target.id] = mob
+        -- Prep chain step display data
+        ---@type SkillchainStep
+        local chain_step = {
+            id = action.sub_kind,
+            time = os.time(),
+            type = ChainType.Unknown,
+            name = actionName,
+            base_damage = action.param,
+            bonus_damage = action.proc_param,
+            resonance = nil,
+        }
+
+        -- Specialize our chain step
+        if action.miss == 1 then
+            chain_step.type = ChainType.Miss
+        elseif not action.has_proc then
+            chain_step.type = ChainType.Starter
+            chain_step.resonance = attrInfo
+
+            mob.time = os.time()
+            mob.chain = { }
+        elseif action.has_proc then
+            chain_step.type = ChainType.Skillchain
+            chain_step.resonance = Resonances[action.proc_message]
+
+            mob.time = os.time()
+        else
+            chain_step.type = ChainType.Unknown
+        end
+
+        table.insert(mob.chain, chain_step)
     end
+
+    -- Replace the existing mob information or add the new one
+    mobs[target.id] = mob
 end
 
 -- Collects and collates data about a particular action in order for the render
