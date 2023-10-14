@@ -1,48 +1,68 @@
 addon.name    = 'minimap-helper'
 addon.author  = 'lin'
-addon.version = '1.3.0'
+addon.version = '2.0'
 addon.desc    = 'Automates minimap scale changes'
 
-local Packets = require('lin.packets')
-local Zones = require('minimap-zones')
+require('common')
+local chat = require('chat')
+local settings = require('settings')
 
-local CurrentZone = nil
-local Scales = {
-    Dungeon = 0.4,
-    City = 0.5,
-    Field = 0.16,
-}
+local defaultScale = '0.5'
+local defaultConfig = T{ }
+local config = settings.load(defaultConfig)
 
-local function Contains(array, value)
-    for i = 1, #array do
-        if array[i] == value then
-            return true
-        end
+settings.register('settings', 'settings_update', function (newConfig)
+    if newConfig ~= nil then
+        config = newConfig
     end
 
-    return false
+    settings.save()
+end)
+
+---@param str string
+local function LogInfo(str, ...)
+    print(chat.header(addon.name):append(chat.message(str)):format(...))
 end
 
-local function SetMinimapScale()
-    local scale = Scales.Field
-    if Contains(Zones.cities, CurrentZone) then
-        scale = Scales.City
-    elseif Contains(Zones.dungeons, CurrentZone) then
-        scale = Scales.Dungeon
+---@param str string
+local function LogError(str, ...)
+    print(chat.header(addon.name):append(chat.error(str)):format(...))
+end
+
+---Sets the minimap scale and saves to character configuration.
+---@param zone  number
+---@param scale string
+local function SetMinimapScale(zone, scale)
+    if tonumber(scale, 10) == nil then
+        LogError('%s is not a number', scale)
+        return
     end
 
-    print(string.format('Setting scale for zone %d to %s', CurrentZone, tostring(scale)))
+    config[zone] = scale
+    settings.save()
+
+    LogInfo('setting scale for zone %d to %s', zone, tostring(scale))
     AshitaCore:GetChatManager():QueueCommand(1, '/minimap zoom ' .. scale)
 end
 
+ashita.events.register('command', 'command_cb', function(e)
+    local args = e.command:args()
+    if #args < 2 or args[1] ~= '/mmh' then
+        return
+    end
+
+    local zone = AshitaCore:GetMemoryManager():GetParty():GetMemberZone(0)
+    SetMinimapScale(zone, args[2])
+end)
+
 ashita.events.register('packet_in', 'packet_in_cb', function(e)
-    if e.id == 0x000A then
-        CurrentZone = Packets.ParseZoneIn(e.data).zone
-        SetMinimapScale()
+    if e.id == 0x0A then
+        local zone = struct.unpack('i2', e.data, 0x30 + 1)
+        SetMinimapScale(zone, config[zone] or defaultScale)
     end
 end)
 
 ashita.events.register('load', 'load_cb', function()
-    CurrentZone = AshitaCore:GetMemoryManager():GetParty():GetMemberZone(0)
-    SetMinimapScale()
+    local zone = AshitaCore:GetMemoryManager():GetParty():GetMemberZone(0)
+    SetMinimapScale(zone, config[zone] or defaultScale)
 end)
