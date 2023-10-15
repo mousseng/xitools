@@ -50,6 +50,7 @@
 
 /alias add /glam /lockstyleset
 /alias add /gear /lac fwd gear
+/alias add /merit /lac fwd merit
 
 /wait 3
 
