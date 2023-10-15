@@ -163,7 +163,7 @@ local sets = {
 
         Back = "Hexerei Cape",
         Waist = "Swift Belt",
-        Legs = "Cmb.Cst. Slacks",
+        Legs = "Nashira Seraweels",
         Feet = "Duelist's Boots",
     },
     Stoneskin = Equip.NewSet {
@@ -251,7 +251,7 @@ local sets = {
 
         Back = "Rainbow Cape",
         Waist = "Duelist's Belt",
-        Legs = "Errant Slops",
+        Legs = "Nashira Seraweels",
         Feet = "Wise Pigaches",
     },
     EnfeebMnd = Equip.NewSet {
@@ -272,7 +272,7 @@ local sets = {
 
         Back = "Rainbow Cape",
         Waist = "Duelist's Belt",
-        Legs = "Errant Slops",
+        Legs = "Nashira Seraweels",
         Feet = "Duelist's Boots",
     },
     NinjutsuAcc = Equip.NewSet {
@@ -318,7 +318,7 @@ local sets = {
 
         Back = "Rainbow Cape",
         Waist = "Swift Belt",
-        Legs = "Errant Slops",
+        Legs = "Nashira Seraweels",
         Feet = "Wise Pigaches",
     },
 }

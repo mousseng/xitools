@@ -9,9 +9,16 @@ local Status = gFunc.LoadFile('common/status.lua')
 
 local settings = {
     Subjob = 'NON',
-    Main = "Kanaria",
-    Sub  = "Shigi",
-    Ammo = "Date Shuriken",
+    Default = {
+        Main = "Kaja Katana",
+        Sub  = "Ternion Dagger +1",
+        Ammo = "Date Shuriken",
+    },
+    Merit = {
+        Main = "Ternion Dagger +1",
+        Sub  = "Kaja Katana",
+        Ammo = "Date Shuriken",
+    },
     Capes = {
         Auto      = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+20', } },
         BladeShun = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+30', } },
@@ -46,38 +53,14 @@ local sets = {
         },
         Throw = Equip.NewSet {
         },
-        GeneralWs = Equip.NewSet {
+        Weaponskill = Equip.NewSet {
             Ammo  = "Seething Bomblet",
-            Ring2 = "Mummu Ring",
-        },
-        BladeKu = Equip.NewSet {
-            Ammo  = "Seething Bomblet",
-            Ring2 = "Mummu Ring",
-        },
-        BladeShun = Equip.NewSet {
+
             Head  = "Mummu Bonnet +1",
-            Body  = "Mummu Jacket +1",
+            Body  = "Mummu Jacket +2",
             Hands = "Mummu Wrists +1",
             Legs  = "Mummu Kecks +1",
             Feet  = "Mummu Gamash. +1",
-
-            Ring2 = "Mummu Ring",
-        },
-        BladeHi = Equip.NewSet {
-            Head  = "Mummu Bonnet +1",
-            Body  = "Mummu Jacket +1",
-            Hands = "Mummu Wrists +1",
-            Legs  = "Mummu Kecks +1",
-            Feet  = "Mummu Gamash. +1",
-
-            Ring2 = "Mummu Ring",
-        },
-        AeolianEdge = Equip.NewSet {
-            Ammo  = "Seething Bomblet",
-
-            Head  = "Taeon Chapeau",
-            Hands = "Taeon Gloves",
-            Feet  = "Hachi. Kyahan +1",
 
             Ring2 = "Mummu Ring",
         },
@@ -97,6 +80,64 @@ local sets = {
             Hands = "Hattori Tekko",
 
             Ring1 = "Weather. Ring",
+        },
+    },
+    Weaponskills = {
+        ['Blade: Ku'] = Equip.NewSet {
+            Ammo  = "Seething Bomblet",
+
+            Head  = "Mummu Bonnet +1",
+            Body  = "Mummu Jacket +2",
+            Hands = "Mummu Wrists +1",
+            Legs  = "Mummu Kecks +1",
+            Feet  = "Mummu Gamash. +1",
+
+            Ring2 = "Mummu Ring",
+        },
+        ['Blade: Shun'] = Equip.NewSet {
+            Head  = "Mummu Bonnet +1",
+            Body  = "Mummu Jacket +2",
+            Hands = "Mummu Wrists +1",
+            Legs  = "Mummu Kecks +1",
+            Feet  = "Mummu Gamash. +1",
+
+            Ring2 = "Mummu Ring",
+            Waist = "Thunder Belt",
+        },
+        ['Blade: Hi'] = Equip.NewSet {
+            Head  = "Mummu Bonnet +1",
+            Body  = "Mummu Jacket +2",
+            Hands = "Mummu Wrists +1",
+            Legs  = "Mummu Kecks +1",
+            Feet  = "Mummu Gamash. +1",
+
+            Ring2 = "Mummu Ring",
+        },
+        ['Aeolian Edge'] = Equip.NewSet {
+            Ammo  = "Seething Bomblet",
+
+            Head  = "Taeon Chapeau",
+            Body  = "Mummu Jacket +2",
+            Hands = "Herculean Gloves",
+            Legs  = "Hiza. Hizayoroi +2",
+            Feet  = "Hachi. Kyahan +1",
+
+            Neck  = "Sanctity Necklace",
+            Ear1  = "Hecate's Earring",
+            Ear2  = "Odr Earring",
+            Ring1 = "Weather. Ring",
+            Ring2 = "Mephitas's Ring +1",
+            -- Back  = "",
+            Waist = "Thunder Belt",
+        },
+        ['Exenterator'] = Equip.NewSet {
+            Head  = "Mummu Bonnet +1",
+            Body  = "Mummu Jacket +2",
+            Hands = "Mummu Wrists +1",
+            Legs  = "Mummu Kecks +1",
+            Feet  = "Mummu Gamash. +1",
+
+            Ring2 = "Mummu Ring",
         },
     },
 }
@@ -127,18 +168,10 @@ end
 
 local function handleWeaponskill()
     local ws = gData.GetAction()
+    local wsSet = sets.Weaponskills[ws.Name]
+    local fallback = sets.Melee.Weaponskill
 
-    if ws.Name == 'Blade: Shun' then
-        Equip.Set(sets.Melee.BladeShun)
-    elseif ws.Name == 'Blade: Hi' then
-        Equip.Set(sets.Melee.BladeHi)
-    elseif ws.Name == 'Blade: Ku' then
-        Equip.Set(sets.Melee.BladeKu)
-    elseif ws.Name == 'Aeolian Edge' then
-        Equip.Set(sets.Melee.AeolianEdge)
-    else
-        Equip.Set(sets.Melee.GeneralWs)
-    end
+    Equip.Set(wsSet or fallback)
 end
 
 local function handlePrecast()
@@ -154,9 +187,13 @@ local function handleCommand(args)
     end
 
     if args[1] == 'gear' then
-        Equip.Main(settings.Main, true)
-        Equip.Sub(settings.Sub, true)
-        Equip.Ammo(settings.Ammo, true)
+        Equip.Main(settings.Default.Main, true)
+        Equip.Sub(settings.Default.Sub, true)
+        Equip.Ammo(settings.Default.Ammo, true)
+    elseif args[1] == 'merit' then
+        Equip.Main(settings.Merit.Main, true)
+        Equip.Sub(settings.Merit.Sub, true)
+        Equip.Ammo(settings.Merit.Ammo, true)
     end
 end
 
