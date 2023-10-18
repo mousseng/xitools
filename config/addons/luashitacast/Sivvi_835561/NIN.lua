@@ -9,6 +9,7 @@ local Status = gFunc.LoadFile('common/status.lua')
 
 local settings = {
     Subjob = 'NON',
+    MeleeSet = 'Dps',
     Default = {
         Main = "Kaja Katana",
         Sub  = "Ternion Dagger +1",
@@ -20,21 +21,40 @@ local settings = {
         Ammo = "Date Shuriken",
     },
     Capes = {
-        Auto      = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+20', } },
-        BladeShun = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+30', } },
-        BladeHi   = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', } },
-        Nuke      = { Name = "Andartia's Mantle", Augment = { [1] = 'INT+30', } },
+        Auto  = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+20', [2] = '"Dbl.Atk."+10', } },
+        -- StrWs = { Name = "Andartia's Mantle", Augment = { [1] = 'STR+30', [2] = 'Weapon skill damage +10%', } },
+        DexWs = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+29', [2] = 'Weapon skill damage +10%', } },
+        -- AgiWs = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Weapon skill damage +10%', } },
+        -- Cast = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Fast Cast +10%', } },
+        Nuke  = { Name = "Andartia's Mantle", Augment = { [1] = 'INT+30', [2] = '"Mag. Atk. Bns."+9' } },
     },
 }
 
 local sets = {
     Idle = Equip.NewSet {
-        Feet = "Hachi. Kyahan +1",
+        Feet = "Hachiya Kyahan +2",
         Ring1 = "Dim. Ring (Holla)",
         Ring2 = "Warp Ring",
     },
     Melee = {
-        Auto = Equip.NewSet {
+        Dps = Equip.NewSet {
+            Ammo  = "Date Shuriken",
+
+            Head  = "Mummu Bonnet +2",
+            Body  = "Mummu Jacket +2",
+            Hands = "Mummu Wrists +2",
+            Legs  = "Mummu Kecks +2",
+            Feet  = "Mummu Gamash. +2",
+
+            Neck  = "Moonbeam Nodowa",
+            Ear1  = "Brutal Earring",
+            Ear2  = "Odr Earring",
+            Ring1 = "Epona's Ring",
+            Ring2 = "Mummu Ring",
+            Back  = settings.Capes.Auto,
+            Waist = "Sailfi Belt +1",
+        },
+        Eva = Equip.NewSet {
             Ammo  = "Date Shuriken",
 
             Head  = "Hiza. Somen +2",
@@ -53,17 +73,6 @@ local sets = {
         },
         Throw = Equip.NewSet {
         },
-        Weaponskill = Equip.NewSet {
-            Ammo  = "Seething Bomblet",
-
-            Head  = "Mummu Bonnet +1",
-            Body  = "Mummu Jacket +2",
-            Hands = "Mummu Wrists +1",
-            Legs  = "Mummu Kecks +1",
-            Feet  = "Mummu Gamash. +1",
-
-            Ring2 = "Mummu Ring",
-        },
     },
     Magic = {
         FastCast = Equip.NewSet {
@@ -75,69 +84,89 @@ local sets = {
             Feet  = "Hattori Kyahan",
         },
         Enfeeble = Equip.NewSet {
+            Body  = "Herculean Vest",
         },
         Nuke = Equip.NewSet {
+            Body  = "Herculean Vest",
             Hands = "Hattori Tekko",
+            Feet  = "Hachiya Kyahan +2",
 
             Ring1 = "Weather. Ring",
+            Back  = settings.Capes.Nuke,
         },
     },
     Weaponskills = {
+        Base = Equip.NewSet {
+            Ammo  = "Seething Bomblet",
+
+            Head  = "Mummu Bonnet +2",
+            Body  = "Mummu Jacket +2",
+            Hands = "Mummu Wrists +2",
+            Legs  = "Mummu Kecks +2",
+            Feet  = "Mummu Gamash. +2",
+
+            Ring2 = "Mummu Ring",
+            Back  = settings.Capes.DexWs,
+        },
         ['Blade: Ku'] = Equip.NewSet {
             Ammo  = "Seething Bomblet",
 
-            Head  = "Mummu Bonnet +1",
+            Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
-            Hands = "Mummu Wrists +1",
-            Legs  = "Mummu Kecks +1",
-            Feet  = "Mummu Gamash. +1",
+            Hands = "Mummu Wrists +2",
+            Legs  = "Mummu Kecks +2",
+            Feet  = "Mummu Gamash. +2",
 
             Ring2 = "Mummu Ring",
+            Back  = settings.Capes.DexWs,
         },
         ['Blade: Shun'] = Equip.NewSet {
-            Head  = "Mummu Bonnet +1",
+            Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
-            Hands = "Mummu Wrists +1",
-            Legs  = "Mummu Kecks +1",
-            Feet  = "Mummu Gamash. +1",
+            Hands = "Mummu Wrists +2",
+            Legs  = "Mummu Kecks +2",
+            Feet  = "Mummu Gamash. +2",
 
             Ring2 = "Mummu Ring",
+            Back  = settings.Capes.DexWs,
             Waist = "Thunder Belt",
         },
         ['Blade: Hi'] = Equip.NewSet {
-            Head  = "Mummu Bonnet +1",
+            Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
-            Hands = "Mummu Wrists +1",
-            Legs  = "Mummu Kecks +1",
-            Feet  = "Mummu Gamash. +1",
+            Hands = "Mummu Wrists +2",
+            Legs  = "Mummu Kecks +2",
+            Feet  = "Mummu Gamash. +2",
 
             Ring2 = "Mummu Ring",
+            Back  = settings.Capes.DexWs,
         },
         ['Aeolian Edge'] = Equip.NewSet {
             Ammo  = "Seething Bomblet",
 
             Head  = "Taeon Chapeau",
-            Body  = "Mummu Jacket +2",
+            Body  = "Herculean Vest",
             Hands = "Herculean Gloves",
             Legs  = "Hiza. Hizayoroi +2",
-            Feet  = "Hachi. Kyahan +1",
+            Feet  = "Hachiya Kyahan +2",
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Hecate's Earring",
             Ear2  = "Odr Earring",
             Ring1 = "Weather. Ring",
             Ring2 = "Mephitas's Ring +1",
-            -- Back  = "",
+            Back  = settings.Capes.DexWs,
             Waist = "Thunder Belt",
         },
         ['Exenterator'] = Equip.NewSet {
-            Head  = "Mummu Bonnet +1",
+            Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
-            Hands = "Mummu Wrists +1",
-            Legs  = "Mummu Kecks +1",
-            Feet  = "Mummu Gamash. +1",
+            Hands = "Mummu Wrists +2",
+            Legs  = "Mummu Kecks +2",
+            Feet  = "Mummu Gamash. +2",
 
             Ring2 = "Mummu Ring",
+            Back  = settings.Capes.DexWs,
         },
     },
 }
@@ -160,7 +189,7 @@ local function handleDefault()
     if Status.IsNewlyIdle(player) then
         Equip.Set(sets.Idle)
     elseif Status.IsAttacking(player) then
-        Equip.Set(sets.Melee.Auto)
+        Equip.Set(sets.Melee.Dps)
     else
         Equip.Feet(sets.Idle.Feet)
     end
@@ -169,7 +198,7 @@ end
 local function handleWeaponskill()
     local ws = gData.GetAction()
     local wsSet = sets.Weaponskills[ws.Name]
-    local fallback = sets.Melee.Weaponskill
+    local fallback = sets.Weaponskills.Base
 
     Equip.Set(wsSet or fallback)
 end
