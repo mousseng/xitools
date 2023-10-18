@@ -58,8 +58,8 @@ function ToBase64(toEncode)
 end
 
 local function LogPacket(prefix, packet)
-    local date = os.date('!%Y-%m-%d')
-    local time = os.date('!T%TZ')
+    local date = os.date('%Y-%m-%d')
+    local time = os.date('T%TZ')
     local encoded = ToBase64(packet)
     local line = string.format('[%s%s] [%s] %s\n', date, time, prefix, encoded)
 
