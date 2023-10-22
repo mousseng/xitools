@@ -82,7 +82,7 @@ local sets = {
         Ring2 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
 
         Back = "Psilos Mantle", -- upgrade to Forager's
-        Waist = "Ryl.Kgt. Belt", -- upgrade to Warwolf
+        Waist = "Warwolf Belt",
         Legs = "Byakko's Haidate",
         Feet = "Fed. Kyahan", -- upgrade to Rutters or Shura
 
