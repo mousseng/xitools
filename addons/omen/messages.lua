@@ -1,3 +1,18 @@
+local MID_BOSSES = {
+    [0] = 'Glassy Thinker',
+    [1] = 'Glassy Craver',
+    [2] = 'Glassy Gorger',
+}
+
+local BIG_BOSSES = {
+    [0] = 'Kin',
+    [1] = 'Gin',
+    [2] = 'Kei',
+    [3] = 'Kyou',
+    [4] = 'Fu',
+    [5] = 'Ou',
+}
+
 ---Clears the state for when players are moved to the next floor
 ---@param msg   OmenMessage
 ---@param state OmenObjectives
@@ -23,6 +38,22 @@ end
 ---@param state OmenObjectives
 local function updateSummary1(msg, state)
     state.floor.summary = msg.summary:format(msg.params[1])
+end
+
+---Updates the summary for the mid-boss
+---@param msg   OmenMessage
+---@param state OmenObjectives
+local function updateSummaryMid(msg, state)
+    local bossName = MID_BOSSES[msg.params[1]]
+    state.floor.summary = msg.summary:format(bossName)
+end
+
+---Updates the summary for the final boss
+---@param msg   OmenMessage
+---@param state OmenObjectives
+local function updateSummaryBig(msg, state)
+    local bossName = BIG_BOSSES[msg.params[1]]
+    state.floor.summary = msg.summary:format(bossName)
 end
 
 ---Updates the floor timer with the remaining seconds
@@ -122,14 +153,14 @@ local messages = {
         func = updateSummary0,
     },
     [7331] = {
-        summary = 'Vanquish midboss (TODO)',
+        summary = 'Vanquish %s',
         text = "Vanquish the [Glassy Thinker/Glassy Craver/Glassy Gorger].",
-        func = updateSummary0,
+        func = updateSummaryMid,
     },
     [7332] = {
-        summary = 'Vanquish final boss (TODO)',
+        summary = 'Vanquish %s',
         text = "Vanquish [Kin/Gin/Kei/Kyou/Fu/Ou].",
-        func = updateSummary0,
+        func = updateSummaryBig,
     },
     [7333] = {
         summary = 'Open %d treasure portents',
