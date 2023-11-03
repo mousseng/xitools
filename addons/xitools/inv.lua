@@ -8,14 +8,45 @@ local imgui = require('imgui')
 local ui = require('ui')
 
 local textures = { }
-local inventories = T{ bag = T{}, satchel = T{}, house = T{}, wardrobe = T{}, gil = 0, }
 local gfxDevice = d3d8.get_device()
 local fontWidth = imgui.CalcTextSize('A')
+local inventories = T{
+    gil = 0,
+    bag = T{
+        all  = T{},
+        temp = T{},
+        inv  = T{},
+    },
+    satchel = T{
+        all = T{},
+        satchel = T{},
+        case = T{},
+        sack = T{},
+    },
+    wardrobe = T{
+        all = T{},
+        wardrobe1 = T{},
+        wardrobe2 = T{},
+        wardrobe3 = T{},
+        wardrobe4 = T{},
+        wardrobe5 = T{},
+        wardrobe6 = T{},
+        wardrobe7 = T{},
+        wardrobe8 = T{},
+    },
+    house = T{
+        all = T{},
+        mogSafe1 = T{},
+        mogSafe2 = T{},
+        storage = T{},
+        mogLocker = T{},
+    },
+}
 
 local itemTypes = {
-    misc = 1,
-    weapon = 4,
-    armor = 5,
+    misc       = 1,
+    weapon     = 4,
+    armor      = 5,
     consumable = 7,
 }
 
@@ -99,6 +130,28 @@ local jobs = {
     [20] = 'SCH',
     [21] = 'GEO',
     [22] = 'RUN',
+}
+
+local bags = {
+    inventory      = 0,
+    mogSafe        = 1,
+    storage        = 2,
+    tempItems      = 3,
+    mogLocker      = 4,
+    mogSatchel     = 5,
+    mogSack        = 6,
+    mogCase        = 7,
+    wardrobe       = 8,
+    mogSafe2       = 9,
+    wardrobe2      = 10,
+    wardrobe3      = 11,
+    wardrobe4      = 12,
+    wardrobe5      = 13,
+    wardrobe6      = 14,
+    wardrobe7      = 15,
+    wardrobe8      = 16,
+    recycleBin     = 17,
+    maxContainerId = 18,
 }
 
 local function FormatGil(number)
@@ -263,25 +316,51 @@ local function UpdateInventories()
     if gil == nil or invSize == 0 then return end
 
     inventories.gil = FormatGil(gil.Count)
+    inventories.bag.inv = UpdateInventory(inv, res, bags.inventory):sort(SortInventory)
+    inventories.bag.temp = UpdateInventory(inv, res, bags.tempItems):sort(SortInventory)
+    inventories.satchel.satchel = UpdateInventory(inv, res, bags.mogSatchel):sort(SortInventory)
+    inventories.satchel.case = UpdateInventory(inv, res, bags.mogCase):sort(SortInventory)
+    inventories.satchel.sack = UpdateInventory(inv, res, bags.mogSack):sort(SortInventory)
+    inventories.wardrobe.wardrobe1 = UpdateInventory(inv, res, bags.wardrobe):sort(SortInventory)
+    inventories.wardrobe.wardrobe2 = UpdateInventory(inv, res, bags.wardrobe2):sort(SortInventory)
+    inventories.wardrobe.wardrobe3 = UpdateInventory(inv, res, bags.wardrobe3):sort(SortInventory)
+    inventories.wardrobe.wardrobe4 = UpdateInventory(inv, res, bags.wardrobe4):sort(SortInventory)
+    inventories.wardrobe.wardrobe5 = UpdateInventory(inv, res, bags.wardrobe5):sort(SortInventory)
+    inventories.wardrobe.wardrobe6 = UpdateInventory(inv, res, bags.wardrobe6):sort(SortInventory)
+    inventories.wardrobe.wardrobe7 = UpdateInventory(inv, res, bags.wardrobe7):sort(SortInventory)
+    inventories.wardrobe.wardrobe8 = UpdateInventory(inv, res, bags.wardrobe8):sort(SortInventory)
+    inventories.house.mogSafe1 = UpdateInventory(inv, res, bags.mogSafe):sort(SortInventory)
+    inventories.house.mogSafe2 = UpdateInventory(inv, res, bags.mogSafe2):sort(SortInventory)
+    inventories.house.storage = UpdateInventory(inv, res, bags.storage):sort(SortInventory)
+    inventories.house.locker = UpdateInventory(inv, res, bags.mogLocker):sort(SortInventory)
 
-    inventories.bag = UpdateInventory(inv, res, 0)
+    inventories.bag.all = T{}
+        :extend(inventories.bag.inv)
+        :extend(inventories.bag.temp)
         :sort(SortInventory)
 
-    inventories.satchel = UpdateInventory(inv, res, 5)
+    inventories.satchel.all = T{}
+        :extend(inventories.satchel.satchel)
+        :extend(inventories.satchel.case)
+        :extend(inventories.satchel.sack)
         :sort(SortInventory)
 
-    inventories.wardrobe = UpdateInventory(inv, res, 8)
-        :extend(UpdateInventory(inv, res, 10))
-        :extend(UpdateInventory(inv, res, 11))
-        :extend(UpdateInventory(inv, res, 12))
-        :extend(UpdateInventory(inv, res, 13))
-        :extend(UpdateInventory(inv, res, 14))
-        :extend(UpdateInventory(inv, res, 15))
-        :extend(UpdateInventory(inv, res, 16))
+    inventories.wardrobe.all = T{}
+        :extend(inventories.wardrobe.wardrobe1)
+        :extend(inventories.wardrobe.wardrobe2)
+        :extend(inventories.wardrobe.wardrobe3)
+        :extend(inventories.wardrobe.wardrobe4)
+        :extend(inventories.wardrobe.wardrobe5)
+        :extend(inventories.wardrobe.wardrobe6)
+        :extend(inventories.wardrobe.wardrobe7)
+        :extend(inventories.wardrobe.wardrobe8)
         :sort(SortInventory)
 
-    inventories.house = UpdateInventory(inv, res, 1)
-        :extend(UpdateInventory(inv, res, 2))
+    inventories.house.all = T{}
+        :extend(inventories.house.mogSafe1)
+        :extend(inventories.house.mogSafe2)
+        :extend(inventories.house.storage)
+        :extend(inventories.house.locker)
         :sort(SortInventory)
 end
 
@@ -424,10 +503,10 @@ local function DrawItem(item, addCtxMenu)
     end
 end
 
-local function DrawBag(bagId)
+local function DrawBag(bagId, subId)
     local rowLength = 5
 
-    for i, item in ipairs(inventories[bagId]) do
+    for i, item in ipairs(inventories[bagId][subId]) do
         if i % rowLength ~= 1 then
             imgui.SameLine()
         end
@@ -436,28 +515,79 @@ local function DrawBag(bagId)
     end
 end
 
+local function DrawSubInventory(title, bagId, subId)
+    if #inventories[bagId][subId] == 0 then
+        return
+    end
+
+    imgui.Text(title)
+    imgui.Separator()
+    DrawBag(bagId, subId)
+end
+
 local function DrawInventory()
     imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingSome)
     imgui.Text(('%s G'):format(inventories.gil))
 
     if imgui.BeginTabBar('xitools.inventories') then
         if imgui.BeginTabItem('bag') then
-            DrawBag('bag')
+            DrawSubInventory('Temp Items', 'bag', 'temp')
+            DrawSubInventory('Inventory', 'bag', 'inv')
             imgui.EndTabItem()
         end
 
         if imgui.BeginTabItem('satchel') then
-            DrawBag('satchel')
+            DrawSubInventory('Mog Satchel', 'satchel', 'satchel')
+            DrawSubInventory('Mog Case', 'satchel', 'case')
+            DrawSubInventory('Mog Sack', 'satchel', 'sack')
             imgui.EndTabItem()
         end
 
         if imgui.BeginTabItem('ward') then
-            DrawBag('wardrobe')
+            DrawSubInventory('Wardrobe 1', 'wardrobe', 'wardrobe1')
+            DrawSubInventory('Wardrobe 2', 'wardrobe', 'wardrobe2')
+            DrawSubInventory('Wardrobe 3', 'wardrobe', 'wardrobe3')
+            DrawSubInventory('Wardrobe 4', 'wardrobe', 'wardrobe4')
+            DrawSubInventory('Wardrobe 5', 'wardrobe', 'wardrobe5')
+            DrawSubInventory('Wardrobe 6', 'wardrobe', 'wardrobe6')
+            DrawSubInventory('Wardrobe 7', 'wardrobe', 'wardrobe7')
+            DrawSubInventory('Wardrobe 8', 'wardrobe', 'wardrobe8')
             imgui.EndTabItem()
         end
 
         if imgui.BeginTabItem('house') then
-            DrawBag('house')
+            DrawSubInventory('Mog Safe 1', 'house', 'mogSafe1')
+            DrawSubInventory('Mog Safe 2', 'house', 'mogSafe2')
+            DrawSubInventory('Storage', 'house', 'storage')
+            DrawSubInventory('Mog Locker', 'house', 'locker')
+            imgui.EndTabItem()
+        end
+    end
+    imgui.PopStyleVar()
+end
+
+local function DrawInventoryUnified()
+    imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingSome)
+    imgui.Text(('%s G'):format(inventories.gil))
+
+    if imgui.BeginTabBar('xitools.inventories') then
+        if imgui.BeginTabItem('bag') then
+            DrawBag('bag', 'all')
+            imgui.EndTabItem()
+        end
+
+        if imgui.BeginTabItem('satchel') then
+            DrawBag('satchel', 'all')
+            imgui.EndTabItem()
+        end
+
+        if imgui.BeginTabItem('ward') then
+            DrawBag('wardrobe', 'all')
+            imgui.EndTabItem()
+        end
+
+        if imgui.BeginTabItem('house') then
+            DrawBag('house', 'all')
             imgui.EndTabItem()
         end
     end
@@ -472,6 +602,7 @@ local inv = {
         name = 'xitools.inv',
         isEnabled = T{ false },
         isVisible = T{ true },
+        isUnified = T{ true },
         size = T{ 0, 0 },
         maxHeight = T{ 432 },
         pos = T{ 256, 256 },
@@ -504,6 +635,7 @@ local inv = {
             end
 
             imgui.Checkbox('Visible', options.isVisible)
+            imgui.Checkbox('Draw Unified Bags', options.isUnified)
             imgui.InputInt('Max Height', options.maxHeight)
 
             if imgui.InputInt2('Position', options.pos) then
@@ -518,7 +650,11 @@ local inv = {
         imgui.SetNextWindowSizeConstraints({ -1, 0 }, { -1, options.maxHeight[1] })
         ui.DrawNormalWindow(options, gOptions, function()
             imgui.SetWindowFontScale(Scale)
-            DrawInventory()
+            if options.isUnified[1] then
+                DrawInventoryUnified()
+            else
+                DrawInventory()
+            end
         end)
     end,
 }
