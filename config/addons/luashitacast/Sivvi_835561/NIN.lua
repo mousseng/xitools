@@ -1,6 +1,7 @@
 require('common')
 local noop = function() end
-local chat = AshitaCore:GetChatManager()
+local chat = require('chat')
+local chatMgr = AshitaCore:GetChatManager()
 
 ---@module 'common.equip'
 local Equip = gFunc.LoadFile('common/equip.lua')
@@ -10,6 +11,8 @@ local Status = gFunc.LoadFile('common/status.lua')
 local settings = {
     Subjob = 'NON',
     MeleeSet = 'Dps',
+    TreasureHunter = false,
+    Futae = false,
     Default = {
         Main = "Kaja Katana",
         Sub  = "Ternion Dagger +1",
@@ -28,22 +31,32 @@ local settings = {
         -- Cast = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Fast Cast +10%', } },
         Nuke  = { Name = "Andartia's Mantle", Augment = { [1] = 'INT+30', [2] = '"Mag. Atk. Bns."+9' } },
     },
+    Interface = {
+        Flags = ImGuiWindowFlags_NoDecoration,
+        IsOpen = { true },
+    },
 }
 
 local sets = {
     Idle = Equip.NewSet {
+        Body  = "Hiza. Haramaki +2",
         Feet = "Hachiya Kyahan +2",
+
+        Neck  = "Sanctity Necklace",
         Ring1 = "Dim. Ring (Holla)",
         Ring2 = "Warp Ring",
+    },
+    TreasureHunter = Equip.NewSet {
+        Legs  = "Herculean Trousers",
     },
     Melee = {
         Dt = Equip.NewSet {
             Ammo  = "Date Shuriken",
 
             Head  = "Hattori Zukin +2",
-            Body  = "Hiza. Haramaki +2",
+            Body  = "Hattori Ningi +2",
             Hands = "Hizamaru Kote +2",
-            Legs  = "Hiza. Hizayoroi +2",
+            Legs  = "Hattori Hakama +2",
             Feet  = "Hattori Kyahan +2",
 
             Neck  = "Moonbeam Nodowa",
@@ -93,21 +106,25 @@ local sets = {
     },
     Magic = {
         FastCast = Equip.NewSet {
+            Ammo  = "Sapience Orb",
             Hands = "Taeon Gloves",
-
             Ring1 = "Weather. Ring",
         },
         Shadows = Equip.NewSet {
+            Ammo  = "Sapience Orb",
             Feet  = "Hattori Kyahan",
         },
         Enfeeble = Equip.NewSet {
+            Ammo  = "Sapience Orb",
             Body  = "Herculean Vest",
         },
         Nuke = Equip.NewSet {
+            Ammo  = "Sapience Orb",
+
             Head  = "Taeon Chapeau",
             Body  = "Herculean Vest",
-            Hands = "Hattori Tekko +1",
-            Legs  = "Taeon Tights",
+            Hands = "Herculean Gloves",
+            Legs  = "Herculean Trousers",
             Feet  = "Hachiya Kyahan +2",
 
             Neck  = "Sanctity Necklace",
@@ -159,7 +176,7 @@ local sets = {
             Waist = "Thunder Belt",
         },
         ['Blade: Hi'] = Equip.NewSet {
-            Ammo  = "Date Shuriken",
+            Ammo  = "Yetshila",
 
             Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
@@ -177,7 +194,7 @@ local sets = {
             Head  = "Taeon Chapeau",
             Body  = "Herculean Vest",
             Hands = "Herculean Gloves",
-            Legs  = "Hiza. Hizayoroi +2",
+            Legs  = "Herculean Trousers",
             Feet  = "Hachiya Kyahan +2",
 
             Neck  = "Sanctity Necklace",
@@ -202,13 +219,20 @@ local sets = {
     },
 }
 
+local function watchFutae(e)
+    if e.message:match("Sivvi's Futae effect wears off")
+    or e.message:match("Sivvi casts") then
+        settings.Futae = false
+    end
+end
+
 local function changeThotbarPalette(subjob)
     if subjob == nil or subjob == 'NON' or subjob == settings.Subjob then
         return
     end
 
     local thotbarCmd = '/tb palette change %s'
-    chat:QueueCommand(1, thotbarCmd:format(subjob))
+    chatMgr:QueueCommand(1, thotbarCmd:format(subjob))
     settings.Subjob = subjob
 end
 
@@ -220,7 +244,11 @@ local function handleDefault()
     if Status.IsNewlyIdle(player) then
         Equip.Set(sets.Idle)
     elseif Status.IsAttacking(player) then
-        Equip.Set(sets.Melee.Dps)
+        Equip.Set(sets.Melee[settings.MeleeSet])
+
+        if settings.TreasureHunter then
+            Equip.Set(sets.TreasureHunter)
+        end
     else
         Equip.Feet(sets.Idle.Feet)
     end
@@ -234,11 +262,30 @@ local function handleWeaponskill()
     Equip.Set(wsSet or fallback)
 end
 
+local function handleAbility()
+    local ability = gData.GetAction()
+
+    if ability.Name == 'Futae' then
+        settings.Futae = true
+    end
+end
+
 local function handlePrecast()
     Equip.Set(sets.Magic.FastCast)
 end
 
 local function handleMidcast()
+    local spell = gData.GetAction()
+
+    if Status.IsNuke(spell)
+    or Status.IsPotencyNinjutsu(spell)
+    or Status.IsAccuracyNinjutsu(spell) then
+        Equip.Set(sets.Magic.Nuke)
+
+        if settings.Futae then
+            Equip.Hands("Hattori Tekko +2")
+        end
+    end
 end
 
 local function handleCommand(args)
@@ -246,7 +293,23 @@ local function handleCommand(args)
         return
     end
 
-    if args[1] == 'gear' then
+    if args[1] == 'idle' then
+        Equip.Set(sets.Idle, true)
+    elseif args[1] == 'melee' and #args == 2 then
+        local meleeSet = args[2]:proper()
+        if T{ 'Dt', 'Dps', 'Eva' }:contains(meleeSet) then
+            settings.MeleeSet = meleeSet
+            print(chat.header(addon.name):append(chat.message('Melee set: ')):append(chat.success(meleeSet:upper())))
+        end
+    elseif args[1] == 'th' then
+        settings.TreasureHunter = not settings.TreasureHunter
+
+        if settings.TreasureHunter then
+            print(chat.header(addon.name):append(chat.message('Treasure Hunter ')):append(chat.success('ON')))
+        else
+            print(chat.header(addon.name):append(chat.message('Treasure Hunter ')):append(chat.error('OFF')))
+        end
+    elseif args[1] == 'gear' then
         Equip.Main(settings.Default.Main, true)
         Equip.Sub(settings.Default.Sub, true)
         Equip.Ammo(settings.Default.Ammo, true)
@@ -258,17 +321,19 @@ local function handleCommand(args)
 end
 
 local function onLoad()
-    chat:QueueCommand(-1, '/addon reload wheel')
+    ashita.events.register('text_in', 'lac_nin_watch_futae', watchFutae)
+    chatMgr:QueueCommand(-1, '/addon reload wheel')
 
     ashita.tasks.once(1, function()
-        chat:QueueCommand(1, '/wheel level ni')
-        chat:QueueCommand(1, '/wheel alt san')
-        chat:QueueCommand(1, '/wheel lock')
+        chatMgr:QueueCommand(1, '/wheel level ni')
+        chatMgr:QueueCommand(1, '/wheel alt san')
+        chatMgr:QueueCommand(1, '/wheel lock')
     end)
 end
 
 local function onUnload()
-    chat:QueueCommand(-1, '/addon unload wheel')
+    ashita.events.unregister('text_in', 'lac_nin_watch_futae')
+    chatMgr:QueueCommand(-1, '/addon unload wheel')
 end
 
 return {
@@ -277,7 +342,7 @@ return {
     OnUnload          = onUnload,
     HandleCommand     = handleCommand,
     HandleDefault     = handleDefault,
-    HandleAbility     = noop,
+    HandleAbility     = handleAbility,
     HandleItem        = gFunc.LoadFile('common/items.lua'),
     HandlePrecast     = handlePrecast,
     HandleMidcast     = handleMidcast,

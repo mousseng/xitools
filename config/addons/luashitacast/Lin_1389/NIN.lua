@@ -37,7 +37,7 @@ local sets = {
 
         AtNight = {
             Legs = "Ninja Hakama",
-            Feet = "Ninja Kyahan",
+            Feet = "Nin. Kyahan +1",
         },
     },
     Auto = Equip.NewSet {
@@ -197,7 +197,7 @@ local sets = {
         Back = "Fed. Army Mantle", -- sidegrade to Astute Cape
         Waist = "Ryl.Kgt. Belt", -- upgrade to Jungle Rope
         Legs = "Yasha Hakama",  -- upgrade to +1
-        Feet = "Yasha Sune-ate", -- upgrade to AF+1
+        Feet = "Nin. Kyahan +1",
 
         AtHalfMp = {
             Neck = "Uggalepih Pendant",

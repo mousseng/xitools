@@ -49,8 +49,11 @@
 /bind t /xit t
 
 /alias add /glam /lockstyleset
+/alias add /idle /lac fwd idle
 /alias add /gear /lac fwd gear
 /alias add /merit /lac fwd merit
+/alias add /th /lac fwd th
+/alias add /melee /lac fwd melee
 
 /wait 3
 
