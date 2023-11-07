@@ -1,3 +1,4 @@
+local bit = require('bit')
 local ffxi = {}
 
 -- Fetch an entity by its server ID. Helpful when looking up information from
@@ -165,6 +166,71 @@ function ffxi.IsInterfaceHidden()
     end
 
     return ashita.memory.read_uint8(ptr + 0xB4) == 1
+end
+
+local contentPtr = ashita.memory.find('FFXiMain.dll', 0, 'A1????????8B88B4000000C1E907F6C101E9', 0, 0)
+
+---Returns whether or not the local player has access to the given container.
+---Code provided by atom0s.
+---@param index number The container index.
+---@return boolean True if the player has access, false otherwise.
+function ffxi.HasBagAccess(index)
+    local inv = AshitaCore:GetMemoryManager():GetInventory()
+    if contentPtr == 0 or inv == nil then
+        return false
+    end
+
+    local ptr = ashita.memory.read_uint32(contentPtr + 1)
+    if ptr == 0 then
+        return false
+    end
+
+    local flagsPtr = ashita.memory.read_uint32(ptr)
+    if flagsPtr == 0 then
+        return false
+    end
+
+    local val = ashita.memory.read_uint8(flagsPtr + 0xB4)
+
+    return switch(index, {
+        -- Inventory
+        [0] = function ()
+            return true
+        end,
+        -- Wardrobe 3
+        [11] = function ()
+            return bit.band(bit.rshift(val, 0x02), 0x01) ~= 0
+        end,
+        -- Wardrobe 4
+        [12] = function ()
+            return bit.band(bit.rshift(val, 0x03), 0x01) ~= 0
+        end,
+        -- Wardrobe 5
+        [13] = function ()
+            return bit.band(bit.rshift(val, 0x04), 0x01) ~= 0
+        end,
+        -- Wardrobe 6
+        [14] = function ()
+            return bit.band(bit.rshift(val, 0x05), 0x01) ~= 0
+        end,
+        -- Wardrobe 7
+        [15] = function ()
+            return bit.band(bit.rshift(val, 0x06), 0x01) ~= 0
+        end,
+        -- Wardrobe 8
+        [16] = function ()
+            return bit.band(bit.rshift(val, 0x07), 0x01) ~= 0
+        end,
+        [switch.default] = function ()
+            -- Safe to Wardrobe 2..
+            if (index >= 1 and index <= 10) then
+                return inv:GetContainerCountMax(index) > 0
+            end
+
+            -- Consider rest invalid..
+            return false
+        end,
+    })
 end
 
 local jobs = {

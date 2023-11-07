@@ -2,8 +2,9 @@ require('common')
 local bit = require('bit')
 local ffi = require('ffi')
 local d3d8 = require('d3d8')
-local debounce = require('utils.debounce')
-local packets = require('utils.packets')
+local ffxi = require('utils/ffxi')
+local debounce = require('utils/debounce')
+local packets = require('utils/packets')
 local imgui = require('imgui')
 local ui = require('ui')
 
@@ -161,12 +162,12 @@ local moveableBags = {
     { id =  7, hasAccess = false, isGearOnly = false, name = 'case' },
     { id =  8, hasAccess = false, isGearOnly = true,  name = 'wardrobe 1' },
     { id = 10, hasAccess = false, isGearOnly = true,  name = 'wardrobe 2' },
-    -- { id = 11, hasAccess = false, isGearOnly = true,  name = 'wardrobe 3' },
-    -- { id = 12, hasAccess = false, isGearOnly = true,  name = 'wardrobe 4' },
-    -- { id = 13, hasAccess = false, isGearOnly = true,  name = 'wardrobe 5' },
-    -- { id = 14, hasAccess = false, isGearOnly = true,  name = 'wardrobe 6' },
-    -- { id = 15, hasAccess = false, isGearOnly = true,  name = 'wardrobe 7' },
-    -- { id = 16, hasAccess = false, isGearOnly = true,  name = 'wardrobe 8' },
+    { id = 11, hasAccess = false, isGearOnly = true,  name = 'wardrobe 3' },
+    { id = 12, hasAccess = false, isGearOnly = true,  name = 'wardrobe 4' },
+    { id = 13, hasAccess = false, isGearOnly = true,  name = 'wardrobe 5' },
+    { id = 14, hasAccess = false, isGearOnly = true,  name = 'wardrobe 6' },
+    { id = 15, hasAccess = false, isGearOnly = true,  name = 'wardrobe 7' },
+    { id = 16, hasAccess = false, isGearOnly = true,  name = 'wardrobe 8' },
 }
 
 local function FormatGil(number)
@@ -333,7 +334,11 @@ local function UpdateInventories()
     if gil == nil or invSize == 0 then return end
 
     for _, bag in ipairs(moveableBags) do
-        bag.hasAccess = inv:GetContainerCountMax(bag.id) > 0
+        if bag.id > 10 then
+            bag.hasAccess = ffxi.HasBagAccess(bag.id)
+        else
+            bag.hasAccess = inv:GetContainerCountMax(bag.id) > 0
+        end
     end
 
     inventories.gil = FormatGil(gil.Count)
