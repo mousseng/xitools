@@ -154,6 +154,21 @@ local bags = {
     maxContainerId = 18,
 }
 
+local moveableBags = {
+    { id =  0, hasAccess = false, isGearOnly = false, name = 'inventory' },
+    { id =  5, hasAccess = false, isGearOnly = false, name = 'satchel' },
+    { id =  6, hasAccess = false, isGearOnly = false, name = 'sack' },
+    { id =  7, hasAccess = false, isGearOnly = false, name = 'case' },
+    { id =  8, hasAccess = false, isGearOnly = true,  name = 'wardrobe 1' },
+    { id = 10, hasAccess = false, isGearOnly = true,  name = 'wardrobe 2' },
+    -- { id = 11, hasAccess = false, isGearOnly = true,  name = 'wardrobe 3' },
+    -- { id = 12, hasAccess = false, isGearOnly = true,  name = 'wardrobe 4' },
+    -- { id = 13, hasAccess = false, isGearOnly = true,  name = 'wardrobe 5' },
+    -- { id = 14, hasAccess = false, isGearOnly = true,  name = 'wardrobe 6' },
+    -- { id = 15, hasAccess = false, isGearOnly = true,  name = 'wardrobe 7' },
+    -- { id = 16, hasAccess = false, isGearOnly = true,  name = 'wardrobe 8' },
+}
+
 local function FormatGil(number)
     local str = tostring(number)
     local len = #str
@@ -267,12 +282,14 @@ local function UpdateInventory(inv, res, bagId)
 
             local coolItem = {
                 id = invItem.Id,
+                bagId = bagId,
                 sortId = itemObj.ResourceId,
                 slotId = invItem.Index,
                 uniqueId = ('%i.%i.%s'):format(bagId, invItem.Index, itemObj.Name[1]),
                 type = itemObj.Type,
                 flags = itemObj.Flags,
                 isUsable = bit.band(1, bit.rshift(itemObj.Flags, 10)) == 1,
+                isMoveable = true,
                 isLocked = bit.band(1, invItem.Flags) == 1 or bagId > 0,
                 isEquippable = itemObj.Type == 4 or itemObj.Type == 5,
                 name = ('%s [%i]'):format(itemObj.LogNameSingular[1], invItem.Id),
@@ -314,6 +331,10 @@ local function UpdateInventories()
     local gil = inv:GetContainerItem(0, 0)
     local invSize = inv:GetContainerCountMax(0)
     if gil == nil or invSize == 0 then return end
+
+    for _, bag in ipairs(moveableBags) do
+        bag.hasAccess = inv:GetContainerCountMax(bag.id) > 0
+    end
 
     inventories.gil = FormatGil(gil.Count)
     inventories.bag.inv = UpdateInventory(inv, res, bags.inventory):sort(SortInventory)
@@ -390,6 +411,25 @@ local function TryToEquip(item)
     end
 end
 
+local function TryToMove(item)
+    if imgui.BeginMenu('Move') then
+        for _, bag in ipairs(moveableBags) do
+            local title = ('to %s'):format(bag.name)
+
+            local shouldShow = bag.hasAccess
+                and bag.id ~= item.bagId
+                and (not bag.isGearOnly or bag.isGearOnly and item.isEquippable)
+
+            if shouldShow and imgui.MenuItem(title) then
+                AshitaCore:GetPacketManager():AddOutgoingPacket(
+                    packets.outbound.inventoryMove:make(item.stackCur, item.bagId, bag.id, item.slotId))
+            end
+        end
+
+        imgui.EndMenu()
+    end
+end
+
 local function TryToDrop(item)
     if imgui.BeginMenu('Drop') then
         local itemName = item.longNameS
@@ -448,9 +488,11 @@ local function AddTooltip(item)
     imgui.EndTooltip()
 end
 
-local function AddContextMenu(item)
+local function AddFullCtxMenu(item)
     local menuOpened = false
-    if (item.isUsable or item.isEquippable or not item.isLocked) and imgui.BeginPopupContextItem(item.uniqueId) then
+    local menuOpenable = item.isUsable or item.isMoveable or item.isEquippable or not item.isLocked
+
+    if menuOpenable and imgui.BeginPopupContextItem(item.uniqueId) then
         menuOpened = true
 
         if item.isUsable then
@@ -459,6 +501,10 @@ local function AddContextMenu(item)
 
         if item.isEquippable then
             TryToEquip(item)
+        end
+
+        if item.isMoveable then
+            TryToMove(item)
         end
 
         if not item.isLocked then
@@ -475,11 +521,40 @@ local function AddContextMenu(item)
     return menuOpened
 end
 
+local function AddSatchelCtxMenu(item)
+    local menuOpened = false
+    local menuOpenable = item.isMoveable or not item.isLocked
+
+    if menuOpenable and imgui.BeginPopupContextItem(item.uniqueId) then
+        menuOpened = true
+
+        if item.isMoveable then
+            TryToMove(item)
+        end
+
+        if not item.isLocked then
+            TryToDrop(item)
+        end
+
+        if imgui.Selectable('Cancel') then
+            imgui.CloseCurrentPopup()
+        end
+
+        imgui.EndPopup()
+    end
+
+    return menuOpened
+end
+
+local function AddHouseCtxMenu(item)
+    return false
+end
+
 local contextMenus = {
-    bag      = AddContextMenu,
-    satchel  = function() return false end,
-    house    = function() return false end,
-    wardrobe = AddContextMenu,
+    bag      = AddFullCtxMenu,
+    satchel  = AddSatchelCtxMenu,
+    wardrobe = AddFullCtxMenu,
+    house    = AddHouseCtxMenu,
 }
 
 local function DrawItem(item, addCtxMenu)
@@ -523,6 +598,7 @@ local function DrawSubInventory(title, bagId, subId)
     imgui.Text(title)
     imgui.Separator()
     DrawBag(bagId, subId)
+    imgui.NewLine()
 end
 
 local function DrawInventory()
@@ -531,35 +607,35 @@ local function DrawInventory()
 
     if imgui.BeginTabBar('xitools.inventories') then
         if imgui.BeginTabItem('bag') then
-            DrawSubInventory('Temp Items', 'bag', 'temp')
-            DrawSubInventory('Inventory', 'bag', 'inv')
+            DrawSubInventory('temp items', 'bag', 'temp')
+            DrawSubInventory('inventory', 'bag', 'inv')
             imgui.EndTabItem()
         end
 
         if imgui.BeginTabItem('satchel') then
-            DrawSubInventory('Mog Satchel', 'satchel', 'satchel')
-            DrawSubInventory('Mog Case', 'satchel', 'case')
-            DrawSubInventory('Mog Sack', 'satchel', 'sack')
+            DrawSubInventory('mog satchel', 'satchel', 'satchel')
+            DrawSubInventory('mog case', 'satchel', 'case')
+            DrawSubInventory('mog sack', 'satchel', 'sack')
             imgui.EndTabItem()
         end
 
         if imgui.BeginTabItem('ward') then
-            DrawSubInventory('Wardrobe 1', 'wardrobe', 'wardrobe1')
-            DrawSubInventory('Wardrobe 2', 'wardrobe', 'wardrobe2')
-            DrawSubInventory('Wardrobe 3', 'wardrobe', 'wardrobe3')
-            DrawSubInventory('Wardrobe 4', 'wardrobe', 'wardrobe4')
-            DrawSubInventory('Wardrobe 5', 'wardrobe', 'wardrobe5')
-            DrawSubInventory('Wardrobe 6', 'wardrobe', 'wardrobe6')
-            DrawSubInventory('Wardrobe 7', 'wardrobe', 'wardrobe7')
-            DrawSubInventory('Wardrobe 8', 'wardrobe', 'wardrobe8')
+            DrawSubInventory('wardrobe 1', 'wardrobe', 'wardrobe1')
+            DrawSubInventory('wardrobe 2', 'wardrobe', 'wardrobe2')
+            DrawSubInventory('wardrobe 3', 'wardrobe', 'wardrobe3')
+            DrawSubInventory('wardrobe 4', 'wardrobe', 'wardrobe4')
+            DrawSubInventory('wardrobe 5', 'wardrobe', 'wardrobe5')
+            DrawSubInventory('wardrobe 6', 'wardrobe', 'wardrobe6')
+            DrawSubInventory('wardrobe 7', 'wardrobe', 'wardrobe7')
+            DrawSubInventory('wardrobe 8', 'wardrobe', 'wardrobe8')
             imgui.EndTabItem()
         end
 
         if imgui.BeginTabItem('house') then
-            DrawSubInventory('Mog Safe 1', 'house', 'mogSafe1')
-            DrawSubInventory('Mog Safe 2', 'house', 'mogSafe2')
-            DrawSubInventory('Storage', 'house', 'storage')
-            DrawSubInventory('Mog Locker', 'house', 'locker')
+            DrawSubInventory('mog safe 1', 'house', 'mogSafe1')
+            DrawSubInventory('mog safe 2', 'house', 'mogSafe2')
+            DrawSubInventory('storage', 'house', 'storage')
+            DrawSubInventory('mog locker', 'house', 'locker')
             imgui.EndTabItem()
         end
     end
