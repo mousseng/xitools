@@ -26,14 +26,10 @@ local settings = {
     Capes = {
         Auto  = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+20', [2] = '"Dbl.Atk."+10', } },
         -- StrWs = { Name = "Andartia's Mantle", Augment = { [1] = 'STR+30', [2] = 'Weapon skill damage +10%', } },
-        DexWs = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+29', [2] = 'Weapon skill damage +10%', } },
+        DexWs = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+30', [2] = 'Weapon skill damage +10%', } },
         -- AgiWs = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Weapon skill damage +10%', } },
         -- Cast = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Fast Cast +10%', } },
-        Nuke  = { Name = "Andartia's Mantle", Augment = { [1] = 'INT+30', [2] = '"Mag. Atk. Bns."+9' } },
-    },
-    Interface = {
-        Flags = ImGuiWindowFlags_NoDecoration,
-        IsOpen = { true },
+        Nuke  = { Name = "Andartia's Mantle", Augment = { [1] = 'INT+20', [2] = '"Mag. Atk. Bns."+10' } },
     },
 }
 
@@ -61,7 +57,7 @@ local sets = {
 
             Neck  = "Moonbeam Nodowa",
             Ear1  = "Brutal Earring",
-            Ear2  = "Odr Earring",
+            Ear2  = "Hattori Earring",
             Ring1 = "Epona's Ring",
             Ring2 = "Hizamaru Ring",
             Back  = settings.Capes.Auto,
@@ -78,7 +74,7 @@ local sets = {
 
             Neck  = "Moonbeam Nodowa",
             Ear1  = "Brutal Earring",
-            Ear2  = "Odr Earring",
+            Ear2  = "Hattori Earring",
             Ring1 = "Epona's Ring",
             Ring2 = "Hizamaru Ring",
             Back  = settings.Capes.Auto,
@@ -95,7 +91,7 @@ local sets = {
 
             Neck  = "Moonbeam Nodowa",
             Ear1  = "Brutal Earring",
-            Ear2  = "Odr Earring",
+            Ear2  = "Hattori Earring",
             Ring1 = "Epona's Ring",
             Ring2 = "Hizamaru Ring",
             Back  = settings.Capes.Auto,
@@ -144,6 +140,8 @@ local sets = {
             Legs  = "Hiza. Hizayoroi +2",
             Feet  = "Hattori Kyahan +2",
 
+            Ear1  = "Odr Earring",
+            Ear2  = "Hattori Earring",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
@@ -157,6 +155,8 @@ local sets = {
             Legs  = "Hiza. Hizayoroi +2",
             Feet  = "Hattori Kyahan +2",
 
+            Ear1  = "Odr Earring",
+            Ear2  = "Hattori Earring",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
@@ -170,6 +170,8 @@ local sets = {
             Legs  = "Hiza. Hizayoroi +2",
             Feet  = "Hattori Kyahan +2",
 
+            Ear1  = "Odr Earring",
+            Ear2  = "Hattori Earring",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
@@ -184,6 +186,8 @@ local sets = {
             Legs  = "Mummu Kecks +2",
             Feet  = "Hattori Kyahan +2",
 
+            Ear1  = "Odr Earring",
+            Ear2  = "Hattori Earring",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
