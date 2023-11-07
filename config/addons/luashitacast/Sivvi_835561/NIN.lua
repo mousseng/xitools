@@ -35,12 +35,21 @@ local settings = {
 
 local sets = {
     Idle = Equip.NewSet {
+        Ammo  = "Date Shuriken",
+
+        Head  = "Hattori Zukin +2",
         Body  = "Hiza. Haramaki +2",
-        Feet = "Hachiya Kyahan +2",
+        Hands = "Hizamaru Kote +2",
+        Legs  = "Hattori Hakama +2",
+        Feet  = "Hachiya Kyahan +2",
 
         Neck  = "Sanctity Necklace",
+        Ear1  = "Brutal Earring",
+        Ear2  = "Hattori Earring",
         Ring1 = "Dim. Ring (Holla)",
         Ring2 = "Warp Ring",
+        Back  = settings.Capes.Auto,
+        Waist = "Sailfi Belt +1",
     },
     TreasureHunter = Equip.NewSet {
         Legs  = "Herculean Trousers",
@@ -280,6 +289,7 @@ end
 
 local function handleMidcast()
     local spell = gData.GetAction()
+    Status.currentStatus = 'Casting'
 
     if Status.IsNuke(spell)
     or Status.IsPotencyNinjutsu(spell)

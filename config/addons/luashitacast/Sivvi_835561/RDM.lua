@@ -15,9 +15,22 @@ local settings = {
 
 local sets = {
     Idle = Equip.NewSet {
-        Main = "Tokko Knife",
-        Ring1 = "Dim. Ring (Holla)",
+        Main  = "Emissary",
+        Ammo  = "Sapience Orb",
+
+        Head  = "Jhakri Coronal",
+        Body  = "Jhakri Robe",
+        Hands = "Shrieker's Cuffs",
+        Legs  = "Jhakri Slops",
+        Feet  = "Inspirited Boots",
+
+        Neck  = "Sanctity Necklace",
+        Ear1  = "Mendi. Earring",
+        Ear2  = "Lethargy Earring",
+        Ring1 = "Mephitas's Ring +1",
         Ring2 = "Warp Ring",
+        Back  = "Buquwik Cape",
+        Waist = "Sailfi Belt +1",
     },
     Melee = {
         Auto = Equip.NewSet {
@@ -27,13 +40,36 @@ local sets = {
     },
     Magic = {
         FastCast = Equip.NewSet {
-            Ring1 = "Weather. Ring",
+            Main = "Emissary",
+            Ammo = "Sapience Orb",
+
+            Legs  = "Doyen Pants",
+
+            Ear1  = "Mendi. Earring",
+            Ear2  = "Lethargy Earring",
+            Ring2 = "Weather. Ring",
         },
         Shadows = Equip.NewSet {
         },
         Enfeeble = Equip.NewSet {
         },
         Nuke = Equip.NewSet {
+            Main  = "Emissary",
+            Ammo  = "Sapience Orb",
+
+            Head  = "Jhakri Coronal",
+            Body  = "Jhakri Robe",
+            Hands = "Jhakri Cuffs",
+            Legs  = "Jhakri Slops",
+            Feet  = "Jhakri Pigaches",
+
+            Neck  = "Sanctity Necklace",
+            Ear1  = "Mendi. Earring",
+            Ear2  = "Hecate's Earring", -- replace mendi later, mp for now
+            Ring1 = "Mephitas's Ring +1",
+            Ring2 = "Warp Ring",
+            Back  = "Buquwik Cape",
+            Waist = "Sailfi Belt +1",
         },
     },
 }
@@ -53,15 +89,14 @@ local function handleDefault()
 
     changeThotbarPalette(player.SubJob)
 
-    if Status.IsAttacking(player) then
-        Equip.Set(sets.Melee.Auto)
-    else
+    if Status.IsNewlyIdle(player) then
         Equip.Set(sets.Idle)
+    elseif Status.IsAttacking(player) then
+        Equip.Set(sets.Melee.Auto)
     end
 end
 
 local function handleWeaponskill()
-    local ws = gData.GetAction()
     Equip.Set(sets.Melee.GeneralWs)
 end
 
@@ -70,7 +105,11 @@ local function handlePrecast()
 end
 
 local function handleMidcast()
-    Equip.Main("Chatoyant Staff")
+    local spell = gData.GetAction()
+
+    if Status.IsNuke(spell) then
+        Equip.Set(sets.Magic.Nuke)
+    end
 end
 
 local function onLoad()

@@ -84,8 +84,8 @@ function status.IsNewlyIdle(player)
     status.lastStatus = status.currentStatus
     status.currentStatus = player.Status
 
-    return status.lastStatus == 'Engaged'
-        and status.currentStatus ~= 'Engaged'
+    return status.lastStatus ~= status.currentStatus
+        and (status.currentStatus == 'Idle' or status.currentStatus == 'Resting')
 end
 
 ---@param player   table
