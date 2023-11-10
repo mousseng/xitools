@@ -1,8 +1,8 @@
 local gridHeight = 3
 local gridWidth = 10
 
-local btnHeight = 48
-local btnWidth = 48
+local btnHeight = 54
+local btnWidth = 54
 
 local padHeight = 6
 local padWidth = 6

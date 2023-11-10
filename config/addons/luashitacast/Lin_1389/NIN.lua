@@ -35,9 +35,12 @@ local sets = {
         Legs = "Nokizaru Hakama",
         Feet = "Mountain Gaiters",
 
+        AtNightPlus = {
+            Feet = "Nin. Kyahan +1",
+        },
+
         AtNight = {
             Legs = "Ninja Hakama",
-            Feet = "Nin. Kyahan +1",
         },
     },
     Auto = Equip.NewSet {
