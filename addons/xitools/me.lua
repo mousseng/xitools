@@ -1,6 +1,6 @@
 require('common')
 local bit = require('bit')
-local ffxi = require('utils.ffxi')
+local ffxi = require('utils/ffxi')
 local imgui = require('imgui')
 local ui = require('ui')
 

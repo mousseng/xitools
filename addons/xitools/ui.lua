@@ -115,12 +115,14 @@ function ui.DrawNormalWindow(config, gConfig, drawStuff)
     imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
-    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
-        drawStuff()
+    if config.isVisible[1] then
+        if imgui.Begin(config.name, config.isVisible, config.flags) then
+            drawStuff()
 
-        local x, y = imgui.GetWindowPos()
-        config.pos[1] = x
-        config.pos[2] = y
+            local x, y = imgui.GetWindowPos()
+            config.pos[1] = x
+            config.pos[2] = y
+        end
         imgui.End()
     end
 end
@@ -141,23 +143,26 @@ function ui.DrawUiWindow(config, gConfig, drawStuff)
         flags = bit.bor(flags, ImGuiWindowFlags_NoInputs)
     end
 
-    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, flags) then
-        imgui.PopStyleColor(2)
-        imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
-        imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
+    if config.isVisible[1] then
+        if imgui.Begin(config.name, config.isVisible, flags) then
+            imgui.PopStyleColor(2)
+            imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
+            imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
 
-        drawStuff()
+            drawStuff()
 
-        local x, y = imgui.GetWindowPos()
-        config.pos[1] = x
-        config.pos[2] = y
+            local x, y = imgui.GetWindowPos()
+            config.pos[1] = x
+            config.pos[2] = y
 
-        imgui.PopStyleVar()
-        imgui.PopStyleColor()
+            imgui.PopStyleVar()
+            imgui.PopStyleColor()
+        end
         imgui.End()
     else
         imgui.PopStyleColor(2)
     end
+
     imgui.PopStyleVar(2)
 end
 
@@ -177,23 +182,26 @@ function ui.DrawInvisWindow(config, gConfig, drawStuff)
         flags = bit.bor(flags, ImGuiWindowFlags_NoInputs)
     end
 
-    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, flags) then
-        imgui.PopStyleColor(2)
-        imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
-        imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
+    if config.isVisible[1] then
+        if imgui.Begin(config.name, config.isVisible, flags) then
+            imgui.PopStyleColor(2)
+            imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
+            imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
 
-        drawStuff()
+            drawStuff()
 
-        local x, y = imgui.GetWindowPos()
-        config.pos[1] = x
-        config.pos[2] = y
+            local x, y = imgui.GetWindowPos()
+            config.pos[1] = x
+            config.pos[2] = y
 
-        imgui.PopStyleVar()
-        imgui.PopStyleColor()
+            imgui.PopStyleVar()
+            imgui.PopStyleColor()
+        end
         imgui.End()
     else
         imgui.PopStyleColor(2)
     end
+
     imgui.PopStyleVar(2)
 end
 

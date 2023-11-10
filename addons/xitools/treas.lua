@@ -2,7 +2,7 @@ require('common')
 local bit = require('bit')
 local imgui = require('imgui')
 local ui = require('ui')
-local packets = require('utils.packets')
+local packets = require('utils/packets')
 
 local TextBaseWidth = imgui.CalcTextSize('A')
 local Scale = 1.0

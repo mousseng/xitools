@@ -2,7 +2,7 @@ require('common')
 local bit = require('bit')
 local imgui = require('imgui')
 local ui = require('ui')
-local packets = require('utils.packets')
+local packets = require('utils/packets')
 
 local Scale = 1.0
 
@@ -822,7 +822,7 @@ local tgt = {
         end
     end,
     DrawConfig = function(options, gOptions)
-        if imgui.BeginTabItem('tgt') then
+        if imgui.BeginTabItem('tgt', nil) then
             imgui.Checkbox('Enabled', options.isEnabled)
 
             imgui.Checkbox('Show main target', options.showMain)

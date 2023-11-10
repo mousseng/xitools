@@ -610,7 +610,7 @@ local function DrawInventory()
     imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingSome)
     imgui.Text(('%s G'):format(inventories.gil))
 
-    if imgui.BeginTabBar('xitools.inventories') then
+    if imgui.BeginTabBar('##xitools.inventories', ImGuiTabBarFlags_NoCloseWithMiddleMouseButton) then
         if imgui.BeginTabItem('bag') then
             DrawSubInventory('temp items', 'bag', 'temp')
             DrawSubInventory('inventory', 'bag', 'inv')
@@ -643,6 +643,8 @@ local function DrawInventory()
             DrawSubInventory('mog locker', 'house', 'locker')
             imgui.EndTabItem()
         end
+
+        imgui.EndTabBar()
     end
     imgui.PopStyleVar()
 end
@@ -651,7 +653,7 @@ local function DrawInventoryUnified()
     imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingSome)
     imgui.Text(('%s G'):format(inventories.gil))
 
-    if imgui.BeginTabBar('xitools.inventories') then
+    if imgui.BeginTabBar('##xitools.inventories', ImGuiTabBarFlags_NoCloseWithMiddleMouseButton) then
         if imgui.BeginTabItem('bag') then
             DrawBag('bag', 'all')
             imgui.EndTabItem()
@@ -671,6 +673,8 @@ local function DrawInventoryUnified()
             DrawBag('house', 'all')
             imgui.EndTabItem()
         end
+
+        imgui.EndTabBar()
     end
     imgui.PopStyleVar()
 end

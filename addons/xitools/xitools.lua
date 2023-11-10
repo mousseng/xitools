@@ -4,7 +4,7 @@ addon.version = '0.22'
 addon.desc    = 'A humble UI toolkit'
 
 require('common')
-local ffxi = require('utils.ffxi')
+local ffxi = require('utils/ffxi')
 local imgui = require('imgui')
 local settings = require('settings')
 local ui = require('ui')
@@ -99,8 +99,6 @@ local defaultOptions = T{
 local options = settings.load(defaultOptions)
 
 local function DrawConfig()
-    if not options.tools.config.isVisible then return end
-
     ui.DrawNormalWindow(options.tools.config, options.globals, function()
         imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingSome)
 
@@ -126,7 +124,7 @@ local function DrawConfig()
         imgui.ColorEdit4("Border Color", options.globals.borderColor)
         imgui.NewLine()
 
-        if imgui.BeginTabBar('xitools.config.ui') then
+        if imgui.BeginTabBar('##xitools.config.ui', ImGuiTabBarFlags_NoCloseWithMiddleMouseButton) then
             for _, tool in ipairs(uiWindows) do
                 tool.DrawConfig(options.tools[tool.Name], options.globals)
             end
@@ -137,7 +135,7 @@ local function DrawConfig()
         imgui.NewLine()
         imgui.Text('Tool settings')
         imgui.Separator()
-        if imgui.BeginTabBar('xitools.config.normal') then
+        if imgui.BeginTabBar('##xitools.config.normal', ImGuiTabBarFlags_NoCloseWithMiddleMouseButton) then
             for _, tool in ipairs(normalWindows) do
                 tool.DrawConfig(options.tools[tool.Name], options.globals)
             end

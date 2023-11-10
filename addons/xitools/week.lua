@@ -2,7 +2,7 @@ require('common')
 local bit = require('bit')
 local imgui = require('imgui')
 local ui = require('ui')
-local packets = require('utils.packets')
+local packets = require('utils/packets')
 
 local Scale = 1.0
 
@@ -280,7 +280,7 @@ local week = {
         end
     end,
     DrawConfig = function(options, gOptions)
-        if imgui.BeginTabItem('week') then
+        if imgui.BeginTabItem('week', nil) then
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Visible', options.isVisible)
             if imgui.InputInt2('Position', options.pos) then

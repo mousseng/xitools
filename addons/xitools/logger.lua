@@ -1,7 +1,7 @@
-local ffxi = require('utils.ffxi')
+local ffxi = require('utils/ffxi')
 local imgui = require('imgui')
-local packets = require('utils.packets')
-local inspect  = require('utils.inspect')
+local packets = require('utils/packets')
+local inspect  = require('utils/inspect')
 
 local function Dump(id, str)
     local date = os.date('*t')

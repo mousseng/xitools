@@ -1,7 +1,7 @@
 require('common')
 local bit = require('bit')
 local imgui = require('imgui')
-local packets = require('utils.packets')
+local packets = require('utils/packets')
 local recipesByIngredients = require('data.recipesByIngredients')
 local recipesBySkill = require('data.recipesBySkill')
 local ui = require('ui')

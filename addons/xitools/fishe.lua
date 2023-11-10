@@ -1,8 +1,8 @@
 require('common')
 local imgui = require('imgui')
 local ui = require('ui')
-local packets = require('utils.packets')
-local vanatime = require('utils.vanatime')
+local packets = require('utils/packets')
+local vanatime = require('utils/vanatime')
 
 local Scale = 1.0
 
