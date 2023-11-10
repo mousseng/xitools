@@ -822,7 +822,7 @@ local tgt = {
         end
     end,
     DrawConfig = function(options, gOptions)
-        if imgui.BeginTabItem('tgt', nil) then
+        if imgui.BeginTabItem('tgt') then
             imgui.Checkbox('Enabled', options.isEnabled)
 
             imgui.Checkbox('Show main target', options.showMain)

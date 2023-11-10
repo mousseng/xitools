@@ -280,7 +280,7 @@ local week = {
         end
     end,
     DrawConfig = function(options, gOptions)
-        if imgui.BeginTabItem('week', nil) then
+        if imgui.BeginTabItem('week') then
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Visible', options.isVisible)
             if imgui.InputInt2('Position', options.pos) then
