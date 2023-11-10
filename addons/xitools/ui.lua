@@ -195,7 +195,6 @@ function ui.DrawInvisWindow(config, gConfig, drawStuff)
     imgui.PopStyleColor(2)
 
     if isOpen then
-        imgui.PopStyleColor(2)
         imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
         imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
 
