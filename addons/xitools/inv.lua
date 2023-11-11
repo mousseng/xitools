@@ -274,33 +274,34 @@ local function UpdateInventory(inv, res, bagId)
 
     for i = 0, itemCount do
         local invItem = inv:GetContainerItem(bagId, i)
-        local itemObj = res:GetItemById(invItem.Id)
+        local itemRes = res:GetItemById(invItem.Id)
 
-        if itemObj ~= nil and invItem.Id ~= 65535 then
+        if itemRes ~= nil and invItem.Id ~= 65535 then
             if textures[invItem.Id] == nil then
-                textures[invItem.Id] = CreateTexture(itemObj.Bitmap, itemObj.ImageSize)
+                textures[invItem.Id] = CreateTexture(itemRes.Bitmap, itemRes.ImageSize)
             end
 
             local coolItem = {
                 id = invItem.Id,
                 bagId = bagId,
-                sortId = itemObj.ResourceId,
+                sortId = itemRes.ResourceId,
                 slotId = invItem.Index,
-                uniqueId = ('%i.%i.%s'):format(bagId, invItem.Index, itemObj.Name[1]),
-                type = itemObj.Type,
-                flags = itemObj.Flags,
-                isUsable = bit.band(1, bit.rshift(itemObj.Flags, 10)) == 1,
+                uniqueId = ('%i.%i.%s'):format(bagId, invItem.Index, itemRes.Name[1]),
+                type = itemRes.Type,
+                flags = itemRes.Flags,
+                targets = itemRes.Targets,
+                isUsable = bit.band(1, bit.rshift(itemRes.Flags, 10)) == 1,
                 isMoveable = true,
                 isLocked = bit.band(1, invItem.Flags) == 1 or bagId > 0,
-                isEquippable = itemObj.Type == 4 or itemObj.Type == 5,
-                name = ('%s [%i]'):format(itemObj.LogNameSingular[1], invItem.Id),
-                shortName = itemObj.Name[1],
-                longNameS = itemObj.LogNameSingular[1],
-                longNameP = itemObj.LogNamePlural[1],
-                desc = EscapeString(itemObj.Description[1]),
+                isEquippable = itemRes.Type == 4 or itemRes.Type == 5,
+                name = ('%s [%i]'):format(itemRes.LogNameSingular[1], invItem.Id),
+                shortName = itemRes.Name[1],
+                longNameS = itemRes.LogNameSingular[1],
+                longNameP = itemRes.LogNamePlural[1],
+                desc = EscapeString(itemRes.Description[1]),
                 stack = nil,
                 stackCur = invItem.Count,
-                stackMax = itemObj.StackSize,
+                stackMax = itemRes.StackSize,
                 level = nil,
                 jobs = nil,
                 iconPtr = tonumber(ffi.cast('uint32_t', textures[invItem.Id]))
@@ -312,11 +313,11 @@ local function UpdateInventory(inv, res, bagId)
 
             if coolItem.type == itemTypes.armor
             or coolItem.type == itemTypes.weapon then
-                local itemSlots = GetSlots(itemObj.Slots, itemObj.Skill)
-                local itemJobs = GetJobs(itemObj.Jobs)
-                coolItem.level = ('Lv %i %s'):format(itemObj.Level, itemSlots)
+                local itemSlots = GetSlots(itemRes.Slots, itemRes.Skill)
+                local itemJobs = GetJobs(itemRes.Jobs)
+                coolItem.level = ('Lv %i %s'):format(itemRes.Level, itemSlots)
                 coolItem.jobs = itemJobs:join(', ')
-                coolItem.slots = itemObj.Slots
+                coolItem.slots = itemRes.Slots
             end
 
             inventory:append(coolItem)
@@ -394,9 +395,10 @@ local function TryToUse(item)
     if imgui.Selectable('Use') then
         local target = '<me>'
 
-        -- TODO: figure out how to actually target correctly
-        if item.id >= 5261 and item.id <= 5263 then
-            target = '<bt>'
+        -- target determination courtesy of Thorny's thotbar
+        local targetsOthers = bit.band(item.Targets, 0xFC) ~= 0
+        if targetsOthers then
+            target = '<t>'
         end
 
         AshitaCore:GetChatManager():QueueCommand(1, ('/item "%s" %s'):format(item.shortName, target))
