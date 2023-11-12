@@ -265,7 +265,8 @@ end
 
 ---@param player PartyMember
 local function DrawZone(player)
-    imgui.TextDisabled(zones[player.zoneId])
+    local zone = zones[player.zoneId] or string.format('??? ZONEID %s', tostring(player.zoneId))
+    imgui.TextDisabled(zone)
 end
 
 ---@param player PartyMember
