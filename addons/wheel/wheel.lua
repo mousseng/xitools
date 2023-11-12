@@ -15,9 +15,8 @@ local LevelMap = {
 }
 
 local function AdvanceWheelTo(position)
-    renderer.animation.current = 0
-    renderer.animation.progress = 0
-    renderer.animation.distance = (position - state.position + 6) % 6
+    renderer.animation.currentPos = state.position
+    renderer.animation.targetPos = position % 6
     state.position = position % 6
 end
 

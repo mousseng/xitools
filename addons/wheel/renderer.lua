@@ -10,7 +10,7 @@ local white = imgui.GetColorU32({ 1, 1, 1, 1.0 })
 local shadow = imgui.GetColorU32({ 0, 0, 0, 0.6 })
 local transparent = imgui.GetColorU32({ 1, 1, 1, 0.3 })
 
-local turn = math.pi / 3
+local oneTurn = math.pi / 3
 local circumference = math.pi * 2
 
 local flags = bit.bor(ImGuiWindowFlags_NoDecoration, ImGuiWindowFlags_NoBackground)
@@ -67,9 +67,10 @@ local drawing = {
 local animation = {
     speed = 400,
     lastFrame = ashita.time.clock().ms,
-    current = nil,
-    progress = nil,
-    distance = nil,
+    currentPos = 0,
+    targetPos = 0,
+    currentRot = 0,
+    targetRot = 0,
 }
 
 local renderer = {
@@ -93,36 +94,42 @@ function renderer.init(state)
 end
 
 function renderer.calc(state)
-    local delta = ashita.time.clock().ms - animation.lastFrame
+    if animation.currentPos ~= animation.targetPos then
+        animation.targetRot = animation.targetPos * oneTurn
 
-    -- if we are currently animating, calculate out the partial position
-    if animation.current ~= nil and animation.current <= animation.speed then
-        animation.current = animation.current + delta
+        -- if we're spinning past the "end" of the circle, we want the numbers
+        -- to keep going up so the animation continues smoothly in one direction
+        -- TODO: maybe we allow backwards rotation for out-of-order casts?
+        if animation.targetRot < animation.currentRot then
+            animation.targetRot = animation.targetRot + circumference
+        end
 
-        -- in order to ensure we don't over-rotate, chop off any excess animation
-        -- time over the set speed
-        local excess = math.max(0, animation.current - animation.speed)
-        animation.progress = (delta - excess) / animation.speed
+        local distance = (animation.targetPos - animation.currentPos) % 6
+        local deltaTime = ashita.time.clock().ms - animation.lastFrame
+        local deltaRot = (deltaTime / animation.speed) * (oneTurn * distance)
+        local newRot = math.min(animation.currentRot + deltaRot, animation.targetRot)
 
-        -- multiply out the partial rotation
-        drawing.rotation = drawing.rotation + animation.progress * animation.distance * turn
-    -- if we've finished animating, reset the animation state
-    elseif animation.progress ~= nil and animation.progress > animation.speed then
-        animation.current = nil
-        animation.progress = nil
-        animation.distance = nil
+        animation.currentRot = newRot
 
-        -- just so we don't increment forever, chop off any excess circumferences
-        if drawing.rotation > circumference then
-            drawing.rotation = drawing.rotation - circumference
+        -- once we've completed the rotation, mark the new current pos so we can
+        -- skip these calculations until the next cast
+        if animation.currentRot == animation.targetRot then
+            animation.currentPos = animation.targetPos
+        end
+    else
+        -- once we're settled in a new spot, just make sure to chop off extra
+        -- rotation to keep ourselves close to the [0,2pi] range
+        if animation.currentRot > circumference then
+            animation.currentRot = animation.currentRot - circumference
         end
     end
 
     -- move on to figuring out offsets and recasts for each spoke
     for i = 0, 5 do
-        -- divide by -3 to get clockwise rotation
-        local posX = drawing.radius * math.sin(i * math.pi / -3 + drawing.rotation)
-        local posY = drawing.radius * math.cos(i * math.pi / -3 + drawing.rotation)
+        -- add 3 to move the "next spell" to the top of the wheel instead of
+        -- the bottom; divide by -3 to get clockwise rotation
+        local posX = drawing.radius * math.sin((i + 3) * math.pi / -3 + animation.currentRot)
+        local posY = drawing.radius * math.cos((i + 3) * math.pi / -3 + animation.currentRot)
 
         drawing.spokes[i].pos = { posX, posY }
         drawing.spokes[i].tools = state.get_tools(i)
