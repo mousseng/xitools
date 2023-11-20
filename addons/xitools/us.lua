@@ -6,7 +6,6 @@ local d3d8_device = d3d8.get_device()
 local imgui = require('imgui')
 local ui = require('ui')
 
-local log = require('utils/log')
 local ffxi = require('utils/ffxi')
 local zones = require('utils/zones')
 
