@@ -292,6 +292,7 @@ local function UpdateInventory(inv, res, bagId)
                 targets = itemRes.Targets,
                 isUsable = bit.band(1, bit.rshift(itemRes.Flags, 10)) == 1,
                 isMoveable = true,
+                isTradeable = true,
                 isLocked = bit.band(1, invItem.Flags) == 1 or bagId > 0,
                 isEquippable = itemRes.Type == 4 or itemRes.Type == 5,
                 name = ('%s [%i]'):format(itemRes.LogNameSingular[1], invItem.Id),
@@ -396,12 +397,18 @@ local function TryToUse(item)
         local target = '<me>'
 
         -- target determination courtesy of Thorny's thotbar
-        local targetsOthers = bit.band(item.Targets, 0xFC) ~= 0
+        local targetsOthers = bit.band(item.targets, 0xFC) ~= 0
         if targetsOthers then
             target = '<t>'
         end
 
         AshitaCore:GetChatManager():QueueCommand(1, ('/item "%s" %s'):format(item.shortName, target))
+    end
+end
+
+local function TryToTrade(item)
+    if imgui.Selectable('Trade') then
+        AshitaCore:GetChatManager():QueueCommand(1, ('/item "%s" <t>'):format(item.shortName))
     end
 end
 
@@ -506,6 +513,43 @@ local function AddFullCtxMenu(item)
             TryToUse(item)
         end
 
+        if item.isTradeable then
+            TryToTrade(item)
+        end
+
+        if item.isEquippable then
+            TryToEquip(item)
+        end
+
+        if item.isMoveable then
+            TryToMove(item)
+        end
+
+        if not item.isLocked then
+            TryToDrop(item)
+        end
+
+        if imgui.Selectable('Cancel') then
+            imgui.CloseCurrentPopup()
+        end
+
+        imgui.EndPopup()
+    end
+
+    return menuOpened
+end
+
+local function AddWardrobeCtxMenu(item)
+    local menuOpened = false
+    local menuOpenable = item.isUsable or item.isMoveable or item.isEquippable or not item.isLocked
+
+    if menuOpenable and imgui.BeginPopupContextItem(item.uniqueId) then
+        menuOpened = true
+
+        if item.isUsable then
+            TryToUse(item)
+        end
+
         if item.isEquippable then
             TryToEquip(item)
         end
@@ -560,7 +604,7 @@ end
 local contextMenus = {
     bag      = AddFullCtxMenu,
     satchel  = AddSatchelCtxMenu,
-    wardrobe = AddFullCtxMenu,
+    wardrobe = AddWardrobeCtxMenu,
     house    = AddHouseCtxMenu,
 }
 
