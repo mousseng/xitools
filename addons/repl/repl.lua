@@ -24,34 +24,32 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
         return
     end
 
-    if visible[1] then
-        if imgui.Begin('repl', visible) then
-            local fontSize = 14
-            local padding = imgui.GetStyle().FramePadding.y * 2
-            local spacing = imgui.GetStyle().ItemSpacing.y * 2
+    imgui.SetNextWindowSizeConstraints({ 128, 128 }, { FLT_MAX, FLT_MAX })
+    if imgui.Begin('repl', visible) then
+        local fontSize = 14
+        local padding = imgui.GetStyle().FramePadding.y * 2
+        local spacing = imgui.GetStyle().ItemSpacing.y * 2
 
-            local x, y = imgui.GetContentRegionAvail()
-            local size = { x, (y - (padding + spacing + fontSize)) / 2 }
+        local x, y = imgui.GetContentRegionAvail()
+        local size = { x, (y - (padding + spacing + fontSize)) / 2 }
 
-            if imgui.Button('Execute') then
-                local code, loadErr = loadstring(input[1])
-                if loadErr then
-                    output[1] = loadErr
-                elseif code then
-                    local exeErr, result = pcall(code)
-                    output[1] = formatResults(result)
-                end
+        if imgui.Button('Execute') then
+            local code, loadErr = loadstring(input[1])
+            if loadErr then
+                output[1] = loadErr
+            elseif code then
+                local exeErr, result = pcall(code)
+                output[1] = formatResults(result)
             end
-
-            imgui.PushID('repl.input')
-            imgui.InputTextMultiline('', input, 4096, size)
-            imgui.PopID()
-
-            imgui.PushID('repl.output')
-            imgui.InputTextMultiline('', output, 4096 * 32, size, ImGuiInputTextFlags_ReadOnly)
-            imgui.PopID()
-
         end
-        imgui.End()
+
+        imgui.PushID('repl.input')
+        imgui.InputTextMultiline('', input, 4096, size)
+        imgui.PopID()
+
+        imgui.PushID('repl.output')
+        imgui.InputTextMultiline('', output, 4096 * 32, size, ImGuiInputTextFlags_ReadOnly)
+        imgui.PopID()
     end
+    imgui.End()
 end)
