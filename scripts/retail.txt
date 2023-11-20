@@ -9,6 +9,7 @@
 /addon load allmaps
 /addon load cfhblock
 /addon load checker
+/addon load debuff
 /addon load enternity
 /addon load filterless
 /addon load fps
@@ -31,6 +32,7 @@
 /addon load captain
 /addon load nolock
 /addon load combatmessages
+/addon load targetlines
 /addon load logs
 /addon load loggers
 
