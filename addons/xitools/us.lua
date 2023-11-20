@@ -63,7 +63,7 @@ local function CreateTexture(icon)
     end
 end
 
-local function GetStatusEffects(party, serverId)
+local function GetBuffs(party, serverId)
     -- courtesy of Thorny and Heals
     for i = 0, 4 do
         local sId = party:GetStatusIconsServerId(i)
@@ -99,6 +99,18 @@ local function GetStatusEffects(party, serverId)
     return { }
 end
 
+local function FilterBuffs(buffList)
+    local buffs = {}
+
+    for _, buff in ipairs(buffList) do
+        if buff ~= nil and buff > 0 then
+            table.insert(buffs, buff)
+        end
+    end
+
+    return buffs
+end
+
 local function IsSubTargetActive(target)
     local flags = target:GetSubTargetFlags()
     if flags == 0xFFFFFFFF then
@@ -112,7 +124,7 @@ local function GetPlayer(options, target, party, stal)
     local player = AshitaCore:GetMemoryManager():GetPlayer()
 
     local serverId = party:GetMemberServerId(0)
-    local buffs = player:GetBuffs()
+    local buffs = FilterBuffs(player:GetBuffs())
 
     return {
         entity = GetEntity(party:GetMemberTargetIndex(0)),
@@ -147,7 +159,7 @@ end
 ---@return PartyMember
 local function GetMember(i, window, target, party, stal)
     local serverId = party:GetMemberServerId(i)
-    local buffs = GetStatusEffects(party, serverId)
+    local buffs = FilterBuffs(GetBuffs(party, serverId))
 
     return {
         entity = GetEntity(party:GetMemberTargetIndex(i)),
@@ -313,21 +325,17 @@ end
 ---@param player PartyMember
 local function DrawBuffs(player)
     imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Scale({ 2, 2 }, Scale))
-    for i = 1, 32 do
-        local buffId = player.statusIds[i]
-        if buffId ~= nil and buffId >= 0 then
-            if Textures[buffId] == nil then
-                local icon = AshitaCore:GetResourceManager():GetStatusIconByIndex(buffId)
-                Textures[buffId] = CreateTexture(icon)
-            end
+    imgui.NewLine()
 
-            if i ~= 1 and i ~= 32 then
-                imgui.SameLine()
-            end
-
-            local img = tonumber(ffi.cast("uint32_t", Textures[buffId]))
-            imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
+    for _, buffId in ipairs(player.statusIds) do
+        if Textures[buffId] == nil then
+            local icon = AshitaCore:GetResourceManager():GetStatusIconByIndex(buffId)
+            Textures[buffId] = CreateTexture(icon)
         end
+
+        imgui.SameLine()
+        local img = tonumber(ffi.cast("uint32_t", Textures[buffId]))
+        imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
     end
 
     imgui.PopStyleVar()
