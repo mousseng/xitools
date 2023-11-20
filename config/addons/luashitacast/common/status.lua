@@ -162,8 +162,10 @@ local spells = {
     IceSpikes = 250,
     ShockSpikes = 251,
     Blind = 254,
+    Break = 255,
     Bind = 258,
     BlindII = 276,
+    Addle = 286,
     Enlight = 310,
     MonomiIchi = 317,
     KatonIchi = 320,
@@ -175,6 +177,13 @@ local spells = {
     DokumoriSan = 352,
     TonkoIchi = 353,
     TonkoNi = 354,
+    Distract = 841,
+    FrazzleII = 844,
+    DrainIII = 880,
+    AspirIII = 881,
+    DistractIII = 882,
+    FrazzleIII = 883,
+    AddleII = 884,
 }
 
 ---@param spell table
@@ -194,6 +203,8 @@ function status.IsDrain(spell)
         or spell.Id == spells.Aspir
         or spell.Id == spells.DrainII
         or spell.Id == spells.AspirII
+        or spell.Id == spells.DrainIII
+        or spell.Id == spells.AspirIII
 end
 
 -- Is this spell an INT-based elemental nuke or dot?
@@ -241,6 +252,11 @@ function status.IsEnfeebMnd(spell)
         or spell.Id == spells.Slow
         or spell.Id == spells.SlowII
         or spell.Id == spells.Silence
+        or spell.Id == spells.Addle
+        or spell.Id == spells.AddleII
+        or (spell.Id >= spells.Distract and spell.Id <= spells.FrazzleII)
+        or spell.Id == spells.DistractIII
+        or spell.Id == spells.FrazzleIII
 end
 
 ---@param spell table
@@ -251,6 +267,7 @@ function status.IsEnfeebInt(spell)
         or spell.Id == spells.Blind
         or spell.Id == spells.BlindII
         or spell.Id == spells.Bind
+        or spell.Id == spells.Break
         or (spell.Id >= spells.Poison and spell.Id <= spells.PoisongaV)
 end
 

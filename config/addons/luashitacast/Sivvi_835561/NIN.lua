@@ -19,7 +19,7 @@ local settings = {
         Ammo = "Date Shuriken",
     },
     Merit = {
-        Main = "Ternion Dagger +1",
+        Main = "Kaja Knife",
         Sub  = "Kaja Katana",
         Ammo = "Date Shuriken",
     },
@@ -28,7 +28,7 @@ local settings = {
         -- StrWs = { Name = "Andartia's Mantle", Augment = { [1] = 'STR+30', [2] = 'Weapon skill damage +10%', } },
         DexWs = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+30', [2] = 'Weapon skill damage +10%', } },
         -- AgiWs = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Weapon skill damage +10%', } },
-        -- Cast = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Fast Cast +10%', } },
+        Cast  = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+20', [2] = 'Fast Cast +10%', } },
         Nuke  = { Name = "Andartia's Mantle", Augment = { [1] = 'INT+20', [2] = '"Mag. Atk. Bns."+10' } },
     },
 }
@@ -106,22 +106,23 @@ local sets = {
             Back  = settings.Capes.Auto,
             Waist = "Sailfi Belt +1",
         },
-        Throw = Equip.NewSet {
-        },
     },
     Magic = {
         FastCast = Equip.NewSet {
             Ammo  = "Sapience Orb",
             Hands = "Taeon Gloves",
             Ring1 = "Weather. Ring",
+            Back  = settings.Capes.Cast,
         },
         Shadows = Equip.NewSet {
             Ammo  = "Sapience Orb",
             Feet  = "Hattori Kyahan",
+            Back  = settings.Capes.Cast,
         },
         Enfeeble = Equip.NewSet {
             Ammo  = "Sapience Orb",
             Body  = "Herculean Vest",
+            Back  = settings.Capes.Nuke,
         },
         Nuke = Equip.NewSet {
             Ammo  = "Sapience Orb",
@@ -134,14 +135,16 @@ local sets = {
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Hecate's Earring",
-            Ring1 = "Weather. Ring",
+            Ear2  = "Friomisi Earring",
+            Ring1 = "Shiva Ring",
             Ring2 = "Mephitas's Ring +1",
             Back  = settings.Capes.Nuke,
+            Waist = "Skrymir Cord",
         },
     },
     Weaponskills = {
         Base = Equip.NewSet {
-            Ammo  = "Seething Bomblet",
+            Ammo  = "Seething Bomblet +1",
 
             Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
@@ -150,13 +153,13 @@ local sets = {
             Feet  = "Hattori Kyahan +2",
 
             Ear1  = "Odr Earring",
-            Ear2  = "Hattori Earring",
+            Ear2  = "Lugra Earring +1",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
         },
         ['Blade: Ku'] = Equip.NewSet {
-            Ammo  = "Seething Bomblet",
+            Ammo  = "Seething Bomblet +1",
 
             Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
@@ -165,7 +168,7 @@ local sets = {
             Feet  = "Hattori Kyahan +2",
 
             Ear1  = "Odr Earring",
-            Ear2  = "Hattori Earring",
+            Ear2  = "Lugra Earring +1",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
@@ -180,7 +183,7 @@ local sets = {
             Feet  = "Hattori Kyahan +2",
 
             Ear1  = "Odr Earring",
-            Ear2  = "Hattori Earring",
+            Ear2  = "Lugra Earring +1",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
@@ -196,13 +199,13 @@ local sets = {
             Feet  = "Hattori Kyahan +2",
 
             Ear1  = "Odr Earring",
-            Ear2  = "Hattori Earring",
+            Ear2  = "Lugra Earring +1",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
         },
         ['Aeolian Edge'] = Equip.NewSet {
-            Ammo  = "Seething Bomblet",
+            Ammo  = "Seething Bomblet +1",
 
             Head  = "Taeon Chapeau",
             Body  = "Herculean Vest",
@@ -212,11 +215,11 @@ local sets = {
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Hecate's Earring",
-            Ear2  = "Odr Earring",
-            Ring1 = "Weather. Ring",
+            Ear2  = "Friomisi Earring",
+            Ring1 = "Shiva Ring",
             Ring2 = "Mephitas's Ring +1",
             Back  = settings.Capes.DexWs,
-            Waist = "Thunder Belt",
+            Waist = "Skrymir Cord",
         },
         ['Exenterator'] = Equip.NewSet {
             Head  = "Mummu Bonnet +2",
@@ -225,9 +228,12 @@ local sets = {
             Legs  = "Hiza. Hizayoroi +2",
             Feet  = "Hattori Kyahan +2",
 
+            Ear1  = "Odr Earring",
+            Ear2  = "Lugra Earring +1",
             Ring1 = "Regal Ring",
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
+            Waist = "Thunder Belt",
         },
     },
 }
