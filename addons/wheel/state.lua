@@ -1,5 +1,5 @@
 require('common')
-local packets = require('packets')
+local packets = require('lin.packets')
 local recast = AshitaCore:GetMemoryManager():GetRecast()
 
 local trackedItems = T{
