@@ -1,3 +1,4 @@
+local bit = require('bit')
 local ffxi = {}
 
 -- Fetch an entity by its server ID. Helpful when looking up information from
@@ -88,7 +89,7 @@ end
 function ffxi.IsChatExpanded()
     -- courtesy of Syllendel
 	local pattern = "83EC??B9????????E8????????0FBF4C24??84C0"
-	local patternAddress = ashita.memory.find("FFXiMain.dll", 0, pattern, 0x04, 0);
+	local patternAddress = ashita.memory.find("FFXiMain.dll", 0, pattern, 0x04, 0)
 	local chatExpandedPointer = ashita.memory.read_uint32(patternAddress)+0xF1
 	local chatExpandedValue = ashita.memory.read_uint8(chatExpandedPointer)
 
@@ -110,19 +111,20 @@ function ffxi.GetStPartyIndex()
     end
 end
 
-local menuBase = ashita.memory.find('FFXiMain.dll', 0, '8B480C85C974??8B510885D274??3B05', 16, 0);
+local menuBase = ashita.memory.find('FFXiMain.dll', 0, '8B480C85C974??8B510885D274??3B05', 16, 0)
 
 --- Gets the name of the top-most menu element.
 ---@return string
 function ffxi.GetMenuName()
-    local subPointer = ashita.memory.read_uint32(menuBase);
-    local subValue = ashita.memory.read_uint32(subPointer);
+    local subPointer = ashita.memory.read_uint32(menuBase)
+    local subValue = ashita.memory.read_uint32(subPointer)
     if (subValue == 0) then
-        return '';
+        return ''
     end
-    local menuHeader = ashita.memory.read_uint32(subValue + 4);
-    local menuName = ashita.memory.read_string(menuHeader + 0x46, 16);
-    return string.gsub(menuName, '\x00', '');
+    local menuHeader = ashita.memory.read_uint32(subValue + 4)
+    local menuName = ashita.memory.read_string(menuHeader + 0x46, 16)
+    local trimmedName = string.gsub(menuName, '\x00', '')
+    return trimmedName
 end
 
 --- Determines if the map is open in game.
@@ -132,6 +134,103 @@ function ffxi.IsMapOpen()
     return menuName:match('menu%s+map.*') ~= nil
         or menuName:match('menu%s+scanlist.*') ~= nil
         or menuName:match('menu%s+cnqframe') ~= nil
+end
+
+-- event system signature courtesy of Velyn
+local eventSystem = ashita.memory.find('FFXiMain.dll', 0, "A0????????84C0741AA1????????85C0741166A1????????663B05????????0F94C0C3", 0, 0)
+
+function ffxi.IsEventHappening()
+    if eventSystem == 0 then
+        return false
+    end
+
+    local ptr = ashita.memory.read_uint32(eventSystem + 1)
+    if ptr == 0 then
+        return false
+    end
+
+    return ashita.memory.read_uint8(ptr) == 1
+end
+
+-- interface hidden signature courtesy of Velyn
+local interfaceHidden = ashita.memory.find('FFXiMain.dll', 0, "8B4424046A016A0050B9????????E8????????F6D81BC040C3", 0, 0)
+
+function ffxi.IsInterfaceHidden()
+    if interfaceHidden == 0 then
+        return false
+    end
+
+    local ptr = ashita.memory.read_uint32(interfaceHidden + 10)
+    if ptr == 0 then
+        return false
+    end
+
+    return ashita.memory.read_uint8(ptr + 0xB4) == 1
+end
+
+local contentPtr = ashita.memory.find('FFXiMain.dll', 0, 'A1????????8B88B4000000C1E907F6C101E9', 0, 0)
+
+---Returns whether or not the local player has access to the given container.
+---Code provided by atom0s.
+---@param index number The container index.
+---@return boolean True if the player has access, false otherwise.
+function ffxi.HasBagAccess(index)
+    local inv = AshitaCore:GetMemoryManager():GetInventory()
+    if contentPtr == 0 or inv == nil then
+        return false
+    end
+
+    local ptr = ashita.memory.read_uint32(contentPtr + 1)
+    if ptr == 0 then
+        return false
+    end
+
+    local flagsPtr = ashita.memory.read_uint32(ptr)
+    if flagsPtr == 0 then
+        return false
+    end
+
+    local val = ashita.memory.read_uint8(flagsPtr + 0xB4)
+
+    return switch(index, {
+        -- Inventory
+        [0] = function ()
+            return true
+        end,
+        -- Wardrobe 3
+        [11] = function ()
+            return bit.band(bit.rshift(val, 0x02), 0x01) ~= 0
+        end,
+        -- Wardrobe 4
+        [12] = function ()
+            return bit.band(bit.rshift(val, 0x03), 0x01) ~= 0
+        end,
+        -- Wardrobe 5
+        [13] = function ()
+            return bit.band(bit.rshift(val, 0x04), 0x01) ~= 0
+        end,
+        -- Wardrobe 6
+        [14] = function ()
+            return bit.band(bit.rshift(val, 0x05), 0x01) ~= 0
+        end,
+        -- Wardrobe 7
+        [15] = function ()
+            return bit.band(bit.rshift(val, 0x06), 0x01) ~= 0
+        end,
+        -- Wardrobe 8
+        [16] = function ()
+            return bit.band(bit.rshift(val, 0x07), 0x01) ~= 0
+        end,
+        [switch.default] = function ()
+            -- Safe to Wardrobe 2..
+            if (index >= 1 and index <= 10) then
+                return inv:GetContainerCountMax(index) > 0
+            end
+
+            -- Consider rest invalid..
+            return false
+        end,
+    })
 end
 
 local jobs = {
@@ -160,7 +259,7 @@ local jobs = {
 }
 
 ---@param id integer
----@return string?
+---@return 'WAR'|'MNK'|'WHM'|'BLM'|'RDM'|'THF'|'PLD'|'DRK'|'BST'|'BRD'|'RNG'|'SAM'|'NIN'|'DRG'|'SMN'|'BLU'|'COR'|'PUP'|'DNC'|'SCH'|'GEO'|'RUN'|nil
 function ffxi.GetJobAbbr(id)
     return jobs[id]
 end

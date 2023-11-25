@@ -1,6 +1,6 @@
 require('common')
 local bit = require('bit')
-local ffxi = require('utils.ffxi')
+local ffxi = require('utils/ffxi')
 local imgui = require('imgui')
 local ui = require('ui')
 
@@ -120,7 +120,7 @@ local function DrawLp(cur, max, isLocked)
     end
 
     local barColor = ui.Colors.LpBar
-    local title = string.format('LP %4s', type, ffxi.FormatXp(cur, cur > 9999))
+    local title = string.format('LP %4s', ffxi.FormatXp(cur, false))
 
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale))

@@ -1,6 +1,7 @@
-local ffxi = require('utils.ffxi')
+local ffxi = require('utils/ffxi')
 local imgui = require('imgui')
-local packets = require('utils.packets')
+local packets = require('utils/packets')
+local inspect  = require('utils/inspect')
 
 local function Dump(id, str)
     local date = os.date('*t')
@@ -25,12 +26,40 @@ local function Dump(id, str)
     end
 end
 
+local function WritePacket(type, id, packet)
+    Dump(string.format('%s 0x%03x', type, id), inspect(packet))
+end
+
+local function WritePcUpdate(pcUpdate)
+    local output =
+        string.format('player: %i\n',          pcUpdate.player) ..
+        string.format('playerIndex: %i\n',     pcUpdate.playerIndex) ..
+        string.format('updatedPosition: %s\n', pcUpdate.updatedPosition) ..
+        string.format('updatedStatus: %s\n',   pcUpdate.updatedStatus) ..
+        string.format('updatedVitals: %s\n',   pcUpdate.updatedVitals) ..
+        string.format('updatedName: %s\n',     pcUpdate.updatedName) ..
+        string.format('updatedModel: %s\n',    pcUpdate.updatedModel) ..
+        string.format('isDespawned: %s\n',     pcUpdate.isDespawned) ..
+        string.format('heading: %i\n',         pcUpdate.heading)
+
+    Dump('in 0x00D', output)
+end
+
+local function WriteInventoryFinish(invFinish)
+    local output =
+        string.format('flag: %s\n', invFinish.flag) ..
+        string.format('container: %i\n', invFinish.container)
+
+    Dump('in 0x01D', output)
+end
+
 local function WriteAction(action)
     local output =
         'actor_id: '     .. string.format('%i',   action.actor_id) .. ' (' .. ffxi.GetEntityNameByServerId(action.actor_id) .. ')\n' ..
         'target_count: ' .. string.format('%i',   action.target_count) .. '\n' ..
         'category: '     .. string.format('0x%x', action.category)     .. '\n' ..
         'param: '        .. string.format('0x%x', action.param)        .. '\n' ..
+        'param2: '       .. string.format('0x%x', action.param2)       .. '\n' ..
         'recast: '       .. string.format('%i',   action.recast)       .. '\n' ..
         'unknown: '      .. string.format('%i',   action.unknown)      .. '\n' ..
         'targets:\n'
@@ -215,7 +244,19 @@ local function DispatchPacketOut(e)
 end
 
 local function DispatchPacketIn(e)
-    if e.id == 0x028 then
+    if e.id == 0x00D then
+        WritePcUpdate(packets.inbound.pcUpdate.parse(e.data_modified_raw))
+    elseif e.id == 0x01C then
+        WritePacket('in', e.id, packets.inbound.inventorySize.parse(e.data))
+    elseif e.id == 0x01D then
+        WriteInventoryFinish(packets.inbound.inventoryFinish.parse(e.data))
+    elseif e.id == 0x01E then
+        WritePacket('in', e.id, packets.inbound.inventoryModify.parse(e.data))
+    elseif e.id == 0x01F then
+        WritePacket('in', e.id, packets.inbound.inventoryAssign.parse(e.data))
+    elseif e.id == 0x020 then
+        WritePacket('in', e.id, packets.inbound.inventoryItem.parse(e.data))
+    elseif e.id == 0x028 then
         local packet = packets.inbound.action.parse(e.data_modified_raw)
         if packet.category == 0 or packet.category == 1 then return false end
         WriteAction(packet)
@@ -242,6 +283,12 @@ local logger = {
         isVisible = T{ false },
         loggedPackets = T{
             inbound = T{
+                [0x00D] = { true },
+                [0x01C] = { true },
+                [0x01D] = { true },
+                [0x01E] = { true },
+                [0x01F] = { true },
+                [0x020] = { true },
                 [0x028] = { true },
                 [0x029] = { true },
                 [0x02A] = { true },

@@ -1,252 +1,503 @@
-require 'common'
-local levelSync = gFunc.LoadFile('common/levelSync.lua')
-local conserveMp = gFunc.LoadFile('common/conserveMp.lua')
-local doMagic = gFunc.LoadFile('common/magic.lua')
-local doSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
-local doDaggerWs = gFunc.LoadFile('common/weaponskills/dagger.lua')
-local handleCudgel = gFunc.LoadFile('common/cudgel.lua')
-local handleGlamour = gFunc.LoadFile('common/glamour.lua')
-local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
-local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
-local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
+require('common')
+local noop = function() end
 
-local profile = {
-    Sets = {
-        Base_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            Sub = { "Parana Shield" },
-            -- Range = { },
-            Ammo = { "Morion Tathlum" },
-            Head = { "Gold Hairpin", "Brass Hairpin", "Dream Hat +1" },
-            Body = { "Warlock's Tabard", "Savage Separates", "Ryl.Ftm. Tunic", "Dream Robe" },
-            Hands = { "Savage Gauntlets", "Dream Mittens +1" },
-            Legs = { "Savage Loincloth", "Dream Pants +1" },
-            Feet = { "Warlock's Boots", "Savage Gaiters", "Dream Boots +1" },
-            Neck = { "Tiger Stole" },
-            Waist = { "Friar's Rope" },
-            Ear1 = { "Moldavite Earring" },
-            Ear2 = { "Cunning Earring" },
-            Ring1 = { "San d'Orian Ring" },
-            Ring2 = { "Chariot Band" },
-            Back = { "Black Cape", "Cotton Cape" },
-        },
-        Glamour = {
-            Head = "remove",
-            Body = "Savage Separates",
-            Hands = "Savage Gauntlets",
-            Legs = "Warlock's Tights",
-            Feet = "Warlock's Boots",
-        },
-        -- situational base sets
-        Rest_Priority = {
-            Main = { "Pilgrim's Wand" },
-        },
-        Tp_Priority = {
-            Head = { "Super Ribbon" },
-            Body = { "Brigandine" },
-            Hands = { "Warlock's Gloves", "Ryl.Ftm. Gloves" },
-            Legs = { "Cmb.Cst. Slacks" },
-            Waist = { "Tilt Belt" },
-            Ear1 = { "Beetle Earring +1" },
-            Ear2 = { "Beetle Earring +1" },
-            Ring1 = { "Balance Ring" },
-            Ring2 = { "Balance Ring" },
-        },
-        Movement_Priority = {
-        },
-        Solo = {
-            Main = "Saber",
-            Sub = "Parana Shield",
-            Hands = "Warlock's Gloves",
-        },
-        SoloNin = {
-            Main = "Saber",
-            Sub = "Ryl.Grd. Fleuret",
-            Hands = "Warlock's Gloves",
-        },
-        -- stat bonus sets
-        Str_Priority = {
-            Head = { "Super Ribbon" },
-            Body = { "Savage Separates" },
-            Feet = { "Savage Gaiters" },
-            Neck = { "Spike Necklace" },
-            Waist = { "Ryl.Kgt. Belt" },
-            Ring1 = { "San d'Orian Ring" },
-        },
-        Dex_Priority = {
-            Head = { "Super Ribbon" },
-            Body = { "Brigandine" },
-            Hands = { "Warlock's Gloves" },
-            Neck = { "Spike Necklace" },
-            Waist = { "Ryl.Kgt. Belt" },
-            Ring1 = { "Balance Ring" },
-            Ring2 = { "Balance Ring" },
-        },
-        Vit_Priority = {
-        },
-        Agi_Priority = {
-        },
-        Int_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            Ammo = { "Morion Tathlum" },
-            Head = { "Warlock's Chapeau", "Super Ribbon", { Name = "displaced", Level = 10 } },
-            Body = { { Name = "displaced", Level = 52 }, "Ryl.Ftm. Tunic" },
-            Hands = { "Sly Gauntlets" },
-            Legs = { "Magic Cuisses" },
-            Feet = { "Warlock's Boots" },
-            Neck = { "Black Neckerchief" },
-            Waist = { "Ryl.Kgt. Belt", "Wizard's Belt" },
-            Ear2 = { "Cunning Earring" },
-            Ring1 = { "Eremite's Ring" },
-            Ring2 = { "Eremite's Ring" },
-            Back = { "Black Cape" },
-        },
-        Mnd_Priority = {
-            Main = { "Fencing Degen", "Yew Wand +1" },
-            Head = { "Super Ribbon" },
-            Hands = { "Savage Gauntlets" },
-            Legs = { "Warlock's Tights", "Magic Cuisses", "Savage Loincloth" },
-            Feet = { "Warlock's Boots" },
-            Neck = { "Justice Badge" },
-            Waist = { "Ryl.Kgt. Belt", "Friar's Rope" },
-            Ring1 = { "Saintly Ring" },
-            Ring2 = { "Saintly Ring" },
-            Back = { "White Cape" },
-        },
-        Chr_Priority = {
-        },
-        -- substat bonus sets
-        Acc_Priority = {
-        },
-        Att_Priority = {
-        },
-        Eva_Priority = {
-        },
-        Hp_Priority = {
-        },
-        Mp_Priority = {
-        },
-        Interrupt_Priority = {
-        },
-        -- skill bonus sets
-        Healing_Priority = {
-            Legs = { "Warlock's Tights" },
-            Neck = { "Healing Torque" },
-        },
-        Elemental_Priority = {
-            Head = { "Warlock's Chapeau" },
-            Neck = { "Elemental Torque" },
-            Ear1 = { "Moldavite Earring" },
-        },
-        Enhancing_Priority = {
-            Legs = { "Warlock's Tights" },
-            Neck = { "Enhancing Torque" },
-        },
-        Enfeebling_Priority = {
-            Main = { "Fencing Degen" },
-            Body = { "Warlock's Tabard" },
-            Neck = { "Enfeebling Torque" },
-        },
-        Divine_Priority = {
-            Neck = { "Divine Torque" },
-        },
-        Dark_Priority = {
-            Neck = { "Dark Torque" },
-        },
+---@module 'common.equip'
+local Equip = gFunc.LoadFile('common/equip.lua')
+---@module 'common.status'
+local Status = gFunc.LoadFile('common/status.lua')
+
+local sets = {
+    Idle = Equip.NewSet {
+        Main = Equip.Staves.Earth,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Hedgehog Bomb",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Duelist's Tabard",
+        Hands = "Warlock's Gloves",
+        Ring1 = "Zoredonite Ring",
+        Ring2 = "Sattva Ring",
+
+        Back = "Hexerei Cape",
+        Waist = "Ryl.Kgt. Belt",
+        Legs = "Crimson Cuisses",
+        Feet = "Duelist's Boots",
+    },
+    Rest = Equip.NewSet {
+        Main = Equip.Staves.Dark,
+        Ear1 = "Relaxing Earring",
+        Body = "Errant Hpl.",
+        Waist = "Duelist's Belt",
+    },
+    Solo = Equip.NewSet {
+        Main = "Martial Anelace",
+        Sub = "Joyeuse",
+    },
+    Auto = Equip.NewSet {
+        Head = "Ogre Mask",
+        Neck = "Spike Necklace",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
+
+        Body = "Assault Jerkin",
+        Hands = "Warlock's Gloves",
+        Ring1 = "Woodsman Ring",
+        Ring2 = "Balance Ring",
+
+        Back = "Psilos Mantle",
+        Waist = "Swift Belt",
+        Legs = "Duelist's Tights",
+        Feet = "Ogre Ledelsens",
+    },
+    Weaponskill = Equip.NewSet {
+        Head = "Ogre Mask",
+        Neck = "Tiger Stole",
+        Ear1 = "Beetle Earring +1",
+        Ear2 = "Beetle Earring +1",
+
+        Body = "Assault Jerkin",
+        Hands = "Ogre Gloves",
+        Ring1 = "Woodsman Ring",
+        Ring2 = "Courage Ring",
+
+        Back = "Psilos Mantle",
+        Waist = "Life Belt",
+        Legs = "Duelist's Tights",
+        Feet = "Ogre Ledelsens",
+    },
+    MaxMp = Equip.NewSet {
+        Main = "Fencing Degen",
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Hedgehog Bomb",
+
+        Head = "Gold Hairpin",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Morion Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Duelist's Tabard",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Zoredonite Ring",
+        Ring2 = "Chariot Band",
+
+        Back = "Rainbow Cape",
+        Waist = "Friar's Rope",
+        Legs = "Savage Loincloth",
+        Feet = "Duelist's Boots",
+    },
+    Pdt = Equip.NewSet {
+        Main = Equip.Staves.Earth,
+
+        -- Head = "Darksteel Cap +1",
+        -- Neck = "",
+        -- Ear1 = "",
+        -- Ear2 = "",
+
+        -- Body = "Dst. Harness +1",
+        -- Hands = "Dst. Mittens +1",
+        Ring1 = "Jelly Ring",
+        Ring2 = "Sattva Ring",
+
+        Back = "Hexerei Cape",
+        -- Waist = "",
+        -- Legs = "Dst. Subligar +1",
+        -- Feet = "Dst. Leggings +1",
+    },
+    Mdt = Equip.NewSet {
+        -- Head = "Coral Visor +1",
+        -- Neck = "Jeweled Collar",
+        Ear1 = "Merman's Earring",
+        -- Ear2 = "Merman's Earring",
+
+        -- Body = "Cor. Scale Mail +1",
+        -- Hands = "Coral Fng.Gnt. +1",
+        -- Ring1 = "Merman's Ring",
+        Ring2 = "Sattva Ring",
+
+        Back = "Hexerei Cape",
+        -- Waist = "Duelist's Belt",
+        Legs = "Crimson Cuisses",
+        -- Feet = "Crimson Greaves",
+    },
+    Bdt = Equip.NewSet {
+        -- Head = "",
+        -- Neck = "",
+        -- Ear1 = "",
+        -- Ear2 = "",
+
+        -- Body = "",
+        -- Hands = "",
+        -- Ring1 = "",
+        Ring2 = "Sattva Ring",
+
+        Back = "Hexerei Cape",
+        -- Waist = ""
+        -- Legs = "",
+        -- Feet = "",
+    },
+    FastCast = Equip.NewSet {
+        Head = "Warlock's Chapeau",
+        Body = "Duelist's Tabard",
+    },
+    Shadows = Equip.NewSet {
+        Main = Equip.Staves.Wind,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Hedgehog Bomb",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Warlock's Tabard",
+        Hands = "Warlock's Gloves",
+        Ring1 = "Reflex Ring",
+        Ring2 = "Peridot Ring",
+
+        Back = "Hexerei Cape",
+        Waist = "Swift Belt",
+        Legs = "Nashira Seraweels",
+        Feet = "Duelist's Boots",
+    },
+    Stoneskin = Equip.NewSet {
+        Main = "Yew Wand +1",
+        Sub = "Yew Wand +1",
+        Range = Equip.Special.Displaced,
+        Ammo = "Hedgehog Bomb",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Justice Badge",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Errant Hpl.",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Saintly Ring",
+        Ring2 = "Saintly Ring",
+
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Errant Slops",
+        Feet = "Duelist's Boots",
+    },
+    Enhancing = Equip.NewSet {
+        Neck = "Enhancing Torque",
+        Legs = "Warlock's Tights",
+    },
+    Cure = Equip.NewSet {
+        Main = "Yew Wand +1",
+        Sub = "Yew Wand +1",
+        Range = Equip.Special.Displaced,
+        Ammo = "Morion Tathlum",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Harmonia's Torque",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Savage Separates",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Sattva Ring",
+        Ring2 = "Bomb Queen Ring",
+
+        Back = "White Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Crimson Cuisses",
+        Feet = "Duelist's Boots",
+    },
+    Heal = Equip.NewSet {
+        Main = "Yew Wand +1",
+        Sub = "Yew Wand +1",
+        Range = Equip.Special.Displaced,
+        Ammo = "Hedgehog Bomb",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Justice Badge",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Errant Hpl.",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Saintly Ring",
+        Ring2 = "Saintly Ring",
+
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Errant Slops",
+        Feet = "Duelist's Boots",
+    },
+    EnfeebInt = Equip.NewSet {
+        Main = "Fencing Degen",
+        Sub = "Yew Wand +1",
+        Range = Equip.Special.Displaced,
+        Ammo = "Morion Tathlum",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Enfeebling Torque",
+        Ear1 = "Morion Earring",
+        Ear2 = "Abyssal Earring",
+
+        Body = "Warlock's Tabard",
+        Hands = "Sly Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
+
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Nashira Seraweels",
+        Feet = "Wise Pigaches",
+    },
+    EnfeebMnd = Equip.NewSet {
+        Main = "Fencing Degen",
+        Sub = "Yew Wand +1",
+        Range = Equip.Special.Displaced,
+        Ammo = "Hedgehog Bomb",
+
+        Head = "Duelist's Chapeau",
+        Neck = "Enfeebling Torque",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Warlock's Tabard",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Saintly Ring",
+        Ring2 = "Saintly Ring",
+
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Nashira Seraweels",
+        Feet = "Duelist's Boots",
+    },
+    NinjutsuAcc = Equip.NewSet {
+    },
+    NinjutsuPot = Equip.NewSet {
+    },
+    Nuke = Equip.NewSet {
+        Main = Equip.Staves.Ice,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Morion Tathlum",
+
+        Head = "Warlock's Chapeau",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Moldavite Earring",
+        Ear2 = "Abyssal Earring",
+
+        Body = "Errant Hpl.",
+        Hands = "Sly Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
+
+        Back = "Rainbow Cape",
+        Waist = "Duelist's Belt",
+        Legs = "Duelist's Tights",
+        Feet = "Duelist's Boots",
+    },
+    Drain = Equip.NewSet {
+        Main = Equip.Staves.Dark,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Hedgehog Bomb",
+
+        Head = "Warlock's Chapeau",
+        Neck = "Uggalepih Pendant",
+        Ear1 = "Morion Earring",
+        Ear2 = "Abyssal Earring",
+
+        Body = "Duelist's Tabard",
+        Hands = "Sly Gauntlets",
+        Ring1 = "Eremite's Ring",
+        Ring2 = "Eremite's Ring",
+
+        Back = "Rainbow Cape",
+        Waist = "Swift Belt",
+        Legs = "Nashira Seraweels",
+        Feet = "Wise Pigaches",
     },
 }
 
-profile.OnLoad = function()
-    gSettings.AllowAddSet = true
-    gSettings.SoloMode = false
-    gSettings.FishMode = false
-    gSettings.HelmMode = false
+local settings = {
+    Tank     = false,
+    Solo     = false,
+    Pdt      = false,
+    Mdt      = false,
+    IsRested = false,
+}
 
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /glam /lac fwd glam')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
-    AshitaCore:GetChatManager():QueueCommand(1, '/macro book 2')
-end
+local function equipCureCheat(spell)
+    local hpNeeded = 0
+    if spell.Name == 'Cure IV' then
+        hpNeeded = 400
+    elseif spell.Name == 'Cure III' then
+        hpNeeded = 200
+    elseif spell.Name == 'Cure II' then
+        hpNeeded = 100
+    end
 
-profile.OnUnload = function()
-    handleSoloMode('solo off')
-    handleFishMode('fish off')
-    handleHelmMode('helm off')
-
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /glam')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /solo')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm')
-end
-
-profile.HandleCommand = function(args)
-    if #args == 0 then return end
-    handleGlamour(args)
-    handleSoloMode(args)
-    handleFishMode(args)
-    handleHelmMode(args)
-    handleCudgel(args)
-end
-
-profile.HandleDefault = function()
     local player = gData.GetPlayer()
-    levelSync(profile.Sets)
+    local hpMissing = player.MaxHP - player.HP
 
-    gFunc.EquipSet('Base')
-    if player.Status == 'Resting' then
-        gFunc.EquipSet('Rest')
-    elseif player.Status == 'Engaged' then
-        gFunc.EquipSet('Tp')
+    hpNeeded = hpNeeded - hpMissing
+    if hpNeeded <= 0 then
+        return
+    end
 
-        if player.HPP <= 75 and player.TP <= 1000 then
-            gFunc.Equip('Ring1', "Fencer's Ring")
+    -- TODO: equip HP- pieces to exceed hpNeeded
+end
+
+local function handleCommand(args)
+    if #args < 1 then return end
+
+    local cmd = args[1]
+    if cmd == 'solo' then
+        settings.Solo = not settings.Solo
+        if settings.Solo then
+            Equip.Set(sets.Solo, true)
+            Equip.Disable(Equip.Slots.Main)
+            Equip.Disable(Equip.Slots.Sub)
+            Equip.Disable(Equip.Slots.Range)
+        else
+            Equip.Enable(Equip.Slots.Main)
+            Equip.Enable(Equip.Slots.Sub)
+            Equip.Enable(Equip.Slots.Range)
         end
-    elseif player.IsMoving then
-        gFunc.EquipSet('Movement')
-    end
-
-    if gSettings.SoloMode then
-        gFunc.EquipSet('Solo')
-    end
-end
-
-profile.HandleAbility = function()
-end
-
-profile.HandleItem = function()
-    local item = gData.GetAction()
-    if item.Name == 'Orange Juice' then
-        gFunc.Equip('Legs', "Dream Pants +1")
+    elseif cmd == 'tank' then
+        settings.Tank = not settings.Tank
+    elseif cmd == 'pdt' then
+        settings.Pdt = not settings.Pdt
+        if settings.Pdt then settings.Mdt = false end
+    elseif cmd == 'mdt' then
+        settings.Mdt = not settings.Mdt
+        if settings.Mdt then settings.Pdt = false end
     end
 end
 
-profile.HandlePrecast = function()
-    gFunc.Equip('Head', "Warlock's Chapeau")
-    conserveMp(profile.Sets.Base)
+local function handleDefault()
+    local player = gData.GetPlayer()
+    local env = gData.GetEnvironment()
+
+    Equip.Set(sets.Idle)
+
+    if settings.Pdt then
+        Equip.Set(sets.Pdt)
+    elseif settings.Mdt then
+        Equip.Set(sets.Mdt)
+    elseif Status.IsAttacking(player) then
+        Equip.Set(sets.Auto)
+
+        if player.HPP <= 75 and player.TP < 1000 and Status.HasStatus('en%a+') then
+            Equip.Ring2("Fencer's Ring")
+        end
+    end
+
+    if Status.IsInSandoria(env) then
+        Equip.Body("Kingdom Aketon")
+    elseif Status.IsInBastok(env) then
+        Equip.Body("Republic Aketon")
+    elseif Status.IsInWindurst(env) then
+        Equip.Body("Federation Aketon")
+    end
+
+    if Status.IsResting(player, settings) then
+        Equip.Set(sets.Rest)
+    end
 end
 
-profile.HandleMidcast = function()
+local function handleAbility()
+    local ability = gData.GetAction()
+
+    if ability.Name == 'Convert' then
+        Equip.LockSet(sets.MaxMp, 10)
+    end
+end
+
+local function handlePrecast()
     local spell = gData.GetAction()
-    doMagic(spell)
+    local target = gData.GetTarget()
 
-    if gSettings.SoloMode then
-        gFunc.Equip('Body', "Warlock's Tabard")
+    if settings.Tank and target.Name == 'Lin' then
+        equipCureCheat(spell)
     end
 
-    conserveMp(profile.Sets.Base)
+    Equip.Set(sets.FastCast)
 end
 
-profile.HandlePreshot = function()
+local function handleMidcast()
+    local spell = gData.GetAction()
+
+    if Status.IsStealth(spell) then
+        Equip.Stealth()
+    elseif Status.IsHeal(spell) then
+        if settings.Tank then
+            Equip.Set(sets.Cure)
+            Equip.Obi(spell)
+        else
+            Equip.Set(sets.Heal)
+            Equip.Obi(spell)
+        end
+    elseif Status.IsDrain(spell) then
+        Equip.Set(sets.Drain)
+        Equip.Obi(spell)
+    elseif Status.IsStoneskin(spell) then
+        Equip.Set(sets.Stoneskin)
+    elseif Status.IsEnhancement(spell) then
+        Equip.Set(sets.Enhancing)
+    elseif Status.IsShadows(spell) then
+        Equip.Set(sets.Shadows)
+    elseif Status.IsNuke(spell) then
+        Equip.Set(sets.Nuke)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
+    elseif Status.IsEnfeebMnd(spell) then
+        Equip.Set(sets.EnfeebMnd)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
+    elseif Status.IsEnfeebInt(spell) then
+        Equip.Set(sets.EnfeebInt)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
+    elseif Status.IsPotencyNinjutsu(spell) then
+        Equip.Set(sets.NinjutsuPot)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
+    elseif Status.IsAccuracyNinjutsu(spell) then
+        Equip.Set(sets.NinjutsuAcc)
+        Equip.Staff(spell)
+        Equip.Obi(spell)
+    else
+        Equip.Set(sets.Idle)
+        Equip.Main(Equip.Staves.Wind)
+        Equip.Sub(Equip.Special.Displaced)
+        if settings.Pdt then
+            Equip.Set(sets.Pdt)
+        elseif settings.Mdt then
+            Equip.Set(sets.Mdt)
+        end
+    end
 end
 
-profile.HandleMidshot = function()
+local function handleWeaponskill()
+    Equip.Set(sets.Weaponskill)
 end
 
-profile.HandleWeaponskill = function()
-    local weaponskill = gData.GetAction()
-    doSwordWs(weaponskill.Name)
-    doDaggerWs(weaponskill.Name)
-end
-
-return profile
+return {
+    Sets = sets,
+    OnLoad = noop,
+    OnUnload = noop,
+    HandleCommand = handleCommand,
+    HandleDefault = handleDefault,
+    HandleAbility = handleAbility,
+    HandleItem = gFunc.LoadFile('common/items.lua'),
+    HandlePrecast = handlePrecast,
+    HandleMidcast = handleMidcast,
+    HandlePreshot = noop,
+    HandleMidshot = noop,
+    HandleWeaponskill = handleWeaponskill,
+}

@@ -56,6 +56,8 @@
 /ambient 255 255 255
 /drawdistance setw 10
 /drawdistance setm 10
+/drawdistance sete 10
+/cam b 15
 /sl self on
 /sl target on
 /sl others on

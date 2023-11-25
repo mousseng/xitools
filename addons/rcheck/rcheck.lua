@@ -1,8 +1,9 @@
 addon.name    = 'rcheck'
 addon.author  = 'lin'
-addon.version = '2.0.0'
+addon.version = '2.1'
 addon.desc    = 'Make ready-checking easy :)'
 
+require('common')
 local Set = require('lin.set')
 local Packets = require('lin.packets')
 
@@ -22,7 +23,7 @@ local function GetParty()
     local partyMgr = AshitaCore:GetMemoryManager():GetParty()
 
     for i = 0, 17 do
-        if partyMgr:GetMemberActive(i) == 1 then
+        if partyMgr:GetMemberIsActive(i) == 1 then
             result:add(partyMgr:GetMemberName(i))
         end
     end
@@ -69,14 +70,14 @@ ashita.events.register('command', 'command_handler', function(e)
 
     SendMessage('/p', string.format(Prompt, duration))
 
-    ashita.tasks.repeating(1, 29, 1, function()
+    ashita.tasks.repeating(1, duration - 1, 1, function()
         if IsListening and Set.equals(Ready, Party) then
             SendMessage('/p', AllReady)
             IsListening = false
         end
     end)
 
-    ashita.tasks.once(30, function()
+    ashita.tasks.once(duration, function()
         if IsListening and Set.equals(Ready, Party) then
             SendMessage('/p', AllReady)
         elseif IsListening then

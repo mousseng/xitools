@@ -151,7 +151,13 @@ local function OnPresent()
     local timers    = T{}
 
     local playerJob = mmPlayer:GetMainJob()
-    if playerJob == nil or playerJob == 0 or Ffxi.IsChatExpanded() then
+
+    if playerJob == nil
+    or playerJob == 0
+    or Ffxi.IsChatExpanded()
+    or Ffxi.IsMapOpen()
+    or Ffxi.IsEventHappening()
+    or Ffxi.IsInterfaceHidden() then
         return
     end
 

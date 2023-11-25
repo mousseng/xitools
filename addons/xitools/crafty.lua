@@ -1,7 +1,7 @@
 require('common')
 local bit = require('bit')
 local imgui = require('imgui')
-local packets = require('utils.packets')
+local packets = require('utils/packets')
 local recipesByIngredients = require('data.recipesByIngredients')
 local recipesBySkill = require('data.recipesBySkill')
 local ui = require('ui')
@@ -13,6 +13,36 @@ local iconCheck = '\xef\x81\x98'
 local imguiLeafNode = bit.bor(ImGuiTreeNodeFlags_Leaf, ImGuiTreeNodeFlags_NoTreePushOnOpen)
 local textBaseWidth = imgui.CalcTextSize('A')
 local inProgSynth = nil
+
+local crystalMap = {
+    -- nq crystals
+    [4096] = 4096,
+    [4097] = 4097,
+    [4098] = 4098,
+    [4099] = 4099,
+    [4100] = 4100,
+    [4101] = 4101,
+    [4102] = 4102,
+    [4103] = 4103,
+    -- hq crystals
+    [4238] = 4096,
+    [4239] = 4097,
+    [4240] = 4098,
+    [4241] = 4099,
+    [4242] = 4100,
+    [4243] = 4101,
+    [4244] = 4102,
+    [4245] = 4103,
+    -- some other shit
+    [6506] = 4096,
+    [6507] = 4097,
+    [6508] = 4098,
+    [6509] = 4099,
+    [6510] = 4100,
+    [6511] = 4101,
+    [6512] = 4102,
+    [6513] = 4103,
+}
 
 local skillsMap = {
     [1] = 'Woodworking',
@@ -177,8 +207,14 @@ local function DrawRecipes(skills)
     end
 end
 
-local function DrawHistory(history)
+local function DrawHistory(options)
     if imgui.CollapsingHeader('Craft History') then
+        if imgui.Button('Clear History') then
+            options.history = T{}
+        end
+
+        local history = options.history
+
         if imgui.BeginTable('xitool.crafty.history', 3, ImGuiTableFlags_ScrollY, { textBaseWidth * 60, 400 * Scale }) then
             local res = AshitaCore:GetResourceManager()
             imgui.TableSetupScrollFreeze(0, 1)
@@ -261,7 +297,7 @@ local crafty = {
         -- useful item name.
         if e.id == 0x096 and inProgSynth == nil then
             local startSynth = packets.outbound.startSynth.parse(e.data)
-            local crystal = startSynth.crystal
+            local crystal = crystalMap[startSynth.crystal]
             local sortedIngredients = T{}
             for i=0,startSynth.ingredientCount-1 do
                 if startSynth.ingredient[i] ~= 0 then
@@ -347,6 +383,7 @@ local crafty = {
     DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('crafty') then
             imgui.Checkbox('Enabled', options.isEnabled)
+            imgui.Checkbox('Visible', options.isVisible)
 
             for id, skill in pairs(skillsMap) do
                 imgui.InputFloat(skill, options.skills[id], 0.1, 0.1, '%.1f')
@@ -361,7 +398,7 @@ local crafty = {
             imgui.SetWindowFontScale(Scale)
             DrawSkills(options.skills)
             DrawRecipes(options.skills)
-            DrawHistory(options.history)
+            DrawHistory(options)
         end)
     end,
 }

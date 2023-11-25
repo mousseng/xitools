@@ -6,8 +6,8 @@ local d3d8_device = d3d8.get_device()
 local imgui = require('imgui')
 local ui = require('ui')
 
-local ffxi = require('utils.ffxi')
-local zones = require('utils.zones')
+local ffxi = require('utils/ffxi')
+local zones = require('utils/zones')
 
 local Scale = 1.0
 
@@ -24,18 +24,46 @@ local Alliances = { }
 -- bit 6: ?
 -- bit 7: level sync target
 
----@param filePath string
-local function CreateTexture(filePath)
-    -- Courtesy of Thorny's mobDb
+---@class PartyMember
+---@field entity           table
+---@field name             string
+---@field showCastbar      boolean
+---@field serverId         integer
+---@field isInZone         boolean
+---@field isActive         boolean
+---@field isPartyLeader    boolean
+---@field isAllianceLeader boolean
+---@field isSyncTarget     boolean
+---@field isTarget         boolean
+---@field isSubTarget      boolean
+---@field isPartyTarget    boolean
+---@field job              string
+---@field sub              string?
+---@field jobLevel         integer
+---@field subLevel         integer
+---@field zoneId           integer
+---@field hpp              integer
+---@field mpp              integer
+---@field hp               integer
+---@field mp               integer
+---@field tp               integer
+---@field windowName       string
+---@field windowSize       integer[]
+---@field windowPos        integer[]
+---@field statusIds        integer[]
+
+---@param icon userdata
+local function CreateTexture(icon)
+    -- Courtesy of Thorny's partybuffs
     local dx_texture_ptr = ffi.new('IDirect3DTexture8*[1]')
-    if (ffi.C.D3DXCreateTextureFromFileA(d3d8_device, filePath, dx_texture_ptr) == ffi.C.S_OK) then
+    if ffi.C.D3DXCreateTextureFromFileInMemoryEx(d3d8_device, icon.Bitmap, icon.ImageSize, 0xFFFFFFFF, 0xFFFFFFFF, 1, 0, ffi.C.D3DFMT_A8R8G8B8, ffi.C.D3DPOOL_MANAGED, ffi.C.D3DX_DEFAULT, ffi.C.D3DX_DEFAULT, 0xFF000000, nil, nil, dx_texture_ptr) == ffi.C.S_OK then
         return d3d8.gc_safe_release(ffi.cast('IDirect3DTexture8*', dx_texture_ptr[0]))
     else
         return nil
     end
 end
 
-local function GetStatusEffects(party, serverId)
+local function GetBuffs(party, serverId)
     -- courtesy of Thorny and Heals
     for i = 0, 4 do
         local sId = party:GetStatusIconsServerId(i)
@@ -71,16 +99,35 @@ local function GetStatusEffects(party, serverId)
     return { }
 end
 
-local function GetPlayer(options)
-    local target = AshitaCore:GetMemoryManager():GetTarget()
+local function FilterBuffs(buffList)
+    local buffs = {}
+
+    for _, buff in ipairs(buffList) do
+        if buff ~= nil and buff > 0 then
+            table.insert(buffs, buff)
+        end
+    end
+
+    return buffs
+end
+
+local function IsSubTargetActive(target)
+    local flags = target:GetSubTargetFlags()
+    if flags == 0xFFFFFFFF then
+        return target:GetActive(1) == 1
+    else
+        return target:GetActive(0) == 1
+    end
+end
+
+local function GetPlayer(options, target, party, stal)
     local player = AshitaCore:GetMemoryManager():GetPlayer()
-    local party = AshitaCore:GetMemoryManager():GetParty()
 
     local serverId = party:GetMemberServerId(0)
-    local stpt = ffxi.GetStPartyIndex()
-    local buffs = player:GetBuffs()
+    local buffs = FilterBuffs(player:GetBuffs())
 
     return {
+        entity = GetEntity(party:GetMemberTargetIndex(0)),
         name = party:GetMemberName(0),
         showCastbar = options.showCastbar[1],
         serverId = serverId,
@@ -91,7 +138,7 @@ local function GetPlayer(options)
         isSyncTarget = bit.band(party:GetMemberFlagMask(0), 256) == 256,
         isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
         isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
-        isPartyTarget = stpt ~= nil and stpt == 0,
+        isPartyTarget = stal ~= nil and stal == 0,
         job = ffxi.GetJobAbbr(party:GetMemberMainJob(0)),
         sub = ffxi.GetJobAbbr(party:GetMemberSubJob(0)),
         jobLevel = party:GetMemberMainJobLevel(0),
@@ -109,15 +156,13 @@ local function GetPlayer(options)
     }
 end
 
-local function GetMember(i, window)
-    local target = AshitaCore:GetMemoryManager():GetTarget()
-    local party = AshitaCore:GetMemoryManager():GetParty()
-
+---@return PartyMember
+local function GetMember(i, window, target, party, stal)
     local serverId = party:GetMemberServerId(i)
-    local stpt = ffxi.GetStPartyIndex()
-    local buffs = GetStatusEffects(party, serverId)
+    local buffs = FilterBuffs(GetBuffs(party, serverId))
 
     return {
+        entity = GetEntity(party:GetMemberTargetIndex(i)),
         name = party:GetMemberName(i),
         showCastbar = false,
         serverId = serverId,
@@ -128,7 +173,7 @@ local function GetMember(i, window)
         isSyncTarget = bit.band(party:GetMemberFlagMask(i), 256) == 256,
         isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
         isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
-        isPartyTarget = stpt ~= nil and stpt == i,
+        isPartyTarget = stal ~= nil and stal == i,
         job = ffxi.GetJobAbbr(party:GetMemberMainJob(i)),
         sub = ffxi.GetJobAbbr(party:GetMemberSubJob(i)),
         jobLevel = party:GetMemberMainJobLevel(i),
@@ -154,7 +199,8 @@ local function DrawDot(pos, color)
 end
 
 ---@param player PartyMember
-local function DrawName(player)
+---@param showDist boolean
+local function DrawName(player, showDist)
     -- the "party status dots" are intended to be a prefix to the player's name,
     -- so we want any target indicators to come beforehand.
     if player.isSubTarget or player.isPartyTarget then
@@ -205,6 +251,13 @@ local function DrawName(player)
         imgui.SameLine()
         imgui.SetCursorPosX((player.windowSize[1] * Scale) - (80 + 10) * Scale)
         ui.DrawBar2(castbar:GetPercent() * 100, 100, ui.Scale({ 80, 8 }, Scale), '')
+    elseif showDist and player.entity then
+        local dist = string.format('%.1fm', math.sqrt(player.entity.Distance))
+        local width = imgui.CalcTextSize(dist) + ui.Styles.WindowPadding[1] * Scale
+
+        imgui.SameLine()
+        imgui.SetCursorPosX((player.windowSize[1] * Scale) - width)
+        imgui.Text(dist)
     elseif player.job ~= nil then
         local jobStr = ''
         if player.sub ~= nil then
@@ -223,7 +276,8 @@ end
 
 ---@param player PartyMember
 local function DrawZone(player)
-    imgui.TextDisabled(zones[player.zoneId])
+    local zone = zones[player.zoneId] or string.format('??? ZONEID %s', tostring(player.zoneId))
+    imgui.TextDisabled(zone)
 end
 
 ---@param player PartyMember
@@ -271,28 +325,26 @@ end
 ---@param player PartyMember
 local function DrawBuffs(player)
     imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Scale({ 2, 2 }, Scale))
-    for i = 1, 32 do
-        local buffId = player.statusIds[i]
-        if buffId ~= nil and buffId >= 0 then
-            if Textures[buffId] == nil then
-                Textures[buffId] = CreateTexture(addon.path .. "icons\\" .. buffId .. ".png")
-            end
+    imgui.NewLine()
 
-            if i ~= 1 and i ~= 32 then
-                imgui.SameLine()
-            end
-
-            local img = tonumber(ffi.cast("uint32_t", Textures[buffId]))
-            imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
+    for _, buffId in ipairs(player.statusIds) do
+        if Textures[buffId] == nil then
+            local icon = AshitaCore:GetResourceManager():GetStatusIconByIndex(buffId)
+            Textures[buffId] = CreateTexture(icon)
         end
+
+        imgui.SameLine()
+        local img = tonumber(ffi.cast("uint32_t", Textures[buffId]))
+        imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
     end
 
     imgui.PopStyleVar()
 end
 
 ---@param player PartyMember
-local function DrawPartyMember(player)
-    DrawName(player)
+---@param showDist boolean
+local function DrawPartyMember(player, showDist)
+    DrawName(player, showDist)
 
     if player.isInZone then
         DrawHp(player)
@@ -304,14 +356,36 @@ local function DrawPartyMember(player)
     end
 end
 
+---@param player PartyMember
+local function DrawCompactPartyMember(player)
+    -- TODO: indicate targeted by stpt/stal
+    if player.isInZone then
+        imgui.Text(player.name:slice(0, 3))
+        imgui.SameLine()
+        DrawHp(player)
+    else
+        imgui.TextDisabled(player.name:slice(0, 3))
+    end
+end
+
 local function DrawAlliance(alliance, gOptions)
     ui.DrawUiWindow(alliance, gOptions, function()
         imgui.SetWindowFontScale(Scale)
+
+        local target = AshitaCore:GetMemoryManager():GetTarget()
+        local party = AshitaCore:GetMemoryManager():GetParty()
+        local stal = ffxi.GetStPartyIndex()
+        local showDist = stal ~= nil or IsSubTargetActive(target)
+
         for _, getMember in pairs(Alliances[alliance.name]) do
-            local person = getMember()
+            local person = getMember(target, party, stal)
 
             if person.isActive and person.name ~= '' then
-                DrawPartyMember(person)
+                if alliance.isCompact[1] then
+                    DrawCompactPartyMember(person)
+                else
+                    DrawPartyMember(person, showDist)
+                end
             end
         end
     end)
@@ -353,22 +427,31 @@ local us = {
         hideWhenSolo = T{ false },
         showCastbar = T{ true },
         alliance1 = T{
+            isCompact = T{ false },
             isVisible = T{ true },
             name = 'xitools.us.1',
+            fullSize = T{ 276, -1 },
+            compactSize = T{ -1, -1 },
             size = T{ 276, -1 },
             pos = T{ 392, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
         alliance2 = T{
+            isCompact = T{ false },
             isVisible = T{ true },
             name = 'xitools.us.2',
+            fullSize = T{ 276, -1 },
+            compactSize = T{ -1, -1 },
             size = T{ 276, -1 },
             pos = T{ 107, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
         alliance3 = T{
+            isCompact = T{ false },
             isVisible = T{ true },
             name = 'xitools.us.3',
+            fullSize = T{ 276, -1 },
+            compactSize = T{ -1, -1 },
             size = T{ 276, -1 },
             pos = T{ 000, 628 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
@@ -381,6 +464,29 @@ local us = {
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Hide when solo', options.hideWhenSolo)
             imgui.Checkbox('Display cast bar', options.showCastbar)
+
+            if imgui.Checkbox('Compact alliance 1', options.alliance1.isCompact) then
+                if options.alliance1.isCompact[1] then
+                    options.alliance1.size = options.alliance1.compactSize
+                else
+                    options.alliance1.size = options.alliance1.fullSize
+                end
+            end
+            if imgui.Checkbox('Compact alliance 2', options.alliance2.isCompact) then
+                if options.alliance2.isCompact[1] then
+                    options.alliance2.size = options.alliance2.compactSize
+                else
+                    options.alliance2.size = options.alliance2.fullSize
+                end
+            end
+            if imgui.Checkbox('Compact alliance 3', options.alliance3.isCompact) then
+                if options.alliance3.isCompact[1] then
+                    options.alliance3.size = options.alliance3.compactSize
+                else
+                    options.alliance3.size = options.alliance3.fullSize
+                end
+            end
+
             if imgui.InputInt2('Alliance 1', options.alliance1.pos) then
                 imgui.SetWindowPos(options.alliance1.name, options.alliance1.pos)
             end
@@ -390,6 +496,7 @@ local us = {
             if imgui.InputInt2('Alliance 3', options.alliance3.pos) then
                 imgui.SetWindowPos(options.alliance3.name, options.alliance3.pos)
             end
+
             imgui.EndTabItem()
         end
     end,

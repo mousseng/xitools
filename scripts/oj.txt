@@ -1,6 +1,0 @@
-/lac disable legs
-/equip legs 'Dream Pants +1'
-/wait 0.5
-/item 'Orange juice' <me>
-/wait 2
-/lac enable legs

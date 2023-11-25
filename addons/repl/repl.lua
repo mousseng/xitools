@@ -24,7 +24,8 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
         return
     end
 
-    if visible[1] and imgui.Begin('repl', visible) then
+    imgui.SetNextWindowSizeConstraints({ 128, 128 }, { FLT_MAX, FLT_MAX })
+    if imgui.Begin('repl', visible) then
         local fontSize = 14
         local padding = imgui.GetStyle().FramePadding.y * 2
         local spacing = imgui.GetStyle().ItemSpacing.y * 2
@@ -49,7 +50,6 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
         imgui.PushID('repl.output')
         imgui.InputTextMultiline('', output, 4096 * 32, size, ImGuiInputTextFlags_ReadOnly)
         imgui.PopID()
-
-        imgui.End()
     end
+    imgui.End()
 end)

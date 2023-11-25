@@ -5,10 +5,12 @@ a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 - `xitools` is a suite of UI replacement components, check its README for details
 - `recast` is a fork of `recast` that has been imgui-fied
 - `skillchain` tracks active and potential skillchains and magic bursts
-- `repl` is a debugging tool to run lua code maybe more easily
+- `wheel` is a one-button ninja nuke thing
+- `minimap-helper` auto-configures the zoom for your Minimap plugin
+- `omen` helps keep Omen objectives in sight instead of the logspam
 - `rcheck` makes it easy to check party/alliance readiness by asking and doing
   the tallying for you
-- `minimap-helper` auto-configures the zoom for your Minimap plugin
+- `repl` is a debugging tool to run lua code maybe more easily
 
 ## config
 these are my ashitacast configs. perhaps you'll find them useful; mostly i just

@@ -1,3 +1,4 @@
+local bit = require('bit')
 local imgui = require('imgui')
 
 local ui = {
@@ -111,34 +112,49 @@ function ui.DrawBar3(cur, max, size, overlay)
 end
 
 function ui.DrawNormalWindow(config, gConfig, drawStuff)
+    if not config.isVisible[1] then
+        return
+    end
+
     imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
-    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
+    if imgui.Begin(config.name, config.isVisible, config.flags) then
         drawStuff()
 
         local x, y = imgui.GetWindowPos()
         config.pos[1] = x
         config.pos[2] = y
-        imgui.End()
     end
+
+    imgui.End()
 end
 
 ---@param config table
 ---@param drawStuff function
 function ui.DrawUiWindow(config, gConfig, drawStuff)
+    if not config.isVisible[1] then
+        return
+    end
+
+    local flags = config.flags
+    if gConfig.isClickThru[1] then
+        flags = bit.bor(flags, ImGuiWindowFlags_NoInputs)
+    end
+
     imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
-    imgui.PushStyleColor(ImGuiCol_WindowBg, ui.Colors.FfxiGreyBg)
-    imgui.PushStyleColor(ImGuiCol_Border, ui.Colors.FfxiGreyBorder)
-    imgui.PushStyleColor(ImGuiCol_BorderShadow, ui.Colors.BorderShadow)
+    imgui.PushStyleColor(ImGuiCol_WindowBg, gConfig.backgroundColor)
+    imgui.PushStyleColor(ImGuiCol_Border, gConfig.borderColor)
     imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Scale(ui.Styles.ItemSpacing, gConfig.uiScale[1]))
     imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, ui.Scale(ui.Styles.WindowPadding, gConfig.uiScale[1]))
 
-    if config.isVisible[1] and imgui.Begin(config.name, config.isVisible, config.flags) then
-        imgui.PopStyleColor(3)
-        imgui.PushStyleColor(ImGuiCol_Text, ui.Colors.White)
+    local isOpen = imgui.Begin(config.name, config.isVisible, flags)
+    imgui.PopStyleColor(2)
+
+    if isOpen then
+        imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
         imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
 
         drawStuff()
@@ -149,10 +165,50 @@ function ui.DrawUiWindow(config, gConfig, drawStuff)
 
         imgui.PopStyleVar()
         imgui.PopStyleColor()
-        imgui.End()
-    else
-        imgui.PopStyleColor(3)
     end
+
+    imgui.PopStyleVar(2)
+    imgui.End()
+end
+
+---@param config table
+---@param drawStuff function
+function ui.DrawInvisWindow(config, gConfig, drawStuff)
+    if not config.isVisible[1] then
+        return
+    end
+
+    local flags = config.flags
+    if gConfig.isClickThru[1] then
+        flags = bit.bor(flags, ImGuiWindowFlags_NoInputs)
+    end
+
+    imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
+    imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
+
+    imgui.PushStyleColor(ImGuiCol_WindowBg, { 0, 0, 0, 0 })
+    imgui.PushStyleColor(ImGuiCol_Border, { 0, 0, 0, 0 })
+    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 1 })
+    imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, { 1, 1 })
+
+    local isOpen = imgui.Begin(config.name, config.isVisible, flags)
+    imgui.PopStyleColor(2)
+
+    if isOpen then
+        imgui.PushStyleColor(ImGuiCol_Text, gConfig.textColor)
+        imgui.PushStyleVar(ImGuiStyleVar_FramePadding, ui.Styles.FramePaddingNone)
+
+        drawStuff()
+
+        local x, y = imgui.GetWindowPos()
+        config.pos[1] = x
+        config.pos[2] = y
+
+        imgui.PopStyleVar()
+        imgui.PopStyleColor()
+    end
+
+    imgui.End()
     imgui.PopStyleVar(2)
 end
 

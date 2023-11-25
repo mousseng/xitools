@@ -100,7 +100,14 @@
 			<name>hut3</name>
 		</spell>
 
+		<spell id="318">
+			<name>mo</name>
+			<name>mon</name>
+			<name>mono</name>
+		</spell>
+
 		<spell id="353">
+			<name>ton</name>
 			<name>tonko</name>
 		</spell>
 
@@ -114,6 +121,22 @@
 		</ability>
 
 	<!-- Debuffs -->
+		<spell id="58">
+			<name>para</name>
+		</spell>
+
+		<spell id="80">
+			<name>para2</name>
+		</spell>
+
+		<spell id="254">
+			<name>bl1</name>
+		</spell>
+
+		<spell id="276">
+			<name>bl2</name>
+		</spell>
+
 		<spell id="59">
 			<name>si</name>
 			<name>sil</name>
@@ -131,8 +154,28 @@
 			<name>slp2</name>
 		</spell>
 
+		<spell id="273">
+			<name>slga</name>
+		</spell>
+
+		<spell id="274">
+			<name>slga2</name>
+		</spell>
+
 		<spell id="258">
 			<name>bi</name>
+		</spell>
+
+		<spell id="255">
+			<name>br</name>
+		</spell>
+
+		<spell id="365">
+			<name>brga</name>
+		</spell>
+
+		<spell id="260">
+			<name>dis</name>
 		</spell>
 
 	<!-- Self-Buffs -->
@@ -150,6 +193,23 @@
 
 		<spell id="106">
 			<name>ph</name>
+		</spell>
+
+		<spell id="135">
+			<name>rr</name>
+			<name>rr1</name>
+		</spell>
+
+		<spell id="141">
+			<name>rr2</name>
+		</spell>
+
+		<spell id="142">
+			<name>rr3</name>
+		</spell>
+
+		<spell id="848">
+			<name>rr4</name>
 		</spell>
 
 	<!-- Enspells -->
@@ -177,13 +237,21 @@
 			<name>enw</name>
 		</spell>
 
-	<!-- Sneak/Invis -->
+	<!-- Util -->
 		<spell id="136">
 			<name>invis</name>
 		</spell>
 
 		<spell id="137">
 			<name>sn</name>
+		</spell>
+
+		<spell id="107">
+			<name>ph2</name>
+		</spell>
+
+		<spell id="143">
+			<name>er</name>
 		</spell>
 
 	<!-- Drain -->
@@ -201,6 +269,10 @@
 
 		<spell id="248">
 			<name>as2</name>
+		</spell>
+
+		<spell id="252">
+			<name>st</name>
 		</spell>
 
 	<!-- Fires -->
@@ -446,6 +518,18 @@
 			<name>h</name>
 		</spell>
 
+		<spell id="511">
+			<name>h2</name>
+		</spell>
+
+		<spell id="845">
+			<name>fl</name>
+		</spell>
+
+		<spell id="846">
+			<name>fl2</name>
+		</spell>
+
 	<!-- Cures -->
 		<spell id="1">
 			<name>c</name>
@@ -466,6 +550,35 @@
 
 		<spell id="5">
 			<name>c5</name>
+		</spell>
+
+		<spell id="6">
+			<name>c6</name>
+		</spell>
+
+		<spell id="7">
+			<name>ca</name>
+			<name>ca1</name>
+		</spell>
+
+		<spell id="8">
+			<name>ca2</name>
+		</spell>
+
+		<spell id="9">
+			<name>ca3</name>
+		</spell>
+
+		<spell id="10">
+			<name>ca4</name>
+		</spell>
+
+		<spell id="11">
+			<name>ca5</name>
+		</spell>
+
+		<spell id="12">
+			<name>ca6</name>
 		</spell>
 
 	<!-- Protects -->
@@ -489,6 +602,11 @@
 			<name>prot4</name>
 		</spell>
 
+		<spell id="47">
+			<name>pro5</name>
+			<name>prot5</name>
+		</spell>
+
 		<spell id="48">
 			<name>sh</name>
 			<name>sh1</name>
@@ -504,5 +622,9 @@
 
 		<spell id="51">
 			<name>sh4</name>
+		</spell>
+
+		<spell id="52">
+			<name>sh5</name>
 		</spell>
 </shorthand>

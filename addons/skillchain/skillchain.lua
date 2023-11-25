@@ -1,23 +1,24 @@
 addon.name    = 'skillchain'
 addon.author  = 'lin'
-addon.version = '3.3'
+addon.version = '4.0'
 addon.desc    = 'A little skillchain tracker so you know when things happen'
 
 require('common')
-local Settings = require('settings')
-local Ffxi = require('lin.ffxi')
-local Imgui = require('lin.imgui')
-local Packets = require('lin.packets')
+local settings = require('settings')
+local ffxi = require('lin/ffxi')
+local imgui = require('lin/imgui')
+local packets = require('lin/packets')
 
-local BloodPacts = require('data.bloodpacts')
-local ChainType = require('data.chaintype')
-local Elements = require('data.elements')
-local MagicBursts = require('data.magicbursts')
-local NonChainingSkills = require('data.nonchainingskills')
-local Resonances = require('data.resonances')
-local Weaponskills = require('data.weaponskills')
+local Elements = require('data/elements')
+local ChainType = require('data/chaintype')
+local Resonances = require('data/resonances')
+local MagicBursts = require('data/magicbursts')
+local Weaponskills = require('data/weaponskills')
+local MobSkills = require('data/mobskills')
+local WeaponskillMsgs = T{ 185, 188, 264, }
 
 ---@class SkillchainSettings
+---@field dataSet 'retail'|'horizon'
 ---@field windowName string
 ---@field windowSize Vec2
 ---@field windowPos Vec2
@@ -33,24 +34,33 @@ local Weaponskills = require('data.weaponskills')
 ---@field type ChainType
 ---@field name string
 ---@field base_damage number
----@field bonus_damage number
----@field resonance Resonance
+---@field bonus_damage number?
+---@field resonance Resonance?
 
 ---@type SkillchainSettings
-local Defaults = {
+local defaultConfig = {
+    dataSet = 'retail',
     windowName = 'Skillchain',
     windowSize = { -1, -1 },
     windowPos = { 100, 100 },
 }
 
 ---@type SkillchainSettings
-local Config = Settings.load(Defaults)
+local config = settings.load(defaultConfig)
 
 ---@type Skillchain[]
-local Chains = { }
+local chains = { }
 
 ---@type integer
-local LastPulse = os.time()
+local lastPulse = os.time()
+
+local function when(cond, t, f)
+    if cond then
+        return t
+    else
+        return f
+    end
+end
 
 -- Fetch an entity by its server ID. Helpful when looking up information from
 -- packets, which tend to not include the entity index (since that's a client
@@ -119,156 +129,134 @@ local function isPetServerIdInParty(id)
     return false
 end
 
+local function handleChainStep(packet, mobs, actionName, attrInfo)
+    if packet.target_count < 1 then
+        return
+    end
+
+    local target = packet.targets[1]
+
+    -- Set up our display data
+    ---@type Skillchain
+    local mob = mobs[target.id] or {
+        name = getEntityByServerId(target.id).Name,
+        time = nil,
+        chain = { },
+    }
+
+    for j = 1, target.action_count do
+        local action = target.actions[j]
+
+        -- skip non-chaining stuff like jumps, bashes, and steals
+        -- if T{ 110, 129, 244, 317, 327, }:contains(action.message) then
+        if not WeaponskillMsgs:contains(action.message) then
+            return
+        end
+
+        -- Prep chain step display data
+        ---@type SkillchainStep
+        local chain_step = {
+            id = action.sub_kind,
+            time = os.time(),
+            type = ChainType.Unknown,
+            name = actionName,
+            base_damage = action.param,
+            bonus_damage = action.proc_param,
+            resonance = nil,
+        }
+
+        -- Specialize our chain step
+        if action.miss == 1 then
+            chain_step.type = ChainType.Miss
+        elseif not action.has_proc then
+            chain_step.type = ChainType.Starter
+            chain_step.resonance = attrInfo
+
+            mob.time = os.time()
+            mob.chain = { }
+        elseif action.has_proc then
+            chain_step.type = ChainType.Skillchain
+            chain_step.resonance = Resonances[action.proc_message]
+
+            mob.time = os.time()
+        else
+            chain_step.type = ChainType.Unknown
+        end
+
+        table.insert(mob.chain, chain_step)
+    end
+
+    -- Replace the existing mob information or add the new one
+    mobs[target.id] = mob
+end
+
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on
 -- weaponskills.
----@param packet table
+---@param packet ActionPacket
 ---@param mobs Skillchain[]
 local function HandleWeaponskill(packet, mobs)
+    local weaponskillInfo = Weaponskills[config.dataSet][packet.param]
+
     -- Don't care about skillchains we can't participate in
-    if not isServerIdInParty(packet.actor_id) then
+    if not isServerIdInParty(packet.actor_id) or weaponskillInfo == nil or weaponskillInfo.attr == nil then
         return
     end
 
     local resources = AshitaCore:GetResourceManager()
+    local actionName = resources:GetAbilityById(packet.param).Name[1]
 
-    -- Iterate down to the meat of our data
-    for i = 1, packet.target_count do
-        local target = packet.targets[i]
-
-        -- Set up our display data
-        ---@type Skillchain
-        local mob = mobs[target.id] or {
-            name = getEntityByServerId(target.id).Name,
-            time = nil,
-            chain = { },
-        }
-
-        for j = 1, target.action_count do
-            local action = target.actions[j]
-            local chain_step = nil
-
-            -- Skip weaponskills that we'll never bother with or actions that
-            -- have no reaction (like Steal)
-            if not NonChainingSkills[action.animation]
-            and action.reaction ~= 0 then
-                -- Prep chain step display data
-                ---@type SkillchainStep
-                chain_step = {
-                    id = action.animation,
-                    time = os.time(),
-                    type = nil,
-                    name = resources:GetAbilityById(packet.param).Name[1],
-                    base_damage = action.param,
-                    bonus_damage = action.add_effect_param,
-                    resonance = nil,
-                }
-
-                -- Specialize our chain step
-                if action.reaction == 0x08 and not action.has_add_effect then
-                    chain_step.type = ChainType.Starter
-                    chain_step.resonance = table.concat(Weaponskills[packet.param].attr, ', ')
-
-                    mob.time = os.time()
-                    mob.chain = { }
-                elseif action.reaction == 0x08 and action.has_add_effect then
-                    chain_step.type = ChainType.Skillchain
-                    chain_step.resonance = Resonances[action.add_effect_message]
-
-                    mob.time = os.time()
-                elseif action.reaction == 0x01 or action.reaction == 0x09 then
-                    chain_step.type = ChainType.Miss
-                else
-                    chain_step.type = ChainType.Unknown
-                end
-
-                table.insert(mob.chain, chain_step)
-            end
-        end
-
-        -- Replace the existing mob information or add the new one
-        mobs[target.id] = mob
-    end
+    handleChainStep(packet, mobs, actionName, table.concat(weaponskillInfo.attr, ', '))
 end
 
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on pet
 -- abilities.
----@param packet table
+---@param packet ActionPacket
 ---@param mobs Skillchain[]
 local function HandlePetAbility(packet, mobs)
+    local petAbilInfo = MobSkills[config.dataSet][packet.param]
+
     -- Don't care about skillchains we can't participate in
-    if not isPetServerIdInParty(packet.actor_id)
-    or BloodPacts[packet.param] == nil then
+    if not isPetServerIdInParty(packet.actor_id) or petAbilInfo == nil or petAbilInfo.attr == nil then
         return
     end
 
-    -- Iterate down to the meat of our data
-    for i = 1, packet.target_count do
-        local target = packet.targets[i]
+    local resources = AshitaCore:GetResourceManager()
+    local actionName = resources:GetString('monsters.abilities', packet.param - 256):trimend('\0')
 
-        -- Set up our display data
-        ---@type Skillchain
-        local mob = mobs[target.id] or {
-            name = getEntityByServerId(packet.actor_id).Name,
-            time = nil,
-            chain = { },
-        }
+    handleChainStep(packet, mobs, actionName, table.concat(petAbilInfo.attr, ', '))
+end
 
-        for j = 1, target.action_count do
-            local action = target.actions[j]
+-- Collects and collates data about a particular action in order for the render
+-- function to display information about active skillchains. Specialized on
+-- mob skills.
+---@param packet ActionPacket
+---@param mobs Skillchain[]
+local function HandleMobSkill(packet, mobs)
+    local mobSkillInfo = MobSkills[config.dataSet][packet.param]
 
-            ---@type SkillchainStep
-            local chain_step = {
-                id = action.animation,
-                time = os.time(),
-                type = nil,
-                name = BloodPacts[packet.param].name,
-                base_damage = action.param,
-                bonus_damage = action.add_effect_param,
-                resonance = nil,
-            }
-
-            -- Specialize our chain step
-            if action.reaction == 0x08 and not action.has_add_effect then
-                chain_step.type = ChainType.Starter
-                chain_step.resonance = table.concat(BloodPacts[packet.param].attr, ', ')
-
-                mob.time = os.time()
-                mob.chain = { }
-            elseif action.reaction == 0x08 and action.has_add_effect then
-                chain_step.type = ChainType.Skillchain
-                chain_step.resonance = Resonances[action.add_effect_message]
-
-                mob.time = os.time()
-            elseif action.reaction == 0x01 or action.reaction == 0x09 then
-                chain_step.type = ChainType.Miss
-            else
-                chain_step.type = ChainType.Unknown
-            end
-
-            -- Don't expect to need this, but it's nice to be clear
-            if chain_step.type == nil then
-                chain_step.type = ChainType.Unknown
-            end
-
-            table.insert(mob.chain, chain_step)
-        end
-
-        -- Replace the existing mob information or add the new one
-        mobs[target.id] = mob
+    -- Don't care about skillchains we can't participate in
+    if not isServerIdInParty(packet.actor_id) or mobSkillInfo == nil or mobSkillInfo.attr == nil then
+        return
     end
+
+    local resources = AshitaCore:GetResourceManager()
+    local actionName = resources:GetString('monsters.abilities', packet.param - 256):trimend('\0')
+
+    handleChainStep(packet, mobs, actionName, table.concat(mobSkillInfo.attr, ', '))
 end
 
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on
 -- magic abilities; only handles magic bursts currently, not BLU chains.
----@param packet table
+---@param packet ActionPacket
 ---@param mobs Skillchain[]
 local function HandleMagicAbility(packet, mobs)
+    local burstInfo = MagicBursts[config.dataSet][packet.param]
+
     -- Don't care about skillchains we can't participate in
-    if not isServerIdInParty(packet.actor_id)
-    or MagicBursts[packet.param] == nil then
+    if not isServerIdInParty(packet.actor_id) or burstInfo == nil then
         return
     end
 
@@ -278,26 +266,28 @@ local function HandleMagicAbility(packet, mobs)
 
         -- MB targets must have a skillchain already
         local mob = mobs[target.id]
-        if mob then
-            for j = 1, target.action_count do
-                local action = target.actions[j]
+        if not mob then
+            return
+        end
 
-                ---@type SkillchainStep
-                local chain_step = nil
+        for j = 1, target.action_count do
+            local action = target.actions[j]
 
-                if action.message == MagicBursts[packet.param].burst_msg then
-                    chain_step = {
-                        id = packet.param,
-                        time = os.time(),
-                        type = ChainType.MagicBurst,
-                        name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[1],
-                        base_damage = action.param,
-                        bonus_damage = nil,
-                        resonance = nil,
-                    }
+            ---@type SkillchainStep
+            local chain_step = nil
 
-                    table.insert(mob.chain, chain_step)
-                end
+            if action.message == burstInfo.burst_msg then
+                chain_step = {
+                    id = packet.param,
+                    time = os.time(),
+                    type = ChainType.MagicBurst,
+                    name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[1],
+                    base_damage = when(burstInfo.no_dmg, nil, action.param),
+                    bonus_damage = nil,
+                    resonance = nil,
+                }
+
+                table.insert(mob.chain, chain_step)
             end
         end
     end
@@ -307,21 +297,25 @@ end
 ---@param mob Skillchain
 local function DrawMob(mob)
     -- Create the heading for our skillchain.
-    Imgui.Text(mob.name)
+    imgui.Text(mob.name)
     -- Fill out the body of our skillchain.
     for _, chain in pairs(mob.chain) do
         -- Is this the first step of a chain? If so, don't show burstable
         -- elements (since you can't burst).
         if chain.type == ChainType.Starter then
-            Imgui.BulletText(string.format('%s [%i dmg]\n%s', chain.name, chain.base_damage, chain.resonance))
+            imgui.BulletText(string.format('%s [%i dmg]\n%s', chain.name, chain.base_damage, chain.resonance))
         -- Otherwise, also display the bonus damage and burstable elements.
         elseif chain.type == ChainType.Skillchain then
-            Imgui.BulletText(string.format('%s [%i + %i dmg]\n%s (%s)', chain.name, chain.base_damage, chain.bonus_damage or 0, chain.resonance, Elements[chain.resonance]))
+            imgui.BulletText(string.format('%s [%i + %i dmg]\n%s (%s)', chain.name, chain.base_damage, chain.bonus_damage or 0, chain.resonance, Elements[chain.resonance]))
         -- Display any magic bursts that occurred and their damage.
         elseif chain.type == ChainType.MagicBurst then
-            Imgui.BulletText(string.format('Magic Burst! %s [%i dmg]', chain.name, chain.base_damage))
+            if chain.base_damage ~= nil then
+                imgui.BulletText(string.format('Magic Burst! %s [%i dmg]', chain.name, chain.base_damage))
+            else
+                imgui.BulletText(string.format('Magic Burst! %s', chain.name))
+            end
         elseif chain.type == ChainType.Miss then
-            Imgui.BulletText(string.format('%s missed.', chain.name))
+            imgui.BulletText(string.format('%s missed.', chain.name))
         else
             -- chain.type == ChainType.Unknown
         end
@@ -335,12 +329,12 @@ local function DrawMob(mob)
             -- you must wait 3 seconds before weaponskilling, but the remaining
             -- 7 seconds are free game for burst and skilling
             if time_remaining <= 7 then
-                Imgui.BulletText(string.format('%is - go!', time_remaining))
+                imgui.BulletText(string.format('%is - go!', time_remaining))
             else
-                Imgui.BulletText(string.format('%is - wait...', time_remaining))
+                imgui.BulletText(string.format('%is - wait...', time_remaining))
             end
         else
-            Imgui.BulletText('closed.')
+            imgui.BulletText('closed.')
         end
     end
 end
@@ -352,7 +346,7 @@ local function DrawSkillchain(mobs)
     for _, mob in pairs(mobs) do
         if #mob.chain > 0 then
             if i > 1 then
-                Imgui.Text('')
+                imgui.Text('')
             end
             DrawMob(mob)
             i = i + 1
@@ -381,11 +375,11 @@ end
 
 ---@param s SkillchainSettings?
 local function UpdateSettings(s)
-    if (s ~= nil) then
-        Config = s
+    if s ~= nil then
+        config = s
     end
 
-    Settings.save()
+    settings.save()
 end
 
 local function OnLoad()
@@ -403,7 +397,11 @@ local function OnCommand(e)
         return
     end
 
-    if args[2] == 'test' then
+    if args[2] == 'retail' then
+        config.dataSet = 'retail'
+    elseif args[2] == 'horizon' then
+        config.dataSet = 'horizon'
+    elseif args[2] == 'test' then
         ---@type Skillchain
         local testMob = {
             chain = { },
@@ -413,6 +411,7 @@ local function OnCommand(e)
 
         ---@type SkillchainStep
         local testStep = {
+            id = 42,
             name = 'Test Weaponskill',
             resonance = Resonances[299],
             base_damage = 69,
@@ -421,7 +420,7 @@ local function OnCommand(e)
         }
 
         table.insert(testMob.chain, testStep)
-        table.insert(Chains, testMob)
+        table.insert(chains, testMob)
     end
 
     e.blocked = true
@@ -430,40 +429,50 @@ end
 ---@param e PacketInEventArgs
 local function OnPacket(e)
     if e.id == 0x28 then
-        local action = Packets.ParseAction(e.data_modified_raw)
+        ---@type ActionPacket
+        local action = packets.ParseAction(e.data_modified_raw)
 
         if action.category == 3 then
-            HandleWeaponskill(action, Chains)
+            -- For some reason, some trusts (like Valaineral) send their mobskills
+            -- as weaponskill packets instead. It's possible there's something in
+            -- the sub_kind, scale, or message that could be used to distinguish
+            if action.param > 256 then
+                HandleMobSkill(action, chains)
+            else
+                HandleWeaponskill(action, chains)
+            end
         elseif action.category == 4 then
-            HandleMagicAbility(action, Chains)
+            HandleMagicAbility(action, chains)
+        elseif action.category == 11 then
+            HandleMobSkill(action, chains)
         elseif action.category == 13 then
-            HandlePetAbility(action, Chains)
+            HandlePetAbility(action, chains)
         end
     end
 end
 
 local function OnPresent()
     local activeCount = 0
-    for _, mob in pairs(Chains) do
+    for _, mob in pairs(chains) do
         if #mob.chain > 0 then
             activeCount = activeCount + 1
         end
     end
 
-    if activeCount > 0 and not Ffxi.IsChatExpanded() then
-        Imgui.Lin.DrawWindow(Config.windowName, Config.windowSize, Config.windowPos, function()
-            DrawSkillchain(Chains)
+    if activeCount > 0 and not ffxi.IsChatExpanded() then
+        imgui.Lin.DrawWindow(config.windowName, config.windowSize, config.windowPos, function()
+            DrawSkillchain(chains)
         end)
     end
 
     local now = os.time()
-    if now - LastPulse > 1 then
-        LastPulse = now
-        RunGarbageCollector(Chains)
+    if now - lastPulse > 1 then
+        lastPulse = now
+        RunGarbageCollector(chains)
     end
 end
 
-Settings.register('settings', 'settings_update', UpdateSettings)
+settings.register('settings', 'settings_update', UpdateSettings)
 ashita.events.register('load', 'on_load', OnLoad)
 ashita.events.register('unload', 'on_unload', OnUnload)
 ashita.events.register('command', 'on_command', OnCommand)

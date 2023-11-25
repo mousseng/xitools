@@ -1,6 +1,3 @@
----@enum Element
--- A lookup table to find the appropriate list of burstable magic elements for
--- a given skillchain effect.
 return {
     Light         = 'Wind, Thunder, Fire, Light',
     Darkness      = 'Ice, Water, Earth, Dark',

@@ -1,237 +1,302 @@
-require 'common'
-local levelSync = gFunc.LoadFile('common/levelSync.lua')
-local handleGlamour = gFunc.LoadFile('common/glamour.lua')
-local handleSoloMode = gFunc.LoadFile('common/soloMode.lua')
-local handleFishMode = gFunc.LoadFile('common/fishMode.lua')
-local handleHelmMode = gFunc.LoadFile('common/helmMode.lua')
-local handleMagic = gFunc.LoadFile('common/magic.lua')
-local handleSwordWs = gFunc.LoadFile('common/weaponskills/sword.lua')
-local handleDaggerWs = gFunc.LoadFile('common/weaponskills/dagger.lua')
-local handleKatanaWs = gFunc.LoadFile('common/weaponskills/katana.lua')
+require('common')
+local noop = function() end
 
-local profile = {
-    Sets = {
-        -- situational base sets
-        Base_Priority = {
-            Main = { "Kodachi +1" },
-            Sub = { "Fukuro" },
-            -- Range = {  },
-            Ammo = { "Pebble" },
-            Head = { "Brass Hairpin" },
-            Body = { "Nanban Kariginu" },
-            Hands = { "Windurstian Tekko" },
-            Legs = { "Republic Subligar" },
-            Feet = { "Fed. Kyahan" },
-            Neck = { "Tiger Stole" },
-            Waist = { "Warrior's Belt" },
-            Ear1 = { "Beetle Earring +1" },
-            Ear2 = { "Beetle Earring +1" },
-            Ring1 = { "San d'Orian Ring" },
-            Ring2 = { "Chariot Band" },
-            -- Back = {  },
+---@module 'common.equip'
+local Equip = gFunc.LoadFile('common/equip.lua')
+---@module 'common.status'
+local Status = gFunc.LoadFile('common/status.lua')
+
+local settings = {
+    Main = "Senjuinrikio",
+    Sub  = "Fudo",
+    Ammo = "Dart",
+    ExpBand = "Empress Band",
+}
+
+local sets = {
+    Idle = Equip.NewSet {
+        Main = Equip.Staves.Earth,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Nokizaru Shuriken",
+
+        Head = "Arhat's Jinpachi",
+        Neck = "Evasion Torque",
+        Ear1 = "Drone Earring", -- upgrade to Dodge/Evasion/Gold+1/Platinum/Elusive
+        Ear2 = "Drone Earring", -- upgrade to Dodge/Evasion/Gold+1/Platinum/Elusive
+
+        Body = "Arhat's Gi",
+        Hands = "Kog. Tekko +1",
+        Ring1 = "Sattva Ring",
+        Ring2 = settings.ExpBand,
+
+        Back = "High Brth. Mantle", -- upgrade to Resentment Cape
+        Waist = "Ryl.Kgt. Belt", -- upgrade to Scouter's Rope
+        Legs = "Nokizaru Hakama",
+        Feet = "Mountain Gaiters",
+
+        AtNightPlus = {
+            Feet = "Nin. Kyahan +1",
         },
-        Glamour = {
-            -- Head = "remove",
-            -- Body = "Beetle Harness",
-            -- Hands = "remove",
-            -- Legs = "Fisherman's Hose",
-            -- Feet = "Dream Boots +1",
+
+        AtNight = {
+            Legs = "Ninja Hakama",
         },
-        Rest_Priority = {
+    },
+    Auto = Equip.NewSet {
+        Main = settings.Main,
+        Sub = settings.Sub,
+        Range = Equip.Special.Displaced,
+        Ammo = "Bomb Core",
+
+        Head = "Super Ribbon", -- upgrade to Optical Hat or Panther Mask
+        Neck = "Spike Necklace", -- upgrade to PCC
+        Ear1 = "Merman's Earring", -- upgrade to Stealth
+        Ear2 = "Brutal Earring",
+
+        Body = "Koga Chainmail", -- upgrade to AF+1
+        Hands = "Windurstian Tekko", -- upgrade to Dusk, H/O/B-Kote, AF+1
+        Ring1 = "Sattva Ring",
+        Ring2 = "Woodsman Ring",
+
+        Back = "Psilos Mantle", -- upgrade to Forager's
+        Waist = "Swift Belt",
+        Legs = "Byakko's Haidate",
+        Feet = "Fed. Kyahan", -- upgrade to Fuma
+
+        AtNightPlus = {
+            Hands = "Kog. Tekko +1",
         },
-        Movement_Priority = {
+    },
+    Weaponskill = Equip.NewSet {
+        Main = settings.Main,
+        Sub = settings.Sub,
+        Range = Equip.Special.Displaced,
+        Ammo = "Bomb Core",
+
+        Head = "Super Ribbon", -- upgrade to Optical Hat or Walkure
+        Neck = "Spike Necklace", -- upgrade to gorget?
+        Ear1 = "Merman's Earring",
+        Ear2 = "Brutal Earring",
+
+        Body = "Koga Chainmail", -- upgrade to Hauby? or use Osode?
+        Hands = "Windurstian Tekko", -- upgrade to H/O/B-Kote, AF+1
+        Ring1 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
+        Ring2 = "Balance Ring", -- upgrade to Flame/Thunder Ring?
+
+        Back = "Psilos Mantle", -- upgrade to Forager's
+        Waist = "Warwolf Belt",
+        Legs = "Byakko's Haidate",
+        Feet = "Fed. Kyahan", -- upgrade to Rutters or Shura
+
+        AtNightPlus = {
+            Hands = "Kog. Tekko +1",
         },
-        Tp_Priority = {
-            -- Range = { },
-            -- Ammo = { },
-            -- Head = { },
-            -- Body = { },
-            Hands = { "Mrc. Tekko", },
-            Legs = { "Mrc. Sitabaki", },
-            -- Feet = { },
-            -- Neck = { },
-            -- Waist = { },
-            -- Ear1 = { },
-            -- Ear2 = { },
-            Ring1 = { "Balance Ring", },
-            Ring2 = { "Balance Ring", },
-            -- Back = { },
+    },
+    Throw = Equip.NewSet {
+        Main = Equip.Staves.Earth,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = settings.Ammo,
+
+        Head = "Arhat's Jinpachi",
+        Neck = "Harmonia's Torque",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Koga Chainmail",
+        Hands = "Ninja Tekko",
+        Ring1 = "Woodsman Ring",
+        Ring2 = "Horn Ring",
+
+        Back = "Psilos Mantle",
+        Waist = "Ryl.Kgt. Belt",
+        Legs = "Ninja Hakama",
+        Feet = "Fed. Kyahan",
+    },
+    Stoneskin = Equip.NewSet {
+        Main = Equip.Staves.Water,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Nokizaru Shuriken",
+
+        Head = "Super Ribbon",
+        Neck = "Justice Badge", -- upgrade to Promise Badge
+        Ear1 = "Drone Earring", -- upgrade to Geist Earring
+        Ear2 = "Drone Earring", -- upgrade to Geist Earring
+
+        Body = "Kirin's Osode",
+        Hands = "Savage Gauntlets",
+        Ring1 = "Saintly Ring",
+        Ring2 = "Saintly Ring",
+
+        Back = "High Brth. Mantle", -- upgrade to merciful cape
+        Waist = "Ryl.Kgt. Belt",
+        Legs = "Savage Loincloth",
+        Feet = "Suzaku's Sune-Ate",
+    },
+    Shadows = Equip.NewSet {
+        Main = Equip.Staves.Wind,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Nokizaru Shuriken",
+
+        Head = "Yasha Jinpachi",
+        Neck = "Evasion Torque",
+        Ear1 = "Drone Earring",
+        Ear2 = "Drone Earring",
+
+        Body = "Yasha Samue",
+        Hands = "Kog. Tekko +1",
+        Ring1 = "Sattva Ring",
+        Ring2 = "Reflex Ring", -- upgrade to Loquacious
+
+        Back = "Fed. Army Mantle", -- upgrade to Boxer Mantle or Resentment Cape
+        Waist = "Swift Belt",
+        Legs = "Byakko's Haidate",
+        Feet = "Yasha Sune-ate", -- upgrade to Fuma
+
+        AtNight = {
+            Legs = "Ninja Hakama",
         },
-        -- stat bonus sets
-        Str_Priority = {
-            -- Range = { },
-            -- Ammo = { },
-            -- Head = { },
-            Body = { "Savage Separates" },
-            -- Hands = { },
-            -- Legs = { },
-            Feet = { "Savage Gaiters" },
-            Neck = { "Spike Necklace", },
-            -- Waist = { },
-            -- Ear1 = { },
-            -- Ear2 = { },
-            Ring1 = { "San d'Orian Ring" },
-            -- Ring2 = { },
-            -- Back = { },
-        },
-        Dex_Priority = {
-            -- Range = { },
-            -- Ammo = { },
-            -- Head = { },
-            -- Body = { },
-            -- Hands = { },
-            -- Legs = { },
-            -- Feet = { },
-            Neck = { "Spike Necklace", },
-            -- Waist = { },
-            -- Ear1 = { },
-            -- Ear2 = { },
-            Ring1 = { "Balance Ring" },
-            Ring2 = { "Balance Ring" },
-            -- Back = { },
-        },
-        Vit_Priority = {
-        },
-        Agi_Priority = {
-            Neck = { "Wing Pendant" }
-        },
-        Int_Priority = {
-            -- Range = { },
-            Ammo = { "Morion Tathlum" },
-            -- Head = {  },
-            -- Body = {  },
-            -- Hands = {  },
-            -- Legs = {  },
-            -- Feet = {  },
-            -- Neck = {  },
-            -- Waist = {  },
-            -- Ear1 = {  },
-            Ear2 = { "Cunning Earring" },
-            Ring1 = { "Eremite's Ring" },
-            Ring2 = { "Eremite's Ring" },
-            -- Back = {  },
-        },
-        Mnd_Priority = {
-            -- Range = { },
-            -- Ammo = { },
-            -- Head = { },
-            -- Body = { },
-            Hands = { "Savage Gauntlets" },
-            Legs = { "Savage Loincloth" },
-            -- Feet = { },
-            Neck = { "Justice Badge" },
-            Waist = { "Friar's Rope" },
-            -- Ear1 = { },
-            -- Ear2 = { },
-            Ring1 = { "Saintly Ring" },
-            Ring2 = { "Saintly Ring" },
-            -- Back = { },
-        },
-        Chr_Priority = {
-        },
-        -- substat bonus sets
-        Acc_Priority = {
-        },
-        Att_Priority = {
-            Hands = { "Ryl.Ftm. Gloves" }
-        },
-        Eva_Priority = {
-        },
-        Hp_Priority = {
-        },
-        Mp_Priority = {
-        },
-        Interrupt_Priority = {
-        },
-        -- skill bonus sets
-        Healing_Priority = {
-        },
-        Elemental_Priority = {
-        },
-        Enhancing_Priority = {
-        },
-        Enfeebling_Priority = {
-        },
-        Divine_Priority = {
-        },
-        Dark_Priority = {
+    },
+    Enfeeble = Equip.NewSet {
+        Main = Equip.Staves.Wind,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Nokizaru Shuriken",
+
+        Head = "Yasha Jinpachi",
+        Neck = "Harmonia's Torque",
+        Ear1 = "Drone Earring", -- upgrade to Eris Earring
+        Ear2 = "Drone Earring", -- upgrade to Eris Earring
+
+        Body = "Yasha Samue",
+        Hands = "Kog. Tekko +1",
+        Ring1 = "Sattva Ring",
+        Ring2 = "Reflex Ring", -- upgrade to Mermaid Ring
+
+        Back = "Fed. Army Mantle", -- upgrade to Astute/Resentment Cape
+        Waist = "Swift Belt", -- upgrade to Koga Sarashi or Warwolf
+        Legs = "Byakko's Haidate",
+        Feet = "Yasha Sune-ate",
+    },
+    Nuke = Equip.NewSet {
+        Main = Equip.Staves.Wind,
+        Sub = Equip.Special.Displaced,
+        Range = Equip.Special.Displaced,
+        Ammo = "Phtm. Tathlum",
+
+        Head = "Yasha Jinpachi", -- upgrade to +1
+        Neck = "Rep.Mythril Medal",
+        Ear1 = "Abyssal Earring", -- upgrade to Novio
+        Ear2 = "Moldavite Earring",
+
+        Body = "Kirin's Osode",
+        Hands = "Kog. Tekko +1",
+        Ring1 = "Snow Ring",
+        Ring2 = "Snow Ring",
+
+        Back = "Fed. Army Mantle", -- sidegrade to Astute Cape
+        Waist = "Ryl.Kgt. Belt", -- upgrade to Jungle Rope
+        Legs = "Yasha Hakama",  -- upgrade to +1
+        Feet = "Nin. Kyahan +1",
+
+        AtHalfMp = {
+            Neck = "Uggalepih Pendant",
         },
     },
 }
 
-profile.OnLoad = function()
-    gSettings.AllowAddSet = true
-    gSettings.SoloMode = false
-    gSettings.FishMode = false
-    gSettings.HelmMode = false
-
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /glam /lac fwd glam')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /solo /lac fwd solo')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /fishe /lac fwd fish')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias add /helm /lac fwd helm')
-    AshitaCore:GetChatManager():QueueCommand(1, '/macro book 4')
+local function onLoad()
+    AshitaCore:GetChatManager():QueueCommand(-1, '/addon reload wheel')
+    ashita.tasks.once(1, function()
+        AshitaCore:GetChatManager():QueueCommand( 1, '/wheel level ni')
+        AshitaCore:GetChatManager():QueueCommand( 1, '/wheel lock')
+    end)
 end
 
-profile.OnUnload = function()
-    handleSoloMode('solo off')
-    handleFishMode('fish off')
-    handleHelmMode('helm off')
-
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /glam')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /solo')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /fishe')
-    AshitaCore:GetChatManager():QueueCommand(-1, '/alias del /helm')
+local function onUnload()
+    AshitaCore:GetChatManager():QueueCommand(-1, '/addon unload wheel')
 end
 
-profile.HandleCommand = function(args)
-    if #args == 0 then return end
-    handleGlamour(args)
-    handleSoloMode(args)
-    handleFishMode(args)
-    handleHelmMode(args)
+local function handleCommand(args)
+    if args[1] == 'ammo' then
+        settings.Ammo = args[2] or "Pebble"
+    end
 end
 
-profile.HandleDefault = function()
+local function handleDefault()
     local player = gData.GetPlayer()
-    levelSync(profile.Sets)
+    local env = gData.GetEnvironment()
 
-    gFunc.EquipSet('Base')
-    if player.Status == 'Resting' then
-        gFunc.EquipSet('Rest')
-    elseif player.Status == 'Engaged' then
-        gFunc.EquipSet('Tp')
+    Equip.Set(sets.Idle)
+
+    if Status.IsAttacking(player) then
+        Equip.Set(sets.Auto)
+    end
+
+    if Status.IsInSandoria(env) then
+        Equip.Body("Kingdom Aketon")
+    elseif Status.IsInBastok(env) then
+        Equip.Body("Republic Aketon")
+    elseif Status.IsInWindurst(env) then
+        Equip.Body("Federation Aketon")
     end
 end
 
-profile.HandleAbility = function()
-end
+local function handlePreshot()
+    Equip.Ammo(settings.Ammo)
 
-profile.HandleItem = function()
-    local item = gData.GetAction()
-    if item.Name == 'Orange Juice' then
-        gFunc.Equip('Legs', "Dream Pants +1")
+    if not Status.HasEquipment(settings.Ammo) then
+        gFunc.CancelAction()
     end
 end
 
-profile.HandlePrecast = function()
+local function handleMidshot()
+    Equip.Set(sets.Throw)
 end
 
-profile.HandleMidcast = function()
+local function handleMidcast()
     local spell = gData.GetAction()
-    handleMagic(spell)
+
+    if Status.IsStealth(spell) then
+        Equip.Set(sets.Shadows)
+        Equip.Stealth()
+    elseif Status.IsShadows(spell) then
+        Equip.Set(sets.Shadows)
+    elseif Status.IsDrain(spell) then
+        Equip.Set(sets.Shadows)
+        Equip.Obi(spell)
+        Equip.Staff(spell)
+    elseif Status.IsNuke(spell) or Status.IsPotencyNinjutsu(spell) then
+        Equip.Set(sets.Nuke)
+        Equip.Obi(spell)
+        Equip.Staff(spell)
+    elseif Status.IsAccuracyNinjutsu(spell) then
+        Equip.Set(sets.Enfeeble)
+        Equip.Obi(spell)
+        Equip.Staff(spell)
+    elseif Status.IsStoneskin(spell) then
+        Equip.Set(sets.Stoneskin)
+    end
 end
 
-profile.HandlePreshot = function()
+local function handleWeaponskill()
+    Equip.Set(sets.Weaponskill)
 end
 
-profile.HandleMidshot = function()
-end
-
-profile.HandleWeaponskill = function()
-    local weaponskill = gData.GetAction()
-    handleSwordWs(weaponskill.Name)
-    handleDaggerWs(weaponskill.Name)
-    handleKatanaWs(weaponskill.Name)
-end
-
-return profile
+return {
+    Sets = sets,
+    OnLoad = onLoad,
+    OnUnload = onUnload,
+    HandleCommand = handleCommand,
+    HandleDefault = handleDefault,
+    HandleAbility = noop,
+    HandleItem = gFunc.LoadFile('common/items.lua'),
+    HandlePrecast = noop,
+    HandlePreshot = handlePreshot,
+    HandleMidcast = handleMidcast,
+    HandleMidshot = handleMidshot,
+    HandleWeaponskill = handleWeaponskill,
+}

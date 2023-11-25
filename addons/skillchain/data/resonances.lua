@@ -1,6 +1,3 @@
----@enum Resonance
--- A lookup table to find the appropriate name for a given skillchain effect.
--- The keys are an action's add_effect_message.
 return {
     [0x120] = 'Light',
     [0x121] = 'Darkness',
@@ -17,5 +14,5 @@ return {
     [0x12C] = 'Detonation',
     [0x12D] = 'Impaction',
     [0x12E] = 'Radiance',
-    [0x12F] = 'Umbra'
+    [0x12F] = 'Umbra',
 }
