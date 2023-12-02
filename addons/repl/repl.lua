@@ -24,7 +24,7 @@ ashita.events.register('d3d_present', 'd3d_present_handler', function()
         return
     end
 
-    imgui.SetNextWindowSizeConstraints({ 128, 128 }, { FLT_MAX, FLT_MAX })
+    imgui.SetNextWindowSizeConstraints({ 512, 512 }, { FLT_MAX, FLT_MAX })
     if imgui.Begin('repl', visible) then
         local fontSize = 14
         local padding = imgui.GetStyle().FramePadding.y * 2
