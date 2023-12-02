@@ -4,6 +4,7 @@
 /load thirdparty
 /load stylist
 /load nameplate
+/load sequencer
 /load trenderer
 
 /addon load allmaps
