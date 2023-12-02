@@ -33,7 +33,6 @@ local cast = require('cast')
 local crafty = require('crafty')
 local fishe = require('fishe')
 local week = require('week')
-local logger = require('logger')
 
 local uiWindows = {
     me,
@@ -50,7 +49,6 @@ local normalWindows = {
     crafty,
     fishe,
     week,
-    logger,
 }
 
 local tools = T{}:extend(uiWindows):extend(normalWindows)

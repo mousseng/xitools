@@ -673,10 +673,6 @@ local inboundFishBiteInfo = {
 
 local packets = {
     outbound = {
-        sorted = {
-            outboundStartSynth,
-            outboundFishingAction,
-        },
         startSynth = outboundStartSynth,
         fishingAction = outboundFishingAction,
         inventoryDrop = outboundInventoryDrop,
@@ -685,29 +681,6 @@ local packets = {
         treasurePass = outboundTreasurePass,
     },
     inbound = {
-        sorted = {
-            inboundBasic,
-            inboundPcUpdate,
-            inboundSpecial,
-            inboundAction,
-            inboundDeath,
-            inboundChatMessage,
-            inboundNpcMessage,
-            inboundZoneIn,
-            inboundKeyItems,
-            inboundCharStats,
-            inboundCharSkills,
-            inboundSynthAnimation,
-            inboundSynthResultPlayer,
-            inboundSynthResultOther,
-            inboundInventorySize,
-            inboundInventoryFinish,
-            inboundInventoryModify,
-            inboundInventoryAssign,
-            inboundInventoryItem,
-            inboundFishBiteInfo,
-            inboundCaughtFish,
-        },
         zoneIn = inboundZoneIn,
         pcUpdate = inboundPcUpdate,
         chatMessage = inboundChatMessage,
