@@ -4,8 +4,8 @@ addon.version = '2.1'
 addon.desc    = 'Make ready-checking easy :)'
 
 require('common')
-local Set = require('lin.set')
-local Packets = require('lin.packets')
+local Set = require('lin/set')
+local Packets = require('lin/packets')
 
 local MessagePacket = 0x0017
 local PartyMessage = 4
@@ -100,7 +100,7 @@ end)
 
 ashita.events.register('packet_in', 'packet_in_handler', function(e)
     if e.id == MessagePacket and IsListening then
-        local msg = Packets.ParseChatMessage(e.data)
+        local msg = Packets.inbound.chatMessage.parse(e.data)
 
         if msg.type == PartyMessage
         and Whitelist:contains(string.trim(msg.text))

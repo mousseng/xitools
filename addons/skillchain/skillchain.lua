@@ -430,7 +430,7 @@ end
 local function OnPacket(e)
     if e.id == 0x28 then
         ---@type ActionPacket
-        local action = packets.ParseAction(e.data_modified_raw)
+        local action = packets.inbound.action.parse(e.data_modified_raw)
 
         if action.category == 3 then
             -- For some reason, some trusts (like Valaineral) send their mobskills

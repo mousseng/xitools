@@ -6,7 +6,7 @@ addon.desc    = 'Track weaponskill points'
 require('common')
 local bit = require('bit')
 local imgui = require('imgui')
-local packets = require('packets')
+local packets = require('lin/packets')
 local settings = require('settings')
 
 local wsPoints = {
