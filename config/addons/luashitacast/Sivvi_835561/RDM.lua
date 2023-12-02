@@ -38,6 +38,7 @@ local sets = {
             Main = "Emissary",
             Ammo = "Sapience Orb",
 
+            Head  = "Nares Cap",
             Hands = "Repartie Gloves",
             Legs  = "Doyen Pants",
 

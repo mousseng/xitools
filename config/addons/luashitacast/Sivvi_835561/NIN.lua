@@ -110,6 +110,7 @@ local sets = {
     Magic = {
         FastCast = Equip.NewSet {
             Ammo  = "Sapience Orb",
+            Body  = "Mochi. Chainmail +1",
             Hands = "Taeon Gloves",
             Ring1 = "Weather. Ring",
             Back  = settings.Capes.Cast,
@@ -127,7 +128,7 @@ local sets = {
         Nuke = Equip.NewSet {
             Ammo  = "Sapience Orb",
 
-            Head  = "Taeon Chapeau",
+            Head  = "Mochi. Hatsuburi +2",
             Body  = "Herculean Vest",
             Hands = "Herculean Gloves",
             Legs  = "Herculean Trousers",
@@ -207,7 +208,7 @@ local sets = {
         ['Aeolian Edge'] = Equip.NewSet {
             Ammo  = "Seething Bomblet +1",
 
-            Head  = "Taeon Chapeau",
+            Head  = "Mochi. Hatsuburi +2",
             Body  = "Herculean Vest",
             Hands = "Herculean Gloves",
             Legs  = "Herculean Trousers",
