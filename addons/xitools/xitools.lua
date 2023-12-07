@@ -90,7 +90,6 @@ local defaultOptions = T{
         crafty = crafty.DefaultSettings,
         fishe = fishe.DefaultSettings,
         week = week.DefaultSettings,
-        logger = logger.DefaultSettings,
     },
 }
 
