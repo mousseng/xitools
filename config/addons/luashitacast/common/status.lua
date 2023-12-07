@@ -143,6 +143,9 @@ local spells = {
     Enwater = 105,
     Phalanx = 106,
     PhalanxII = 107,
+    Regen = 108,
+    RegenII = 110,
+    RegenIII = 111,
     Flash = 112,
     Invisible = 136,
     Sneak = 137,
@@ -177,6 +180,8 @@ local spells = {
     DokumoriSan = 352,
     TonkoIchi = 353,
     TonkoNi = 354,
+    RegenIV = 477,
+    RegenV = 504,
     Distract = 841,
     FrazzleII = 844,
     DrainIII = 880,
@@ -307,6 +312,16 @@ function status.IsEnhancement(spell)
         or (spell.Id >= spells.BlazeSpikes and spell.Id <= spells.ShockSpikes)
         or spell.Id == spells.Phalanx
         or spell.Id == spells.PhalanxII
+end
+
+---@param spell table
+---@return boolean
+function status.IsRegen(spell)
+    return spell.Id == spells.Regen
+        or spell.Id == spells.RegenII
+        or spell.Id == spells.RegenIII
+        or spell.Id == spells.RegenIV
+        or spell.Id == spells.RegenV
 end
 
 return status
