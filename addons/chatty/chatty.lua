@@ -10,8 +10,7 @@ local config = require('chatty-config')
 local ui = require('chatty-ui')
 
 ashita.events.register('load', 'load_chatty', function()
-    -- TODO: save and load tab configurations
-    state:Init()
+    state:LoadSettings()
 end)
 
 ashita.events.register('command', 'command_chatty', function(e)

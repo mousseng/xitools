@@ -1,5 +1,7 @@
 require('common')
 local chat = require('chat')
+local inspect = require('inspect')
+local modes = require('chat-modes')
 
 local state = {
     IsDebugOn = false,
@@ -23,6 +25,9 @@ local function GenerateUuid()
     return uuid
 end
 
+---Logs a formatted message if debugging is enabled.
+---@param msg string
+---@param ... unknown
 function state:Debug(msg, ...)
     if not self.IsDebugOn then
         return
@@ -33,15 +38,97 @@ function state:Debug(msg, ...)
     print(headerized)
 end
 
----Initialize each chat tab and their backing storage.
-function state:Init()
-    self:Debug('state:Init()')
+---Prints a formatted error message.
+---@param msg string
+---@param ... unknown
+function state:Error(msg, ...)
+    local formatted = string.format(msg, ...)
+    local headerized = chat.header('chatty'):append(chat.error(formatted))
+    print(headerized)
+end
 
-    self:AddTab('Party')
-    self:AddTab('Linkshell 1')
-    self:AddTab('Linkshell 2')
-    self:AddTab('Tells')
-    self:AddTab('Combat')
+function state:SaveSettings()
+    self:Debug('state:SaveSettings()')
+
+    local settingsDir = string.format(
+        '%s\\config\\addons\\%s',
+        AshitaCore:GetInstallPath(),
+        addon.name)
+
+    local settingsPath = string.format(
+        '%s\\settings.lua',
+        settingsDir,
+        addon.name)
+
+    local settings = inspect {
+        IsDebugOn = self.IsDebugOn,
+        TabFilters = self.TabFilters,
+        Tabs = self.Tabs,
+    }
+
+    local serialized = string.format('return %s', settings)
+    ashita.fs.create_dir(settingsDir)
+
+    local file = io.open(settingsPath, 'w+')
+    if file == nil then
+        self:Error('Failed to save settings to %s', tostring(settingsPath))
+        return
+    end
+
+    file:write(serialized)
+    file:close()
+end
+
+function state:LoadSettings()
+    self:Debug('state:LoadSettings()')
+
+    local settingsPath = string.format(
+        '%s\\config\\addons\\%s\\settings.lua',
+        AshitaCore:GetInstallPath(),
+        addon.name)
+
+    local settings = nil
+    local success = pcall(function ()
+        local getSettings = loadfile(settingsPath)
+        if getSettings then
+            settings = getSettings()
+        end
+    end)
+
+    if success and type(settings) == 'table' then
+        self.IsDebugOn  = settings.IsDebugOn
+
+        for tabIndex, tabName in ipairs(settings.Tabs) do
+            self:AddTab(tabName)
+            self.TabFilters[tabIndex] = settings.TabFilters[tabIndex]
+        end
+    else
+        self:Error('Failed to load settings; using defaults')
+
+        -- create default tabs
+        self:AddTab('Party')
+        self:AddTab('Linkshell 1')
+        self:AddTab('Linkshell 2')
+        self:AddTab('Tells')
+        self:AddTab('Combat')
+
+        -- set default tab filters
+        for _, mode in ipairs(modes) do
+            if mode.Tag == 'party' then
+                self:AddFilter(mode.Id, 1)
+            elseif mode.Tag == 'ls1' then
+                self:AddFilter(mode.Id, 2)
+            elseif mode.Tag == 'ls1' then
+                self:AddFilter(mode.Id, 3)
+            elseif mode.Tag == 'tell' then
+                self:AddFilter(mode.Id, 4)
+            elseif mode.Tag == 'combat' then
+                self:AddFilter(mode.Id, 5)
+            end
+        end
+
+        self:SaveSettings()
+    end
 end
 
 ---Adds a new tab with the given name. A UUID is automatically appended behind

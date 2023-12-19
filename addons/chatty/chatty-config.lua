@@ -51,6 +51,7 @@ function config:DrawTabList()
 
     if imgui.Button('+##chatty_config_tabs_add', { BASE_W * 3, 0 }) then
         state:AddTab('New Tab')
+        state:SaveSettings()
     end
 
     -- only bother showing the "delete tab" button if there's a tab to delete
@@ -58,6 +59,7 @@ function config:DrawTabList()
         imgui.SameLine()
         if imgui.Button('-##chatty_config_tabs_del', { BASE_W * 3, 0 }) then
             state:RemoveTab(self.SelectedTab)
+            state:SaveSettings()
         end
     end
 
@@ -78,6 +80,7 @@ function config:DrawFilterConfig()
         imgui.SameLine()
         if imgui.Button('Rename') then
             state:RenameTab(self.SelectedTab, self.Inputs.Rename[1])
+            state:SaveSettings()
             self:ResetInputs()
         end
 
@@ -88,6 +91,7 @@ function config:DrawFilterConfig()
                 else
                     state:RemoveFilter(mode.Id, self.SelectedTab)
                 end
+                state:SaveSettings()
             end
         end
     end
