@@ -778,7 +778,6 @@ local inv = {
     end,
     DrawMain = function(options, gOptions)
         Scale = gOptions.uiScale[1]
-        imgui.SetNextWindowSizeConstraints({ -1, 0 }, { -1, options.maxHeight[1] })
         ui.DrawNormalWindow(options, gOptions, function()
             imgui.SetWindowFontScale(Scale)
             if options.isUnified[1] then
