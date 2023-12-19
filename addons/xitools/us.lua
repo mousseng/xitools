@@ -52,8 +52,14 @@ local Alliances = { }
 ---@field windowPos        integer[]
 ---@field statusIds        integer[]
 
+---@param statusId number
 ---@param icon userdata
-local function CreateTexture(icon)
+local function CreateTexture(statusId, icon)
+    if icon == nil then
+        print('xitools error: no icon for status ' .. tostring(statusId))
+        return nil
+    end
+
     -- Courtesy of Thorny's partybuffs
     local dx_texture_ptr = ffi.new('IDirect3DTexture8*[1]')
     if ffi.C.D3DXCreateTextureFromFileInMemoryEx(d3d8_device, icon.Bitmap, icon.ImageSize, 0xFFFFFFFF, 0xFFFFFFFF, 1, 0, ffi.C.D3DFMT_A8R8G8B8, ffi.C.D3DPOOL_MANAGED, ffi.C.D3DX_DEFAULT, ffi.C.D3DX_DEFAULT, 0xFF000000, nil, nil, dx_texture_ptr) == ffi.C.S_OK then
@@ -330,12 +336,15 @@ local function DrawBuffs(player)
     for _, buffId in ipairs(player.statusIds) do
         if Textures[buffId] == nil then
             local icon = AshitaCore:GetResourceManager():GetStatusIconByIndex(buffId)
-            Textures[buffId] = CreateTexture(icon)
+            Textures[buffId] = CreateTexture(buffId, icon)
         end
 
-        imgui.SameLine()
-        local img = tonumber(ffi.cast("uint32_t", Textures[buffId]))
-        imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
+        local buffIcon = Textures[buffId]
+        if buffIcon then
+            imgui.SameLine()
+            local img = tonumber(ffi.cast("uint32_t", buffIcon))
+            imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
+        end
     end
 
     imgui.PopStyleVar()
