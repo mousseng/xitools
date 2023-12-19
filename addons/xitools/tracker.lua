@@ -147,7 +147,7 @@ local function DrawTrackers(trackers)
             end
         end
 
-        imgui.Unindent(10)
+        imgui.Unindent(10 * Scale)
     end
 end
 
