@@ -81,7 +81,7 @@ end
 ---@param pos Vec2
 ---@param drawStuff function
 function Imgui.Lin.DrawWindow(name, size, pos, drawStuff)
-    Imgui.SetNextWindowSize(size, ImGuiCond_Always)
+    Imgui.SetNextWindowSize(size, ImGuiCond_Once)
     Imgui.SetNextWindowPos(pos, ImGuiCond_FirstUseEver)
 
     Imgui.PushStyleColor(ImGuiCol_WindowBg, Imgui.Lin.Colors.FfxiGreyBg)
@@ -99,11 +99,11 @@ function Imgui.Lin.DrawWindow(name, size, pos, drawStuff)
 
         Imgui.PopStyleVar()
         Imgui.PopStyleColor()
-        Imgui.End()
     else
         Imgui.PopStyleColor(3)
     end
 
+    Imgui.End()
     Imgui.PopStyleVar(2)
 end
 
