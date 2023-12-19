@@ -2,6 +2,8 @@ local bit = require('bit')
 local imgui = require('imgui')
 local state = require('chatty-state')
 
+local BASE_W, BASE_H = imgui.CalcTextSize('W')
+
 local ui = {
     WindowFlags = bit.bor(ImGuiWindowFlags_NoTitleBar),
     IsVisible = { true },
@@ -18,10 +20,20 @@ end
 ---@param messages table[]
 local function DrawTab(name, messages)
     if imgui.BeginTabItem(name) then
+        local panelName = string.format('chatty_tabs##%s', name)
+        imgui.BeginChild(panelName)
+
         for _, msg in ipairs(messages) do
             DrawMessage(msg)
         end
 
+        -- autoscroll to bottom if you're close; this will keep new messages in
+        -- view without manual intervention
+        if (imgui.GetScrollMaxY() - imgui.GetScrollY()) <= BASE_H then
+            imgui.SetScrollHereY(1.0)
+        end
+
+        imgui.EndChild()
         imgui.EndTabItem()
     end
 end
