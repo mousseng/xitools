@@ -12,9 +12,9 @@ local settings = {
     Subjob = 'NON',
     MeleeSet = 'Dps',
     Default = {
-        Main = "",
-        Sub  = "",
-        Ammo = "",
+        Main = "Kaja Sword",
+        Sub  = "Colada",
+        Ammo = "Sapience Orb",
     },
 }
 
@@ -22,11 +22,11 @@ local sets = {
     Idle = Equip.NewSet {
         Ammo  = "Sapience Orb",
 
-        Head  = "Assim. Keffiyeh",
-        Body  = "Assim. Jubbah",
-        Hands = "Assim. Bazu.",
-        Legs  = "Assim. Shalwar",
-        Feet  = "Assim. Charuqs",
+        Head  = "Aya. Zucchetto +1",
+        Body  = "Jhakri Robe +1",
+        Hands = "Aya. Manopolas +1",
+        Legs  = "Aya. Cosciales +1",
+        Feet  = "Aya. Gambieras +1",
 
         Neck  = "Sanctity Necklace",
         Ear1  = "Brutal Earring",
@@ -40,17 +40,17 @@ local sets = {
         Dps = Equip.NewSet {
             Ammo  = "Sapience Orb",
 
-            Head  = "Assim. Keffiyeh",
-            Body  = "Assim. Jubbah",
-            Hands = "Assim. Bazu.",
-            Legs  = "Assim. Shalwar",
-            Feet  = "Assim. Charuqs",
+            Head  = "Aya. Zucchetto +1",
+            Body  = "Ayanmo Corazza +1",
+            Hands = "Aya. Manopolas +1",
+            Legs  = "Jhakri Slops +1",
+            Feet  = "Aya. Gambieras +1",
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Brutal Earring",
             Ear2  = "Hashishin Earring",
             Ring1 = "Epona's Ring",
-            Ring2 = "Jhakri Ring",
+            Ring2 = "Ayanmo Ring",
             Back  = "Aptitude Mantle +1",
             Waist = "Sailfi Belt +1",
         },
@@ -58,18 +58,43 @@ local sets = {
     Magic = {
         FastCast = Equip.NewSet {
             Ammo  = "Sapience Orb",
+
+            Head  = "Jhakri Coronal +1",
+            Body  = "Hashishin Mintan",
+            Hands = "Hashi. Bazu. +1",
+            Legs  = "Aya. Cosciales +1",
+            Feet  = "Jhakri Pigaches +1",
+
             Ring1 = "Weather. Ring",
+            Ring2 = "Lebeche Ring",
         },
+        Nuke = Equip.NewSet {
+            -- Ammo  = "Sapience Orb",
+
+            Head  = "Jhakri Coronal +1",
+            Body  = "Jhakri Robe +1",
+            Hands = "Jhakri Cuffs +1",
+            Legs  = "Jhakri Slops +1",
+            Feet  = "Jhakri Pigaches +1",
+
+            Neck  = "Sanctity Necklace",
+            Ear1  = "Friomisi Earring",
+            Ear2  = "Hecate's Earring",
+            Ring1 = "Shiva Ring",
+            Ring2 = "Jhakri Ring",
+            Back  = "Aptitude Mantle +1",
+            Waist = "Skrymir Cord",
+        }
     },
     Weaponskills = {
         Base = Equip.NewSet {
             Ammo  = "Sapience Orb",
 
-            Head  = "Assim. Keffiyeh",
-            Body  = "Assim. Jubbah",
-            Hands = "Assim. Bazu.",
-            Legs  = "Assim. Shalwar",
-            Feet  = "Assim. Charuqs",
+            Head  = "Jhakri Coronal +1",
+            Body  = "Jhakri Robe +1",
+            Hands = "Jhakri Cuffs +1",
+            Legs  = "Jhakri Slops +1",
+            Feet  = "Jhakri Pigaches +1",
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Brutal Earring",
@@ -78,6 +103,74 @@ local sets = {
             Ring2 = "Jhakri Ring",
             Back  = "Aptitude Mantle +1",
             Waist = "Sailfi Belt +1",
+        },
+        ['Chant du Cygne'] = Equip.NewSet {
+            Ammo  = "Sapience Orb",
+
+            Head  = "Aya. Zucchetto +1",
+            Body  = "Ayanmo Corazza +1",
+            Hands = "Jhakri Cuffs +1",
+            Legs  = "Aya. Cosciales +1",
+            Feet  = "Aya. Gambieras +1",
+
+            Neck  = "Fotia Gorget",
+            Ear1  = "Odr Earring",
+            Ear2  = "Hashishin Earring",
+            Ring1 = "Epona's Ring",
+            Ring2 = "Ayanmo Ring",
+            Back  = "Aptitude Mantle +1",
+            Waist = "Fotia Belt",
+        },
+        ['Savage Blade'] = Equip.NewSet {
+            Ammo  = "Sapience Orb",
+
+            Head  = "Jhakri Coronal +1",
+            Body  = "Jhakri Robe +1",
+            Hands = "Jhakri Cuffs +1",
+            Legs  = "Jhakri Slops +1",
+            Feet  = "Jhakri Pigaches +1",
+
+            Neck  = "Sanctity Necklace",
+            Ear1  = "Odr Earring",
+            Ear2  = "Hashishin Earring",
+            Ring1 = "Epona's Ring",
+            Ring2 = "Jhakri Ring",
+            Back  = "Aptitude Mantle +1",
+            Waist = "Latria Sash",
+        },
+        ['Vorpal Blade'] = Equip.NewSet {
+            Ammo  = "Sapience Orb",
+
+            Head  = "Jhakri Coronal +1",
+            Body  = "Jhakri Robe +1",
+            Hands = "Jhakri Cuffs +1",
+            Legs  = "Jhakri Slops +1",
+            Feet  = "Jhakri Pigaches +1",
+
+            Neck  = "Fotia Gorget",
+            Ear1  = "Odr Earring",
+            Ear2  = "Hashishin Earring",
+            Ring1 = "Epona's Ring",
+            Ring2 = "Jhakri Ring",
+            Back  = "Aptitude Mantle +1",
+            Waist = "Fotia Belt",
+        },
+        ['Requiescat'] = Equip.NewSet {
+            Ammo  = "Sapience Orb",
+
+            Head  = "Jhakri Coronal +1",
+            Body  = "Jhakri Robe +1",
+            Hands = "Jhakri Cuffs +1",
+            Legs  = "Jhakri Slops +1",
+            Feet  = "Jhakri Pigaches +1",
+
+            Neck  = "Fotia Gorget",
+            Ear1  = "Odr Earring",
+            Ear2  = "Hashishin Earring",
+            Ring1 = "Epona's Ring",
+            Ring2 = "Jhakri Ring",
+            Back  = "Aptitude Mantle +1",
+            Waist = "Fotia Belt",
         },
     },
 }
@@ -123,6 +216,12 @@ end
 local function handleMidcast()
     local spell = gData.GetAction()
     Status.currentStatus = 'Casting'
+
+    Equip.Set(sets.Magic.Nuke)
+
+    if spell.Element == 'Light' then
+        Equip.Ring2('Weather. Ring')
+    end
 end
 
 local function handleCommand(args)

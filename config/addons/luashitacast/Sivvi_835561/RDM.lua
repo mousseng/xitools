@@ -44,6 +44,7 @@ local sets = {
 
             Ear1  = "Mendi. Earring",
             Ear2  = "Lethargy Earring",
+            Ring1 = "Lebeche Ring",
             Ring2 = "Weather. Ring",
             Back  = "Sucello's Cape",
         },
@@ -79,7 +80,7 @@ local sets = {
             Ear1  = "Mendi. Earring",
             Ear2  = "Hecate's Earring",
             -- Ring1 = "Mephitas's Ring +1",
-            -- Ring2 = "Shiva Ring",
+            Ring2 = "Lebeche Ring",
             Back  = "Sucello's Cape",
             Waist = "Skrymir Cord",
         },
