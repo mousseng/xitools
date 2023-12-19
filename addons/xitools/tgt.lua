@@ -596,7 +596,7 @@ local function HandleAction(debuffs, action)
 end
 
 ---@param debuffs table
----@param basic any
+---@param basic string
 local function HandleBasic(debuffs, basic)
     -- if we're tracking a mob that dies, reset its status
     if basic.message == 6 and debuffs[basic.target] then
@@ -856,7 +856,6 @@ local tgt = {
         local subTargetId = tgt:GetTargetIndex(1)
         local subTargetActive = tgt:GetIsSubTargetActive() == 1
         local totId = 0
-
 
         -- the target struct appears to be a stack, so when we have two targets
         -- that means the subtarget is actually in [0] and main moves to [1]
