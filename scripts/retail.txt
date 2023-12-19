@@ -7,35 +7,35 @@
 /load sequencer
 /load trenderer
 
-/addon load allmaps
-/addon load cfhblock
-/addon load checker
-/addon load debuff
-/addon load enternity
-/addon load filterless
-/addon load fps
-/addon load instantah
-/addon load luashitacast
-/addon load macrofix
-/addon load recast
-/addon load stfu
-/addon load timestamp
-/addon load xicamera
-/addon load xitools
-/addon load minimap-helper
-/addon load points
-/addon load mobdb
-/addon load equipmon
-/addon load instantchat
-/addon load simplelog
-/addon load thotbar
-/addon load skillchain
-/addon load captain
-/addon load nolock
-/addon load combatmessages
-/addon load targetlines
-/addon load logs
-/addon load loggers
+/addon reload logs
+/addon reload loggers
+/addon reload allmaps
+/addon reload cfhblock
+/addon reload checker
+/addon reload debuff
+/addon reload enternity
+/addon reload filterless
+/addon reload fps
+/addon reload instantah
+/addon reload instantchat
+/addon reload luashitacast
+/addon reload macrofix
+/addon reload recast
+/addon reload stfu
+/addon reload timestamp
+/addon reload xicamera
+/addon reload minimap-helper
+/addon reload points
+/addon reload mobdb
+/addon reload equipmon
+/addon reload simplelog
+/addon reload thotbar
+/addon reload skillchain
+/addon reload captain
+/addon reload nolock
+/addon reload combatmessages
+/addon reload targetlines
+/addon reload xitools
 
 /bindblock
 /bind insert /ashita
