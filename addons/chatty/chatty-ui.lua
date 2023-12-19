@@ -22,6 +22,7 @@ local function DrawTab(name, messages)
     if imgui.BeginTabItem(name) then
         local panelName = string.format('chatty_tabs##%s', name)
         imgui.BeginChild(panelName)
+        imgui.PushTextWrapPos(imgui.GetWindowContentRegionWidth())
 
         for _, msg in ipairs(messages) do
             DrawMessage(msg)
@@ -33,6 +34,7 @@ local function DrawTab(name, messages)
             imgui.SetScrollHereY(1.0)
         end
 
+        imgui.PopTextWrapPos()
         imgui.EndChild()
         imgui.EndTabItem()
     end
