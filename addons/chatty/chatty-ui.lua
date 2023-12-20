@@ -5,6 +5,7 @@ local state = require('chatty-state')
 local BASE_W, BASE_H = imgui.CalcTextSize('W')
 
 local ui = {
+    Font = imgui.AddFontFromFileTTF(string.format('%s\\CascadiaCode.ttf', addon.path), 18),
     WindowFlags = bit.bor(ImGuiWindowFlags_NoTitleBar),
     IsVisible = { true },
 }
@@ -13,6 +14,8 @@ local ui = {
 ---@param msg table
 local function DrawMessage(msg)
     imgui.NewLine()
+    -- TODO: while the segmenting strategy makes it simple to colorize text in
+    --       imgui, it has left the wrapping messed up
     for _, segment in ipairs(msg.Message) do
         imgui.SameLine(0, 0)
         imgui.TextColored(segment.Color, segment.String)
@@ -37,7 +40,7 @@ end
 local function DrawTab(name, messages)
     if imgui.BeginTabItem(name) then
         local panelName = string.format('chatty_tabs##%s', name)
-        imgui.BeginChild(panelName)
+        imgui.BeginChild(panelName, { 0, 0 }, false, ImGuiWindowFlags_NoBackground)
         imgui.PushTextWrapPos(imgui.GetWindowContentRegionWidth())
 
         for _, msg in ipairs(messages) do
@@ -73,11 +76,14 @@ end
 
 ---Displays the chat window.
 function ui:Render()
+    -- TODO: using an alternative font breaks FontAwesome?
+    imgui.PushFont(self.Font)
     if imgui.Begin('chatty', self.IsVisible, self.WindowFlags) then
         DrawTabsAndChat()
     end
 
     imgui.End()
+    imgui.PopFont()
 end
 
 return ui

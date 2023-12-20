@@ -49,6 +49,8 @@ function state:Error(msg, ...)
     print(headerized)
 end
 
+---Serializes some persistable configuration values and writes it to a .lua file.
+---This is heavily based on the ashita settings lib.
 function state:SaveSettings()
     self:Debug('state:SaveSettings()')
 
@@ -81,6 +83,8 @@ function state:SaveSettings()
     file:close()
 end
 
+---Tries to read a .lua file that returns a settings object and pull relevant
+---properties off of it. This is heavily based on the ashita settings lib.
 function state:LoadSettings()
     self:Debug('state:LoadSettings()')
 
@@ -189,6 +193,9 @@ function state:AddMessagesToTabs(messages, indexes)
     end
 end
 
+---Reinterprets an array of bytes as a string.
+---@param bytes number[]
+---@return string
 local function Stringify(bytes)
     ---@diagnostic disable-next-line: undefined-field
     return table.join(table.map(bytes, string.char), '')
