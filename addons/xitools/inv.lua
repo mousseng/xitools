@@ -470,12 +470,12 @@ local function AddStackSize(posX, posY, count)
     imgui.GetWindowDrawList():AddText({ posX, posY }, mainColor, tostring(count or 0))
 end
 
+local highlightColor = imgui.GetColorU32({ 0.23, 0.67, 0.91, 1.0 })
 local function AddHighlight(posX, posY, size, drawList)
     local pad = 2
-    local color = imgui.GetColorU32({ 0.23, 0.67, 0.91, 1.0 })
     local upperLeft = { posX - pad, posY - pad }
     local bottomRight = { posX + size + pad, posY + size + pad }
-    drawList:AddRect(upperLeft, bottomRight, color, 0.0)
+    drawList:AddRect(upperLeft, bottomRight, highlightColor, 0.0)
 end
 
 local function AddTooltip(item)
