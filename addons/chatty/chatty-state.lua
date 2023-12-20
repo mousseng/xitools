@@ -1,6 +1,7 @@
 require('common')
 local chat = require('chat')
 local inspect = require('inspect')
+local symbols = require('chat-symbols')
 local colors = require('chat-colors')
 local modes = require('chat-modes')
 
@@ -201,6 +202,7 @@ function state:ParseMessage(event)
 
         -- begin parsing out colors into distinct segments with color information
         -- that imgui can use
+        -- TODO: it seems like color id -> color value depends on the message mode?
         local segments = {
             { ColorId = '1.1', Color = colors[1][1], Bytes = { } },
         }
@@ -249,6 +251,15 @@ function state:ParseMessage(event)
                     Color = color or colors[3][1],
                     Bytes = { }
                 }
+            elseif byte == 129 then
+                -- marker for a symbol
+                local nextByte = cleanedBytes[i + 1]
+                local symbol = symbols[byte][nextByte]
+                skipNext = true
+
+                for _, symbolByte in ipairs(symbol) do
+                    table.insert(segments[segment].Bytes, symbolByte)
+                end
             else
                 -- regular ascii, accumulate into current segment
                 table.insert(segments[segment].Bytes, byte)
