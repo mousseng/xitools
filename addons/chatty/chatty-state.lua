@@ -97,10 +97,11 @@ function state:LoadSettings()
 
     if success and type(settings) == 'table' then
         self.IsDebugOn  = settings.IsDebugOn
+        self.Tabs = settings.Tabs
+        self.TabFilters = settings.TabFilters
 
-        for tabIndex, tabName in ipairs(settings.Tabs) do
-            self:AddTab(tabName)
-            self.TabFilters[tabIndex] = settings.TabFilters[tabIndex]
+        for i, _ in ipairs(self.Tabs) do
+            self.TabMessages[i] = self.TabMessages[i] or { }
         end
     else
         self:Error('Failed to load settings; using defaults')
