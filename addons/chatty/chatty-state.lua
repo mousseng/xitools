@@ -1,6 +1,7 @@
 require('common')
 local chat = require('chat')
 local inspect = require('inspect')
+local colors = require('chat-colors')
 local modes = require('chat-modes')
 
 local state = {
@@ -175,7 +176,7 @@ end
 ---test for appropriateness.
 ---@param messages table[]
 ---@param indexes  number[]
-function state:AddMessageToTabs(messages, indexes)
+function state:AddMessagesToTabs(messages, indexes)
     self:Debug('state:AddMessageToTabs(messages = (%i) %s, indexes = { %s })', #messages, tostring(messages), table.concat(indexes, ', '))
 
     for _, messageTable in ipairs(messages) do
@@ -187,19 +188,107 @@ function state:AddMessageToTabs(messages, indexes)
     end
 end
 
+local function Stringify(bytes)
+    ---@diagnostic disable-next-line: undefined-field
+    return table.join(table.map(bytes, string.char), '')
+end
+
+---Parses out a message event into a structured object for easy rendering.
+---@param event TextInEventArgs
+function state:ParseMessage(event)
+        ---@diagnostic disable-next-line: undefined-field
+        local cleanedBytes = event.message_modified:strip_translate(true):totable()
+
+        -- begin parsing out colors into distinct segments with color information
+        -- that imgui can use
+        local segments = {
+            { ColorId = '1.1', Color = colors[1][1], Bytes = { } },
+        }
+
+        local segment = 1
+        local skipNext = false
+        for i = 1, #cleanedBytes do
+            local byte = cleanedBytes[i]
+
+            if skipNext then
+                -- last byte was color marker, this byte has already been used
+                skipNext = false
+            elseif byte == 30 then
+                -- marker for color table 1, start a new segment
+                local nextByte = cleanedBytes[i + 1]
+                local color = colors[1][nextByte]
+                skipNext = true
+                segment = segment + 1
+
+                segments[segment] = {
+                    Tooltip = string.format('table %d, color %d', byte, nextByte),
+                    Color = color or colors[1][1],
+                    Bytes = { }
+                }
+            elseif byte == 31 then
+                -- marker for color table 2, start a new segment
+                local nextByte = cleanedBytes[i + 1]
+                local color = colors[2][nextByte]
+                skipNext = true
+                segment = segment + 1
+
+                segments[segment] = {
+                    Tooltip = string.format('table %d, color %d', byte, nextByte),
+                    Color = color or colors[2][1],
+                    Bytes = { }
+                }
+            elseif byte == 127 then
+                -- marker for color table 3? start a new segment
+                local nextByte = cleanedBytes[i + 1]
+                local color = colors[3][nextByte]
+                skipNext = true
+                segment = segment + 1
+
+                segments[segment] = {
+                    Tooltip = string.format('table %d, color %d', byte, nextByte),
+                    Color = color or colors[3][1],
+                    Bytes = { }
+                }
+            else
+                -- regular ascii, accumulate into current segment
+                table.insert(segments[segment].Bytes, byte)
+            end
+        end
+
+        -- mark empty segments
+        local emptySegments = { }
+        for i, seg in ipairs(segments) do
+            if #seg.Bytes == 0 then
+                table.insert(emptySegments, 1, i)
+            end
+        end
+
+        -- drop marked segments
+        for _, i in ipairs(emptySegments) do
+            table.remove(segments, i)
+        end
+
+        -- re-stringify our collected bytes
+        for _, seg in ipairs(segments) do
+            seg.String = Stringify(seg.Bytes)
+            seg.Bytes = nil
+            seg.Table = nil
+        end
+
+        -- add finalized message object to backing stores
+        return { Mode = event.mode, Message = segments }
+end
+
 ---Adds an incoming message to the backing buffer and each appropriate tab array.
 ---@param event TextInEventArgs
 function state:AddMessage(event)
     self:Debug('state:AddMessage(event = %s)', tostring(event))
 
-    -- TODO: strip color tags and replace with imgui colorification
-    ---@diagnostic disable-next-line: undefined-field
-    local cleanedMessage = event.message_modified:strip_translate(true)
-    local messageTable = { Mode = event.mode, Message = cleanedMessage }
-    table.insert(self.AllMessages, messageTable)
+    local message = self:ParseMessage(event)
+    table.insert(self.AllMessages, message)
 
     ---@diagnostic disable-next-line: undefined-field
-    self:AddMessageToTabs({ messageTable }, table.keys(self.Tabs))
+    self:AddMessagesToTabs({ message }, table.keys(self.Tabs))
 end
 
 ---Checks to see if a message belongs to a specific tab.
@@ -226,7 +315,7 @@ function state:AddFilter(mode, tabIndex)
 
     table.insert(self.TabFilters[tabIndex], mode)
     self:ClearTab(tabIndex)
-    self:AddMessageToTabs(self.AllMessages, { tabIndex })
+    self:AddMessagesToTabs(self.AllMessages, { tabIndex })
 end
 
 ---Removes a mode from a tab's list of filters.
@@ -235,16 +324,16 @@ end
 function state:RemoveFilter(mode, tabIndex)
     self:Debug('state:RemoveFilter(mode = %i, tabIndex = %i)', mode, tabIndex)
 
-    local modes = self.TabFilters[tabIndex]
-    for i, m in ipairs(modes) do
+    local tabFilters = self.TabFilters[tabIndex]
+    for i, m in ipairs(tabFilters) do
         if m == mode then
-            table.remove(modes, i)
+            table.remove(tabFilters, i)
         end
     end
 
     -- TODO: is it better to just iterate through and remove the dead modes?
     self:ClearTab(tabIndex)
-    self:AddMessageToTabs(self.AllMessages, { tabIndex })
+    self:AddMessagesToTabs(self.AllMessages, { tabIndex })
 end
 
 ---Gets a reference to an array containing the pre-computed list of messages

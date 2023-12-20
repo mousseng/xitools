@@ -12,7 +12,23 @@ local ui = {
 ---Draws a chat message within the window.
 ---@param msg table
 local function DrawMessage(msg)
-    imgui.Text(tostring(msg.Message))
+    imgui.NewLine()
+    for _, segment in ipairs(msg.Message) do
+        imgui.SameLine(0, 0)
+        imgui.TextColored(segment.Color, segment.String)
+
+        if imgui.IsItemHovered() then
+            local tlX, tlY = imgui.GetItemRectMin()
+            local brX, brY = imgui.GetItemRectMax()
+            local color = imgui.GetColorU32({ 0.23, 0.67, 0.91, 1.0 })
+            local drawList = imgui.GetWindowDrawList()
+            drawList:AddRect({ tlX, tlY }, { brX, brY }, color, 0.0)
+
+            imgui.BeginTooltip()
+            imgui.Text(segment.Tooltip)
+            imgui.EndTooltip()
+        end
+    end
 end
 
 ---Draws a given tab and its contents.
