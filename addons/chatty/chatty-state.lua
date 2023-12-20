@@ -96,9 +96,9 @@ function state:LoadSettings()
     end)
 
     if success and type(settings) == 'table' then
-        self.IsDebugOn  = settings.IsDebugOn
-        self.Tabs = settings.Tabs
-        self.TabFilters = settings.TabFilters
+        self.IsDebugOn  = settings.IsDebugOn  or self.IsDebugOn
+        self.Tabs       = settings.Tabs       or self.Tabs
+        self.TabFilters = settings.TabFilters or self.TabFilters
 
         for i, _ in ipairs(self.Tabs) do
             self.TabMessages[i] = self.TabMessages[i] or { }
