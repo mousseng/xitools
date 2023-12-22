@@ -81,7 +81,7 @@ end
 ---@param pos Vec2
 ---@param drawStuff function
 function Imgui.Lin.DrawWindow(name, size, pos, drawStuff)
-    Imgui.SetNextWindowSize(size, ImGuiCond_Once)
+    Imgui.SetNextWindowSize(size, ImGuiCond_Always)
     Imgui.SetNextWindowPos(pos, ImGuiCond_FirstUseEver)
 
     Imgui.PushStyleColor(ImGuiCol_WindowBg, Imgui.Lin.Colors.FfxiGreyBg)
