@@ -15,7 +15,8 @@ local Resonances = require('data/resonances')
 local MagicBursts = require('data/magicbursts')
 local Weaponskills = require('data/weaponskills')
 local MobSkills = require('data/mobskills')
-local WeaponskillMsgs = T{ 185, 188, 264, }
+local MagicSkills = require('data/magicskills')
+local WeaponskillMsgs = T{ 103, 185, 187, 238, }
 
 ---@class SkillchainSettings
 ---@field dataSet 'retail'|'horizon'
@@ -50,6 +51,12 @@ local config = settings.load(defaultConfig)
 
 ---@type Skillchain[]
 local chains = { }
+
+---@type number[]
+local chainAffinity = { }
+
+---@type number[]
+local immanence = { }
 
 ---@type integer
 local lastPulse = os.time()
@@ -129,7 +136,14 @@ local function isPetServerIdInParty(id)
     return false
 end
 
-local function handleChainStep(packet, mobs, actionName, attrInfo)
+-- Looks through a packet for skillchain info and specializes based on the
+-- parameters.
+---@param packet       ActionPacket
+---@param mobs         Skillchain[]
+---@param actionName   string
+---@param attrInfo     string
+---@param msgWhitelist table?
+local function handleChainStep(packet, mobs, actionName, attrInfo, msgWhitelist)
     if packet.target_count < 1 then
         return
     end
@@ -148,8 +162,7 @@ local function handleChainStep(packet, mobs, actionName, attrInfo)
         local action = target.actions[j]
 
         -- skip non-chaining stuff like jumps, bashes, and steals
-        -- if T{ 110, 129, 244, 317, 327, }:contains(action.message) then
-        if not WeaponskillMsgs:contains(action.message) then
+        if msgWhitelist and not msgWhitelist:contains(action.message) then
             return
         end
 
@@ -194,7 +207,7 @@ end
 -- function to display information about active skillchains. Specialized on
 -- weaponskills.
 ---@param packet ActionPacket
----@param mobs Skillchain[]
+---@param mobs   Skillchain[]
 local function HandleWeaponskill(packet, mobs)
     local weaponskillInfo = Weaponskills[config.dataSet][packet.param]
 
@@ -205,15 +218,16 @@ local function HandleWeaponskill(packet, mobs)
 
     local resources = AshitaCore:GetResourceManager()
     local actionName = resources:GetAbilityById(packet.param).Name[1]
+    local attrs = table.concat(weaponskillInfo.attr, ', ')
 
-    handleChainStep(packet, mobs, actionName, table.concat(weaponskillInfo.attr, ', '))
+    handleChainStep(packet, mobs, actionName, attrs, WeaponskillMsgs)
 end
 
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on pet
 -- abilities.
 ---@param packet ActionPacket
----@param mobs Skillchain[]
+---@param mobs   Skillchain[]
 local function HandlePetAbility(packet, mobs)
     local petAbilInfo = MobSkills[config.dataSet][packet.param]
 
@@ -224,15 +238,16 @@ local function HandlePetAbility(packet, mobs)
 
     local resources = AshitaCore:GetResourceManager()
     local actionName = resources:GetString('monsters.abilities', packet.param - 256):trimend('\0')
+    local attrs = table.concat(petAbilInfo.attr, ', ')
 
-    handleChainStep(packet, mobs, actionName, table.concat(petAbilInfo.attr, ', '))
+    handleChainStep(packet, mobs, actionName, attrs)
 end
 
 -- Collects and collates data about a particular action in order for the render
 -- function to display information about active skillchains. Specialized on
 -- mob skills.
 ---@param packet ActionPacket
----@param mobs Skillchain[]
+---@param mobs   Skillchain[]
 local function HandleMobSkill(packet, mobs)
     local mobSkillInfo = MobSkills[config.dataSet][packet.param]
 
@@ -243,8 +258,26 @@ local function HandleMobSkill(packet, mobs)
 
     local resources = AshitaCore:GetResourceManager()
     local actionName = resources:GetString('monsters.abilities', packet.param - 256):trimend('\0')
+    local attrs = table.concat(mobSkillInfo.attr, ', ')
 
-    handleChainStep(packet, mobs, actionName, table.concat(mobSkillInfo.attr, ', '))
+    handleChainStep(packet, mobs, actionName, attrs)
+end
+
+---@param packet ActionPacket
+---@param mobs   Skillchain[]
+local function HandleMagicChain(packet, mobs)
+    local magicSkillInfo = MagicSkills[config.dataSet][packet.param]
+
+    -- Don't care about skillchains we can't participate in
+    if not isServerIdInParty(packet.actor_id) or magicSkillInfo == nil or magicSkillInfo.attr == nil then
+        return
+    end
+
+    local resources = AshitaCore:GetResourceManager()
+    local actionName = resources:GetSpellById(packet.param).Name[1]
+    local attrs = table.concat(magicSkillInfo.attr, ', ')
+
+    handleChainStep(packet, mobs, actionName, attrs)
 end
 
 -- Collects and collates data about a particular action in order for the render
@@ -252,7 +285,7 @@ end
 -- magic abilities; only handles magic bursts currently, not BLU chains.
 ---@param packet ActionPacket
 ---@param mobs Skillchain[]
-local function HandleMagicAbility(packet, mobs)
+local function HandleMagicBurst(packet, mobs)
     local burstInfo = MagicBursts[config.dataSet][packet.param]
 
     -- Don't care about skillchains we can't participate in
@@ -431,6 +464,7 @@ local function OnPacket(e)
     if e.id == 0x28 then
         ---@type ActionPacket
         local action = packets.inbound.action.parse(e.data_modified_raw)
+        local now = os.time()
 
         if action.category == 3 then
             -- For some reason, some trusts (like Valaineral) send their mobskills
@@ -442,11 +476,25 @@ local function OnPacket(e)
                 HandleWeaponskill(action, chains)
             end
         elseif action.category == 4 then
-            HandleMagicAbility(action, chains)
+            HandleMagicBurst(action, chains)
+
+            if chainAffinity[action.actor_id] and (now <= chainAffinity[action.actor_id]) then
+                HandleMagicChain(action, chains)
+                chainAffinity[action.actor_id] = nil
+            elseif immanence[action.actor_id] and (now <= immanence[action.actor_id]) then
+                HandleMagicChain(action, chains)
+                immanence[action.actor_id] = nil
+            end
         elseif action.category == 11 then
             HandleMobSkill(action, chains)
         elseif action.category == 13 then
             HandlePetAbility(action, chains)
+        elseif action.category == 6 then
+            if action.param == 94 then
+                chainAffinity[action.actor_id] = now + 30
+            elseif action.param == 317 then
+                immanence[action.actor_id] = now + 60
+            end
         end
     end
 end

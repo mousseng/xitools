@@ -234,6 +234,7 @@ local retail = {
     [646] = { name = 'Magic Hammer',       burst_msg = 252, },
     [648] = { name = 'Regurgitation',      burst_msg = 252, },
     [651] = { name = 'Corrosive Ooze',     burst_msg = 252, },
+    [713] = { name = 'Diffusion Ray',      burst_msg = 252, },
 }
 
 return {
