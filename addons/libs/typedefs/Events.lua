@@ -6,6 +6,7 @@
 
 ---@class CommandEventArgs
 ---@field command AshitaCommand
+---@field blocked boolean
 
 ---@class TextInEventArgs
 ---@field mode             integer
