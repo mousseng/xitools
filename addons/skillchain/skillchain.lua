@@ -16,27 +16,29 @@ local MagicBursts = require('data/magicbursts')
 local Weaponskills = require('data/weaponskills')
 local MobSkills = require('data/mobskills')
 local MagicSkills = require('data/magicskills')
-local WeaponskillMsgs = T{ 103, 185, 187, 238, }
+local WeaponskillMsgs = T{ 103, 185, 187, 188, 238, }
+local BaseDelay = 4
+local BaseWindow = 6
 
 ---@class SkillchainSettings
----@field dataSet 'retail'|'horizon'
+---@field dataSet    'retail'|'horizon'
 ---@field windowName string
 ---@field windowSize Vec2
----@field windowPos Vec2
+---@field windowPos  Vec2
 
 ---@class Skillchain
----@field name string
----@field time number
----@field chain SkillchainStep[]
+---@field name   string
+---@field time   number
+---@field chain  SkillchainStep[]
+---@field active boolean
 
 ---@class SkillchainStep
----@field id number
----@field time number
----@field type ChainType
----@field name string
----@field base_damage number
+---@field id           number
+---@field type         number
+---@field name         string
+---@field base_damage  number
 ---@field bonus_damage number?
----@field resonance Resonance?
+---@field resonance    string?
 
 ---@type SkillchainSettings
 local defaultConfig = {
@@ -142,20 +144,23 @@ end
 ---@param mobs         Skillchain[]
 ---@param actionName   string
 ---@param attrInfo     string
+---@param extraDelay        number
 ---@param msgWhitelist table?
-local function handleChainStep(packet, mobs, actionName, attrInfo, msgWhitelist)
+local function handleChainStep(packet, mobs, actionName, attrInfo, extraDelay, msgWhitelist)
     if packet.target_count < 1 then
         return
     end
 
     local target = packet.targets[1]
+    local closeTime = os.time() + BaseDelay + BaseWindow + extraDelay
 
     -- Set up our display data
     ---@type Skillchain
     local mob = mobs[target.id] or {
         name = getEntityByServerId(target.id).Name,
-        time = nil,
+        time = closeTime,
         chain = { },
+        active = false,
     }
 
     for j = 1, target.action_count do
@@ -170,7 +175,6 @@ local function handleChainStep(packet, mobs, actionName, attrInfo, msgWhitelist)
         ---@type SkillchainStep
         local chain_step = {
             id = action.sub_kind,
-            time = os.time(),
             type = ChainType.Unknown,
             name = actionName,
             base_damage = action.param,
@@ -181,19 +185,22 @@ local function handleChainStep(packet, mobs, actionName, attrInfo, msgWhitelist)
         -- Specialize our chain step
         if action.miss == 1 then
             chain_step.type = ChainType.Miss
+            mob.time = mob.time or closeTime
         elseif not action.has_proc then
             chain_step.type = ChainType.Starter
             chain_step.resonance = attrInfo
 
-            mob.time = os.time()
+            mob.time = closeTime
             mob.chain = { }
+            mob.active = true
         elseif action.has_proc then
             chain_step.type = ChainType.Skillchain
             chain_step.resonance = Resonances[action.proc_message]
 
-            mob.time = os.time()
+            mob.time = closeTime
         else
             chain_step.type = ChainType.Unknown
+            mob.time = closeTime
         end
 
         table.insert(mob.chain, chain_step)
@@ -219,8 +226,9 @@ local function HandleWeaponskill(packet, mobs)
     local resources = AshitaCore:GetResourceManager()
     local actionName = resources:GetAbilityById(packet.param).Name[1]
     local attrs = table.concat(weaponskillInfo.attr, ', ')
+    local extraDelay = weaponskillInfo.delay or 0
 
-    handleChainStep(packet, mobs, actionName, attrs, WeaponskillMsgs)
+    handleChainStep(packet, mobs, actionName, attrs, extraDelay, WeaponskillMsgs)
 end
 
 -- Collects and collates data about a particular action in order for the render
@@ -239,8 +247,9 @@ local function HandlePetAbility(packet, mobs)
     local resources = AshitaCore:GetResourceManager()
     local actionName = resources:GetString('monsters.abilities', packet.param - 256):trimend('\0')
     local attrs = table.concat(petAbilInfo.attr, ', ')
+    local extraDelay = petAbilInfo.delay or 0
 
-    handleChainStep(packet, mobs, actionName, attrs)
+    handleChainStep(packet, mobs, actionName, attrs, extraDelay)
 end
 
 -- Collects and collates data about a particular action in order for the render
@@ -259,8 +268,9 @@ local function HandleMobSkill(packet, mobs)
     local resources = AshitaCore:GetResourceManager()
     local actionName = resources:GetString('monsters.abilities', packet.param - 256):trimend('\0')
     local attrs = table.concat(mobSkillInfo.attr, ', ')
+    local extraDelay = mobSkillInfo.delay or 0
 
-    handleChainStep(packet, mobs, actionName, attrs)
+    handleChainStep(packet, mobs, actionName, attrs, extraDelay)
 end
 
 ---@param packet ActionPacket
@@ -276,8 +286,9 @@ local function HandleMagicChain(packet, mobs)
     local resources = AshitaCore:GetResourceManager()
     local actionName = resources:GetSpellById(packet.param).Name[1]
     local attrs = table.concat(magicSkillInfo.attr, ', ')
+    local extraDelay = magicSkillInfo.delay or 0
 
-    handleChainStep(packet, mobs, actionName, attrs)
+    handleChainStep(packet, mobs, actionName, attrs, extraDelay)
 end
 
 -- Collects and collates data about a particular action in order for the render
@@ -312,7 +323,6 @@ local function HandleMagicBurst(packet, mobs)
             if action.message == burstInfo.burst_msg then
                 chain_step = {
                     id = packet.param,
-                    time = os.time(),
                     type = ChainType.MagicBurst,
                     name = AshitaCore:GetResourceManager():GetSpellById(packet.param).Name[1],
                     base_damage = when(burstInfo.no_dmg, nil, action.param),
@@ -329,6 +339,8 @@ end
 -- Draws a single skillchain.
 ---@param mob Skillchain
 local function DrawMob(mob)
+    local now = os.time()
+
     -- Create the heading for our skillchain.
     imgui.Text(mob.name)
     -- Fill out the body of our skillchain.
@@ -356,15 +368,15 @@ local function DrawMob(mob)
 
     -- Create the footer for our skillchain, noting the remaining window and
     -- including a spacer between the mobs.
-    if mob.time ~= nil then
-        local time_remaining = 10 - math.abs(mob.time - os.time())
-        if time_remaining >= 0 then
-            -- you must wait 3 seconds before weaponskilling, but the remaining
-            -- 7 seconds are free game for burst and skilling
-            if time_remaining <= 7 then
-                imgui.BulletText(string.format('%is - go!', time_remaining))
+    if mob.active then
+        local remainingTime = mob.time - now
+        if remainingTime >= 0 then
+            -- you must wait until the animation begins before the SC window
+            -- opens up
+            if remainingTime <= BaseWindow then
+                imgui.BulletText(string.format('%is - go!', remainingTime))
             else
-                imgui.BulletText(string.format('%is - wait...', time_remaining))
+                imgui.BulletText(string.format('%is - wait...', remainingTime))
             end
         else
             imgui.BulletText('closed.')
@@ -391,17 +403,9 @@ end
 ---@param chains Skillchain[]
 local function RunGarbageCollector(chains)
     for i, mob in pairs(chains) do
-        if mob.time == nil and #mob.chain > 0 and mob.chain[#mob.chain].type == ChainType.Miss then
-            -- this means our starter missed
-            local timeSince = os.time() - mob.chain[#mob.chain].time
-            if timeSince > 12 then
-                chains[i] = nil
-            end
-        elseif mob.time ~= nil then
-            local timeSince = os.time() - mob.time
-            if timeSince > 16 then
-                chains[i] = nil
-            end
+        local timeSince = os.time() - mob.time
+        if timeSince > 6 then
+            chains[i] = nil
         end
     end
 end
@@ -439,7 +443,8 @@ local function OnCommand(e)
         local testMob = {
             chain = { },
             name = 'Test Mob',
-            time = os.time(),
+            time = os.time() + 10,
+            active = true,
         }
 
         ---@type SkillchainStep
