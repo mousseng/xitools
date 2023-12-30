@@ -852,7 +852,7 @@ local tgt = {
     DrawMain = function(options, gOptions)
         local tgt = AshitaCore:GetMemoryManager():GetTarget()
         local targetId = tgt:GetTargetIndex(0)
-        local targetActive = tgt:GetActive(0) == 1
+        local targetActive = tgt:GetIsActive(0) == 1
         local subTargetId = tgt:GetTargetIndex(1)
         local subTargetActive = tgt:GetIsSubTargetActive() == 1
         local totId = 0
