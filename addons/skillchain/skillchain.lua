@@ -198,6 +198,7 @@ local function handleChainStep(packet, mobs, actionName, attrInfo, extraDelay, m
             chain_step.resonance = Resonances[action.proc_message]
 
             mob.time = closeTime
+            mob.active = true
         else
             chain_step.type = ChainType.Unknown
             mob.time = closeTime
