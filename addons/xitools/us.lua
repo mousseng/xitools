@@ -120,9 +120,9 @@ end
 local function IsSubTargetActive(target)
     local flags = target:GetSubTargetFlags()
     if flags == 0xFFFFFFFF then
-        return target:GetActive(1) == 1
+        return target:GetIsActive(1) == 1
     else
-        return target:GetActive(0) == 1
+        return target:GetIsActive(0) == 1
     end
 end
 
