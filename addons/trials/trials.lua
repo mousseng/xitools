@@ -177,6 +177,11 @@ local function HandleWeaponskill(packet)
 
     local action = target.actions[1]
 
+    -- ignore non-weaponskill things
+    if not T{ 103, 185, 187, 188, 238, }:contains(action.message) then
+        return
+    end
+
     -- no points for misses
     if action.reaction == 0x01 or action.reaction == 0x09 then
         return
