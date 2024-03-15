@@ -358,6 +358,13 @@ local fishe = {
         local player = GetPlayerEntity()
         if player == nil then return end
 
+        -- reset state on zoning in case you get boated
+        if e.id == 0x00A then
+            currentLine.hook = nil
+            currentLine.feel = nil
+            return
+        end
+
         if e.id == 0x027 then
             local msg = packets.inbound.fishCatch.parse(e.data)
             if msg.player == player.ServerId then
