@@ -275,7 +275,7 @@ local function DrawCurrent()
     local day = AshitaCore:GetResourceManager():GetString('days', date.weekday)
 
     imgui.Separator()
-    imgui.Text(('%-15s %2i%%%%'):format(moon, date.moon_percent))
+    imgui.Text(('%-15s %2i%%'):format(moon, date.moon_percent))
     imgui.Text(('%-13s %02i:%02i'):format(day, time.h, time.m))
     imgui.Text(('Restock at... %02i:00'):format(poolResets[math.floor(time.h)]))
 end
