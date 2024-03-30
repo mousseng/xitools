@@ -673,7 +673,7 @@ end
 
 ---@param hpPercent integer
 local function DrawHp(hpPercent)
-    local title = string.format('HP %3i%%%%', hpPercent)
+    local title = string.format('HP %3i%%', hpPercent)
     local textColor = ui.Colors.White
     local barColor = ui.Colors.HpBar
 
