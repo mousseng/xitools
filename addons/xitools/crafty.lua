@@ -150,11 +150,11 @@ local function DrawRecipe(recipe, skills, inv, res)
 end
 
 local recipeFilter = { '' }
-local searchResults = T{ [''] = T{ } }
+local searchResults = { [''] = { } }
 local function FilterRecipes(filter)
     local res = AshitaCore:GetResourceManager()
     if searchResults[filter] == nil then
-        searchResults[filter] = T{ }
+        searchResults[filter] = { }
         -- TODO: remove the "by skill" bits
         for skillId, recipeList in ipairs(recipesBySkill) do
             for _, recipe in ipairs(recipeList) do
@@ -165,7 +165,7 @@ local function FilterRecipes(filter)
                 local fullName = item.LogNameSingular[1]
                 if itemName:lower():match(filter)
                 or fullName:lower():match(filter) then
-                    searchResults[filter]:append(recipe)
+                    table.insert(searchResults[filter], recipe)
                 end
             end
         end
