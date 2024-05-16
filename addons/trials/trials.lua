@@ -145,8 +145,11 @@ local function LoadConfig(c)
         config = c
     end
 
-    config.serverId = GetPlayerEntity().ServerId
-    settings.save()
+    local player = GetPlayerEntity()
+    if player ~= nil then
+        config.serverId = GetPlayerEntity().ServerId
+        settings.save()
+    end
 end
 
 local function GetMainHand()
