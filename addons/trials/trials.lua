@@ -183,7 +183,7 @@ local function HandleWeaponskill(packet)
     end
 
     -- no points for misses
-    if action.reaction == 0x01 or action.reaction == 0x09 then
+    if action.miss == 1 then
         return
     end
 
@@ -191,8 +191,8 @@ local function HandleWeaponskill(packet)
     local earnedPoints = 1
 
     -- forming a skillchain gives bonus points
-    if action.has_add_effect then
-        earnedPoints = wsPoints[action.add_effect_message]
+    if action.has_proc then
+        earnedPoints = wsPoints[action.proc_message]
     end
 
     config.weapons[weapon].Cur = config.weapons[weapon].Cur + earnedPoints
