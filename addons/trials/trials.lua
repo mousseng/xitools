@@ -1,6 +1,6 @@
 addon.name    = 'trials'
 addon.author  = 'lin'
-addon.version = '0.1'
+addon.version = '0.2'
 addon.desc    = 'Track weaponskill points'
 
 require('common')
