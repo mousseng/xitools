@@ -1,11 +1,16 @@
 addon.name    = 'minimap-helper'
 addon.author  = 'lin'
-addon.version = '2.0'
+addon.version = '2.1'
 addon.desc    = 'Automates minimap scale changes'
 
 require('common')
+local ffi = require('ffi')
 local chat = require('chat')
 local settings = require('settings')
+
+ffi.cdef[[
+double strtod(const char *str, char **str_end);
+]]
 
 local defaultScale = '0.5'
 local defaultConfig = T{ }
@@ -29,11 +34,25 @@ local function LogError(str, ...)
     print(chat.header(addon.name):append(chat.error(str)):format(...))
 end
 
+---@param str string
+local function IsNumber(str)
+    local originalLocale = os.setlocale()
+
+    os.setlocale('en_US')
+    local numEn = ffi.C.strtod(str, nil)
+
+    os.setlocale('fr_FR')
+    local numFr = ffi.C.strtod(str, nil)
+
+    os.setlocale(originalLocale)
+    return numEn ~= nil or numFr ~= nil
+end
+
 ---Sets the minimap scale and saves to character configuration.
 ---@param zone  number
 ---@param scale string
 local function SetMinimapScale(zone, scale)
-    if tonumber(scale, 10) == nil then
+    if not IsNumber(scale) then
         LogError('%s is not a number', scale)
         return
     end
@@ -41,7 +60,7 @@ local function SetMinimapScale(zone, scale)
     config[zone] = scale
     settings.save()
 
-    LogInfo('setting scale for zone %d to %s', zone, tostring(scale))
+    LogInfo('setting scale for zone %d to %s', zone, scale)
     AshitaCore:GetChatManager():QueueCommand(1, '/minimap zoom ' .. scale)
 end
 
