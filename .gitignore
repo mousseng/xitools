@@ -2,4 +2,10 @@
 .vs/
 .vscode/
 
+config/addons/thotbar/**/bindings/
+config/addons/thotbar/**/settings.lua
+config/addons/luashitacast/**/settings.lua
+config/minimap/themes/circle/
+config/minimap/themes/square/
+
 xitools.7z
