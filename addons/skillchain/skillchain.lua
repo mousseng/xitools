@@ -41,7 +41,7 @@ local BaseWindow = 6
 ---@field resonance    string?
 
 ---@type SkillchainSettings
-local defaultConfig = {
+local defaultConfig = T{
     dataSet = 'retail',
     windowName = 'Skillchain',
     windowSize = { -1, -1 },
