@@ -105,6 +105,18 @@ local retail = {
     [503] = { name = "Impact",                burst_msg = 252, },
     [218] = { name = "Meteor",                burst_msg = 252, },
     [219] = { name = "Comet",                 burst_msg = 252, },
+    [828] = { name = "Fira",                  burst_msg = 252, },
+    [829] = { name = "Fira II",               burst_msg = 252, },
+    [830] = { name = "Blizzara",              burst_msg = 252, },
+    [831] = { name = "Blizzara II",           burst_msg = 252, },
+    [832] = { name = "Aera",                  burst_msg = 252, },
+    [833] = { name = "Aera II",               burst_msg = 252, },
+    [834] = { name = "Stonera",               burst_msg = 252, },
+    [835] = { name = "Stonera II",            burst_msg = 252, },
+    [836] = { name = "Thundara",              burst_msg = 252, },
+    [837] = { name = "Thundara II",           burst_msg = 252, },
+    [838] = { name = "Watera",                burst_msg = 252, },
+    [839] = { name = "Watera II",             burst_msg = 252, },
 
     -- debuffs
     [ 58] = { name = "Paralyze",              burst_msg = 271, no_dmg = true, },
