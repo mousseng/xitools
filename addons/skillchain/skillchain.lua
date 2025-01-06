@@ -1,6 +1,6 @@
 addon.name    = 'skillchain'
 addon.author  = 'lin'
-addon.version = '4.0'
+addon.version = '4.1'
 addon.desc    = 'A little skillchain tracker so you know when things happen'
 
 require('common')
@@ -8,6 +8,7 @@ local settings = require('settings')
 local ffxi = require('lin/ffxi')
 local imgui = require('lin/imgui')
 local packets = require('lin/packets')
+local isDuplicate = require('packet-dedupe')
 
 local Elements = require('data/elements')
 local ChainType = require('data/chaintype')
@@ -144,7 +145,7 @@ end
 ---@param mobs         Skillchain[]
 ---@param actionName   string
 ---@param attrInfo     string
----@param extraDelay        number
+---@param extraDelay   number
 ---@param msgWhitelist table?
 local function handleChainStep(packet, mobs, actionName, attrInfo, extraDelay, msgWhitelist)
     if packet.target_count < 1 then
@@ -296,7 +297,7 @@ end
 -- function to display information about active skillchains. Specialized on
 -- magic abilities; only handles magic bursts currently, not BLU chains.
 ---@param packet ActionPacket
----@param mobs Skillchain[]
+---@param mobs   Skillchain[]
 local function HandleMagicBurst(packet, mobs)
     local burstInfo = MagicBursts[config.dataSet][packet.param]
 
@@ -467,6 +468,10 @@ end
 
 ---@param e PacketInEventArgs
 local function OnPacket(e)
+    if isDuplicate(e) then
+        return
+    end
+
     if e.id == 0x28 then
         ---@type ActionPacket
         local action = packets.inbound.action.parse(e.data_modified_raw)
