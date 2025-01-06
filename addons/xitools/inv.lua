@@ -657,20 +657,20 @@ local function DrawInventory()
     imgui.Text(('%s G'):format(inventories.gil))
 
     if imgui.BeginTabBar('##xitools.inventories.all', ImGuiTabBarFlags_NoCloseWithMiddleMouseButton) then
-        if imgui.BeginTabItem('bag##all1') then
+        if imgui.BeginTabItem('bag##xitools.inventories.all.1') then
             DrawSubInventory('temp items', 'bag', 'temp')
             DrawSubInventory('inventory', 'bag', 'inv')
             imgui.EndTabItem()
         end
 
-        if imgui.BeginTabItem('satchel##all2') then
+        if imgui.BeginTabItem('satchel##xitools.inventories.all.2') then
             DrawSubInventory('mog satchel', 'satchel', 'satchel')
             DrawSubInventory('mog case', 'satchel', 'case')
             DrawSubInventory('mog sack', 'satchel', 'sack')
             imgui.EndTabItem()
         end
 
-        if imgui.BeginTabItem('ward##all3') then
+        if imgui.BeginTabItem('ward##xitools.inventories.all.3') then
             DrawSubInventory('wardrobe 1', 'wardrobe', 'wardrobe1')
             DrawSubInventory('wardrobe 2', 'wardrobe', 'wardrobe2')
             DrawSubInventory('wardrobe 3', 'wardrobe', 'wardrobe3')
@@ -682,7 +682,7 @@ local function DrawInventory()
             imgui.EndTabItem()
         end
 
-        if imgui.BeginTabItem('house##all4') then
+        if imgui.BeginTabItem('house##xitools.inventories.all.4') then
             DrawSubInventory('mog safe 1', 'house', 'mogSafe1')
             DrawSubInventory('mog safe 2', 'house', 'mogSafe2')
             DrawSubInventory('storage', 'house', 'storage')
@@ -700,22 +700,22 @@ local function DrawInventoryUnified()
     imgui.Text(('%s G'):format(inventories.gil))
 
     if imgui.BeginTabBar('##xitools.inventories.unified', ImGuiTabBarFlags_NoCloseWithMiddleMouseButton) then
-        if imgui.BeginTabItem('bag##unified1') then
+        if imgui.BeginTabItem('bag##xitools.inventories.unified.1') then
             DrawBag('bag', 'all')
             imgui.EndTabItem()
         end
 
-        if imgui.BeginTabItem('satchel##unified2') then
+        if imgui.BeginTabItem('satchel##xitools.inventories.unified.2') then
             DrawBag('satchel', 'all')
             imgui.EndTabItem()
         end
 
-        if imgui.BeginTabItem('ward##unified3') then
+        if imgui.BeginTabItem('ward##xitools.inventories.unified.3') then
             DrawBag('wardrobe', 'all')
             imgui.EndTabItem()
         end
 
-        if imgui.BeginTabItem('house##unified4') then
+        if imgui.BeginTabItem('house##xitools.inventories.unified.4') then
             DrawBag('house', 'all')
             imgui.EndTabItem()
         end
