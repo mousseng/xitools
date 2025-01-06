@@ -22,7 +22,7 @@ local sets = {
     Idle = Equip.NewSet {
         Ammo  = "Sapience Orb",
 
-        Head  = "Aya. Zucchetto +1",
+        Head  = "Aya. Zucchetto +2",
         Body  = "Jhakri Robe +1",
         Hands = "Aya. Manopolas +1",
         Legs  = "Aya. Cosciales +1",
@@ -31,7 +31,7 @@ local sets = {
         Neck  = "Sanctity Necklace",
         Ear1  = "Brutal Earring",
         Ear2  = "Hashishin Earring",
-        Ring1 = "Dim. Ring (Holla)",
+        Ring1 = "Defending Ring",
         Ring2 = "Warp Ring",
         Back  = "Aptitude Mantle +1",
         Waist = "Sailfi Belt +1",

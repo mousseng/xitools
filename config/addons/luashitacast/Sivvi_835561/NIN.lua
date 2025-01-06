@@ -20,7 +20,7 @@ local settings = {
     },
     Merit = {
         Main = "Kaja Knife",
-        Sub  = "Kaja Katana",
+        Sub  = "Naegling",
         Ammo = "Date Shuriken",
     },
     Capes = {
@@ -46,7 +46,7 @@ local sets = {
         Neck  = "Sanctity Necklace",
         Ear1  = "Brutal Earring",
         Ear2  = "Hattori Earring",
-        Ring1 = "Dim. Ring (Holla)",
+        Ring1 = "Defending Ring",
         Ring2 = "Warp Ring",
         Back  = settings.Capes.Auto,
         Waist = "Sailfi Belt +1",
@@ -68,7 +68,7 @@ local sets = {
             Ear1  = "Brutal Earring",
             Ear2  = "Hattori Earring",
             Ring1 = "Epona's Ring",
-            Ring2 = "Hizamaru Ring",
+            Ring2 = "Rajas Ring",
             Back  = settings.Capes.Auto,
             Waist = "Sailfi Belt +1",
         },
@@ -77,7 +77,7 @@ local sets = {
 
             Head  = "Hattori Zukin +2",
             Body  = "Mummu Jacket +2",
-            Hands = "Mummu Wrists +2",
+            Hands = "Adhemar Wrist. +1",
             Legs  = "Mummu Kecks +2",
             Feet  = "Mummu Gamash. +2",
 
@@ -85,7 +85,7 @@ local sets = {
             Ear1  = "Brutal Earring",
             Ear2  = "Hattori Earring",
             Ring1 = "Epona's Ring",
-            Ring2 = "Hizamaru Ring",
+            Ring2 = "Rajas Ring",
             Back  = settings.Capes.Auto,
             Waist = "Sailfi Belt +1",
         },
@@ -102,7 +102,7 @@ local sets = {
             Ear1  = "Brutal Earring",
             Ear2  = "Hattori Earring",
             Ring1 = "Epona's Ring",
-            Ring2 = "Hizamaru Ring",
+            Ring2 = "Rajas Ring",
             Back  = settings.Capes.Auto,
             Waist = "Sailfi Belt +1",
         },
@@ -224,7 +224,7 @@ local sets = {
             Back  = settings.Capes.DexWs,
         },
         ['Aeolian Edge'] = Equip.NewSet {
-            Ammo  = "Seething Bomblet +1",
+            Ammo  = "Ghastly Tathlum +1",
 
             Head  = "Mochi. Hatsuburi +2",
             Body  = "Herculean Vest",
@@ -236,7 +236,7 @@ local sets = {
             Ear1  = "Hecate's Earring",
             Ear2  = "Friomisi Earring",
             Ring1 = "Shiva Ring",
-            Ring2 = "Mephitas's Ring +1",
+            Ring2 = "Weather. Ring",
             Back  = settings.Capes.DexWs,
             Waist = "Skrymir Cord",
         },
@@ -254,6 +254,9 @@ local sets = {
             Ring2 = "Mummu Ring",
             Back  = settings.Capes.DexWs,
             Waist = "Fotia Belt",
+        },
+        ['Evisceration'] = Equip.NewSet {
+            Ammo = "Yetshila",
         },
         ['Savage Blade'] = Equip.NewSet {
             Ammo  = "Seething Bomblet +1",

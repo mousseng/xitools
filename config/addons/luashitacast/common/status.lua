@@ -324,4 +324,11 @@ function status.IsRegen(spell)
         or spell.Id == spells.RegenV
 end
 
+---@param spell table
+---@return boolean
+function status.IsColure(spell)
+    return spell.Name:startswith('Indi-')
+        or spell.Name:startswith('Geo-')
+end
+
 return status
