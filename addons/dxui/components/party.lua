@@ -4,26 +4,23 @@ local d3d = require('d3d8')
 local ffi = require('ffi')
 local log = require('log')
 local box2 = require('primitives/box2')
+local colors = require('primitives/colors')
 local player = require('primitives/party-player')
-
-local borderColor = d3d.D3DCOLOR_ARGB(255, 192, 192, 192)
-local bgColor = d3d.D3DCOLOR_ARGB(204, 20, 20, 20)
 
 local component = { }
 
 local state = {
     [0] = {
         id             = 0,
-        name           = 'someone',
-        zone           = 'somewhere',
-        job            = 'NIN99',
-        sub            = 'WAR49',
-        hp             = 0,
-        mp             = 0,
+        zone           = 'Port San d\'Oria',
+        name           = 'Sivvi',
+        jobs           = 'NIN99/WAR49',
+        hp             = 2282,
+        mp             = 185,
         tp             = 0,
         hpp            = 1.0,
         mpp            = 1.0,
-        tpp            = 1.0,
+        tpp            = 0.0,
         distance       = 0.0,
         isLeadParty    = false,
         isLeadAlliance = false,
@@ -36,11 +33,9 @@ local state = {
 }
 
 function component:init()
-    log.dbg('initializing party component')
-
     component.panel = box2.new()
-        :bg(bgColor)
-        :border(borderColor)
+        :bg(colors.bgPanel)
+        :border(colors.borderLight)
         :size(424, 73)
         :pos(256, 256)
 
@@ -51,12 +46,12 @@ function component:init()
 end
 
 function component:draw(dxui)
-    log.dbg('rendering party component')
     component.panel:draw(dxui)
     component.player0:draw(dxui)
 end
 
-function component:twiddle()
+function component:update()
+    component.player0:update(state[0])
 end
 
 return component

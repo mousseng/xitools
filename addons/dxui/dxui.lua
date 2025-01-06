@@ -8,39 +8,39 @@ local bit = require('bit')
 local d3d = require('d3d8')
 local ffi = require('ffi')
 local log = require('log')
-
-local componentDir = string.format('%s\\components', addon.path)
+local utils = require('utils')
+local state = require('state')
 
 local dxui = {
     scale = ffi.new('D3DXVECTOR2', { 1.0, 1.0 }),
     surface = nil,
 }
 
-local components = { }
+local components = {
+    require('components/party'):init()
+}
 
 local function init()
     local sprite = ffi.new('ID3DXSprite*[1]')
-    if (ffi.C.D3DXCreateSprite(d3d.get_device(), sprite) == ffi.C.S_OK) then
+    if ffi.C.D3DXCreateSprite(d3d.get_device(), sprite) == ffi.C.S_OK then
         dxui.surface = d3d.gc_safe_release(ffi.cast('ID3DXSprite*', sprite[0]))
     else
         log.err('failed to create sprite')
     end
-
-    for entry in io.popen(string.format([[dir "%s" /b /a-d]], componentDir)):lines() do
-        local component = dofile(string.format('%s\\%s', componentDir, entry))
-        if component then
-            local comp = component:init()
-            table.insert(components, comp)
-        end
-    end
 end
 
 local function render()
+    if utils.ShouldHideUi()
+    or dxui.surface == nil then
+        return
+    end
+
     dxui.surface:Begin()
     for _, component in ipairs(components) do
         component:draw(dxui)
     end
     dxui.surface:End()
+
     log.debug = false
 end
 
@@ -55,7 +55,7 @@ local function command(e)
     end
 
     if args[2] == 'twiddle' then
-        components[1]:twiddle()
+        components[1]:update()
     end
 end
 

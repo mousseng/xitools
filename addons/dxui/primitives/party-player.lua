@@ -13,7 +13,6 @@ local component = { }
 function component.new()
     local c = { }
 
-    -- TODO: name, job/lvl, dist
     c.name = boxText.new()
         :pos(0, 0)
         :font('Consolas', 16)
@@ -29,21 +28,21 @@ function component.new()
         :size(128, 16)
         :bg(colors.bgColor)
         :fg(colors.hpColor)
-        :border(colors.borderColor)
+        :border(colors.borderDark)
 
     c.mp = box3.new()
         :pos(128 + 10, 16)
         :size(128, 16)
         :bg(colors.bgColor)
         :fg(colors.mpColor)
-        :border(colors.borderColor)
+        :border(colors.borderDark)
 
     c.tp = box3.new()
         :pos(256 + 20, 16)
         :size(128, 16)
         :bg(colors.bgColor)
         :fg(colors.tpColor)
-        :border(colors.borderColor)
+        :border(colors.borderDark)
 
     -- TODO: buffs
 
@@ -57,6 +56,8 @@ function component.new()
     end
 
     function c:update(player)
+        self.name:text(player.name)
+        self.jobs:text(player.jobs)
         self.hp:percent(player.hpp)
         self.mp:percent(player.mpp)
         self.tp:percent(player.tpp)
