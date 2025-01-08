@@ -228,7 +228,7 @@ local function EscapeString(str)
             replace('\xEF\x24', 'Water Res'):
             replace('\xEF\x25', 'Light Res'):
             replace('\xEF\x26', 'Dark Res'):
-            replace('\x25',     '%%')
+            replace('\x25',     '%')
     end
 
     return ''
