@@ -1,6 +1,6 @@
 addon.name    = 'omen'
 addon.author  = 'lin'
-addon.version = '0.1'
+addon.version = '1.0'
 addon.desc    = 'Track objectives in omen'
 
 local imgui = require('lin/ui')
@@ -49,12 +49,11 @@ local mainWindow = imgui.lin.Window {
     pos = { 400, 400 },
 }
 
-local function parseStringMessage(packet)
-    -- ignore everything when you're not in reisenjima henge
-    if party:GetMemberZone(0) ~= OMEN_ZONE then
-        return nil
-    end
+local function isInOmen(zoneId)
+    return (zoneId or party:GetMemberZone(0)) == OMEN_ZONE
+end
 
+local function parseStringMessage(packet)
     local msgId = struct.unpack('I2', packet, 0x0a + 1) - 0x8000
     if messages[msgId] == nil then
         return nil
@@ -73,11 +72,6 @@ local function parseStringMessage(packet)
 end
 
 local function parseRestMessage(packet)
-    -- ignore everything when you're not in reisenjima henge
-    if party:GetMemberZone(0) ~= OMEN_ZONE then
-        return nil
-    end
-
     local msgId = struct.unpack('I2', packet, 0x1a + 1) - 0x8000
     if messages[msgId] == nil then
         return nil
@@ -96,11 +90,6 @@ local function parseRestMessage(packet)
 end
 
 local function parseNpcMessage(packet)
-    -- ignore everything when you're not in reisenjima henge
-    if party:GetMemberZone(0) ~= OMEN_ZONE then
-        return nil
-    end
-
     local msgId = struct.unpack('I2', packet, 0x0a + 1) - 0x8000
     if messages[msgId] == nil then
         return nil
@@ -117,6 +106,11 @@ end
 ---@param e PacketInEventArgs
 ---@return OmenMessage?
 local function parseOmenMessage(e)
+    -- ignore everything when you're not in reisenjima henge
+    if not isInOmen() then
+        return nil
+    end
+
     if e.id == 0x027 then
         return parseStringMessage(e.data)
     elseif e.id == 0x02a then
@@ -129,8 +123,7 @@ end
 ---Gets a fresh objective state to begin tracking
 ---@return OmenObjectives
 local function getNewObjectives()
-    ---@type OmenObjectives
-    local obj = {
+    return {
         mainTimer = 0,
         floorTimer = 0,
         floor = {
@@ -141,16 +134,13 @@ local function getNewObjectives()
         },
         transient = { },
     }
-
-    return obj
 end
 
 local currentObjectives = getNewObjectives()
 
 ---Checks the player zone on load to ensure we don't show it at a silly time
 local function checkZone()
-    local isInOmen = party:GetMemberZone(0) == OMEN_ZONE
-    mainWindow.isVisible[1] = isInOmen
+    mainWindow.isVisible[1] = isInOmen()
 end
 
 ---Maintain objective state on zone change
@@ -158,8 +148,7 @@ end
 local function handleZoning(e)
     if e.id == 0x0a then
         local zone = struct.unpack('i2', e.data, 0x30 + 1)
-        local isInOmen = zone == OMEN_ZONE
-        mainWindow.isVisible[1] = isInOmen
+        mainWindow.isVisible[1] = isInOmen(zone)
         currentObjectives = getNewObjectives()
     end
 end
