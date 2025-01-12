@@ -79,10 +79,12 @@ function status.IsAttacking(player)
 end
 
 ---@param player table
+---@param luopan table?
 ---@return boolean
-function status.IsNewlyIdle(player)
+function status.IsNewlyIdle(player, luopan)
     status.lastStatus = status.currentStatus
     status.currentStatus = player.Status
+    if luopan then status.currentStatus = 'Luopan' end
 
     return status.lastStatus ~= status.currentStatus
         and (status.currentStatus == 'Idle' or status.currentStatus == 'Resting')
@@ -181,7 +183,11 @@ local spells = {
     TonkoIchi = 353,
     TonkoNi = 354,
     RegenIV = 477,
+    Firaja = 496,
+    Waterja = 501,
     RegenV = 504,
+    Fira = 828,
+    WateraII = 839,
     Distract = 841,
     FrazzleII = 844,
     DrainIII = 880,
@@ -218,6 +224,8 @@ end
 function status.IsNuke(spell)
     return (spell.Id >= spells.Fire and spell.Id <= spells.FloodII)
         or (spell.Id >= spells.Burn and spell.Id <= spells.Drown)
+        or (spell.Id >= spells.Fira and spell.Id <= spells.WateraII)
+        or (spell.Id >= spells.Firaja and spell.Id <= spells.Waterja)
 end
 
 ---@param spell table

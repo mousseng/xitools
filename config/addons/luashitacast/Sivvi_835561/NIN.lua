@@ -14,7 +14,7 @@ local settings = {
     TreasureHunter = false,
     Futae = false,
     Default = {
-        Main = "Kaja Katana",
+        Main = "Naegling",
         Sub  = "Ternion Dagger +1",
         Ammo = "Date Shuriken",
     },
@@ -68,7 +68,7 @@ local sets = {
             Ear1  = "Brutal Earring",
             Ear2  = "Hattori Earring",
             Ring1 = "Epona's Ring",
-            Ring2 = "Rajas Ring",
+            Ring2 = "Defending Ring",
             Back  = settings.Capes.Auto,
             Waist = "Sailfi Belt +1",
         },
@@ -230,7 +230,7 @@ local sets = {
             Body  = "Herculean Vest",
             Hands = "Herculean Gloves",
             Legs  = "Herculean Trousers",
-            Feet  = "Hachiya Kyahan +2",
+            Feet  = "Herculean Boots",
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Hecate's Earring",
