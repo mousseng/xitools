@@ -73,7 +73,7 @@ local function listIndiOptions(spell)
     end
 end
 
-local function listGeoOptions(spell)
+local function listGeoOptions(spell, targets)
     if not player:HasSpell(spell.geo) then
         return
     end
@@ -100,7 +100,7 @@ local function drawSpellMenu(category, title, spells, targets)
         for _, spell in ipairs(spells) do
             if imgui.BeginMenu(spell.display) then
                 listIndiOptions(spell)
-                listGeoOptions(spell)
+                listGeoOptions(spell, targets)
                 imgui.EndMenu()
             end
         end
