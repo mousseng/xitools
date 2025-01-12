@@ -56,7 +56,7 @@ local Alliances = { }
 ---@param icon userdata
 local function CreateTexture(statusId, icon)
     if icon == nil then
-        print('xitools error: no icon for status ' .. tostring(statusId))
+        -- print('xitools error: no icon for status ' .. tostring(statusId))
         return nil
     end
 
