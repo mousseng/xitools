@@ -313,6 +313,18 @@
 			<name>fga4</name>
 		</spell>
 
+		<spell id="828">
+			<name>fra</name>
+		</spell>
+
+		<spell id="829">
+			<name>fra2</name>
+		</spell>
+
+		<!-- <spell id="???">
+			<name>fra3</name>
+		</spell> -->
+
 	<!-- Blizzards -->
 		<spell id="149">
 			<name>b</name>
@@ -361,6 +373,18 @@
 			<name>bga4</name>
 		</spell>
 
+		<spell id="830">
+			<name>bra</name>
+		</spell>
+
+		<spell id="831">
+			<name>bra2</name>
+		</spell>
+
+		<!-- <spell id="???">
+			<name>bra3</name>
+		</spell> -->
+
 	<!-- Aeros -->
 		<spell id="154">
 			<name>a</name>
@@ -398,6 +422,18 @@
 		<spell id="187">
 			<name>aga4</name>
 		</spell>
+
+		<spell id="832">
+			<name>ara</name>
+		</spell>
+
+		<spell id="833">
+			<name>ara2</name>
+		</spell>
+
+		<!-- <spell id="???">
+			<name>ara3</name>
+		</spell> -->
 
 	<!-- Stones -->
 		<spell id="159">
@@ -437,6 +473,18 @@
 			<name>sga4</name>
 		</spell>
 
+		<spell id="834">
+			<name>sra</name>
+		</spell>
+
+		<spell id="835">
+			<name>sra2</name>
+		</spell>
+
+		<!-- <spell id="???">
+			<name>sra3</name>
+		</spell> -->
+
 	<!-- Thunders -->
 		<spell id="164">
 			<name>t</name>
@@ -475,6 +523,18 @@
 			<name>tga4</name>
 		</spell>
 
+		<spell id="836">
+			<name>tra</name>
+		</spell>
+
+		<spell id="837">
+			<name>tra2</name>
+		</spell>
+
+		<!-- <spell id="???">
+			<name>tra3</name>
+		</spell> -->
+
 	<!-- Waters -->
 		<spell id="169">
 			<name>w</name>
@@ -512,6 +572,18 @@
 		<spell id="202">
 			<name>wga4</name>
 		</spell>
+
+		<spell id="838">
+			<name>wra</name>
+		</spell>
+
+		<spell id="839">
+			<name>wra2</name>
+		</spell>
+
+		<!-- <spell id="???">
+			<name>wra3</name>
+		</spell> -->
 
 	<!-- Haste -->
 		<spell id="57">
@@ -627,4 +699,58 @@
 		<spell id="52">
 			<name>sh5</name>
 		</spell>
+
+	<!-- Geomancy -->
+		<spell id="771">
+			<name>ih</name>
+			<name>ihaste</name>
+		</spell>
+
+		<spell id="801">
+			<name>gh</name>
+			<name>ghaste</name>
+		</spell>
+
+		<spell id="788">
+			<name>ifr</name>
+			<name>ifrail</name>
+			<name>ifrailty</name>
+		</spell>
+
+		<spell id="818">
+			<name>gfr</name>
+			<name>gfrail</name>
+			<name>gfrailty</name>
+		</spell>
+
+		<spell id="779">
+			<name>ifu</name>
+			<name>ifury</name>
+		</spell>
+
+		<spell id="809">
+			<name>gfu</name>
+			<name>gfury</name>
+		</spell>
+
+		<spell id="770">
+			<name>iref</name>
+			<name>irefresh</name>
+		</spell>
+
+		<spell id="800">
+			<name>gref</name>
+			<name>grefresh</name>
+		</spell>
+
+		<spell id="768">
+			<name>ireg</name>
+			<name>iregen</name>
+		</spell>
+
+		<spell id="798">
+			<name>greg</name>
+			<name>gregen</name>
+		</spell>
+
 </shorthand>
