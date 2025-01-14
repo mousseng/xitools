@@ -49,6 +49,10 @@ local function command(e)
         log.debug = true
     end
 
+    if args[2] == 'pos' and #args == 5 then
+        uiHost:pos(args[3], args[4], args[5])
+    end
+
     e.blocked = true
 end
 
