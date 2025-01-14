@@ -57,6 +57,10 @@ function box2.new()
         self.lrRect.right = 1
         self.lrRect.bottom = h
 
+        -- update our border positions based on current w/h
+        self.bPosition.y = self.position.y + h - 1
+        self.rPosition.x = self.position.x + w - 1
+
         return self
     end
 
