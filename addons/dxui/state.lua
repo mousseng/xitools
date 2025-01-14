@@ -24,7 +24,11 @@ local function getMemberJobs(index)
     local mainLv = party:GetMemberMainJobLevel(index)
     local subLv = party:GetMemberSubJobLevel(index)
 
-    if not sub then
+    if main == 0 then
+        return ''
+    end
+
+    if sub == 0 then
         local mainAbbr = resx:GetString('jobs.names_abbr', main)
         return string.format('%s%02d', mainAbbr, mainLv)
     end
