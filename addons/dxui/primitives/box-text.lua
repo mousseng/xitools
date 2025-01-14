@@ -24,6 +24,7 @@ local boxText = { }
 function boxText.new()
     local b = { }
 
+    b.isVisible = true
     b.gdiFont = gdi:create_object(fontSettings, true)
     b.position = ffi.new('D3DXVECTOR2', { 0, 0 })
 
@@ -63,6 +64,13 @@ function boxText.new()
     end
 
     function b:text(str)
+        -- avoid drawing things when we have no string value
+        if str == nil or str == '' then
+            self.isVisible = false
+            return self
+        end
+
+        self.isVisible = true
         self.gdiFont:set_text(str)
         self:realign()
         return self
@@ -80,6 +88,10 @@ function boxText.new()
     end
 
     function b:draw(dxui)
+        if not self.isVisible then
+            return self
+        end
+
         local tex, rect = self.gdiFont:get_texture()
         dxui.surface:Draw(tex, rect, dxui.scale, nil, 0.0, self.position, colors.white)
         return self
