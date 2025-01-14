@@ -9,6 +9,7 @@ local d3d = require('d3d8')
 local ffi = require('ffi')
 local log = require('log')
 local utils = require('utils')
+local uiHost = require('ui-host')
 local state = require('state')
 
 local dxui = {
@@ -16,17 +17,13 @@ local dxui = {
     surface = nil,
 }
 
-local components = {
-    require('components/party'):init()
-}
+local function listen(e)
+    state:listen(e)
+end
 
-local function init()
-    local sprite = ffi.new('ID3DXSprite*[1]')
-    if ffi.C.D3DXCreateSprite(d3d.get_device(), sprite) == ffi.C.S_OK then
-        dxui.surface = d3d.gc_safe_release(ffi.cast('ID3DXSprite*', sprite[0]))
-    else
-        log.err('failed to create sprite')
-    end
+local function update()
+    state:update()
+    uiHost:update()
 end
 
 local function render()
@@ -36,9 +33,7 @@ local function render()
     end
 
     dxui.surface:Begin()
-    for _, component in ipairs(components) do
-        component:draw(dxui)
-    end
+    uiHost:draw(dxui)
     dxui.surface:End()
 
     log.debug = false
@@ -54,11 +49,28 @@ local function command(e)
         log.debug = true
     end
 
-    if args[2] == 'twiddle' then
-        components[1]:update()
-    end
+    e.blocked = true
 end
 
-ashita.events.register('load', 'load', init)
-ashita.events.register('d3d_present', 'd3d_present', render)
-ashita.events.register('command', 'command', command)
+ashita.events.register('load', 'load', function()
+    -- first try to establish our drawing surface
+    local sprite = ffi.new('ID3DXSprite*[1]')
+    local result = ffi.C.D3DXCreateSprite(d3d.get_device(), sprite)
+
+    if result ~= ffi.C.S_OK then
+        log.err('failed to create sprite')
+        AshitaCore:GetChatManager():QueueCommand(-1, '/addon unload dxui')
+        return
+    end
+
+    dxui.surface = d3d.gc_safe_release(ffi.cast('ID3DXSprite*', sprite[0]))
+
+    -- then construct all of our consituent pieces
+    uiHost:init()
+
+    -- finally: let it rip
+    ashita.events.register('packet_in',    'dxui_listen', listen)
+    ashita.events.register('d3d_endscene', 'dxui_update', update)
+    ashita.events.register('d3d_present',  'dxui_draw',   render)
+    ashita.events.register('command',      'dxui_cmd',    command)
+end)

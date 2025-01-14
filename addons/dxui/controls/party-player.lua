@@ -4,45 +4,38 @@ local d3d = require('d3d8')
 local ffi = require('ffi')
 local gdi = require('gdifonts/include')
 local log = require('log')
-local box3 = require('primitives/box3')
-local boxText = require('primitives/boxText')
+local bar = require('controls/value-bar')
+local boxText = require('primitives/box-text')
 local colors = require('primitives/colors')
 
-local component = { }
+local control = { }
 
-function component.new()
+function control.new()
     local c = { }
 
     c.name = boxText.new()
         :pos(0, 0)
         :font('Consolas', 16)
         :text('Someone')
+        :outline(2, colors.borderDark)
 
     c.jobs = boxText.new()
         :pos(404, 0)
         :font('Consolas', 16, gdi.Alignment.Right)
         :text('JOB99/SUB49')
+        :outline(2, colors.borderDark)
 
-    c.hp = box3.new()
+    c.hp = bar.new()
         :pos(0, 16)
-        :size(128, 16)
-        :bg(colors.bgColor)
-        :fg(colors.hpColor)
-        :border(colors.borderDark)
+        :color(colors.hpColor)
 
-    c.mp = box3.new()
+    c.mp = bar.new()
         :pos(128 + 10, 16)
-        :size(128, 16)
-        :bg(colors.bgColor)
-        :fg(colors.mpColor)
-        :border(colors.borderDark)
+        :color(colors.mpColor)
 
-    c.tp = box3.new()
+    c.tp = bar.new()
         :pos(256 + 20, 16)
-        :size(128, 16)
-        :bg(colors.bgColor)
-        :fg(colors.tpColor)
-        :border(colors.borderDark)
+        :color(colors.tpColor)
 
     -- TODO: buffs
 
@@ -58,12 +51,17 @@ function component.new()
     function c:update(player)
         self.name:text(player.name)
         self.jobs:text(player.jobs)
+        self.hp:text(tostring(player.hp))
+        self.mp:text(tostring(player.mp))
+        self.tp:text(tostring(player.tp))
         self.hp:percent(player.hpp)
         self.mp:percent(player.mpp)
         self.tp:percent(player.tpp)
 
         if player.tp >= 1000 then
-            self.tp:fg(colors.tpActiveColor)
+            self.tp:color(colors.tpActiveColor)
+        else
+            self.tp:color(colors.tpColor)
         end
 
         return self
@@ -81,4 +79,4 @@ function component.new()
     return c
 end
 
-return component
+return control

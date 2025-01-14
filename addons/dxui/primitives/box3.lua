@@ -11,7 +11,7 @@ function box3.new()
 
     -- we'll colorize each piece by subtracting from white, so
     -- only a single 1-pixel texture is needed
-    b.texture = require('primitives/pixelTex')
+    b.texture = require('primitives/pixel-tex')
 
     b.bgColor = d3d.D3DCOLOR_ARGB(255, 0, 0, 0)
     b.fgColor = d3d.D3DCOLOR_ARGB(255, 255, 255, 255)

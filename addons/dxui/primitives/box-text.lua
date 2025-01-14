@@ -38,6 +38,12 @@ function boxText.new()
         return self
     end
 
+    function b:outline(width, d3dColor)
+        self.gdiFont:set_outline_width(width)
+        self.gdiFont:set_outline_color(d3dColor)
+        return self
+    end
+
     function b:pos(x, y)
         -- the positioning is a little funny. not sure where the extra height
         -- is coming from, but subtracting 4 vertical pixels seems to let me
