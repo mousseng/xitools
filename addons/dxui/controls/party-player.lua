@@ -5,10 +5,15 @@ local ffi = require('ffi')
 local gdi = require('gdifonts/include')
 local log = require('log')
 local bar = require('controls/value-bar')
+local iconList = require('controls/icon-list')
 local boxText = require('primitives/box-text')
 local colors = require('primitives/colors')
 
 local control = { }
+
+local ROW_H = 16
+local ICON_SZ = 24
+local ICON_PAD = 4
 
 function control.new()
     local c = { }
@@ -37,20 +42,25 @@ function control.new()
         :pos(256 + 20, 16)
         :color(colors.tpColor)
 
-    -- TODO: buffs
+    c.buffs = iconList.new()
+        :pos(0, 36)
+        :scale(ICON_SZ)
+        :limit(14)
 
     function c:pos(x, y)
-        self.name:pos(      x, y)
-        self.jobs:pos(404 + x, y)
-        self.hp:pos(       0 + x, 16 + y)
-        self.mp:pos(128 + 10 + x, 16 + y)
-        self.tp:pos(256 + 20 + x, 16 + y)
+        self.name:pos(         x, y)
+        self.jobs:pos(   404 + x, y)
+        self.hp:pos(       0 + x, y + ROW_H)
+        self.mp:pos(128 + 10 + x, y + ROW_H)
+        self.tp:pos(256 + 20 + x, y + ROW_H)
+        self.buffs:pos(        x, y + ROW_H * 2 + ICON_PAD)
         return self
     end
 
     function c:update(player)
         self.name:text(player.name)
         self.jobs:text(player.jobs)
+        self.buffs:icons(player.buffs)
         self.hp:text(tostring(player.hp))
         self.mp:text(tostring(player.mp))
         self.tp:text(tostring(player.tp))
@@ -73,6 +83,7 @@ function control.new()
         self.tp:draw(dxui)
         self.name:draw(dxui)
         self.jobs:draw(dxui)
+        self.buffs:draw(dxui)
         return self
     end
 

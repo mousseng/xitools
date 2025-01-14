@@ -1,4 +1,5 @@
 local bit = require('bit')
+local bitmapTex = require('primitives/bitmap-tex')
 
 local band = bit.band
 local lshift = bit.lshift
@@ -36,6 +37,19 @@ local function getMemberJobs(index)
     local mainAbbr = resx:GetString('jobs.names_abbr', main)
     local subAbbr = resx:GetString('jobs.names_abbr', sub)
     return string.format('%s%02d/%s%02d', mainAbbr, mainLv, subAbbr, subLv)
+end
+
+local function getIcons(statuses)
+    local icons = { }
+
+    for _, status in ipairs(statuses) do
+        local icon = bitmapTex:getTexture(status)
+        if icon and icon ~= 'missing' then
+            table.insert(icons, icon)
+        end
+    end
+
+    return icons
 end
 
 local function getBuffs(index)
@@ -97,33 +111,39 @@ local function getBuffs(index)
     return effects
 end
 
+local function getMember(index)
+    if party:GetMemberIsActive(index) ~= 1 then
+        return nil
+    end
+
+    return {
+        id             = party:GetMemberServerId(index),
+        zone           = getMemberZone(index),
+        name           = party:GetMemberName(index),
+        jobs           = getMemberJobs(index),
+        hp             = party:GetMemberHP(index),
+        mp             = party:GetMemberMP(index),
+        tp             = party:GetMemberTP(index),
+        hpp            = party:GetMemberHPPercent(index) / 100,
+        mpp            = party:GetMemberMPPercent(index) / 100,
+        tpp            = party:GetMemberTP(index) / 3000,
+        distance       = nil,
+        isLeadParty    = nil,
+        isLeadAlliance = nil,
+        isSync         = nil,
+        isTargetMain   = nil,
+        isTargetSub    = nil,
+        isTargetParty  = nil,
+        buffs          = getIcons(getBuffs(index)),
+    }
+end
+
 function state:listen(e)
 end
 
 function state:update()
     for i = 0, 17 do
-        if party:GetMemberIsActive(i) == 1 then
-            self.party[i] = {
-                id             = party:GetMemberServerId(i),
-                zone           = getMemberZone(i),
-                name           = party:GetMemberName(i),
-                jobs           = getMemberJobs(i),
-                hp             = party:GetMemberHP(i),
-                mp             = party:GetMemberMP(i),
-                tp             = party:GetMemberTP(i),
-                hpp            = party:GetMemberHPPercent(i) / 100,
-                mpp            = party:GetMemberMPPercent(i) / 100,
-                tpp            = party:GetMemberTP(i) / 3000,
-                distance       = nil,
-                isLeadParty    = nil,
-                isLeadAlliance = nil,
-                isSync         = nil,
-                isTargetMain   = nil,
-                isTargetSub    = nil,
-                isTargetParty  = nil,
-                buffs          = getBuffs(i),
-            }
-        end
+        self.party[i] = getMember(i)
     end
 end
 
