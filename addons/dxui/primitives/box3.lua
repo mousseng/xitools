@@ -68,7 +68,7 @@ function box3.new()
     end
 
     function b:percent(p)
-        self.fgRect.right = math.floor(p * self.bgRect.right)
+        self.fgRect.right = math.floor(math.clamp(p, 0, 1) * self.bgRect.right)
         return self
     end
 
