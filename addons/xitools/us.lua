@@ -56,8 +56,8 @@ local Alliances = { }
 ---@param icon userdata
 local function CreateTexture(statusId, icon)
     if icon == nil then
-        -- print('xitools error: no icon for status ' .. tostring(statusId))
-        return nil
+        print('xitools error: no icon for status ' .. tostring(statusId))
+        return 'missing'
     end
 
     -- Courtesy of Thorny's partybuffs
@@ -65,7 +65,7 @@ local function CreateTexture(statusId, icon)
     if ffi.C.D3DXCreateTextureFromFileInMemoryEx(d3d8_device, icon.Bitmap, icon.ImageSize, 0xFFFFFFFF, 0xFFFFFFFF, 1, 0, ffi.C.D3DFMT_A8R8G8B8, ffi.C.D3DPOOL_MANAGED, ffi.C.D3DX_DEFAULT, ffi.C.D3DX_DEFAULT, 0xFF000000, nil, nil, dx_texture_ptr) == ffi.C.S_OK then
         return d3d8.gc_safe_release(ffi.cast('IDirect3DTexture8*', dx_texture_ptr[0]))
     else
-        return nil
+        return 'missing'
     end
 end
 
@@ -86,14 +86,14 @@ local function GetBuffs(party, serverId)
                 --]]
                 local high_bits
                 if b < 16 then
-                    high_bits = bit.lshift(bit.band(bit.rshift(icons_hi, 2* b), 3), 8)
+                    high_bits = bit.lshift(bit.band(bit.rshift(icons_hi, 2 * b), 3), 8)
                 else
                     local buffer = math.floor(icons_hi / 0xffffffff)
                     high_bits = bit.lshift(bit.band(bit.rshift(buffer, 2 * (b - 16)), 3), 8)
                 end
 
-                local buff_id = icons_lo[b+1] + high_bits
-                if (buff_id ~= 255) then
+                local buff_id = icons_lo[b + 1] + high_bits
+                if buff_id ~= 255 then
                     table.insert(effects, buff_id)
                 end
              end
@@ -108,7 +108,7 @@ end
 local function FilterBuffs(buffList)
     local buffs = {}
 
-    for _, buff in ipairs(buffList) do
+    for i, buff in ipairs(buffList) do
         if buff ~= nil and buff > 0 then
             table.insert(buffs, buff)
         end
@@ -340,7 +340,7 @@ local function DrawBuffs(player)
         end
 
         local buffIcon = Textures[buffId]
-        if buffIcon then
+        if buffIcon ~= 'missing' then
             imgui.SameLine()
             local img = tonumber(ffi.cast("uint32_t", buffIcon))
             imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
