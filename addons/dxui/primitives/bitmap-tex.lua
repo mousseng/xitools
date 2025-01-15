@@ -8,7 +8,32 @@ local resx = AshitaCore:GetResourceManager()
 local texCache = { }
 local bitmapTex = { }
 
--- TODO: some of our textures aren't doing transparency properly; white bg
+local function setAlpha(bitmap)
+    -- the in-game bitmap data excludes the 14-byte BMP file header,
+    -- and instead begins at the 40-byte DIB header. add 1 to account
+    -- for lua's 1-based indexes
+    local bmpStart = 40 + 1
+    local bytes = bitmap:totable()
+
+    -- each icon is 32x32 pixels and we're going to iterate over the
+    -- bytes one pixel at a time (ie, 4 bytes). start at 0 since we're
+    -- doing offset maths
+    for i = 0, (32 * 32) - 1 do
+        local pixelStart = i * 4
+        local alpha = bytes[bmpStart + pixelStart + 3]
+
+        -- any non-opaque pixel should be banished to the colorkey realm
+        if alpha < 0xFF then
+            bytes[bmpStart + pixelStart + 0] = 0
+            bytes[bmpStart + pixelStart + 1] = 0
+            bytes[bmpStart + pixelStart + 2] = 0
+        end
+    end
+
+    -- turn our bytes back into chars, and our chars into a string
+    return bytes:map(string.char):join()
+end
+
 function bitmapTex:createTexture(statusId, icon)
     if icon == nil then
         log.err('missing icon information for status %d', statusId)
@@ -19,10 +44,10 @@ function bitmapTex:createTexture(statusId, icon)
     local texPtr = ffi.new('IDirect3DTexture8*[1]')
     local result = ffi.C.D3DXCreateTextureFromFileInMemoryEx(
         dxDevice,              -- pDevice:     LPDIRECT3DDEVICE8
-        icon.Bitmap,           -- pSrcData:    LPCVOID
+        setAlpha(icon.Bitmap), -- pSrcData:    LPCVOID
         icon.ImageSize,        -- SrcDataSize: UINT
-        0xFFFFFFFF,            -- Width:       UINT
-        0xFFFFFFFF,            -- Height:      UINT
+        0,                     -- Width:       UINT
+        0,                     -- Height:      UINT
         1,                     -- MipLevels:   UINT
         0,                     -- Usage:       DWORD
         ffi.C.D3DFMT_A8R8G8B8, -- Format:      D3DFORMAT

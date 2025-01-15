@@ -18,6 +18,7 @@ function uiHost:pos(view, x, y)
     end
 
     self.views[view]:pos(x, y)
+    return self
 end
 
 function uiHost:update()
@@ -32,6 +33,8 @@ function uiHost:draw(dxui)
     for _, view in pairs(self.views) do
         view:draw(dxui)
     end
+
+    return self
 end
 
 return uiHost
