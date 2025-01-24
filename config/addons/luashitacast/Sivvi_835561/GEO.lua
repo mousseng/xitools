@@ -49,7 +49,7 @@ local gear = {
 local sets = {
     Idle = Equip.NewSet {
         Main  = "Mafic Cudgel",
-        -- Sub   = "",
+        Sub   = gear.Displaced, -- TODO: genbu/genmei shield
         Range = nil,
         Ammo  = "Staunch Tathlum",
 
@@ -71,7 +71,7 @@ local sets = {
         -- TODO: stack regen, refresh, dt
 
         Main  = "Solstice",
-        -- Sub   = "",
+        Sub   = gear.Displaced, -- TODO: genbu/genmei shield
         Range = "Dunna",
         Ammo  = gear.Displaced,
 
@@ -82,7 +82,7 @@ local sets = {
         Feet  = gear.Relic.Feet,
 
         -- Neck  = "",
-        -- Ear1  = "",
+        Ear1  = "Hypaspist Earring",
         -- Ear2  = "",
         -- Ring1 = "",
         -- Ring2 = "",
@@ -93,7 +93,7 @@ local sets = {
         -- TODO: stack sid, dt
 
         Main  = "Solstice",
-        -- Sub   = "",
+        Sub   = gear.Displaced, -- TODO: genbu/genmei shield
         Range = "Dunna",
         Ammo  = nil,
 
@@ -118,23 +118,44 @@ local sets = {
         Ammo  = "Ghastly Tathlum +1",
 
         Head  = gear.Jhakri.Head,
-        Body  = gear.Jhakri.Body,
-        Hands = gear.Jhakri.Hands,
+        Body  = gear.Jhakri.Body, -- TODO: amalric doublet +1
+        Hands = gear.Jhakri.Hands, -- TODO: amalric gages +1
         Legs  = gear.Jhakri.Legs,
         Feet  = gear.Jhakri.Feet,
 
-        Neck  = "Sanctity Necklace",
-        Ear1  = "Friomisi Earring",
-        Ear2  = "Azimuth Earring",
-        Ring1 = gear.Jhakri.Ring,
-        Ring2 = "Weather. Ring",
+        Neck  = "Sanctity Necklace", -- TODO: baetyl pendant
+        Ear1  = "Friomisi Earring", -- TODO: barkarole earring, malignance earring
+        Ear2  = "Azimuth Earring", -- TODO: azi +1, azi +2, regal earring
+        Ring1 = gear.Jhakri.Ring, -- TODO: shiva +1
+        Ring2 = "Weather. Ring", -- TODO: freke ring
         -- Back  = gear.Capes.Nuke,
         Waist = "Skrymir Cord",
+    },
+    Heal = Equip.NewSet {
+        Main  = "Chatoyant Staff",
+        Sub   = "Enki Strap",
+        Range = nil,
+        Ammo  = "Staunch Tathlum",
+
+        Head  = gear.Artifact.Head, -- TODO: anything with more than MND
+        Body  = gear.Jhakri.Body, -- TODO: anything with more than MND
+        Hands = "Ayao's Gages",
+        Legs  = gear.Jhakri.Legs, -- TODO: anything with more than MND
+        Feet  = gear.Jhakri.Feet, -- TODO: anything with more than MND
+
+        Neck  = "Sanctity Necklace",
+        Ear1  = "Mendi. Earring",
+        -- Ear2  = "Azimuth Earring",
+        Ring1 = "Lebeche Ring",
+        Ring2 = "Weather. Ring",
+        -- Back  = gear.Capes.Nuke,
+        Waist = "Latria Sash",
     },
     Enfeeble = Equip.NewSet {
     },
     FastCast = Equip.NewSet {
-        Ammo  = "Sapience Orb",
+        Range = "Dunna",
+        Ammo  = gear.Displaced,
 
         Head  = "Nares Cap",
         Body  = gear.Jhakri.Body,
@@ -142,6 +163,7 @@ local sets = {
         Legs  = gear.Artifact.Legs,
         Feet  = gear.Jhakri.Feet,
 
+        Neck  = "Voltsurge Torque",
         Ring1 = gear.Jhakri.Ring,
         Ring2 = "Weather. Ring",
         Back  = gear.Capes.Cast,
@@ -163,7 +185,7 @@ local function handleAbility()
     Status.currentStatus = 'Abilitying'
     local ability = gData.GetAction()
     if ability.Name == 'Life Cycle' then
-        Equip.Body(gear.Relic.Body)
+        Equip.Body(gear.Artifact.Body)
     elseif ability.Name == 'Full Circle' then
         Equip.Head(gear.Empyrean.Head)
     end
@@ -174,6 +196,9 @@ local function handlePrecast()
     Equip.Set(sets.FastCast)
     if spell.Skill == 'Elemental Magic' then
         Equip.Hands(gear.Relic.Hands)
+    elseif spell.Skill == 'Healing Magic' then
+        Equip.Ear1("Mendi. Earring")
+        Equip.Legs("Doyen Pants")
     end
 end
 
@@ -189,6 +214,8 @@ local function handleMidcast()
         Equip.Set(sets.Nuke)
         Equip.Head(gear.Relic.Head)
         Equip.Neck("Erra Pendant")
+    elseif Status.IsHeal(spell) then
+        Equip.Set(sets.Heal)
     end
 end
 
