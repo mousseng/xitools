@@ -11,11 +11,11 @@ local Status = gFunc.LoadFile('common/status.lua')
 local gear = {
     Displaced = "displaced",
     Artifact = {
-        Head  = "Geo. Galero +1",
+        Head  = "Geo. Galero +2",
         Body  = "Geo. Tunic +1",
-        Hands = "Geo. Mitaines +1",
-        Legs  = "Geo. Pants +1",
-        Feet  = "Geo. Sandals +1",
+        Hands = "Geo. Mitaines +2",
+        Legs  = "Geo. Pants +2",
+        Feet  = "Geo. Sandals +2",
     },
     Relic = {
         Head  = "Bagua Galero",
