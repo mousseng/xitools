@@ -52,6 +52,32 @@ local Alliances = { }
 ---@field windowPos        integer[]
 ---@field statusIds        integer[]
 
+local function setAlpha(bitmap)
+    -- the in-game bitmap data excludes the 14-byte BMP file header,
+    -- and instead begins at the 40-byte DIB header. add 1 to account
+    -- for lua's 1-based indexes
+    local bmpStart = 40 + 1
+    local bytes = bitmap:totable()
+
+    -- each icon is 32x32 pixels and we're going to iterate over the
+    -- bytes one pixel at a time (ie, 4 bytes). start at 0 since we're
+    -- doing offset maths
+    for i = 0, (32 * 32) - 1 do
+        local pixelStart = i * 4
+        local alpha = bytes[bmpStart + pixelStart + 3]
+
+        -- any fully-transparent pixel should be banished to the colorkey realm
+        if alpha < 0x01 then
+            bytes[bmpStart + pixelStart + 0] = 0
+            bytes[bmpStart + pixelStart + 1] = 0
+            bytes[bmpStart + pixelStart + 2] = 0
+        end
+    end
+
+    -- turn our bytes back into chars, and our chars into a string
+    return bytes:map(string.char):join()
+end
+
 ---@param statusId number
 ---@param icon userdata
 local function CreateTexture(statusId, icon)
@@ -62,7 +88,7 @@ local function CreateTexture(statusId, icon)
 
     -- Courtesy of Thorny's partybuffs
     local dx_texture_ptr = ffi.new('IDirect3DTexture8*[1]')
-    if ffi.C.D3DXCreateTextureFromFileInMemoryEx(d3d8_device, icon.Bitmap, icon.ImageSize, 0xFFFFFFFF, 0xFFFFFFFF, 1, 0, ffi.C.D3DFMT_A8R8G8B8, ffi.C.D3DPOOL_MANAGED, ffi.C.D3DX_DEFAULT, ffi.C.D3DX_DEFAULT, 0xFF000000, nil, nil, dx_texture_ptr) == ffi.C.S_OK then
+    if ffi.C.D3DXCreateTextureFromFileInMemoryEx(d3d8_device, setAlpha(icon.Bitmap), icon.ImageSize, 0xFFFFFFFF, 0xFFFFFFFF, 1, 0, ffi.C.D3DFMT_A8R8G8B8, ffi.C.D3DPOOL_MANAGED, ffi.C.D3DX_DEFAULT, ffi.C.D3DX_DEFAULT, 0xFF000000, nil, nil, dx_texture_ptr) == ffi.C.S_OK then
         return d3d8.gc_safe_release(ffi.cast('IDirect3DTexture8*', dx_texture_ptr[0]))
     else
         return 'missing'
