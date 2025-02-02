@@ -90,10 +90,10 @@ function ffxi.IsChatExpanded()
     -- courtesy of Syllendel
 	local pattern = "83EC??B9????????E8????????0FBF4C24??84C0"
 	local patternAddress = ashita.memory.find("FFXiMain.dll", 0, pattern, 0x04, 0)
-	local chatExpandedPointer = ashita.memory.read_uint32(patternAddress)+0xF1
+	local chatExpandedPointer = ashita.memory.read_uint32(patternAddress) + 0xF1
 	local chatExpandedValue = ashita.memory.read_uint8(chatExpandedPointer)
 
-	return chatExpandedValue ~= 0
+	return chatExpandedValue > 2
 end
 
 --- Fetches the party index of your <stpt> target, if it exists.
