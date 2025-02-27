@@ -27,12 +27,13 @@ local sets = {
         Neck  = "Sanctity Necklace",
         Ear1  = "Brutal Earring",
         Ear2  = "Skulker's Earring",
-        Ring1 = "Dim. Ring (Holla)",
-        Ring2 = "Warp Ring",
+        Ring1 = "Defending Ring",
+        Ring2 = "Shneddick Ring",
         Back  = "Toutatis's Cape",
         Waist = "Sailfi Belt +1",
     },
     TreasureHunter = Equip.NewSet {
+        Ammo  = "Per. Lucky Egg",
         Legs  = "Herculean Trousers",
     },
     Melee = {

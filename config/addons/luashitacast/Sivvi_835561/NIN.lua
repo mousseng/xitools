@@ -14,7 +14,7 @@ local settings = {
     TreasureHunter = false,
     Futae = false,
     Default = {
-        Main = "Naegling",
+        Main = "Kikoku",
         Sub  = "Ternion Dagger +1",
         Ammo = "Date Shuriken",
     },
@@ -32,6 +32,7 @@ local gear = {
         Hands = "Hachiya Tekko +1",
         Legs  = "Hachi. Hakama +1",
         Feet  = "Hachiya Kyahan +2",
+        Neck  = "Ninja Nodowa +1",
         Ring  = "Regal Ring",
     },
     Relic = {
@@ -75,12 +76,12 @@ local gear = {
         Feet  = "Hiza. Sune-Ate +2",
     },
     Capes = {
-        Auto  = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+20', [2] = '"Dbl.Atk."+10', } },
-        -- StrWs = { Name = "Andartia's Mantle", Augment = { [1] = 'STR+30', [2] = 'Weapon skill damage +10%', } },
-        DexWs = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+30', [2] = 'Weapon skill damage +10%', } },
-        -- AgiWs = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Weapon skill damage +10%', } },
-        Cast  = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+20', [2] = 'Fast Cast +10%', } },
-        Nuke  = { Name = "Andartia's Mantle", Augment = { [1] = 'INT+20', [2] = '"Mag. Atk. Bns."+10' } },
+        Auto  = { Name = "Andartia's Mantle", Augment = { 'DEX+20', '"Dbl.Atk."+10' } },
+        StrWs = { Name = "Andartia's Mantle", Augment = { 'DEX+30', 'Weapon skill damage +10%' } },
+        DexWs = { Name = "Andartia's Mantle", Augment = { 'DEX+30', 'Weapon skill damage +10%' } },
+        AgiWs = { Name = "Andartia's Mantle", Augment = { 'DEX+30', 'Weapon skill damage +10%' } },
+        Cast  = { Name = "Andartia's Mantle", Augment = { 'AGI+20', 'Fast Cast +10%' } },
+        Nuke  = { Name = "Andartia's Mantle", Augment = { 'INT+20', '"Mag. Atk. Bns."+10' } },
     },
 }
 
@@ -98,11 +99,12 @@ local sets = {
         Ear1  = "Brutal Earring",
         Ear2  = gear.Empyrean.Ear,
         Ring1 = "Defending Ring",
-        Ring2 = "Warp Ring",
+        Ring2 = "Shneddick Ring",
         Back  = gear.Capes.Auto,
         Waist = "Sailfi Belt +1",
     },
     TreasureHunter = Equip.NewSet {
+        Ammo  = "Per. Lucky Egg",
         Legs  = "Herculean Trousers",
     },
     Melee = {
@@ -163,8 +165,8 @@ local sets = {
             Ammo  = "Sapience Orb",
             Body  = gear.Relic.Body,
             Neck  = "Voltsurge Torque",
-            Ring1 = "Weather. Ring",
-            Ring2 = "Lebeche Ring",
+            -- Ring1 = "Weather. Ring",
+            -- Ring2 = "Lebeche Ring",
             Back  = gear.Capes.Cast,
         },
         Shadows = Equip.NewSet {
@@ -211,6 +213,23 @@ local sets = {
             Ring2 = gear.Mummu.Ring,
             Back  = gear.Capes.DexWs,
         },
+        ['Blade: Metsu'] = Equip.NewSet {
+            Ammo  = "Date Shuriken",
+
+            Head  = gear.Empyrean.Head,
+            Body  = gear.Empyrean.Body,
+            Hands = gear.Empyrean.Hands,
+            Legs  = gear.Hizamaru.Legs,
+            Feet  = gear.Empyrean.Feet,
+
+            Neck  = gear.Artifact.Neck,
+            Ear1  = "Odr Earring",
+            Ear2  = "Lugra Earring +1",
+            Ring1 = gear.Artifact.Ring,
+            Ring2 = "Rajas Ring",
+            Back  = gear.Capes.DexWs,
+            Waist = "Sailfi Belt +1",
+        },
         ['Blade: Ku'] = Equip.NewSet {
             Ammo  = "Seething Bomblet +1",
 
@@ -254,11 +273,13 @@ local sets = {
             Legs  = gear.Mummu.Legs,
             Feet  = gear.Empyrean.Feet,
 
+            Neck  = gear.Artifact.Neck,
             Ear1  = "Odr Earring",
             Ear2  = "Lugra Earring +1",
             Ring1 = gear.Artifact.Ring,
             Ring2 = gear.Mummu.Ring,
-            Back  = gear.Capes.DexWs,
+            Back  = gear.Capes.AgiWs,
+            Waist = "Sailfi Belt +1",
         },
         ['Blade: Kamu'] = Equip.NewSet {
             Ammo  = "Seething Bomblet +1",
@@ -269,11 +290,30 @@ local sets = {
             Legs  = gear.Hizamaru.Legs,
             Feet  = gear.Empyrean.Feet,
 
+            Neck  = gear.Artifact.Neck,
             Ear1  = "Lugra Earring +1",
             Ear2  = "Hattori Earring",
             Ring1 = gear.Artifact.Ring,
             Ring2 = "Shiva Ring",
             Back  = gear.Capes.DexWs,
+            Waist = "Sailfi Belt +1",
+        },
+        ['Blade: Ten'] = Equip.NewSet {
+            Ammo  = "Seething Bomblet +1",
+
+            Head  = gear.Empyrean.Head,
+            Body  = gear.Empyrean.Body,
+            Hands = gear.Empyrean.Hands,
+            Legs  = gear.Hizamaru.Legs,
+            Feet  = gear.Empyrean.Feet,
+
+            Neck  = gear.Artifact.Neck,
+            Ear1  = "Lugra Earring +1",
+            Ear2  = "Odr Earring",
+            Ring1 = gear.Artifact.Ring,
+            Ring2 = "Rajas Ring",
+            Back  = gear.Capes.StrWs,
+            Waist = "Sailfi Belt +1",
         },
         ['Aeolian Edge'] = Equip.NewSet {
             Ammo  = "Ghastly Tathlum +1",
@@ -288,26 +328,9 @@ local sets = {
             Ear1  = "Hecate's Earring",
             Ear2  = "Friomisi Earring",
             Ring1 = "Shiva Ring",
-            Ring2 = "Weather. Ring",
+            -- Ring2 = "Weather. Ring",
             Back  = gear.Capes.DexWs,
             Waist = "Skrymir Cord",
-        },
-        ['Exenterator'] = Equip.NewSet {
-            Ammo  = "Date Shuriken",
-
-            Head  = gear.Mummu.Head,
-            Body  = gear.Mummu.Body,
-            Hands = gear.Mummu.Hands,
-            Legs  = gear.Hizamaru.Legs,
-            Feet  = gear.Empyrean.Feet,
-
-            Neck  = "Fotia Gorget",
-            Ear1  = "Odr Earring",
-            Ear2  = "Lugra Earring +1",
-            Ring1 = gear.Artifact.Ring,
-            Ring2 = gear.Mummu.Ring,
-            Back  = gear.Capes.DexWs,
-            Waist = "Fotia Belt",
         },
         ['Evisceration'] = Equip.NewSet {
             Ammo = "Yetshila",
@@ -326,22 +349,8 @@ local sets = {
             Ear2  = gear.Empyrean.Ear,
             Ring1 = gear.Artifact.Ring,
             Ring2 = "Epona's Ring",
-            Back  = gear.Capes.DexWs,
-        },
-        ['Circle Blade'] = Equip.NewSet {
-            Ammo  = "Seething Bomblet +1",
-
-            Head  = gear.Relic.Head,
-            Body  = gear.Empyrean.Body,
-            Hands = gear.Empyrean.Hands,
-            Legs  = gear.Hizamaru.Legs,
-            Feet  = gear.Empyrean.Feet,
-
-            Ear1  = "Lugra Earring +1",
-            Ear2  = gear.Empyrean.Ear,
-            Ring1 = gear.Artifact.Ring,
-            Ring2 = "Epona's Ring",
-            Back  = gear.Capes.DexWs,
+            Back  = gear.Capes.StrWs,
+            Waist = "Sailfi Belt +1",
         },
     },
 }
@@ -376,8 +385,6 @@ local function handleDefault()
         if settings.TreasureHunter then
             Equip.Set(sets.TreasureHunter)
         end
-    else
-        Equip.Feet(sets.Idle.Feet)
     end
 end
 
@@ -423,6 +430,12 @@ local function handleCommand(args)
 
     if args[1] == 'idle' then
         Equip.Set(sets.Idle, true)
+    elseif args[1] == 'tp' then
+        Equip.Set(sets.Melee[settings.MeleeSet], true)
+        ashita.tasks.once(1, function()
+            chatMgr:QueueCommand(1, '/checkparam <me>')
+            Equip.Set(sets.Idle, true)
+        end)
     elseif args[1] == 'melee' and #args == 2 then
         local meleeSet = args[2]:proper()
         if T{ 'Dt', 'Dps', 'Eva' }:contains(meleeSet) then

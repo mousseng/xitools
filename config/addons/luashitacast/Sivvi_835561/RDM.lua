@@ -7,6 +7,26 @@ local Equip = gFunc.LoadFile('common/equip.lua')
 ---@module 'common.status'
 local Status = gFunc.LoadFile('common/status.lua')
 
+local gear = {
+    Displaced = "displaced",
+    Artifact = {
+    },
+    Relic = {
+    },
+    Empyrean = {
+    },
+    Jhakri = {
+        Head  = "Jhakri Coronal +1",
+        Body  = "Jhakri Robe +1",
+        Hands = "Jhakri Cuffs +2",
+        Legs  = "Jhakri Slops +1",
+        Feet  = "Jhakri Pigaches +1",
+        Ring  = "Jhakri Ring",
+    },
+    Capes = {
+    },
+}
+
 local settings = {
     Subjob = 'NON',
     Grimoire = nil,
@@ -16,77 +36,74 @@ local settings = {
 
 local sets = {
     Idle = Equip.NewSet {
-        Main  = "Emissary",
-        Ammo  = "Sapience Orb",
+        Main  = "Colada",
+        Ammo  = "Staunch Tathlum",
 
-        Head  = "Jhakri Coronal +1",
-        Body  = "Jhakri Robe +1",
+        Head  = gear.Jhakri.Head,
+        Body  = gear.Jhakri.Body,
         Hands = "Shrieker's Cuffs",
-        Legs  = "Jhakri Slops +1",
+        Legs  = gear.Jhakri.Legs,
         Feet  = "Inspirited Boots",
 
         Neck  = "Sanctity Necklace",
         Ear1  = "Mendi. Earring",
         Ear2  = "Lethargy Earring",
-        Ring1 = "Mephitas's Ring +1",
-        Ring2 = "Warp Ring",
-        Back  = "Sucello's Cape",
+        Ring1 = "Defending Ring",
+        Ring2 = "Shneddick Ring",
+        Back  = "Sucellos's Cape",
         Waist = "Sailfi Belt +1",
     },
     Magic = {
         FastCast = Equip.NewSet {
-            Main = "Emissary",
+            Main = "Colada",
             Ammo = "Sapience Orb",
 
             Head  = "Nares Cap",
-            Hands = "Repartie Gloves",
             Legs  = "Doyen Pants",
 
             Ear1  = "Mendi. Earring",
             Ear2  = "Lethargy Earring",
-            Ring1 = "Lebeche Ring",
-            Ring2 = "Weather. Ring",
-            Back  = "Sucello's Cape",
+            Back  = "Sucellos's Cape",
         },
         Enfeeble = Equip.NewSet {
-            Main  = "Emissary",
-            Ammo  = "Sapience Orb",
+            Main  = "Colada",
+            Ammo  = "Staunch Tathlum",
 
-            Head  = "Jhakri Coronal +1",
-            Body  = "Jhakri Robe +1",
-            Hands = "Jhakri Cuffs +1",
-            Legs  = "Jhakri Slops +1",
-            Feet  = "Jhakri Pigaches +1",
+            Head  = gear.Jhakri.Head,
+            Body  = gear.Jhakri.Body,
+            Hands = gear.Jhakri.Hands,
+            Legs  = gear.Jhakri.Legs,
+            Feet  = gear.Jhakri.Feet,
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Mendi. Earring",
             Ear2  = "Lethargy Earring",
             Ring1 = "Weather. Ring +1",
             Ring2 = "Shiva Ring",
-            Back  = "Sucello's Cape",
+            Back  = "Sucellos's Cape",
             Waist = "Skrymir Cord",
         },
         Heal = Equip.NewSet {
             Main  = "Chatoyant Staff",
             Sub   = "Enki Strap",
 
-            Head  = "Jhakri Coronal +1",
-            Body  = "Jhakri Robe +1",
-            Hands = "Jhakri Cuffs +1",
-            Legs  = "Jhakri Slops +1",
-            Feet  = "Jhakri Pigaches +1",
+            Head  = gear.Jhakri.Head,
+            Body  = gear.Jhakri.Body,
+            Hands = gear.Jhakri.Hands,
+            Legs  = gear.Jhakri.Legs,
+            Feet  = gear.Jhakri.Feet,
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Mendi. Earring",
             Ear2  = "Hecate's Earring",
             -- Ring1 = "Mephitas's Ring +1",
             Ring2 = "Lebeche Ring",
-            Back  = "Sucello's Cape",
+            Back  = "Sucellos's Cape",
             Waist = "Skrymir Cord",
         },
         Nuke = Equip.NewSet {
-            Main  = "Emissary",
-            Ammo  = "Sapience Orb",
+            Main  = "Colada",
+            Ammo  = "Staunch Tathlum",
 
             Head  = "Jhakri Coronal +1",
             Body  = "Jhakri Robe +1",
@@ -99,7 +116,7 @@ local sets = {
             Ear2  = "Hecate's Earring",
             Ring1 = "Jhakri Ring",
             Ring2 = "Shiva Ring",
-            Back  = "Sucello's Cape",
+            Back  = "Sucellos's Cape",
             Waist = "Skrymir Cord",
         },
     },
@@ -177,6 +194,8 @@ local function handleMidcast()
             Equip.Feet('Muddle Pumps')
         end
     end
+
+    Equip.Obi(spell)
 end
 
 local function onLoad()

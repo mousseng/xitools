@@ -13,9 +13,18 @@ local settings = {
     MeleeSet = 'Dps',
     TreasureHunter = false,
     Default = {
-        Main = "Ternion Dagger +1",
-        Sub  = "Nibiru Knife",
-        -- Ammo = "Date Shuriken",
+        Main = "Kaja Knife",
+        Sub  = "Ternion Dagger +1",
+    },
+}
+
+local gear = {
+    Artifact = {
+        Head  = "Dancer's Tiara",
+        Body  = "Dancer's Casaque",
+        Hands = "Dancer's Bangles",
+        Legs  = "Dancer's Tights",
+        Feet  = "Maxixi Toe Shoes +2",
     },
     Capes = {
         -- Auto  = { Name = "Andartia's Mantle", Augment = { [1] = 'DEX+20', [2] = '"Dbl.Atk."+10', } },
@@ -25,28 +34,36 @@ local settings = {
         -- Cast  = { Name = "Andartia's Mantle", Augment = { [1] = 'AGI+30', [2] = 'Fast Cast +10%', } },
         -- Nuke  = { Name = "Andartia's Mantle", Augment = { [1] = 'INT+30', [2] = '"Mag. Atk. Bns."+9' } },
     },
-    -- Interface = {
-    --     Flags = ImGuiWindowFlags_NoDecoration,
-    --     IsOpen = { true },
-    -- },
 }
 
 local sets = {
     Idle = Equip.NewSet {
+        Range = nil,
+        Ammo  = "Staunch Tathlum",
+
+        Head  = "Mummu Bonnet +2",
+        Body  = "Mummu Jacket +2",
+        Hands = "Mummu Wrists +2",
+        Legs  = "Mummu Kecks +2",
+        Feet  = "Mummu Gamash. +2",
+
         Neck  = "Sanctity Necklace",
-        Ring1 = "Dim. Ring (Holla)",
+        Ear1  = "Brutal Earring",
+        Ear2  = "Odr Earring",
+        Ring1 = "Shneddick Ring",
         Ring2 = "Warp Ring",
+        Back  = "Buquwik Cape",
+        Waist = "Sailfi Belt +1",
     },
     TreasureHunter = Equip.NewSet {
+        Ammo  = "Per. Lucky Egg",
         Legs  = "Herculean Trousers",
     },
     Melee = {
         Dps = Equip.NewSet {
-            -- Ammo  = "Seething Bomblet",
-
             Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
-            Hands = "Mummu Wrists +2",
+            Hands = "Adhemar Wrist. +1",
             Legs  = "Mummu Kecks +2",
             Feet  = "Mummu Gamash. +2",
 
@@ -55,23 +72,18 @@ local sets = {
             Ear2  = "Odr Earring",
             Ring1 = "Epona's Ring",
             Ring2 = "Regal Ring",
-            Back  = "Buquwik Cape",
+            Back  = "Aptitude Mantle +1",
             Waist = "Sailfi Belt +1",
         },
     },
-    Magic = {
-        FastCast = Equip.NewSet {
-            Ammo  = "Sapience Orb",
-            Hands = "Taeon Gloves",
-            Ring1 = "Weather. Ring",
-        },
-        Shadows = Equip.NewSet {
+    Abilities = {
+        Jigs = Equip.NewSet {
+            -- Legs  = gear.Relic.Legs,
+            Feet  = gear.Artifact.Feet,
         },
     },
     Weaponskills = {
         Base = Equip.NewSet {
-            -- Ammo  = "Seething Bomblet",
-
             Head  = "Mummu Bonnet +2",
             Body  = "Mummu Jacket +2",
             Hands = "Mummu Wrists +2",
@@ -81,27 +93,25 @@ local sets = {
             Neck  = "Sanctity Necklace",
             Ear1  = "Brutal Earring",
             Ear2  = "Odr Earring",
-            Ring1 = "Epona's Ring",
+            Ring1 = "Mummu Ring",
             Ring2 = "Regal Ring",
-            Back  = "Buquwik Cape",
+            Back  = "Aptitude Mantle +1",
             Waist = "Sailfi Belt +1",
         },
         ['Aeolian Edge'] = Equip.NewSet {
-            -- Ammo  = "Seething Bomblet",
-
-            Head  = "Taeon Chapeau",
+            Head  = "Mummu Bonnet +2",
             Body  = "Herculean Vest",
             Hands = "Herculean Gloves",
             Legs  = "Herculean Trousers",
-            Feet  = "Mummu Gamash. +2",
+            Feet  = "Herculean Boots",
 
             Neck  = "Sanctity Necklace",
             Ear1  = "Hecate's Earring",
             Ear2  = "Odr Earring",
             Ring1 = "Weather. Ring",
             Ring2 = "Mephitas's Ring +1",
-            Back  = "Buquwik Cape",
-            Waist = "Thunder Belt",
+            Back  = "Aptitude Mantle +1",
+            Waist = "Skrymir Cord",
         },
     },
 }
@@ -146,21 +156,14 @@ local function handleAbility()
     local ability = gData.GetAction()
 
     if ability.Name:match('Samba') then
-        Equip.Head("Dancer's Tiara")
+        Equip.Head(gear.Artifact.Head)
     elseif ability.Name:match('Waltz') then
-        Equip.Body("Dancer's Casaque")
-    -- elseif ability.Name:match('Step') then
-    --     Equip.Hands("Dancer's Bangles")
+        Equip.Body(gear.Artifact.Body)
+    elseif ability.Name:match('Step') then
+        Equip.Hands(gear.Artifact.Hands)
     elseif ability.Name:match('Jig') then
-        Equip.Feet("Dancer's Toe Shoes")
+        Equip.Set(sets.Abilities.Jigs)
     end
-end
-
-local function handlePrecast()
-    Equip.Set(sets.Magic.FastCast)
-end
-
-local function handleMidcast()
 end
 
 local function handleCommand(args)
@@ -199,8 +202,8 @@ return {
     HandleDefault     = handleDefault,
     HandleAbility     = handleAbility,
     HandleItem        = gFunc.LoadFile('common/items.lua'),
-    HandlePrecast     = handlePrecast,
-    HandleMidcast     = handleMidcast,
+    HandlePrecast     = noop,
+    HandleMidcast     = noop,
     HandlePreshot     = noop,
     HandleMidshot     = noop,
     HandleWeaponskill = handleWeaponskill,

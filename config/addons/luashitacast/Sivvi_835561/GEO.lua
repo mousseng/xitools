@@ -19,17 +19,18 @@ local gear = {
     },
     Relic = {
         Head  = "Bagua Galero",
-        Body  = "Bagua Tunic",
+        Body  = "Bagua Tunic +1",
         Hands = "Bagua Mitaines",
-        Legs  = "Bagua Pants +1",
-        Feet  = "Bagua Sandals",
+        Legs  = "Bagua Pants +2",
+        Feet  = "Bagua Sandals +1",
+        Neck  = "Bagua Charm +1",
     },
     Empyrean = {
-        Head  = "Azimuth Hood",
+        Head  = "Azimuth Hood +2",
         Body  = "Azimuth Coat",
         Hands = "Azimuth Gloves",
         Legs  = "Azimuth Tights",
-        Feet  = "Azimuth Gaiters",
+        Feet  = "Azimuth Gaiters +2",
     },
     Jhakri = {
         Head  = "Jhakri Coronal +1",
@@ -50,10 +51,10 @@ local sets = {
     Idle = Equip.NewSet {
         Main  = "Mafic Cudgel",
         Sub   = gear.Displaced, -- TODO: genbu/genmei shield
-        Range = nil,
+        Range = gear.Displaced,
         Ammo  = "Staunch Tathlum",
 
-        Head  = gear.Jhakri.Head,
+        Head  = gear.Empyrean.Head,
         Body  = gear.Jhakri.Body,
         Hands = "Shrieker's Cuffs",
         Legs  = "Doyen Pants",
@@ -63,7 +64,27 @@ local sets = {
         -- Ear1  = "",
         -- Ear2  = "",
         Ring1 = "Defending Ring",
-        Ring2 = "Warp Ring",
+        Ring2 = "Shneddick Ring",
+        Back  = gear.Capes.Idle,
+        Waist = "Latria Sash",
+    },
+    Auto = Equip.NewSet {
+        Main  = "Mafic Cudgel",
+        Sub   = gear.Displaced, -- TODO: genbu/genmei shield
+        Range = gear.Displaced,
+        Ammo  = "Staunch Tathlum",
+
+        Head  = gear.Empyrean.Head,
+        Body  = gear.Jhakri.Body,
+        Hands = "Shrieker's Cuffs",
+        Legs  = "Doyen Pants",
+        Feet  = gear.Artifact.Feet,
+
+        Neck  = "Sanctity Necklace",
+        -- Ear1  = "",
+        -- Ear2  = "",
+        Ring1 = "Defending Ring",
+        Ring2 = "Shneddick Ring",
         Back  = gear.Capes.Idle,
         Waist = "Latria Sash",
     },
@@ -76,26 +97,26 @@ local sets = {
         Ammo  = gear.Displaced,
 
         Head  = gear.Empyrean.Head,
-        -- Body  = "",
+        Body  = nil,
         Hands = gear.Artifact.Hands,
-        -- Legs  = "",
+        Legs  = nil,
         Feet  = gear.Relic.Feet,
 
-        -- Neck  = "",
+        Neck  = gear.Relic.Neck,
         Ear1  = "Hypaspist Earring",
-        -- Ear2  = "",
-        -- Ring1 = "",
-        -- Ring2 = "",
+        Ear2  = nil, -- TODO: odnowa earring
+        Ring1 = "Defending Ring",
+        Ring2 = "Shneddick Ring",
         Back  = gear.Capes.Idle,
-        -- Waist = "",
+        Waist = nil,
     },
     ColureCast = Equip.NewSet {
         -- TODO: stack sid, dt
 
-        Main  = "Solstice",
+        Main  = "Gada",
         Sub   = gear.Displaced, -- TODO: genbu/genmei shield
         Range = "Dunna",
-        Ammo  = nil,
+        Ammo  = gear.Displaced,
 
         Head  = gear.Empyrean.Head,
         Body  = gear.Relic.Body,
@@ -103,38 +124,78 @@ local sets = {
         Legs  = gear.Relic.Legs,
         Feet  = gear.Empyrean.Feet,
 
-        -- Neck  = "",
-        -- Ear1  = "",
+        Neck  = gear.Relic.Neck,
+        Ear1  = nil,
         Ear2  = "Azimuth Earring",
-        -- Ring1 = "",
-        -- Ring2 = "",
+        Ring1 = "Defending Ring",
+        Ring2 = nil,
         Back  = gear.Capes.Idle,
-        -- Waist = "",
+        Waist = nil,
     },
     Nuke = Equip.NewSet {
         Main  = "Staccato Staff",
         Sub   = "Enki Strap",
-        Range = nil,
+        Range = gear.Displaced,
         Ammo  = "Ghastly Tathlum +1",
 
-        Head  = gear.Jhakri.Head,
+        Head  = gear.Empyrean.Head,
         Body  = gear.Jhakri.Body, -- TODO: amalric doublet +1
         Hands = gear.Jhakri.Hands, -- TODO: amalric gages +1
         Legs  = gear.Jhakri.Legs,
-        Feet  = gear.Jhakri.Feet,
+        Feet  = gear.Empyrean.Feet,
 
         Neck  = "Sanctity Necklace", -- TODO: baetyl pendant
         Ear1  = "Friomisi Earring", -- TODO: barkarole earring, malignance earring
         Ear2  = "Azimuth Earring", -- TODO: azi +1, azi +2, regal earring
         Ring1 = gear.Jhakri.Ring, -- TODO: shiva +1
-        Ring2 = "Weather. Ring", -- TODO: freke ring
-        -- Back  = gear.Capes.Nuke,
+        Ring2 = "Shiva Ring", -- TODO: freke ring
+        Back  = gear.Capes.Nuke,
         Waist = "Skrymir Cord",
     },
-    Heal = Equip.NewSet {
-        Main  = "Chatoyant Staff",
+    Drain = Equip.NewSet {
+        Main  = "Staccato Staff",
         Sub   = "Enki Strap",
-        Range = nil,
+        Range = gear.Displaced,
+        Ammo  = "Staunch Tathlum", -- TODO: pemphredo tathlum
+
+        Head  = gear.Relic.Head,
+        Body  = gear.Jhakri.Body,
+        Hands = gear.Jhakri.Hands,
+        Legs  = gear.Empyrean.Legs,
+        Feet  = gear.Jhakri.Feet, -- TODO: merlinic crackows, agwu's pigaches
+
+        Neck  = "Erra Pendant",
+        Ear1  = "Mendi. Earring", -- TODO: hirudinea earring
+        Ear2  = "Azimuth Earring",
+        Ring1 = gear.Jhakri.Ring, -- TODO: evanescence ring
+        Ring2 = nil, -- TODO: archon ring
+        Back  = gear.Capes.Nuke,
+        -- Waist = "Skrymir Cord", -- TODO: macc or skill
+    },
+    Enfeeble = Equip.NewSet {
+        Main  = "Gada",
+        Sub   = gear.Displaced,
+        Range = gear.Displaced,
+        Ammo  = "Ghastly Tathlum +1", -- TODO: macc or skill
+
+        Head  = gear.Empyrean.Head, -- TODO: macc or skill
+        Body  = gear.Jhakri.Body, -- TODO: macc or skill
+        Hands = gear.Empyrean.Hands,
+        Legs  = gear.Jhakri.Legs, -- TODO: macc or skill
+        Feet  = gear.Relic.Feet,
+
+        Neck  = gear.Relic.Neck,
+        Ear1  = "Mendi. Earring", -- TODO: macc or skill
+        Ear2  = "Azimuth Earring",
+        Ring1 = gear.Jhakri.Ring, -- TODO: macc or skill
+        Ring2 = "Shiva Ring",
+        Back  = gear.Capes.Nuke,
+        Waist = "Latria Sash", -- TODO: macc or skill
+    },
+    Heal = Equip.NewSet {
+        Main  = "Gada",
+        Sub   = gear.Displaced,
+        Range = gear.Displaced,
         Ammo  = "Staunch Tathlum",
 
         Head  = gear.Artifact.Head, -- TODO: anything with more than MND
@@ -147,13 +208,13 @@ local sets = {
         Ear1  = "Mendi. Earring",
         -- Ear2  = "Azimuth Earring",
         Ring1 = "Lebeche Ring",
-        Ring2 = "Weather. Ring",
-        -- Back  = gear.Capes.Nuke,
+        Ring2 = nil,
+        Back  = gear.Capes.Nuke,
         Waist = "Latria Sash",
     },
-    Enfeeble = Equip.NewSet {
-    },
     FastCast = Equip.NewSet {
+        Main  = "Solstice",
+        Sub   = gear.Displaced,
         Range = "Dunna",
         Ammo  = gear.Displaced,
 
@@ -165,7 +226,7 @@ local sets = {
 
         Neck  = "Voltsurge Torque",
         Ring1 = gear.Jhakri.Ring,
-        Ring2 = "Weather. Ring",
+        Ring2 = nil,
         Back  = gear.Capes.Cast,
     },
 }
@@ -178,6 +239,8 @@ local function handleDefault()
         Equip.Set(sets.Idle)
     elseif luopan then
         Equip.Set(sets.ColureIdle)
+    elseif Status.IsAttacking(player) then
+        Equip.Set(sets.Auto)
     end
 end
 
@@ -210,12 +273,13 @@ local function handleMidcast()
         Equip.Set(sets.ColureCast)
     elseif Status.IsNuke(spell) then
         Equip.Set(sets.Nuke)
+        Equip.Obi(spell)
     elseif Status.IsDrain(spell) then
-        Equip.Set(sets.Nuke)
-        Equip.Head(gear.Relic.Head)
-        Equip.Neck("Erra Pendant")
+        Equip.Set(sets.Drain)
+        Equip.Obi(spell)
     elseif Status.IsHeal(spell) then
         Equip.Set(sets.Heal)
+        Equip.Obi(spell)
     end
 end
 
