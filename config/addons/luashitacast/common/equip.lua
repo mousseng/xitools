@@ -71,14 +71,14 @@ local Staves = {
 }
 
 local Obis = {
-    Light   = nil,
-    Dark    = nil,
-    Fire    = nil,
-    Ice     = "Hyorin Obi",
-    Water   = nil,
-    Thunder = nil,
-    Earth   = nil,
-    Wind    = nil,
+    Light   = "Hachirin-no-Obi",
+    Dark    = "Hachirin-no-Obi",
+    Fire    = "Hachirin-no-Obi",
+    Ice     = "Hachirin-no-Obi",
+    Water   = "Hachirin-no-Obi",
+    Thunder = "Hachirin-no-Obi",
+    Earth   = "Hachirin-no-Obi",
+    Wind    = "Hachirin-no-Obi",
 }
 
 local SetExtensionTypes = {
