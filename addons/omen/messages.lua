@@ -63,6 +63,7 @@ end
 ---@param state OmenObjectives
 local function updateFloorTimer(msg, state)
     state.floorTimer = msg.params[1]
+    state.floorEnd = os.time() + msg.params[1]
 end
 
 --[[

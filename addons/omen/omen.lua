@@ -3,6 +3,7 @@ addon.author  = 'lin'
 addon.version = '1.0'
 addon.desc    = 'Track objectives in omen'
 
+require('common')
 local imgui = require('lin/ui')
 local messages = require('messages')
 
@@ -19,6 +20,7 @@ local messages = require('messages')
 ---@class OmenObjectives
 ---@field mainTimer  number
 ---@field floorTimer number
+---@field floorEnd   number
 ---@field floor      OmenObjectiveFloor
 ---@field transient  OmenObjectiveTransient[]
 
@@ -126,6 +128,7 @@ local function getNewObjectives()
     return {
         mainTimer = 0,
         floorTimer = 0,
+        floorEnd = 0,
         floor = {
             summary = 'no floor objective yet',
             status  = 'pending',
@@ -186,8 +189,9 @@ local function showObjectives()
             imgui.NewLine()
         end
 
+        local remaining = math.max(currentObjectives.floorEnd - os.time(), 0)
         local timer = '%5ds remaining'
-        imgui.Text(timer:format(currentObjectives.floorTimer))
+        imgui.Text(timer:format(remaining))
 
         for _, obj in ipairs(currentObjectives.transient) do
             local status = STATUSES[obj.status]
