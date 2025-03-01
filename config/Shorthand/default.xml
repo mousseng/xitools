@@ -263,12 +263,20 @@
 			<name>dr2</name>
 		</spell>
 
+		<spell id="880">
+			<name>dr3</name>
+		</spell>
+
 		<spell id="247">
 			<name>as</name>
 		</spell>
 
 		<spell id="248">
 			<name>as2</name>
+		</spell>
+
+		<spell id="881">
+			<name>as3</name>
 		</spell>
 
 		<spell id="252">
@@ -751,6 +759,48 @@
 		<spell id="798">
 			<name>greg</name>
 			<name>gregen</name>
+		</spell>
+
+		<spell id="780">
+			<name>idef</name>
+		</spell>
+
+		<spell id="810">
+			<name>gdef</name>
+		</spell>
+
+		<spell id="781">
+			<name>imab</name>
+		</spell>
+
+		<spell id="811">
+			<name>gmab</name>
+		</spell>
+
+		<spell id="720">
+			<name>imal</name>
+		</spell>
+
+		<spell id="820">
+			<name>gmal</name>
+		</spell>
+
+		<spell id="785">
+			<name>imac</name>
+			<name>imacc</name>
+		</spell>
+
+		<spell id="815">
+			<name>gmac</name>
+			<name>gmacc</name>
+		</spell>
+
+		<spell id="727">
+			<name>igrav</name>
+		</spell>
+
+		<spell id="827">
+			<name>ggrav</name>
 		</spell>
 
 </shorthand>
