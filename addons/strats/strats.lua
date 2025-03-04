@@ -61,6 +61,19 @@ local function command(e)
     e.blocked = true
 end
 
+local function listen(e)
+    if e.id ~= 0x63 then
+        return
+    end
+
+    local packetType = struct.unpack('B', e.data_modified, 0x04 + 1)
+    if packetType ~= 5 then
+        return
+    end
+
+    schJp = struct.unpack('H', e.data_modified, 0x88 + 1)
+end
+
 local function present()
     local schLevel = 0
     if player:GetMainJob() == 20 then
@@ -74,14 +87,16 @@ local function present()
     local curPips = 0
     local maxPips = getMaxPips(schLevel)
     local maxRecast = getMaxRecast(schLevel)
+    local progress = 0.0
 
     for i = 0, 31 do
         local ability = recast:GetAbilityTimerId(i)
         if ability == 231 then
-            local curRecast = recast:GetAbilityTimer(i) / 60
-            local doneRecast = maxRecast - curRecast
+            local remaining = recast:GetAbilityTimer(i) / 60
+            local completed = maxRecast - remaining
             local increment = maxRecast / maxPips
-            curPips = math.floor(doneRecast / increment)
+            curPips = math.floor(completed / increment)
+            progress = math.fmod(remaining, increment)
         end
     end
 
@@ -119,7 +134,7 @@ ashita.events.register('load', 'load', function()
     local result = ffi.C.D3DXCreateSprite(d3d.get_device(), sprite)
 
     if result ~= ffi.C.S_OK then
-        AshitaCore:GetChatManager():QueueCommand(-1, '/addon unload dxui')
+        AshitaCore:GetChatManager():QueueCommand(-1, '/addon unload strats')
         return
     end
 
@@ -127,4 +142,5 @@ ashita.events.register('load', 'load', function()
 
     ashita.events.register('command',     'strats_command', command)
     ashita.events.register('d3d_present', 'strats_present', present)
+    ashita.events.register('packet_in',   'strats_listen',  listen)
 end)
