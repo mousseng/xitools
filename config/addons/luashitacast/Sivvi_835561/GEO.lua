@@ -13,7 +13,7 @@ local Status = gFunc.LoadFile('common/status.lua')
 local sets = {
     Idle = Equip.NewSet {
         Main  = Gear.MaficCudgel,
-        Sub   = Gear.Displaced, -- TODO: genbu/genmei shield
+        Sub   = Gear.Culminus, -- TODO: genbu/genmei shield
         Range = Gear.Displaced,
         Ammo  = Gear.StaunchTath,
 
@@ -33,7 +33,7 @@ local sets = {
     },
     Auto = Equip.NewSet {
         Main  = Gear.MaficCudgel,
-        Sub   = Gear.Displaced, -- TODO: genbu/genmei shield
+        Sub   = Gear.Culminus, -- TODO: genbu/genmei shield
         Range = Gear.Displaced,
         Ammo  = Gear.StaunchTath,
 
@@ -55,7 +55,7 @@ local sets = {
         -- TODO: stack regen, refresh, dt
 
         Main  = Gear.Solstice,
-        Sub   = Gear.Displaced, -- TODO: genbu/genmei shield
+        Sub   = Gear.Culminus, -- TODO: genbu/genmei shield
         Range = Gear.Dunna,
         Ammo  = Gear.Displaced,
 
@@ -65,7 +65,7 @@ local sets = {
         Legs  = nil,
         Feet  = Gear.GEO.RelicFeet,
 
-        Neck  = Gear.GEO.RelicNeck,
+        Neck  = Gear.GEO.Neck,
         Ear1  = Gear.HypaspistEar,
         Ear2  = nil, -- TODO: odnowa earring
         Ring1 = Gear.DefendingRing,
@@ -77,7 +77,7 @@ local sets = {
         -- TODO: stack sid, dt
 
         Main  = Gear.Gada,
-        Sub   = Gear.Displaced, -- TODO: genbu/genmei shield
+        Sub   = Gear.Culminus, -- TODO: genbu/genmei shield
         Range = Gear.Dunna,
         Ammo  = Gear.Displaced,
 
@@ -87,7 +87,7 @@ local sets = {
         Legs  = Gear.GEO.RelicLegs,
         Feet  = Gear.GEO.EmpyFeet,
 
-        Neck  = Gear.GEO.RelicNeck,
+        Neck  = Gear.GEO.Neck,
         Ear1  = nil,
         Ear2  = Gear.GEO.Ear,
         Ring1 = Gear.DefendingRing,
@@ -133,11 +133,11 @@ local sets = {
         Ring1 = Gear.JhakriRing, -- TODO: evanescence ring
         Ring2 = nil, -- TODO: archon ring
         Back  = Gear.GEO.NukeCape,
-        -- Waist = Gear.SkrymirCord, -- TODO: macc or skill
+        Waist = Gear.AusterityBelt,
     },
     Enfeeble = Equip.NewSet {
         Main  = Gear.Gada,
-        Sub   = Gear.Displaced,
+        Sub   = Gear.Culminus, -- TODO: macc?
         Range = Gear.Displaced,
         Ammo  = Gear.GhastlyTath, -- TODO: macc or skill
 
@@ -147,7 +147,7 @@ local sets = {
         Legs  = Gear.JhakriLegs, -- TODO: macc or skill
         Feet  = Gear.GEO.RelicFeet,
 
-        Neck  = Gear.GEO.RelicNeck,
+        Neck  = Gear.GEO.Neck,
         Ear1  = Gear.MendicantEar, -- TODO: macc or skill
         Ear2  = Gear.GEO.Ear,
         Ring1 = Gear.JhakriRing, -- TODO: macc or skill
@@ -157,7 +157,7 @@ local sets = {
     },
     Heal = Equip.NewSet {
         Main  = Gear.Gada,
-        Sub   = Gear.Displaced,
+        Sub   = Gear.Culminus,
         Range = Gear.Displaced,
         Ammo  = Gear.StaunchTath,
 
@@ -177,7 +177,7 @@ local sets = {
     },
     FastCast = Equip.NewSet {
         Main  = Gear.Solstice,
-        Sub   = Gear.Displaced,
+        Sub   = Gear.Culminus,
         Range = Gear.Dunna,
         Ammo  = Gear.Displaced,
 
@@ -253,6 +253,8 @@ local function handleCommand(args)
 
     if args[1] == 'idle' then
         Equip.Set(sets.Idle, true)
+    elseif args[1] == 'validate' then
+        Gear:Validate()
     end
 end
 

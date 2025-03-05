@@ -12,7 +12,10 @@ local gear = {
     MaficCudgel     = "Mafic Cudgel",
     Solstice        = "Solstice",
     Gada            = "Gada",
-    -- grips
+    Colada          = "Colada",
+    ChatoyantStaff  = "Chatoyant Staff",
+    -- shields and grips
+    Culminus        = "Culminus",
     EnkiStrap       = "Enki Strap",
     -- ranged
     Dunna           = "Dunna",
@@ -52,11 +55,16 @@ local gear = {
     SkrymirCord     = "Skrymir Cord",
     FotiaBelt       = "Fotia Belt",
     LatriaSash      = "Latria Sash",
+    AusterityBelt   = "Austerity Belt +1",
+    SiegelSash      = "Siegel Sash",
+    RuminationSash  = "Rumination Sash",
     -- loose armor
     NaresCap        = "Nares Cap",
     ShriekerCuffs   = "Shrieker's Cuffs",
     AyaoGages       = "Ayao's Gages",
     DoyenPants      = "Doyen Pants",
+    QuerkeningBrais = "Querkening Brais",
+    InspiritedBoots = "Inspirited Boots",
     -- adhemar gear
     AdhemarHands    = "Adhemar Wrist. +1",
     -- herculean gear
@@ -94,7 +102,7 @@ local gear = {
     -- JSE time!
     NIN = {
         -- artifact gear
-        AfHead     = "Hachi. Hatsu. +1",
+        AfHead     = "Hachiya Hatsu. +3",
         AfBody     = "Hachi. Chain. +1",
         AfHands    = "Hachiya Tekko +1",
         AfLegs     = "Hachi. Hakama +1",
@@ -110,7 +118,7 @@ local gear = {
         EmpyBody   = "Hattori Ningi +2",
         EmpyHands  = "Hattori Tekko +2",
         EmpyLegs   = "Hattori Hakama +2",
-        EmpyFeet   = "Hattori Kyahan +2",
+        EmpyFeet   = "Hattori Kyahan +3",
         -- misc jse gear
         Ear        = "Hattori Earring",
         Neck       = "Ninja Nodowa +1",
@@ -138,7 +146,7 @@ local gear = {
         -- empyrean gear
         EmpyHead   = "Azimuth Hood +2",
         EmpyBody   = "Azimuth Coat",
-        EmpyHands  = "Azimuth Gloves",
+        EmpyHands  = "Azimuth Gloves +1",
         EmpyLegs   = "Azimuth Tights",
         EmpyFeet   = "Azimuth Gaiters +2",
         -- misc jse gear
@@ -150,9 +158,35 @@ local gear = {
         NukeCape = { Name = "Nantosuelta's Cape", Augment = { 'INT+20', '"Mag. Atk. Bns."+10' } },
         GeoCape  = "Lifestream Cape",
     },
-    BLU = {
-    },
     RDM = {
+        -- artifact gear
+        AfHead     = "Atrophy Chapeau",
+        AfBody     = "Atrophy Tabard +1",
+        AfHands    = "Atrophy Gloves +1",
+        AfLegs     = "Atrophy Tights +1",
+        AfFeet     = "Atrophy Boots",
+        -- relic armor
+        RelicHead  = "Viti. Chapeau +1",
+        RelicBody  = "Viti. Tabard +1",
+        RelicHands = "Viti. Gloves",
+        RelicLegs  = "Viti. Tights",
+        RelicFeet  = "Vitiation Boots +1",
+        -- empyrean gear
+        EmpyHead   = "Leth. Chappel +1",
+        EmpyBody   = "Lethargy Sayon +1",
+        EmpyHands  = "Leth. Ganth. +1",
+        EmpyLegs   = "Leth. Fuseau +1",
+        EmpyFeet   = "Leth. Houseaux +1",
+        -- misc jse gear
+        Ear        = "Leth. Earring +1",
+        Neck       = "",
+        -- ambu capes
+        IdleCape = { Name = "Succelos's Cape", Augment = { 'Fast Cast +10%' } }, -- TODO
+        CastCape = { Name = "Succelos's Cape", Augment = { 'MND+20', 'Fast Cast +10%' } },
+        NukeCape = { Name = "Succelos's Cape", Augment = { 'Fast Cast +10%' } }, -- TODO
+        HealCape = { Name = "Succelos's Cape", Augment = { 'Fast Cast +10%' } }, -- TODO
+    },
+    BLU = {
     },
     DNC = {
     },
@@ -162,11 +196,11 @@ require('common')
 local chat = require('chat')
 local resx = AshitaCore:GetResourceManager()
 
-local function isItem(potentialItem)
+local function parseItem(potentialItem)
     local isItemString = type(potentialItem) == 'string'
     local isItemTable = type(potentialItem) == 'table' and potentialItem.Name ~= nil
     if not isItemString and not isItemTable then
-        return true
+        return nil
     end
 
     local realItem = potentialItem
@@ -174,17 +208,58 @@ local function isItem(potentialItem)
         realItem = potentialItem.Name
     end
 
+    return realItem
+end
+
+local function isItem(potentialItem)
+    local item = parseItem(potentialItem)
     -- special-case these because they're useful but not real
-    if potentialItem == gear.Remove or potentialItem == gear.Displaced then
+    if item == nil or item == gear.Remove or item == gear.Displaced then
         return true
     end
 
-    return resx:GetItemByName(realItem, 0) ~= nil
+    return resx:GetItemByName(item, 0) ~= nil
+end
+
+local function hasItem(inventory, potentialItem)
+    local item = parseItem(potentialItem)
+    -- special-case these because they're useful but not real
+    if item == nil or item == gear.Remove or item == gear.Displaced then
+        return true
+    end
+
+    return inventory[item] or false
+end
+
+local function buildInventory()
+    local inv = AshitaCore:GetMemoryManager():GetInventory()
+    local containers = { 0, 8, 10, 11, 12, 13, 14, 15, 16 }
+    local inventory = { }
+
+    for _, container in ipairs(containers) do
+        for index = 0, 80 do
+            local item = inv:GetContainerItem(container, index)
+            if item and item.Id > 0 then
+                local name = resx:GetItemById(item.Id).Name[1]
+                inventory[name] = true
+            end
+        end
+    end
+
+    return inventory
 end
 
 local function reportBadItem(k, v)
     print(chat.header(addon.name)
         :append(chat.message('Not a valid item: %s = "'):fmt(k))
+        :append(chat.error(v))
+        :append(chat.message('"'))
+    )
+end
+
+local function reportMissingItem(k, v)
+    print(chat.header(addon.name)
+        :append(chat.message('Item not in inventory: %s = "'):fmt(k))
         :append(chat.error(v))
         :append(chat.message('"'))
     )
@@ -204,11 +279,15 @@ end
 
 function gear:Validate()
     local issues = 0
+    local inv = buildInventory()
 
     for k, v in pairs(self) do
         if not isItem(v) then
             issues = issues + 1
             reportBadItem(k, v)
+        elseif not hasItem(inv, v) then
+            issues = issues + 1
+            reportMissingItem(k, v)
         end
     end
 
@@ -216,6 +295,9 @@ function gear:Validate()
         if not isItem(v) then
             issues = issues + 1
             reportBadItem(k, v)
+        elseif not hasItem(inv, v) then
+            issues = issues + 1
+            reportMissingItem(k, v)
         end
     end
 
@@ -223,6 +305,9 @@ function gear:Validate()
         if not isItem(v) then
             issues = issues + 1
             reportBadItem(k, v)
+        elseif not hasItem(inv, v) then
+            issues = issues + 1
+            reportMissingItem(k, v)
         end
     end
 

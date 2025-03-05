@@ -1,124 +1,201 @@
 require('common')
 local noop = function() end
-local chat = AshitaCore:GetChatManager()
+local chatMgr = AshitaCore:GetChatManager()
 
+---@module 'common.gear'
+local Gear = gFunc.LoadFile('common/gear.lua')
 ---@module 'common.equip'
 local Equip = gFunc.LoadFile('common/equip.lua')
 ---@module 'common.status'
 local Status = gFunc.LoadFile('common/status.lua')
 
-local gear = {
-    Displaced = "displaced",
-    Artifact = {
-    },
-    Relic = {
-    },
-    Empyrean = {
-    },
-    Jhakri = {
-        Head  = "Jhakri Coronal +1",
-        Body  = "Jhakri Robe +1",
-        Hands = "Jhakri Cuffs +2",
-        Legs  = "Jhakri Slops +1",
-        Feet  = "Jhakri Pigaches +1",
-        Ring  = "Jhakri Ring",
-    },
-    Capes = {
-    },
-}
-
 local settings = {
     Subjob = 'NON',
     Grimoire = nil,
-    Capes = {
-    },
 }
 
 local sets = {
     Idle = Equip.NewSet {
-        Main  = "Colada",
-        Ammo  = "Staunch Tathlum",
+        Main  = Gear.Naegling,
+        Sub   = Gear.Culminus,
+        Ammo  = Gear.StaunchTath,
 
-        Head  = gear.Jhakri.Head,
-        Body  = gear.Jhakri.Body,
-        Hands = "Shrieker's Cuffs",
-        Legs  = gear.Jhakri.Legs,
-        Feet  = "Inspirited Boots",
+        Head  = Gear.JhakriHead,
+        Body  = Gear.JhakriBody,
+        Hands = Gear.ShriekerCuffs,
+        Legs  = Gear.JhakriLegs,
+        Feet  = Gear.InspiritedBoots,
 
-        Neck  = "Sanctity Necklace",
-        Ear1  = "Mendi. Earring",
-        Ear2  = "Lethargy Earring",
-        Ring1 = "Defending Ring",
-        Ring2 = "Shneddick Ring",
-        Back  = "Sucellos's Cape",
-        Waist = "Sailfi Belt +1",
+        Neck  = Gear.SanctityNeck,
+        Ear1  = Gear.MendicantEar,
+        Ear2  = Gear.RDM.Ear,
+        Ring1 = Gear.DefendingRing,
+        Ring2 = Gear.ShneddickRing,
+        Back  = Gear.RDM.IdleCape,
+        Waist = Gear.SailfiBelt,
     },
-    Magic = {
-        FastCast = Equip.NewSet {
-            Main = "Colada",
-            Ammo = "Sapience Orb",
-
-            Head  = "Nares Cap",
-            Legs  = "Doyen Pants",
-
-            Ear1  = "Mendi. Earring",
-            Ear2  = "Lethargy Earring",
-            Back  = "Sucellos's Cape",
+    Enhance = {
+        Aquaveil = Equip.NewSet {
         },
-        Enfeeble = Equip.NewSet {
-            Main  = "Colada",
-            Ammo  = "Staunch Tathlum",
-
-            Head  = gear.Jhakri.Head,
-            Body  = gear.Jhakri.Body,
-            Hands = gear.Jhakri.Hands,
-            Legs  = gear.Jhakri.Legs,
-            Feet  = gear.Jhakri.Feet,
-
-            Neck  = "Sanctity Necklace",
-            Ear1  = "Mendi. Earring",
-            Ear2  = "Lethargy Earring",
-            Ring1 = "Weather. Ring +1",
-            Ring2 = "Shiva Ring",
-            Back  = "Sucellos's Cape",
-            Waist = "Skrymir Cord",
+        Stoneskin = Equip.NewSet {
         },
-        Heal = Equip.NewSet {
-            Main  = "Chatoyant Staff",
-            Sub   = "Enki Strap",
-
-            Head  = gear.Jhakri.Head,
-            Body  = gear.Jhakri.Body,
-            Hands = gear.Jhakri.Hands,
-            Legs  = gear.Jhakri.Legs,
-            Feet  = gear.Jhakri.Feet,
-
-            Neck  = "Sanctity Necklace",
-            Ear1  = "Mendi. Earring",
-            Ear2  = "Hecate's Earring",
-            -- Ring1 = "Mephitas's Ring +1",
-            Ring2 = "Lebeche Ring",
-            Back  = "Sucellos's Cape",
-            Waist = "Skrymir Cord",
+        Duration = Equip.NewSet {
         },
-        Nuke = Equip.NewSet {
-            Main  = "Colada",
-            Ammo  = "Staunch Tathlum",
+    },
+    Enfeeble = {
+        Macc = Equip.NewSet {
+            Main  = Gear.Naegling,
+            Sub   = Gear.Culminus,
+            Ammo  = Gear.StaunchTath,
 
-            Head  = "Jhakri Coronal +1",
-            Body  = "Jhakri Robe +1",
-            Hands = "Jhakri Cuffs +1",
-            Legs  = "Jhakri Slops +1",
-            Feet  = "Jhakri Pigaches +1",
+            Head  = Gear.JhakriHead,
+            Body  = Gear.JhakriBody,
+            Hands = Gear.JhakriHands,
+            Legs  = Gear.JhakriLegs,
+            Feet  = Gear.JhakriFeet,
 
-            Neck  = "Sanctity Necklace",
-            Ear1  = "Friomisi Earring",
-            Ear2  = "Hecate's Earring",
-            Ring1 = "Jhakri Ring",
-            Ring2 = "Shiva Ring",
-            Back  = "Sucellos's Cape",
-            Waist = "Skrymir Cord",
+            Neck  = Gear.SanctityNeck,
+            Ear1  = nil,
+            Ear2  = Gear.RDM.Ear,
+            Ring1 = Gear.JhakriRing,
+            Ring2 = Gear.AyanmoRing,
+            Back  = Gear.RDM.CastCape,
+            Waist = Gear.SkrymirCord,
         },
+        Skill = Equip.NewSet {
+            Main  = Gear.Naegling,
+            Sub   = Gear.Culminus,
+            Ammo  = Gear.StaunchTath,
+
+            Head  = Gear.JhakriHead,
+            Body  = Gear.JhakriBody,
+            Hands = Gear.JhakriHands,
+            Legs  = Gear.JhakriLegs,
+            Feet  = Gear.JhakriFeet,
+
+            Neck  = Gear.SanctityNeck,
+            Ear1  = nil,
+            Ear2  = Gear.RDM.Ear,
+            Ring1 = Gear.JhakriRing,
+            Ring2 = Gear.AyanmoRing,
+            Back  = Gear.RDM.CastCape,
+            Waist = Gear.SkrymirCord,
+        },
+        Int = Equip.NewSet {
+            Main  = Gear.Staccato,
+            Sub   = Gear.EnkiStrap,
+            Ammo  = Gear.StaunchTath,
+
+            Head  = Gear.JhakriHead,
+            Body  = Gear.JhakriBody,
+            Hands = Gear.JhakriHands,
+            Legs  = Gear.JhakriLegs,
+            Feet  = Gear.JhakriFeet,
+
+            Neck  = Gear.SanctityNeck,
+            Ear1  = nil,
+            Ear2  = Gear.RDM.Ear,
+            Ring1 = Gear.JhakriRing,
+            Ring2 = Gear.ShivaRing,
+            Back  = Gear.RDM.NukeCape,
+            Waist = Gear.SkrymirCord,
+        },
+        Mnd = Equip.NewSet {
+            Main  = Gear.Staccato,
+            Sub   = Gear.EnkiStrap,
+            Ammo  = Gear.StaunchTath,
+
+            Head  = Gear.JhakriHead,
+            Body  = Gear.JhakriBody,
+            Hands = Gear.JhakriHands,
+            Legs  = Gear.JhakriLegs,
+            Feet  = Gear.JhakriFeet,
+
+            Neck  = Gear.SanctityNeck,
+            Ear1  = nil,
+            Ear2  = Gear.RDM.Ear,
+            Ring1 = Gear.JhakriRing,
+            Ring2 = Gear.AyanmoRing,
+            Back  = Gear.RDM.CastCape,
+            Waist = Gear.SkrymirCord,
+        },
+        Inundation = Equip.NewSet {
+        },
+    },
+    FastCast = Equip.NewSet {
+        Main  = Gear.Colada,
+        Sub   = Gear.Culminus,
+        Ammo  = Gear.SapienceOrb,
+
+        Head  = Gear.NaresCap,
+        Body  = Gear.JhakriBody,
+        Hands = Gear.JhakriHands,
+        Legs  = Gear.DoyenPants,
+        Feet  = Gear.JhakriFeet,
+
+        Neck  = Gear.VoltsurgeTorque,
+        Ear1  = Gear.MendicantEar,
+        Ear2  = Gear.RDM.Ear,
+        Ring1 = Gear.DefendingRing,
+        Ring2 = Gear.JhakriRing,
+        Back  = Gear.RDM.CastCape,
+        Waist = Gear.SiegelSash,
+    },
+    Heal = Equip.NewSet {
+        Main  = Gear.ChatoyantStaff,
+        Sub   = Gear.EnkiStrap,
+
+        Head  = Gear.JhakriHead,
+        Body  = Gear.JhakriBody,
+        Hands = Gear.AyaoGages,
+        Legs  = Gear.JhakriLegs,
+        Feet  = Gear.JhakriFeet,
+
+        Neck  = Gear.SanctityNeck,
+        Ear1  = Gear.MendicantEar,
+        Ear2  = Gear.HecateEar, -- TODO: cure or defensive
+        Ring1 = Gear.DefendingRing,
+        Ring2 = Gear.LebecheRing,
+        Back  = Gear.RDM.HealCape,
+        Waist = Gear.AusterityBelt,
+    },
+    Nuke = Equip.NewSet {
+        Main  = Gear.Staccato,
+        Sub   = Gear.EnkiStrap,
+        Ammo  = Gear.StaunchTath,
+
+        Head  = Gear.JhakriHead,
+        Body  = Gear.JhakriBody,
+        Hands = Gear.JhakriHands,
+        Legs  = Gear.JhakriLegs,
+        Feet  = Gear.JhakriFeet,
+
+        Neck  = Gear.SanctityNeck,
+        Ear1  = Gear.FriomisiEar,
+        Ear2  = Gear.HecateEar,
+        Ring1 = Gear.JhakriRing,
+        Ring2 = Gear.ShivaRing,
+        Back  = Gear.RDM.NukeCape,
+        Waist = Gear.SkrymirCord,
+    },
+    Drain = Equip.NewSet {
+        Main  = Gear.Naegling,
+        Sub   = Gear.Culminus,
+        Ammo  = Gear.StaunchTath,
+
+        Head  = Gear.JhakriHead,
+        Body  = Gear.JhakriBody,
+        Hands = Gear.JhakriHands,
+        Legs  = Gear.JhakriLegs,
+        Feet  = Gear.JhakriFeet,
+
+        Neck  = Gear.ErraPendant,
+        Ear1  = Gear.MendicantEar,
+        Ear2  = Gear.RDM.Ear,
+        Ring1 = Gear.JhakriRing,
+        Ring2 = Gear.ShivaRing,
+        Back  = Gear.RDM.NukeCape,
+        Waist = Gear.AusterityBelt,
     },
 }
 
@@ -128,7 +205,7 @@ local function changeThotbarPalette(subjob)
     end
 
     local thotbarCmd = '/tb palette change %s'
-    chat:QueueCommand(1, thotbarCmd:format(subjob))
+    chatMgr:QueueCommand(1, thotbarCmd:format(subjob))
     settings.Subjob = subjob
 end
 
@@ -158,7 +235,7 @@ local function changeScholarPalette()
 
     if settings.Grimoire ~= grimoire then
         settings.Grimoire = grimoire
-        chat:QueueCommand(1, thotbarCmd:format('SCH', grimoire or ''))
+        chatMgr:QueueCommand(1, thotbarCmd:format('SCH', grimoire or ''))
     end
 end
 
@@ -174,7 +251,7 @@ local function handleDefault()
 end
 
 local function handlePrecast()
-    Equip.Set(sets.Magic.FastCast)
+    Equip.Set(sets.FastCast)
 end
 
 local function handleMidcast()
@@ -182,33 +259,78 @@ local function handleMidcast()
     Status.currentStatus = 'Casting'
 
     if Status.IsNuke(spell) then
-        Equip.Set(sets.Magic.Nuke)
+        Equip.Set(sets.Nuke)
+    elseif Status.IsDrain(spell) then
+        Equip.Set(sets.Drain)
     elseif Status.IsHeal(spell) then
-        Equip.Set(sets.Magic.Heal)
-    elseif Status.IsEnfeebInt(spell) then
-        Equip.Set(sets.Magic.Enfeeble)
-    elseif Status.IsEnfeebMnd(spell) then
-        Equip.Set(sets.Magic.Enfeeble)
-
-        if spell.Name:match('Addle') then
-            Equip.Feet('Muddle Pumps')
-        end
+        Equip.Set(sets.Heal)
+    elseif Status.IsEnhancement(spell) then
+        local spellSet = sets.Enhance[spell.Name]
+        local fallback = sets.Enhance.Duration
+        Equip.Set(spellSet or fallback)
+    elseif Status.IsEnfeeble(spell) then
+        local spellSet = sets.Enfeeble[spell.Name]
+        local fallback = sets.Enfeeble.Macc
+        Equip.Set(spellSet or fallback)
     end
 
     Equip.Obi(spell)
 end
 
+local function handleCommand(args)
+    if #args == 0 then
+        return
+    end
+
+    if args[1] == 'idle' then
+        Equip.Set(sets.Idle, true)
+    elseif args[1] == 'validate' then
+        Gear:Validate()
+    end
+end
+
 local function onLoad()
+    sets.Enfeeble['Frazzle III']  = sets.Enfeeble.Skill
+    sets.Enfeeble['Distract III'] = sets.Enfeeble.Skill
+    sets.Enfeeble['Poison']       = sets.Enfeeble.Skill
+    sets.Enfeeble['Poison II']    = sets.Enfeeble.Skill
+
+    sets.Enfeeble['Frazzle II']   = sets.Enfeeble.Macc
+    sets.Enfeeble['Dispel']       = sets.Enfeeble.Macc
+
+    -- these macc spells benefit from duration
+    sets.Enfeeble['Sleep']        = sets.Enfeeble.Macc
+    sets.Enfeeble['Sleep II']     = sets.Enfeeble.Macc
+    sets.Enfeeble['Bind']         = sets.Enfeeble.Macc
+    sets.Enfeeble['Break']        = sets.Enfeeble.Macc
+    sets.Enfeeble['Silence']      = sets.Enfeeble.Macc
+
+    -- these macc spells also benefit from potency
+    sets.Enfeeble['Gravity']      = sets.Enfeeble.Macc
+    sets.Enfeeble['Gravity II']   = sets.Enfeeble.Macc
+
+    sets.Enfeeble['Paralyze']     = sets.Enfeeble.Mnd
+    sets.Enfeeble['Paralyze II']  = sets.Enfeeble.Mnd
+    sets.Enfeeble['Addle']        = sets.Enfeeble.Mnd
+    sets.Enfeeble['Addle II']     = sets.Enfeeble.Mnd
+    sets.Enfeeble['Slow']         = sets.Enfeeble.Mnd
+    sets.Enfeeble['Slow II']      = sets.Enfeeble.Mnd
+
+    sets.Enfeeble['Blind']        = sets.Enfeeble.Int
+    sets.Enfeeble['Blind II']     = sets.Enfeeble.Int
+
+    chatMgr:QueueCommand(-1, '/addon reload strats')
 end
 
 local function onUnload()
+    chatMgr:QueueCommand(-1, '/addon unload strats')
 end
 
 return {
     Sets              = sets,
     OnLoad            = onLoad,
     OnUnload          = onUnload,
-    HandleCommand     = noop,
+    HandleCommand     = handleCommand,
     HandleDefault     = handleDefault,
     HandleAbility     = noop,
     HandleItem        = gFunc.LoadFile('common/items.lua'),

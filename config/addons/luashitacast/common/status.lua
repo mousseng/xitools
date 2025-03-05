@@ -259,6 +259,12 @@ end
 
 ---@param spell table
 ---@return boolean
+function status.IsEnfeeble(spell)
+    return spell.Skill == 'Enfeebling Magic'
+end
+
+---@param spell table
+---@return boolean
 function status.IsEnfeebMnd(spell)
     return spell.Id == spells.Paralyze
         or spell.Id == spells.ParalyzeII

@@ -59,7 +59,7 @@ local sets = {
             Legs  = Gear.NIN.EmpyLegs,
             Feet  = Gear.NIN.EmpyFeet,
 
-            Neck  = Gear.MoonbeamNodowa,
+            Neck  = Gear.NIN.Neck,
             Ear1  = Gear.BrutalEar,
             Ear2  = Gear.NIN.Ear,
             Ring1 = Gear.EponaRing,
@@ -76,7 +76,7 @@ local sets = {
             Legs  = Gear.MummuLegs,
             Feet  = Gear.MummuFeet,
 
-            Neck  = Gear.MoonbeamNodowa,
+            Neck  = Gear.NIN.Neck,
             Ear1  = Gear.BrutalEar,
             Ear2  = Gear.NIN.Ear,
             Ring1 = Gear.EponaRing,
@@ -93,7 +93,7 @@ local sets = {
             Legs  = Gear.HizamaruLegs,
             Feet  = Gear.NIN.EmpyFeet,
 
-            Neck  = Gear.MoonbeamNodowa,
+            Neck  = Gear.NIN.Neck,
             Ear1  = Gear.BrutalEar,
             Ear2  = Gear.NIN.Ear,
             Ring1 = Gear.EponaRing,
@@ -107,8 +107,6 @@ local sets = {
             Ammo  = Gear.SapienceOrb,
             Body  = Gear.NIN.RelicBody,
             Neck  = Gear.VoltsurgeTorque,
-            -- Ring1 = "Weather. Ring",
-            -- Ring2 = "Lebeche Ring",
             Back  = Gear.NIN.CastCape,
         },
         Shadows = Equip.NewSet {
@@ -122,7 +120,7 @@ local sets = {
             Back  = Gear.NIN.NukeCape,
         },
         Nuke = Equip.NewSet {
-            Ammo  = Gear.SapienceOrb,
+            Ammo  = Gear.GhastlyTath,
 
             Head  = Gear.NIN.RelicHead,
             Body  = Gear.HercBody,
@@ -143,7 +141,7 @@ local sets = {
         Base = Equip.NewSet {
             Ammo  = Gear.SeethingBomb,
 
-            Head  = Gear.MummuHead,
+            Head  = Gear.NIN.AfHead,
             Body  = Gear.MummuBody,
             Hands = Gear.MummuHands,
             Legs  = Gear.HizamaruLegs,
@@ -158,7 +156,7 @@ local sets = {
         ['Blade: Metsu'] = Equip.NewSet {
             Ammo  = Gear.DateShuriken,
 
-            Head  = Gear.NIN.EmpyHead,
+            Head  = Gear.NIN.AfHead,
             Body  = Gear.NIN.EmpyBody,
             Hands = Gear.NIN.EmpyHands,
             Legs  = Gear.HizamaruLegs,
@@ -209,7 +207,7 @@ local sets = {
         ['Blade: Hi'] = Equip.NewSet {
             Ammo  = Gear.Yetshila,
 
-            Head  = Gear.MummuHead,
+            Head  = Gear.NIN.AfHead,
             Body  = Gear.MummuBody,
             Hands = Gear.MummuHands,
             Legs  = Gear.MummuLegs,
@@ -274,21 +272,18 @@ local sets = {
             Back  = Gear.NIN.DexCape,
             Waist = Gear.SkrymirCord,
         },
-        ['Evisceration'] = Equip.NewSet {
-            Ammo = Gear.Yetshila,
-        },
-        ['Savage Blade'] = Equip.NewSet {
+        Hybrid = Equip.NewSet {
             Ammo  = Gear.SeethingBomb,
 
             Head  = Gear.NIN.RelicHead,
-            Body  = Gear.NIN.EmpyBody,
-            Hands = Gear.NIN.EmpyHands,
+            Body  = Gear.HercBody,
+            Hands = Gear.HercHands,
             Legs  = Gear.HizamaruLegs,
             Feet  = Gear.NIN.EmpyFeet,
 
             Neck  = Gear.FotiaGorget,
             Ear1  = Gear.LugraEar,
-            Ear2  = Gear.NIN.Ear,
+            Ear2  = Gear.FriomisiEar,
             Ring1 = Gear.RegalRing,
             Ring2 = Gear.EponaRing,
             Back  = Gear.NIN.StrCape,
@@ -332,9 +327,8 @@ end
 
 local function handleWeaponskill()
     local ws = gData.GetAction()
-    local wsSet = sets.Weaponskills[ws.Name]
-    local fallback = sets.Weaponskills.Base
-
+    local wsSet = sets[ws.Name]
+    local fallback = sets.TP
     Equip.Set(wsSet or fallback)
 end
 
@@ -406,6 +400,10 @@ local function handleCommand(args)
 end
 
 local function onLoad()
+    sets.Weaponskills['Blade: Teki'] = sets.Weaponskills.Hybrid
+    sets.Weaponskills['Blade: To']   = sets.Weaponskills.Hybrid
+    sets.Weaponskills['Blade: Chi']  = sets.Weaponskills.Hybrid
+
     ashita.events.register('text_in', 'lac_nin_watch_futae', watchFutae)
     chatMgr:QueueCommand(-1, '/addon reload wheel')
 
