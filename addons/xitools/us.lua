@@ -95,6 +95,34 @@ local function CreateTexture(statusId, icon)
     end
 end
 
+local ptrStatusIcons = AshitaCore:GetPointerManager():Get('party.statusicons')
+local function GetBuffs2(party, serverId)
+    local ptrPartyBuffs = ashita.memory.read_uint32(ptrStatusIcons)
+    for memberIndex = 0, 4 do
+        local memberPtr = ptrPartyBuffs + (0x30 * memberIndex)
+        local playerId = ashita.memory.read_uint32(memberPtr)
+
+        if playerId == serverId then
+            local buffs = { }
+
+            for buffIndex = 0, 31 do
+                local fMod = math.fmod(buffIndex, 4) * 2
+                local lowBits = ashita.memory.read_uint8(memberPtr + 16 + buffIndex)
+                local highBits = ashita.memory.read_uint8(memberPtr + 8 + (math.floor(buffIndex / 4)))
+                highBits = bit.lshift(bit.band(bit.rshift(highBits, fMod), 0x03), 8)
+                local buff = highBits + lowBits
+
+                if buff ~= 255 then
+                    table.insert(buffs, buff)
+                end
+            end
+            return buffs
+        end
+    end
+
+    return { }
+end
+
 local function GetBuffs(party, serverId)
     -- courtesy of Thorny and Heals
     for i = 0, 4 do
@@ -191,7 +219,7 @@ end
 ---@return PartyMember
 local function GetMember(i, window, target, party, stal)
     local serverId = party:GetMemberServerId(i)
-    local buffs = FilterBuffs(GetBuffs(party, serverId))
+    local buffs = FilterBuffs(GetBuffs2(party, serverId))
 
     return {
         entity = GetEntity(party:GetMemberTargetIndex(i)),
