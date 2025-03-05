@@ -17,6 +17,7 @@ local MagicBursts = require('data/magicbursts')
 local Weaponskills = require('data/weaponskills')
 local MobSkills = require('data/mobskills')
 local MagicSkills = require('data/magicskills')
+local Abilities = require('data/abilities')
 local WeaponskillMsgs = T{ 103, 185, 187, 188, 238, }
 local BaseDelay = 4
 local BaseWindow = 6
@@ -252,6 +253,48 @@ local function HandlePetAbility(packet, mobs)
     local extraDelay = petAbilInfo.delay or 0
 
     handleChainStep(packet, mobs, actionName, attrs, extraDelay)
+end
+
+---@param packet ActionPacket
+---@param mobs   Skillchain[]
+local function HandleRunAbility(packet, mobs)
+    local jobAbilityInfo = Abilities[packet.param]
+
+    -- Don't care about skillchains we can't participate in
+    if not isServerIdInParty(packet.actor_id) or jobAbilityInfo == nil then
+        return
+    end
+
+    -- Iterate down to the meat of our data
+    for i = 1, packet.target_count do
+        local target = packet.targets[i]
+
+        -- MB targets must have a skillchain already
+        local mob = mobs[target.id]
+        if not mob then
+            return
+        end
+
+        for j = 1, target.action_count do
+            local action = target.actions[j]
+
+            ---@type SkillchainStep
+            local chain_step = nil
+
+            if action.message == jobAbilityInfo.burst_msg then
+                chain_step = {
+                    id = packet.param,
+                    type = ChainType.MagicBurst,
+                    name = AshitaCore:GetResourceManager():GetAbilityById(packet.param + 512).Name[1],
+                    base_damage = when(jobAbilityInfo.no_dmg, nil, action.param),
+                    bonus_damage = nil,
+                    resonance = nil,
+                }
+
+                table.insert(mob.chain, chain_step)
+            end
+        end
+    end
 end
 
 -- Collects and collates data about a particular action in order for the render
@@ -500,6 +543,8 @@ local function OnPacket(e)
             HandleMobSkill(action, chains)
         elseif action.category == 13 then
             HandlePetAbility(action, chains)
+        elseif action.category == 15 then
+            HandleRunAbility(action, chains)
         elseif action.category == 6 then
             if action.param == 94 then
                 chainAffinity[action.actor_id] = now + 30
