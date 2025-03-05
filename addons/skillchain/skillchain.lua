@@ -1,6 +1,6 @@
 addon.name    = 'skillchain'
 addon.author  = 'lin'
-addon.version = '4.2'
+addon.version = '4.3'
 addon.desc    = 'A little skillchain tracker so you know when things happen'
 
 require('common')
