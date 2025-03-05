@@ -1,6 +1,6 @@
 addon.name    = 'omen'
 addon.author  = 'lin'
-addon.version = '1.0'
+addon.version = '1.1'
 addon.desc    = 'Track objectives in omen'
 
 require('common')
