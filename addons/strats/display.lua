@@ -19,6 +19,7 @@ local color = d3d.D3DCOLOR_ARGB(255, 255, 255, 255)
 local pipsTexture    = loadTexture('pips.png')
 local pipsRectFrame  = ffi.new('RECT', {   0,   0,  64,  64 })
 local pipsRectFill   = ffi.new('RECT', {  64,   0, 128,  64 })
+local pipsRectAccent = ffi.new('RECT', {  64,  64, 128, 128 })
 
 local gaugeTexture   = loadTexture('gauge.png')
 local gaugeRectFrame = ffi.new('RECT', {   0,   0, 490, 150 })
@@ -37,6 +38,12 @@ function display.drawPipFill(sprite, x, y, colorOverride)
     position.x = x
     position.y = y
     sprite:Draw(pipsTexture, pipsRectFill, scale, nil, 0.0, position, colorOverride or color)
+end
+
+function display.drawPipAccent(sprite, x, y, colorOverride)
+    position.x = x
+    position.y = y
+    sprite:Draw(pipsTexture, pipsRectAccent, scale, nil, 0.0, position, colorOverride or color)
 end
 
 function display.drawGaugeFrame(sprite, x, y)

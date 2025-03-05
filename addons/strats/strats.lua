@@ -8,9 +8,8 @@ local d3d = require('d3d8')
 local ffi = require('ffi')
 local display = require('display')
 
-local x, y = 128, 128
+local x, y = 1070, 1000
 local surface = nil
-local pipColor = d3d.D3DCOLOR_ARGB(255, 128, 255, 255)
 local schJp = 0
 local player = AshitaCore:GetMemoryManager():GetPlayer()
 local recast = AshitaCore:GetMemoryManager():GetRecast()
@@ -99,7 +98,7 @@ local function present()
     surface:Begin()
     for i = 1, curPips do
         display.drawPipFrame(surface, x + 42 * (i - 1), y)
-        display.drawPipFill(surface, x + 42 * (i - 1), y, pipColor)
+        display.drawPipFill(surface, x + 42 * (i - 1), y)
     end
 
     for i = curPips + 1, maxPips do
