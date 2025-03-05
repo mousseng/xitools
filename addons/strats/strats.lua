@@ -6,22 +6,14 @@ addon.desc    = 'A UI piece for SCH stratagems'
 require('common')
 local d3d = require('d3d8')
 local ffi = require('ffi')
+local display = require('display')
 
-local x, y, pos, scale, color
-local surface, pipOff, pipOn, pipRect
+local x, y = 128, 128
+local surface = nil
+local pipColor = d3d.D3DCOLOR_ARGB(255, 128, 255, 255)
 local schJp = 0
 local player = AshitaCore:GetMemoryManager():GetPlayer()
 local recast = AshitaCore:GetMemoryManager():GetRecast()
-
-local function loadTexture(filename)
-    local filepath = string.format('%s\\%s', addon.path, filename)
-    local texPtr = ffi.new('IDirect3DTexture8*[1]')
-    if ffi.C.D3DXCreateTextureFromFileA(d3d.get_device(), filepath, texPtr) ~= ffi.C.S_OK then
-        return nil
-    end
-
-    return d3d.gc_safe_release(ffi.cast('IDirect3DTexture8*', texPtr[0]))
-end
 
 local function getMaxPips(schLevel)
     if schLevel >= 90 then
@@ -106,30 +98,20 @@ local function present()
 
     surface:Begin()
     for i = 1, curPips do
-        pos.x = x + 42 * (i - 1)
-        pos.y = y
-        surface:Draw(pipOn, pipRect, scale, nil, 0.0, pos, color)
+        display.drawPipFrame(surface, x + 42 * (i - 1), y)
+        display.drawPipFill(surface, x + 42 * (i - 1), y, pipColor)
     end
 
     for i = curPips + 1, maxPips do
-        pos.x = x + 42 * (i - 1)
-        pos.y = y
-        surface:Draw(pipOff, pipRect, scale, nil, 0.0, pos, color)
+        display.drawPipFrame(surface, x + 42 * (i - 1), y)
     end
+
+    -- TODO: draw progress bar to the next charge
 
     surface:End()
 end
 
 ashita.events.register('load', 'load', function()
-    pipOff  = loadTexture('pip_empty.png')
-    pipOn   = loadTexture('pip_cyan.png')
-    pipRect = ffi.new('RECT', { 0, 0, 64, 64 })
-    pos     = ffi.new('D3DXVECTOR2', { 0, 0 })
-    scale   = ffi.new('D3DXVECTOR2', { 1.0, 1.0 })
-    color   = d3d.D3DCOLOR_ARGB(255, 255, 255, 255)
-    x       = 128
-    y       = 128
-
     local sprite = ffi.new('ID3DXSprite*[1]')
     local result = ffi.C.D3DXCreateSprite(d3d.get_device(), sprite)
 
