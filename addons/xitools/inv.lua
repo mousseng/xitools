@@ -15,8 +15,8 @@ local inventories = T{
     gil = 0,
     bag = T{
         all  = T{},
-        temp = T{},
         inv  = T{},
+        temp = T{},
     },
     satchel = T{
         all = T{},
@@ -658,8 +658,8 @@ local function DrawInventory()
 
     if imgui.BeginTabBar('##xitools.inventories.all', ImGuiTabBarFlags_NoCloseWithMiddleMouseButton) then
         if imgui.BeginTabItem('bag##xitools.inventories.all.1') then
-            DrawSubInventory('temp items', 'bag', 'temp')
             DrawSubInventory('inventory', 'bag', 'inv')
+            DrawSubInventory('temp items', 'bag', 'temp')
             imgui.EndTabItem()
         end
 
