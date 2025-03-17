@@ -72,6 +72,7 @@ ashita.events.register('packet_in', 'state_packetin', function(e)
 end)
 
 local wheel = {
+    debug = false,
     level = 'Ni',
     alt = 'Ichi',
     position = 0,

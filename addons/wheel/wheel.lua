@@ -15,6 +15,10 @@ local LevelMap = {
 }
 
 local function AdvanceWheelTo(position)
+    if position % 6 == renderer.animation.targetPos then
+        return
+    end
+
     renderer.animation.currentPos = state.position
     renderer.animation.targetPos = position % 6
     state.position = position % 6
@@ -78,6 +82,10 @@ local function OnCommand(e)
         renderer.lock()
     elseif verb == 'unlock' then
         renderer.unlock()
+    elseif verb == 'go' then
+        AdvanceWheelTo(args[3] or state.position + 1)
+    elseif verb == 'debug' then
+        state.debug = not state.debug
     else
         PrintHelp()
     end
@@ -85,15 +93,21 @@ end
 
 ---@param e PacketInEventArgs
 local function OnPacketIn(e)
-    if e.id == 0x028 then
-        local actor = ashita.bits.unpack_be(e.data_raw, 40, 32)
-        local type = ashita.bits.unpack_be(e.data_raw, 82, 4)
-        local spell = ashita.bits.unpack_be(e.data_raw, 86, 16)
+    if e.id ~= 0x28 then return end
 
-        if actor == GetPlayerEntity().ServerId and type == 4 and spell >= 320 and spell <= 337 then
-            AdvanceWheelTo(state.lookup[spell] + 1)
-        end
-    end
+    local entity = GetPlayerEntity()
+    if entity == nil then return end
+
+    local actor = ashita.bits.unpack_be(e.data_raw, 40, 32)
+    if actor ~= entity.ServerId then return end
+
+    local type = ashita.bits.unpack_be(e.data_raw, 82, 4)
+    if type ~= 4 then return end
+
+    local spell = ashita.bits.unpack_be(e.data_raw, 86, 16)
+    if spell < 320 or spell > 337 then return end
+
+    AdvanceWheelTo(state.lookup[spell] + 1)
 end
 
 local function OnPresent()

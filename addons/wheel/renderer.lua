@@ -189,6 +189,18 @@ function renderer.draw(state)
             end
         end
 
+    end
+    imgui.End()
+
+    if state.debug then
+        if imgui.Begin('wheel_debug') then
+            imgui.Text('animation:')
+            imgui.Text(string.format('  speed      = %d', animation.speed))
+            imgui.Text(string.format('  currentPos = %d', animation.currentPos))
+            imgui.Text(string.format('  targetPos  = %d', animation.targetPos))
+            imgui.Text(string.format('  currentRot = %d', animation.currentRot / circumference * 360))
+            imgui.Text(string.format('  targetRot  = %d', animation.targetRot / circumference * 360))
+        end
         imgui.End()
     end
 
