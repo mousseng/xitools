@@ -4,8 +4,10 @@ addon.version = '1.1'
 addon.desc    = 'Track objectives in omen'
 
 require('common')
+local chat = require('chat')
 local imgui = require('lin/ui')
-local messages = require('messages')
+local buildMessages = require('messages')
+local messages = buildMessages(7327)
 
 ---@class OmenMessageTemplate
 ---@field text    string
@@ -141,6 +143,21 @@ end
 
 local currentObjectives = getNewObjectives()
 
+---Scan the DATs for a reference message so we can map message IDs to message
+---text. This requires a change to the boot config.
+local function findIds()
+    local res = AshitaCore:GetResourceManager()
+    local id = res:GetString('dialog.omen', 'The light contains...something other than peace and serenity!')
+
+    if id == nil then
+        print(chat.header(addon.name) .. chat.error('Failed to find Omen message IDs'))
+        print(chat.header(addon.name) .. chat.message('Please ensure your Ashita config includes the omen datmap. Check the README for more information.'))
+        return
+    end
+
+    messages = buildMessages(id)
+end
+
 ---Checks the player zone on load to ensure we don't show it at a silly time
 local function checkZone()
     mainWindow.isVisible[1] = isInOmen()
@@ -207,6 +224,7 @@ local function showObjectives()
     end)
 end
 
+ashita.events.register('load', 'findIds', findIds)
 ashita.events.register('load', 'checkZone', checkZone)
 ashita.events.register('packet_in', 'handleZoning', handleZoning)
 ashita.events.register('packet_in', 'trackObjectives', trackObjectives)

@@ -1,5 +1,3 @@
-local MSG_BASE = 7326
-
 local MID_BOSSES = {
     [0] = 'Glassy Thinker',
     [1] = 'Glassy Craver',
@@ -124,165 +122,167 @@ local function updateTransientObjective2(msg, state)
     end
 end
 
----@type OmenMessageTemplate[]
-local messages = {
-    [MSG_BASE + 0] = {
-        text = "Your stay has been extended by # minute[/s].",
-        func = moveToNewFloor,
-    },
-    -- [MSG_BASE +  1]
-    -- [MSG_BASE +  2]
-    -- [MSG_BASE +  3]
-    -- [MSG_BASE +  4]
-    -- [MSG_BASE +  5]
-    [MSG_BASE +  6] = {
-        summary = 'Vanquish all transcended foes',
-        text = "Vanquish all transcended foes.",
-        func = updateSummary0,
-    },
-    [MSG_BASE +  7] = {
-        summary = 'Vanquish %d sweetwater foes',
-        text = "Vanquish # sweetwater foe[/s].",
-        func = updateSummary1,
-    },
-    [MSG_BASE +  8] = {
-        summary = 'Vanquish 1 specific monster',
-        text = "Vanquish 1 specific monster.",
-        func = updateSummary0,
-    },
-    [MSG_BASE +  9] = {
-        summary = 'Vanquish all monsters',
-        text = "Vanquish all monsters.",
-        func = updateSummary0,
-    },
-    [MSG_BASE + 10] = {
-        summary = 'Free floor!',
-        text = "The light shall come even if you fail to obey.",
-        func = updateSummary0,
-    },
-    [MSG_BASE + 11] = {
-        summary = 'Vanquish %s',
-        text = "Vanquish the [Glassy Thinker/Glassy Craver/Glassy Gorger].",
-        func = updateSummaryMid,
-    },
-    [MSG_BASE + 12] = {
-        summary = 'Vanquish %s',
-        text = "Vanquish [Kin/Gin/Kei/Kyou/Fu/Ou].",
-        func = updateSummaryBig,
-    },
-    [MSG_BASE + 13] = {
-        summary = 'Open %d treasure portents',
-        text = "Open # treasure portent[/s].",
-        func = updateSummary1,
-    },
-    [MSG_BASE + 14] = {
-        text = "A spectral light flares up.",
-        func = function(msg, state)
-            state.floor.status = 'success'
-        end,
-    },
-    -- [MSG_BASE + 15]
-    -- [MSG_BASE + 16]
-    [MSG_BASE + 17] = {
-        text = "Follow the light and carry out your charge before time runs out. You have # second[/s] remaining.",
-        func = updateFloorTimer,
-    },
-    [MSG_BASE + 18] = {
-        text = "Carry out your charge before time runs out. You have # second[/s] remaining.",
-        func = updateFloorTimer,
-    },
-    -- [MSG_BASE + 19]
-    -- [MSG_BASE + 20]
-    [MSG_BASE + 21] = {
-        summary = 'Perform a multi-step skillchain',
-        text = "#: [Execute/You have executed/You have failed to execute/You have executed] # skillchain[/s] using weapon skills on your foes!",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 22] = {
-        summary = 'Deal critical hits',
-        text = "#: [Deal/You have dealt/You have failed to deal/You have dealt] # critical hit[/s] to your foes.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 23] = {
-        summary = 'Vanquish foes',
-        text = "#: [Vanquish/You have vanquished/You have failed to vanquish/You have vanquished] # foe[/s].",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 24] = {
-        summary = 'Cast spells',
-        text = "#: [Cast/You have cast/You have failed to cast/You have cast] # spell[/s] on your foes.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 25] = {
-        summary = 'Use abilities',
-        text = "#: [Use/You have used/You have failed to use/You have used] # [ability/abilities] on your foes.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 26] = {
-        summary = 'Use physical weaponskills',
-        text = "#: [Use/You have used/You have failed to use/You have used] # physical weapon skill[/s] on your foes.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 27] = {
-        summary = 'Use elemental weaponskills',
-        text = "#: [Use/You have used/You have failed to use/You have used] # elemental weapon skill[/s] on your foes.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 28] = {
-        summary = 'Use weaponskills',
-        text = "#: [Use/You have used/You have failed to use/You have used] # weapon skill[/s] on your foes.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 29] = {
-        summary = 'Perform magic bursts',
-        text = "#: [Perform/You have performed/You have failed to perform/You have performed] # magic burst[/s] on your foes.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 30] = {
-        summary = 'Deal damage in one attack round',
-        text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by at least # in a single auto-attack.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 31] = {
-        summary = 'Deal exact damage in one attack round',
-        text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by # in a single auto-attack.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 32] = {
-        summary = 'Deal damage in one weaponskill',
-        text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by at least # using a single weapon skill.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 33] = {
-        summary = 'Deal exact damage in one weaponskill',
-        text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by # using a single weapon skill.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 34] = {
-        summary = 'Deal damage in one non-burst spell',
-        text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by at least # using a single magic attack without performing a magic burst.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 35] = {
-        summary = 'Deal exact damage in one non-burst spell',
-        text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by # using a single magic attack without performing a magic burst.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 36] = {
-        summary = 'Deal damage in one magic burst',
-        text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by at least # using a single magic burst.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 37] = {
-        summary = 'Deal exact damage in one magic burst',
-        text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by # using a single magic burst.",
-        func = updateTransientObjective1,
-    },
-    [MSG_BASE + 38] = {
-        summary = 'Restore %d HP',
-        text = "#: [Restore/You have restored/You have failed to restore/You have restored] at least # HP # time[/s].",
-        func = updateTransientObjective2,
-    },
-}
+---@return OmenMessageTemplate[]
+local function buildMessages(msgBase)
+    return {
+        [msgBase + 0] = {
+            text = "Your stay has been extended by # minute[/s].",
+            func = moveToNewFloor,
+        },
+        -- [msgBase +  1]
+        -- [msgBase +  2]
+        -- [msgBase +  3]
+        -- [msgBase +  4]
+        -- [msgBase +  5]
+        [msgBase +  6] = {
+            summary = 'Vanquish all transcended foes',
+            text = "Vanquish all transcended foes.",
+            func = updateSummary0,
+        },
+        [msgBase +  7] = {
+            summary = 'Vanquish %d sweetwater foes',
+            text = "Vanquish # sweetwater foe[/s].",
+            func = updateSummary1,
+        },
+        [msgBase +  8] = {
+            summary = 'Vanquish 1 specific monster',
+            text = "Vanquish 1 specific monster.",
+            func = updateSummary0,
+        },
+        [msgBase +  9] = {
+            summary = 'Vanquish all monsters',
+            text = "Vanquish all monsters.",
+            func = updateSummary0,
+        },
+        [msgBase + 10] = {
+            summary = 'Free floor!',
+            text = "The light shall come even if you fail to obey.",
+            func = updateSummary0,
+        },
+        [msgBase + 11] = {
+            summary = 'Vanquish %s',
+            text = "Vanquish the [Glassy Thinker/Glassy Craver/Glassy Gorger].",
+            func = updateSummaryMid,
+        },
+        [msgBase + 12] = {
+            summary = 'Vanquish %s',
+            text = "Vanquish [Kin/Gin/Kei/Kyou/Fu/Ou].",
+            func = updateSummaryBig,
+        },
+        [msgBase + 13] = {
+            summary = 'Open %d treasure portents',
+            text = "Open # treasure portent[/s].",
+            func = updateSummary1,
+        },
+        [msgBase + 14] = {
+            text = "A spectral light flares up.",
+            func = function(msg, state)
+                state.floor.status = 'success'
+            end,
+        },
+        -- [msgBase + 15]
+        -- [msgBase + 16]
+        [msgBase + 17] = {
+            text = "Follow the light and carry out your charge before time runs out. You have # second[/s] remaining.",
+            func = updateFloorTimer,
+        },
+        [msgBase + 18] = {
+            text = "Carry out your charge before time runs out. You have # second[/s] remaining.",
+            func = updateFloorTimer,
+        },
+        -- [msgBase + 19]
+        -- [msgBase + 20]
+        [msgBase + 21] = {
+            summary = 'Perform a multi-step skillchain',
+            text = "#: [Execute/You have executed/You have failed to execute/You have executed] # skillchain[/s] using weapon skills on your foes!",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 22] = {
+            summary = 'Deal critical hits',
+            text = "#: [Deal/You have dealt/You have failed to deal/You have dealt] # critical hit[/s] to your foes.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 23] = {
+            summary = 'Vanquish foes',
+            text = "#: [Vanquish/You have vanquished/You have failed to vanquish/You have vanquished] # foe[/s].",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 24] = {
+            summary = 'Cast spells',
+            text = "#: [Cast/You have cast/You have failed to cast/You have cast] # spell[/s] on your foes.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 25] = {
+            summary = 'Use abilities',
+            text = "#: [Use/You have used/You have failed to use/You have used] # [ability/abilities] on your foes.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 26] = {
+            summary = 'Use physical weaponskills',
+            text = "#: [Use/You have used/You have failed to use/You have used] # physical weapon skill[/s] on your foes.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 27] = {
+            summary = 'Use elemental weaponskills',
+            text = "#: [Use/You have used/You have failed to use/You have used] # elemental weapon skill[/s] on your foes.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 28] = {
+            summary = 'Use weaponskills',
+            text = "#: [Use/You have used/You have failed to use/You have used] # weapon skill[/s] on your foes.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 29] = {
+            summary = 'Perform magic bursts',
+            text = "#: [Perform/You have performed/You have failed to perform/You have performed] # magic burst[/s] on your foes.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 30] = {
+            summary = 'Deal damage in one attack round',
+            text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by at least # in a single auto-attack.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 31] = {
+            summary = 'Deal exact damage in one attack round',
+            text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by # in a single auto-attack.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 32] = {
+            summary = 'Deal damage in one weaponskill',
+            text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by at least # using a single weapon skill.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 33] = {
+            summary = 'Deal exact damage in one weaponskill',
+            text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by # using a single weapon skill.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 34] = {
+            summary = 'Deal damage in one non-burst spell',
+            text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by at least # using a single magic attack without performing a magic burst.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 35] = {
+            summary = 'Deal exact damage in one non-burst spell',
+            text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by # using a single magic attack without performing a magic burst.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 36] = {
+            summary = 'Deal damage in one magic burst',
+            text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by at least # using a single magic burst.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 37] = {
+            summary = 'Deal exact damage in one magic burst',
+            text = "#: [Reduce/You have reduced/You have failed to reduce/You have reduced] your foe's HP by # using a single magic burst.",
+            func = updateTransientObjective1,
+        },
+        [msgBase + 38] = {
+            summary = 'Restore %d HP',
+            text = "#: [Restore/You have restored/You have failed to restore/You have restored] at least # HP # time[/s].",
+            func = updateTransientObjective2,
+        },
+    }
+end
 
-return messages
+return buildMessages
