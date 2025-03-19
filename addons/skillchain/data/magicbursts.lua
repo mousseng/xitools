@@ -117,6 +117,12 @@ local retail = {
     [837] = { name = "Thundara II",           burst_msg = 252, },
     [838] = { name = "Watera",                burst_msg = 252, },
     [839] = { name = "Watera II",             burst_msg = 252, },
+    [865] = { name = "Fira III",              burst_msg = 252, },
+    [866] = { name = "Blizzara III",          burst_msg = 252, },
+    [867] = { name = "Aera III",              burst_msg = 252, },
+    [868] = { name = "Stonera III",           burst_msg = 252, },
+    [869] = { name = "Thundara III",          burst_msg = 252, },
+    [870] = { name = "Watera III",            burst_msg = 252, },
 
     -- debuffs
     [ 58] = { name = "Paralyze",              burst_msg = 271, no_dmg = true, },
