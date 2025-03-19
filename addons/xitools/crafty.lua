@@ -203,7 +203,7 @@ local function DrawRecipes(skills)
             FilterRecipes(recipeFilter[1]:lower())
         end
 
-        DrawFilteredRecipes(skills, searchResults[recipeFilter[1]])
+        DrawFilteredRecipes(skills, searchResults[recipeFilter[1]:lower()])
     end
 end
 
