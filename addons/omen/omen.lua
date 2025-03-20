@@ -155,7 +155,9 @@ local function findIds()
         return
     end
 
-    messages = buildMessages(id)
+    -- the reference message we're looking for should be 4 after the time extension,
+    -- which is the base we're actually using
+    messages = buildMessages(id - 4)
 end
 
 ---Checks the player zone on load to ensure we don't show it at a silly time
